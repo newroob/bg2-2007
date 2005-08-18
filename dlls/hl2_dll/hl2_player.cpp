@@ -1357,6 +1357,10 @@ static ConCommand ch_createairboat( "ch_createairboat", CC_CH_CreateAirboat, "Sp
 //-----------------------------------------------------------------------------
 void CHL2_Player::CheatImpulseCommands( int iImpulse )
 {
+	//BG2 - Tjoppen - don't do impulse commands unless we're cheating
+	if( !sv_cheats->GetBool() )
+		return;
+
 	switch( iImpulse )
 	{
 	case 50:

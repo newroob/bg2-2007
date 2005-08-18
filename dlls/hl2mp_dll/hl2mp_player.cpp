@@ -59,6 +59,28 @@
 #include "engine/IEngineSound.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
 
+//BG2 - Draco - Start
+//BG2 - Tjoppen - added explainations to mp_limit_* cvars
+//class limit cvars, -1 is unlimited, any non -1 value will enforce a limit
+ConVar mp_limit_light_a( "mp_limit_light_a", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
+						"When != -1 : Maximum amount of Continental Officers for the Americans" );//cont officer
+
+ConVar mp_limit_medium_a( "mp_limit_medium_a", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
+						 "When != -1 : Maximum amount of Minute Men for the Americans" );//minute man
+
+ConVar mp_limit_heavy_a( "mp_limit_heavy_a", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
+						"When != -1 : Maximum amount of Continental Soldiers for the Americans" );//cont soldier
+
+ConVar mp_limit_light_b( "mp_limit_light_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
+						"When != -1 : Maximum amount of Royal Officers for the British" );//royal officer
+
+ConVar mp_limit_medium_b( "mp_limit_medium_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
+						 "When != -1 : Maximum amount of Royal Infantry for the British" );//royal inf
+
+ConVar mp_limit_heavy_b( "mp_limit_heavy_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
+						"When != -1 : Maximum amount of Loyalists for the British" );//loyalist
+
+
 int g_iLastCitizenModel = 0;
 int g_iLastCombineModel = 0;
 
@@ -1167,96 +1189,146 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 	//
 
 	//BG2 - Tjoppen - class selection
-	if ( FStrEq( cmd, "infantrya" ) )
+	if ( FStrEq( cmd, "heavy_a" ) )
 	{
 		if( GetTeamNumber() == TEAM_AMERICANS && m_iClass == CLASS_INFANTRY )
 			return true;
 
-		char str[512];
-		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
-		strncat( str, " is going to fight as a Minute Man for the Americans\n", 512 );
-		ClientPrinttTalkAll( str );
-		//ClientPrint( this, HUD_PRINTCENTER, "When you die you will respawn as infantry\n" );
-
-		engine->ClientCommand( edict(),"cl_playermodel models/player/american/light_a/light_a.mdl" );
-		m_iClass = CLASS_INFANTRY;
-
-		return true;
-	}
-	else if ( FStrEq( cmd, "officera" ) )
-	{
-		if( GetTeamNumber() == TEAM_AMERICANS && m_iClass == CLASS_OFFICER )
-			return true;
-
-		char str[512];
-		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
-		strncat( str, " is going to fight as a Continental Officer for the Americans\n", 512 );
-		ClientPrinttTalkAll( str );
-		//ClientPrint( this, HUD_PRINTCENTER, "When you die you will respawn as an officer\n" );
-
-		engine->ClientCommand( edict(),"cl_playermodel models/player/american/medium_a/medium_a.mdl" );
-		m_iClass = CLASS_OFFICER;
-
-		return true;
-	}
-	else if ( FStrEq( cmd, "snipera" ) )
-	{
-		if( GetTeamNumber() == TEAM_AMERICANS && m_iClass == CLASS_SNIPER )
-			return true;
+		if( mp_limit_heavy_a.GetInt() != -1)//not unlimited?
+		{
+			if (g_Teams[TEAM_AMERICANS]->GetHeavyA() >= mp_limit_heavy_a.GetInt())
+			{
+				ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
+				return true;
+			}
+		}
 
 		char str[512];
 		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
 		strncat( str, " is going to fight as a Continental Soldier for the Americans\n", 512 );
 		ClientPrinttTalkAll( str );
-		//ClientPrint( this, HUD_PRINTCENTER, "When you die you will respawn as a sniper\n" );
+
+		//BG2 - Tjoppen - FIXME: should be heavy_a
+		engine->ClientCommand( edict(),"cl_playermodel models/player/american/light_a/light_a.mdl" );
+		m_iClass = CLASS_INFANTRY;
+
+		return true;
+	}
+	else if ( FStrEq( cmd, "light_a" ) )
+	{
+		if( GetTeamNumber() == TEAM_AMERICANS && m_iClass == CLASS_OFFICER )
+			return true;
+
+		if( mp_limit_light_a.GetInt() != -1)//not unlimited?
+		{
+			if (g_Teams[TEAM_AMERICANS]->GetLightA() >= mp_limit_light_a.GetInt())
+			{
+				ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
+				return true;
+			}
+		}
+
+		char str[512];
+		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
+		strncat( str, " is going to fight as a Continental Officer for the Americans\n", 512 );
+		ClientPrinttTalkAll( str );
+
+		engine->ClientCommand( edict(),"cl_playermodel models/player/american/light_a/light_a.mdl" );
+		m_iClass = CLASS_OFFICER;
+
+		return true;
+	}
+	else if ( FStrEq( cmd, "medium_a" ) )
+	{
+		if( GetTeamNumber() == TEAM_AMERICANS && m_iClass == CLASS_SNIPER )
+			return true;
+
+		if( mp_limit_medium_a.GetInt() != -1)//not unlimited?
+		{
+			if (g_Teams[TEAM_AMERICANS]->GetMediumA() >= mp_limit_medium_a.GetInt())
+			{
+				ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
+				return true;
+			}
+		}
+
+		char str[512];
+		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
+		strncat( str, " is going to fight as a Minute Man for the Americans\n", 512 );
+		ClientPrinttTalkAll( str );
 
 		engine->ClientCommand( edict(),"cl_playermodel models/player/american/medium_a/medium_a.mdl" );
 		m_iClass = CLASS_SNIPER;
 
 		return true;
 	}
-	if ( FStrEq( cmd, "infantryb" ) )
+	if ( FStrEq( cmd, "medium_b" ) )
 	{
 		if( GetTeamNumber() == TEAM_BRITISH && m_iClass == CLASS_INFANTRY )
 			return true;
 
+		if( mp_limit_medium_b.GetInt() != -1)//not unlimited?
+		{
+			if (g_Teams[TEAM_BRITISH]->GetMediumB() >= mp_limit_medium_b.GetInt())
+			{
+				ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
+				return true;
+			}
+		}
+
 		char str[512];
 		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
-		strncat( str, " is going to fight as a Royal Infantry for the British\n", 512 );
+		strncat( str, " is going to fight as Royal Infantry for the British\n", 512 );
 		ClientPrinttTalkAll( str );
-		//ClientPrint( this, HUD_PRINTCENTER, "When you die you will respawn as a Royal Infantryman for the British\n" );
 
 		engine->ClientCommand( edict(),"cl_playermodel models/player/british/medium_b/medium_b.mdl" );
 		m_iClass = CLASS_INFANTRY;
 
 		return true;
 	}
-	else if ( FStrEq( cmd, "officerb" ) )
+	else if ( FStrEq( cmd, "light_b" ) )
 	{
 		if( GetTeamNumber() == TEAM_BRITISH && m_iClass == CLASS_OFFICER )
 			return true;
+
+		if( mp_limit_light_b.GetInt() != -1)//not unlimited?
+		{
+			if (g_Teams[TEAM_BRITISH]->GetLightB() >= mp_limit_light_b.GetInt())
+			{
+				ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
+				return true;
+			}
+		}
 
 		char str[512];
 		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
 		strncat( str, " is going to fight as a Royal Commander for the British\n", 512 );
 		ClientPrinttTalkAll( str );
-		//ClientPrint( this, HUD_PRINTCENTER, "When you die you will respawn as an officer\n" );
 
+		//BG2 - Tjoppen - FIXME: should be light_b
 		engine->ClientCommand( edict(),"cl_playermodel models/player/british/medium_b/medium_b.mdl" );
 		m_iClass = CLASS_OFFICER;
 
 		return true;
 	}
-	else if ( FStrEq( cmd, "sniperb" ) )
+	else if ( FStrEq( cmd, "heavy_b" ) )
 	{
 		if( GetTeamNumber() == TEAM_BRITISH && m_iClass == CLASS_SNIPER )
 			return true;
+
+		if( mp_limit_heavy_b.GetInt() != -1)//not unlimited?
+		{
+			if (g_Teams[TEAM_BRITISH]->GetHeavyB() >= mp_limit_heavy_b.GetInt())
+			{
+				ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
+				return true;
+			}
+		}
 
 		char str[512];
 		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
 		strncat( str, " is going to fight as a Loyalist for the British\n", 512 );
 		ClientPrinttTalkAll( str );
-		//ClientPrint( this, HUD_PRINTCENTER, "When you die you will respawn as a sniper\n" );
 
 		engine->ClientCommand( edict(),"cl_playermodel models/player/british/heavy_b/heavy_b.mdl" );
 		m_iClass = CLASS_SNIPER;
@@ -1291,10 +1363,13 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			if( comm >= 0 && comm < NUM_VOICECOMMS && comm != VCOMM1_NUM && comm != VCOMM2_START+VCOMM2_NUM )
 			{
 				char *chat = NULL;
+				bool say_team = true;
 
 				if( comm == 6 )
 				{
 					//battle cry
+					say_team = false;
+
 					if( GetTeamNumber() == TEAM_AMERICANS )
 					{
 						EmitSound( "Voicecomms.ABattleCry" );
@@ -1320,7 +1395,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 				//UTIL_ClientPrintAll( HUD_PRINTTALK, "testing" );
 				//Host_Say( );
 				if( chat )
-					engine->ClientCommand( edict(), "say %s", chat );
+				{
+					if( say_team )
+						engine->ClientCommand( edict(), "say_team %s", chat );
+					else
+						engine->ClientCommand( edict(), "say %s", chat );
+				}
 
 				m_flNextVoicecomm = gpGlobals->curtime + 2.0f;
 			}

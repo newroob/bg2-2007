@@ -51,13 +51,14 @@
 #endif
 
 #ifndef CLIENT_DLL
+//BG2 - Tjoppen - just make these global so we can reset them
+float	flNextClientPrintAll = 0;
+bool	bNextClientPrintAllForce = false;
+
 void ClientPrintAll( char *str, bool printfordeadplayers = false, bool forcenextclientprintall = false )
 {
 	if( !str )
 		return;
-
-	static float	flNextClientPrintAll = 0;
-	static bool		bNextClientPrintAllForce = false;
 
 	//Msg( "ClientPrintAll: %s printfordeadplayers=%i forcenextclientprintall=%i\t", str, printfordeadplayers, forcenextclientprintall );
 
@@ -480,10 +481,11 @@ LINK_ENTITY_TO_CLASS(flag, CFlag);
 PRECACHE_REGISTER(flag);
 
 #ifndef CLIENT_DLL
+//BG2 - Tjoppen - just make this global so we can reset it
+float nextwinsong = 0;	//to prevent win spamming sound issues..
+
 void CFlagHandler::RespawnAll( char *pSound )
 {
-	static float nextwinsong = 0;	//to prevent win spamming sound issues..
-
 	if( nextwinsong > gpGlobals->curtime )
 		pSound = NULL;	//what a nice hack
 	else

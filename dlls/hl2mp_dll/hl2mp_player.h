@@ -134,6 +134,9 @@ public:
 
 	// Tracks our ragdoll entity.
 	CNetworkHandle( CBaseEntity, m_hRagdoll );	// networked entity handle 
+
+	//BG2 - Tjoppen - GetClass()
+	int	GetClass( void ) { return m_iClass; }
 		
 private:
 

@@ -77,6 +77,9 @@ extern ConVar mp_chattime;
 //BG2 - Draco - Start
 ConVar mp_respawnstyle( "mp_respawnstyle", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_respawntime( "mp_respawntime", "5", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar sv_restartround( "sv_restartround", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar mp_americanscore( "mp_americanscore", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar mp_britishscore( "mp_britishscore", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 //BG2 - Draco - End
 
 
@@ -173,7 +176,7 @@ CHL2MPRules::CHL2MPRules()
 
 	m_hRespawnableItemsAndWeapons.RemoveAll();
 
-	//BG2 - Tjoppen - m_fLastRespawnWave and bot initialization
+	//BG2 - Tjoppen - m_fLastRespawnWave, ClientPrintAll()- and bot initialization
 	m_fLastRespawnWave = 0;
 
 	g_CurBotNumber = 1;
@@ -182,6 +185,15 @@ CHL2MPRules::CHL2MPRules()
 		gBots[x].m_pPlayer = NULL;
 		gBots[x].m_bInuse = false;
 	}
+
+	extern float flNextClientPrintAll;
+	extern bool bNextClientPrintAllForce;
+
+	flNextClientPrintAll = 0;
+	bNextClientPrintAllForce = false;
+
+	extern float nextwinsong;
+	nextwinsong = 0;
 	//
 #endif
 }
@@ -273,6 +285,49 @@ void CHL2MPRules::Think( void )
 		return;
 	}
 
+	//BG2 - Draco - Start
+	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
+	CTeam *pBritish = g_Teams[TEAM_BRITISH];
+	//mp_british/americanscore think
+	if (mp_britishscore.GetInt() != pBritish->GetScore())
+	{
+		g_Teams[TEAM_BRITISH]->SetScore(mp_britishscore.GetInt());
+	}
+	if (mp_americanscore.GetInt() != pAmericans->GetScore())
+	{
+		g_Teams[TEAM_AMERICANS]->SetScore(mp_americanscore.GetInt());
+	}
+	//sv_restartround think
+	if (sv_restartround.GetInt() > 0)
+	{
+		m_fNextGameReset = gpGlobals->curtime + sv_restartround.GetInt();
+//		ClientPrintAll( "Round restarting!", true, true );
+		sv_restartround.SetValue(0);
+	}
+	//now if the time was set we can check for it, non zero means we are restarting
+	if ((m_fNextGameReset != 0) &&(m_fNextGameReset <= gpGlobals->curtime))
+	{
+		m_fNextGameReset = 0;//dont reset again
+		//reset scores...
+		pAmericans->SetScore(0);//...for teams...
+		pBritish->SetScore(0);
+		int x;
+		for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
+		{
+			CBasePlayer *pPlayer = g_Teams[TEAM_AMERICANS]->GetPlayer( x );
+			pPlayer->ResetFragCount();//...for cap points...
+			pPlayer->ResetDeathCount();//...and damage
+		}
+		for( x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
+		{
+			CBasePlayer *pPlayer = g_Teams[TEAM_BRITISH]->GetPlayer( x );
+			pPlayer->ResetFragCount();//...for cap points...
+			pPlayer->ResetDeathCount();//...and damage
+		}
+		CFlagHandler::ResetFlags();
+        CFlagHandler::RespawnAll( NULL );//and respawn! done.
+	}
+	//BG2 - Draco - End
 	//BG2 - Tjoppen - round system goes here
 	//BG2 - Draco - Indeed it does good sir! round system added!
 	//BG2 - Draco - Start

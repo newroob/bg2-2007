@@ -79,35 +79,38 @@ public:
 		switch (m_iCommand)
 		{
 			case 1:
+				//officer
 				switch ( pThisMenu->m_iTeamSelection )
 				{
 					case TEAM_AMERICANS:
-						engine->ServerCmd( "officera" );
+						engine->ServerCmd( "light_a" );
 						break;
 					case TEAM_BRITISH:
-						engine->ServerCmd( "officerb" );
+						engine->ServerCmd( "light_b" );
 						break;
 				}
 				break;
 			case 2:
+				//infantry
 				switch ( pThisMenu->m_iTeamSelection )
 				{
 					case TEAM_AMERICANS:
-						engine->ServerCmd( "infantrya" );
+						engine->ServerCmd( "heavy_a" );
 						break;
 					case TEAM_BRITISH:
-						engine->ServerCmd( "infantryb" );
+						engine->ServerCmd( "medium_b" );
 						break;
 				}
 				break;
 			case 3:
+				//sniper
 				switch ( pThisMenu->m_iTeamSelection )
 				{
 					case TEAM_AMERICANS:
-						engine->ServerCmd( "snipera" );
+						engine->ServerCmd( "medium_a" );
 						break;
 					case TEAM_BRITISH:
-						engine->ServerCmd( "sniperb" );
+						engine->ServerCmd( "heavy_b" );
 						break;
 				}
 				break;
@@ -356,9 +359,9 @@ void CClassMenu::OnThink()
 	switch( m_iTeamSelection )
 	{
 		case TEAM_AMERICANS:
-			m_pInfantryButton->SetText("1. Minute Man");
+			m_pInfantryButton->SetText("1. Continental Soldier");
 			m_pOfficerButton->SetText("2. Continental Officer");
-			m_pSniperButton->SetText("3. Continental Soldier");
+			m_pSniperButton->SetText("3. Minute Man");
 			break;
 		case TEAM_BRITISH:
 			m_pInfantryButton->SetText("1. Royal Infantry");

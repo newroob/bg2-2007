@@ -124,6 +124,7 @@ public:
 
 	//BG2 - Draco - Start
 	float m_fLastRespawnWave;
+	float m_fNextGameReset;
 	//BG2 - Draco - End
 	//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed
 	float	m_flNextRoundRestart;

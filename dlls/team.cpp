@@ -8,6 +8,9 @@
 #include "team.h"
 #include "player.h"
 #include "team_spawnpoint.h"
+//BG2 - Tjoppen - #includes
+#include "hl2mp_player.h"
+//
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -294,3 +297,95 @@ int CTeam::GetScore( void )
 	return m_iScore;
 }
 
+//BG2 - Draco - Start
+int CTeam::GetLightA()
+{
+	int iAmount = 0;
+	int x;
+	for( x = 0; x < GetNumPlayers(); x++ )
+	{
+		CBasePlayer *pPlayer = GetPlayer( x );
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+		if (pHL2Player->GetClass() == CLASS_OFFICER)
+		{
+			iAmount++;
+		}
+	}
+	return iAmount;
+}
+int CTeam::GetMediumA()
+{
+	int iAmount = 0;
+	int x;
+	for( x = 0; x < GetNumPlayers(); x++ )
+	{
+		CBasePlayer *pPlayer = GetPlayer( x );
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+		if (pHL2Player->GetClass() == CLASS_SNIPER)//CLASS_INFANTRY) //BG2 - Tjoppen - fixed medium_a
+		{
+			iAmount++;
+		}
+	}
+	return iAmount;
+}
+int CTeam::GetHeavyA()
+{
+	int iAmount = 0;
+	int x;
+	for( x = 0; x < GetNumPlayers(); x++ )
+	{
+		CBasePlayer *pPlayer = GetPlayer( x );
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+		if (pHL2Player->GetClass() == CLASS_INFANTRY)//CLASS_SNIPER) //BG2 - Tjoppen - fixed heavy_a
+		{
+			iAmount++;
+		}
+	}
+	return iAmount;
+}
+int CTeam::GetLightB()
+{
+	int iAmount = 0;
+	int x;
+	for( x = 0; x < GetNumPlayers(); x++ )
+	{
+		CBasePlayer *pPlayer = GetPlayer( x );
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+		if (pHL2Player->GetClass() == CLASS_OFFICER)
+		{
+			iAmount++;
+		}
+	}
+	return iAmount;
+}
+int CTeam::GetMediumB()
+{
+	int iAmount = 0;
+	int x;
+	for( x = 0; x < GetNumPlayers(); x++ )
+	{
+		CBasePlayer *pPlayer = GetPlayer( x );
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+		if (pHL2Player->GetClass() == CLASS_INFANTRY)
+		{
+			iAmount++;
+		}
+	}
+	return iAmount;
+}
+int CTeam::GetHeavyB()
+{
+	int iAmount = 0;
+	int x;
+	for( x = 0; x < GetNumPlayers(); x++ )
+	{
+		CBasePlayer *pPlayer = GetPlayer( x );
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+		if (pHL2Player->GetClass() == CLASS_SNIPER)
+		{
+			iAmount++;
+		}
+	}
+	return iAmount;
+}
+//BG2 - Draco - End
