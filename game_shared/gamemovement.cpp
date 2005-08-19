@@ -1956,6 +1956,14 @@ bool CGameMovement::CheckJumpButton( void )
 	//BG2 - Tjoppen - don't allow jumping while reloading
 	if( player->GetActiveWeapon() && player->GetActiveWeapon()->m_bInReload )
 		return false;
+
+#ifndef CLIENT_DLL
+	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
+#else
+	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
+#endif
+	if( pHL2Player->m_iStamina < 70 )
+		return false;				//don't drain unless we can cover some height
 	//
 
 	// Don't allow jumping when the player is in a stasis field.
@@ -2003,13 +2011,8 @@ bool CGameMovement::CheckJumpButton( void )
 	else*/
 	{
 		//BG2 - Draco - cant jump much when you're nackered
-#ifndef CLIENT_DLL
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
-#else
-		C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
-#endif
-		
-		flMul = sqrt(2 * sv_gravity.GetFloat() * (GAMEMOVEMENT_JUMP_HEIGHT - ((100 - pHL2Player->m_iStamina)/5)));
+		flMul = sqrt(2 * sv_gravity.GetFloat() * (GAMEMOVEMENT_JUMP_HEIGHT - ((100 - pHL2Player->m_iStamina)/7)));
+		//flMul = sqrt(2 * sv_gravity.GetFloat() * (GAMEMOVEMENT_JUMP_HEIGHT - ((100 - pHL2Player->m_iStamina)/5)));
 		//BG2 - Tjoppen - fall back on default jump stuff on client for now
 		//flMul = sqrt(2 * sv_gravity.GetFloat() * GAMEMOVEMENT_JUMP_HEIGHT);
 	}
@@ -2076,15 +2079,15 @@ bool CGameMovement::CheckJumpButton( void )
 	// Flag that we jumped.
 	mv->m_nOldButtons |= IN_JUMP;	// don't jump again until released
 
-#ifndef CLIENT_DLL
+//#ifndef CLIENT_DLL
 	//BG2 - Draco - decrease stamina for jumping
-	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
+	//CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
 	pHL2Player->m_iStamina -= 25;
 	if (pHL2Player->m_iStamina < 0)//clamp to 0
 	{
 		pHL2Player->m_iStamina = 0;
 	}
-#endif
+//#endif
 
 	return true;
 }
