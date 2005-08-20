@@ -13,6 +13,9 @@
 #include "vgui_controls/controls.h"
 #include "vgui/ISurface.h"
 #include "IVRenderView.h"
+
+#include "debugoverlay_shared.h"
+
 //BG2 - Tjoppen - #includes
 #include "../dlls/hl2_dll/weapon_bg2base.h"
 //
@@ -152,22 +155,69 @@ void CHudCrosshair::Paint( void )
 		
 		float	cx = w / 2,
 				cy = h / 2,
-				r = min( w, h ) / 2;
+				r = max( w, h ) / 2;
 
 		if( weapon->GetAttackType( C_BaseBG2Weapon::ATTACK_PRIMARY ) == C_BaseBG2Weapon::ATTACKTYPE_FIREARM )
 			r *= weapon->GetSpread( C_BaseBG2Weapon::ATTACK_PRIMARY ).x;
 		else
 			r *= 0.05f;
+	
+		//r *= 1.333f; // bp - this is the constant 
+		
+		/*
+		//BG2 - BP - crosshair cirlce actually showing the correct spread cone. bullet always goes inside the circle you see.
+		// all this code is not needed to be executed it was rather added to calculate constants.
+		QAngle angles;
+		Vector forward, up, endpos;
+		
+		AngleVectors( m_curViewAngles, &forward );
+		QAngle up_angle = m_curViewAngles;
+		up_angle.x += 90.0f;
+		AngleVectors( up_angle, &up );
+		VectorMA( m_curViewOrigin, 4096.0f, forward, endpos );
+		
+		trace_t	trace;
+		
+		UTIL_TraceLine( m_curViewOrigin, endpos, CONTENTS_SOLID, NULL, COLLISION_GROUP_NONE, &trace );
+
+		float r_plus = 1.0f;
+
+		if (trace.fraction != 1.0)
+		{
+			Vector difference = trace.endpos - m_curViewOrigin;
+			float distance = difference.Length();
+	
+			// calculate spread cone at this distance
+			float spreaddistance = distance * tan(weapon->GetSpread( C_BaseBG2Weapon::ATTACK_PRIMARY ).x);
+			Msg( "distance = %f spreadunits = %f spreadangle = %f\n", distance, spreaddistance, weapon->GetSpread( C_BaseBG2Weapon::ATTACK_PRIMARY ).x );
+
+			// Transform point into screen space
+			Vector screen, spread_origin;
+			int ix,iy;
+			spread_origin = trace.endpos; trace.
+			VectorMA(spread_origin, spreaddistance, up, spread_origin);
+			GetVectorInScreenSpace(spread_origin, ix, iy, NULL);
+
+			r = iy - ScreenHeight()/2;
+
+
+			//NDebugOverlay::Cross3D( spread_origin, -Vector(4,4,4), Vector(4,4,4), 255, 0, 0, true, 0.5f );
+			
+			//Msg( "Radius: %f \n", r);
+			//Msg( "screen: %f %f\n", ix, iy);
+			//Msg( "spreadend: %f %f %f\n", spread_origin.x, spread_origin.y, spread_origin.z);
+		}
+		*/
 
 		//Msg( "%f\n", gpGlobals->frametime );
+		
 		static float lastr = 0;
-
+		Msg( "Radius: %f \n", r);
 		//r = lastr = r * 5.0f * gpGlobals->frametime + lastr * (1.f - 5.0f * gpGlobals->frametime);
 
 		r = lastr = r + (lastr - r) * expf( -5.0f * gpGlobals->frametime );
 
 		//Msg( "%f %f %f\n", cx, cy, r );
-
 		if( cl_crosshair.GetInt() & 4 )
 		{
 			float scale = cl_crosshair_scale.GetFloat() * min( w, h ) / 300;
@@ -219,57 +269,57 @@ void CHudCrosshair::Paint( void )
 			surface()->DrawFilledRect( cx - scale * 0.25f, cy + scale + expand, 
 										cx + scale * 0.25f, cy + scale * 3.f + expand );*/
 		}
-		
+
 		if( cl_crosshair.GetInt() & 1 )
 		{
-			int step = 10;
+		int step = 10;
 
 			surface()->DrawSetColor( Color( (cl_crosshair_r.GetInt()*2)/3, (cl_crosshair_g.GetInt()*2)/3,
 											(cl_crosshair_b.GetInt()*2)/3, cl_crosshair_a.GetInt()/3 ) );
-			for( int dx = -1; dx <= 1; dx++ )
-				for( int dy = -1; dy <= 1; dy++ )
+		for( int dx = -1; dx <= 1; dx++ )
+			for( int dy = -1; dy <= 1; dy++ )
+			{
+				if( dx == 0 && dy == 0 )
+					continue;
+
+				int cx2 = cx + dx,
+					cy2 = cy + dy;
+
+				int lastx = (int)(cx2 + r*cosf((float)-step * M_PI / 180.f)),
+					lasty =	(int)(cy2 + r*sinf((float)-step * M_PI / 180.f));
+
+				for( int i = 0, j = 0; i < 360; i += step, j++ )
 				{
-					if( dx == 0 && dy == 0 )
-						continue;
+					float	a = (float)i * M_PI / 180.f;
 
-					int cx2 = cx + dx,
-						cy2 = cy + dy;
+					int x = (int)(cx2 + r*cosf(a)),
+						y = (int)(cy2 + r*sinf(a));
 
-					int lastx = (int)(cx2 + r*cosf((float)-step * M_PI / 180.f)),
-						lasty =	(int)(cy2 + r*sinf((float)-step * M_PI / 180.f));
+					//surface()->DrawSetColor( Color( (j&1)*255, (j&1)*255, (j&1)*255, 255 ) );
 
-					for( int i = 0, j = 0; i < 360; i += step, j++ )
-					{
-						float	a = (float)i * M_PI / 180.f;
+					surface()->DrawLine( lastx, lasty, x, y );
 
-						int x = (int)(cx2 + r*cosf(a)),
-							y = (int)(cy2 + r*sinf(a));
-
-						//surface()->DrawSetColor( Color( (j&1)*255, (j&1)*255, (j&1)*255, 255 ) );
-
-						surface()->DrawLine( lastx, lasty, x, y );
-
-						lastx = x;
-						lasty = y;
-					}
+					lastx = x;
+					lasty = y;
 				}
+			}
 
-			int lastx = (int)(cx + r*cosf((float)-step * M_PI / 180.f)),
-				lasty =	(int)(cy + r*sinf((float)-step * M_PI / 180.f));
+        int lastx = (int)(cx + r*cosf((float)-step * M_PI / 180.f)),
+			lasty =	(int)(cy + r*sinf((float)-step * M_PI / 180.f));
 
 			surface()->DrawSetColor( Color( cl_crosshair_r.GetInt(), cl_crosshair_g.GetInt(),
 											cl_crosshair_b.GetInt(), cl_crosshair_a.GetInt() ) );
-			for( int i = 0, j = 0; i < 360; i += step, j++ )
-			{
-				float	a = (float)i * M_PI / 180.f;
+		for( int i = 0, j = 0; i < 360; i += step, j++ )
+		{
+			float	a = (float)i * M_PI / 180.f;
 
-				int x = (int)(cx + r*cosf(a)),
-					y = (int)(cy + r*sinf(a));
+			int x = (int)(cx + r*cosf(a)),
+				y = (int)(cy + r*sinf(a));
 
-				surface()->DrawLine( lastx, lasty, x, y );
+			surface()->DrawLine( lastx, lasty, x, y );
 
-				lastx = x;
-				lasty = y;
+			lastx = x;
+			lasty = y;
 			}
 		}
 	}
