@@ -272,7 +272,7 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		SetAbsVelocity( Vector( 0, 0, 0 ) );
 
 		// play body "thwack" sound
-		EmitSound( "Weapon_Crossbow.BoltHitBody" );
+		EmitSound( "Weapon_Pistol.HitBody" );
 
 		Vector vForward;
 
@@ -312,7 +312,7 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		// See if we struck the world
 		if ( pOther->GetMoveType() == MOVETYPE_NONE && !( tr.surface.flags & SURF_SKY ) )
 		{
-			EmitSound( "Weapon_Crossbow.BoltHitWorld" );
+			EmitSound( "Weapon_Pistol.BoltHitWorld" );
 
 			// if what we hit is static architecture, can stay around for a while.
 			Vector vecDir = GetAbsVelocity();
@@ -321,7 +321,8 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 			// See if we should reflect off this surface
 			float hitDot = DotProduct( tr.plane.normal, -vecDir );
 			
-			if ( ( hitDot < 0.5f ) && ( speed > 100 ) )
+			// BG2 - BP original was( hitDot < 0.5f ) but a musket ball should not bounce off walls if the angle is too big
+			if ( ( hitDot < 0.2f ) && ( speed > 100 ) )
 			{
 				Vector vReflection = 2.0f * tr.plane.normal * hitDot + vecDir;
 				
@@ -372,11 +373,11 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 				}
 			}
 			
-			// Shoot some sparks
-			if ( UTIL_PointContents( GetAbsOrigin() ) != CONTENTS_WATER)
+			//BG2 - BP  TODO: musket balls only create sparks on metal surfaces Shoot some sparks
+			/*if ( UTIL_PointContents( GetAbsOrigin() ) == CONTENTS_WATER)
 			{
 				g_pEffects->Sparks( GetAbsOrigin() );
-			}
+			}*/
 		}
 		else
 		{

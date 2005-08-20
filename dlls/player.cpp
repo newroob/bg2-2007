@@ -754,7 +754,7 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 			//BG2 - Tjoppen - print hit verification
 			CBasePlayer *pVictim = this,
 						*pAttacker = ToBasePlayer( info.GetAttacker() );
-			Assert( pAttacker != NULL; );
+			Assert( pAttacker != NULL );
 
 			char attackerstr[512], victimstr[512];
 

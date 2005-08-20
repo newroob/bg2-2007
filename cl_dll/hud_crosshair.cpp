@@ -212,7 +212,7 @@ void CHudCrosshair::Paint( void )
 		//Msg( "%f\n", gpGlobals->frametime );
 		
 		static float lastr = 0;
-		Msg( "Radius: %f \n", r);
+		//Msg( "Radius: %f \n", r);
 		//r = lastr = r * 5.0f * gpGlobals->frametime + lastr * (1.f - 5.0f * gpGlobals->frametime);
 
 		r = lastr = r + (lastr - r) * expf( -5.0f * gpGlobals->frametime );

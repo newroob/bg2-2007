@@ -2950,7 +2950,7 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 	offset = origin + forward * 8.0f;
 
 	//BG2 - Tjoppen - more smoke
-	for( int j = 0; j < 16; j++ )
+	for( int j = 0; j < 7; j++ )
 	//if ( random->RandomInt( 0, 3 ) != 0 )
 	{
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
@@ -2964,17 +2964,18 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 		pParticle->m_flLifetime		= 0.0f;
 		//BG2 - Tjoppen - smoke lives longer
 		//pParticle->m_flDieTime		= random->RandomFloat( 0.25f, 0.5f );
-		pParticle->m_flDieTime		= random->RandomFloat( 5.0f, 10.0f );
+		pParticle->m_flDieTime		= random->RandomFloat( 4.0f, 7.0f );
 
 		pParticle->m_vecVelocity.Init();
 		//BG2 - Tjoppen - a little bit more speed to the smoke
 		//pParticle->m_vecVelocity = forward * random->RandomFloat( 48.0f, 64.0f );
-		pParticle->m_vecVelocity = forward * (float)j * 0.1f * random->RandomFloat( 32.0f, 64.0f );
-		pParticle->m_vecVelocity[2] += random->RandomFloat( 4.0f, 16.0f );
+		pParticle->m_vecVelocity = forward * (float)j * 0.17f * random->RandomFloat( 32.0f, 64.0f );
+		pParticle->m_vecVelocity[2] += random->RandomFloat( 7.0f, 28.0f );
 
 		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
-		//C_BaseEntity *pEnt = ClientEntityList().GetEnt( entityIndex );
-		//pParticle->m_vecVelocity += pEnt->GetLocalVelocity();
+		C_BaseEntity *pEnt = ClientEntityList().GetEnt( entityIndex );
+		pParticle->m_vecVelocity += pEnt->GetLocalVelocity();
+
 
 		int color = random->RandomInt( 200, 255 );
 		pParticle->m_uchColor[0]	= color;
@@ -2983,7 +2984,7 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 
 		//BG2 - Tjoppen - denser smoke
 		//pParticle->m_uchStartAlpha	= random->RandomInt( 64, 128 );
-		pParticle->m_uchStartAlpha	= random->RandomInt( 128, 192 );
+		pParticle->m_uchStartAlpha	= random->RandomInt( 114, 164 );
 		pParticle->m_uchEndAlpha	= 0;
 
 		//BG2 - Tjoppen - larger smoke
@@ -2993,7 +2994,7 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 		//pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 10.0f;
 		pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 35.0f;
 		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
-		pParticle->m_flRollDelta	= random->RandomFloat( -0.1f, 0.1f );
+		pParticle->m_flRollDelta	= random->RandomFloat( -0.5f, 0.5f );
 	}
 }
 
