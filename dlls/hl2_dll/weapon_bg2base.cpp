@@ -130,6 +130,10 @@ CBullet *CBullet::BoltCreate( const Vector &vecOrigin, const QAngle &angAngles, 
 	CBullet *pBolt = (CBullet *)CreateEntityByName( "bullet" );
 	UTIL_SetOrigin( pBolt, vecOrigin );
 	pBolt->SetAbsAngles( angAngles );
+	Vector vecDir;
+	AngleVectors( angAngles, &vecDir );
+	pBolt->SetAbsVelocity( vecDir * BOLT_AIR_VELOCITY );
+
 	pBolt->Spawn();
 	pBolt->SetOwnerEntity( pentOwner );
 
@@ -202,8 +206,11 @@ void CBullet::Spawn( void )
 	SetSolid( SOLID_BBOX );
 	//SetGravity( 0.05f );
 	SetGravity( 1.0f );
-	SetFriction( 100.0f );
-	
+	//VPhysicsGetObject()->EnableDrag( true );
+	/*VPhysicsGetObject()->Wake();
+	VPhysicsGetObject()->SetMass( 1 );*/
+	SetFriction( 1000.0f );
+
 	// Make sure we're updated if we're underwater
 	UpdateWaterState();
 
@@ -247,18 +254,29 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		ClearMultiDamage();
 		VectorNormalize( vecNormalizedVel );
 
+		float	speed = GetAbsVelocity().Length();
+		if( speed < 100 )
+			speed = 100;
+
+		float	dmg = (float)m_iDamage * speed * speed / (float)(BOLT_AIR_VELOCITY*BOLT_AIR_VELOCITY),
+				dmgforcescale = 100.f / speed;
+
+		Msg( "%f / %f => %f / %f\n", speed, (float)BOLT_AIR_VELOCITY, dmg, (float)m_iDamage );
+
 		if( GetOwnerEntity() && GetOwnerEntity()->IsPlayer() && pOther->IsNPC() )
 		{
-			CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), m_iDamage, DMG_BULLET | DMG_NEVERGIB );
+			//CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), m_iDamage, DMG_BULLET | DMG_NEVERGIB );
+			CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
 			dmgInfo.AdjustPlayerDamageInflictedForSkillLevel();
-			CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, 0.07f );
+			CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
 			dmgInfo.SetDamagePosition( tr.endpos );
 			pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
 		}
 		else
 		{
-			CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), m_iDamage, DMG_BULLET | DMG_NEVERGIB );
-			CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, 0.7f );
+			//CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), m_iDamage, DMG_BULLET | DMG_NEVERGIB );
+			CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
+			CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
 			dmgInfo.SetDamagePosition( tr.endpos );
 			pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
 		}
@@ -411,7 +429,21 @@ void CBullet::BubbleThink( void )
 	SetNextThink( gpGlobals->curtime + 0.1f );
 
 	if ( GetWaterLevel()  == 0 )
+	{
+		//apply drag
+		Vector	vecDir = GetAbsVelocity();
+		float	speed = VectorNormalize( vecDir ),
+				//drag = 0.0001f;
+				drag = 0.002f;
+
+		speed -= drag * speed*speed * gpGlobals->frametime;
+		if( speed < 1000 )
+			speed = 1000;	//clamp
+
+		SetAbsVelocity( vecDir * speed );
+
 		return;
+	}
 
 	UTIL_BubbleTrail( GetAbsOrigin() - GetAbsVelocity() * 0.1f, GetAbsOrigin(), 5 );
 }
@@ -766,7 +798,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 
 	CBullet *pBolt = CBullet::BoltCreate( vecSrc, angDir, GetDamage(iAttack), pOwner );
 
-	if ( pOwner->GetWaterLevel() == 3 )
+	/*if ( pOwner->GetWaterLevel() == 3 )
 	{
 		//pBolt->SetAbsVelocity( vecAiming * BOLT_WATER_VELOCITY );
 		pBolt->SetAbsVelocity( vecDir * BOLT_WATER_VELOCITY );
@@ -775,7 +807,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	{
 		//pBolt->SetAbsVelocity( vecAiming * BOLT_AIR_VELOCITY );
 		pBolt->SetAbsVelocity( vecDir * BOLT_AIR_VELOCITY );
-	}
+	}*/
 
 #endif
 
@@ -797,7 +829,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	if( sv_turboshots.GetInt() == 0 )
 		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate( iAttack );
 	else
-		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.1f;
+		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.03f;
 
 	if( sv_infiniteammo.GetInt() == 0 )
 		m_iClip1--;
