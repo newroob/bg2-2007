@@ -2801,8 +2801,8 @@ void CTempEnts::MuzzleFlash_357_Player( int entityIndex, int attachmentIndex )
 
 	// Smoke
 	offset = origin + forward * 8.0f;
-
-	pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( "particle/particle_smokegrenade" ), offset );
+	// BG2 - BP New musketsmoke shader
+	pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( "particle/particle_musketsmoke" ), offset );
 		
 	if ( pParticle == NULL )
 		return;
@@ -2956,7 +2956,7 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
 		offset = origin + forward * 2.0f * (float)j;
 
-		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( "particle/particle_smokegrenade" ), offset );
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( "particle/particle_musketsmoke" ), offset );
 			
 		if ( pParticle == NULL )
 			return;
