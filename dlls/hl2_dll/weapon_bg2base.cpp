@@ -217,7 +217,7 @@ void CBullet::Spawn( void )
 	SetTouch( &CBullet::BoltTouch );
 
 	SetThink( &CBullet::BubbleThink );
-	SetNextThink( gpGlobals->curtime + 0.1f );
+	SetNextThink( gpGlobals->curtime + 0.01f );
 	
 	CreateSprites();
 
@@ -312,8 +312,7 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 				data.m_vNormal = vForward;
 				data.m_nEntIndex = tr2.fraction != 1.0f;
 			
-				//DispatchEffect( "BoltImpact", data );
-				//DispatchEffect( "BulletImpact", data );
+				DispatchEffect( "Impact", data );
 			}
 		}
 		
@@ -374,8 +373,7 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 				data.m_vNormal = vForward;
 				data.m_nEntIndex = 0;
 			
-				//DispatchEffect( "BoltImpact", data );
-				//DispatchEffect( "BulletImpact", data );
+				DispatchEffect( "Impact", data ); 
 				
 				UTIL_ImpactTrace( &tr, DMG_BULLET );
 
@@ -426,7 +424,7 @@ void CBullet::BubbleThink( void )
 	VectorAngles( GetAbsVelocity(), angNewAngles );
 	SetAbsAngles( angNewAngles );
 
-	SetNextThink( gpGlobals->curtime + 0.1f );
+	SetNextThink( gpGlobals->curtime + 0.05f );
 
 	if ( GetWaterLevel()  == 0 )
 	{
@@ -786,7 +784,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 #ifndef CLIENT_DLL
 	Vector vecAiming	= pOwner->GetAutoaimVector( 0 );	
 	Vector vecSrc		= pOwner->Weapon_ShootPosition();
-
+	
 	/*QAngle angAiming;
 	VectorAngles( vecAiming, angAiming );*/
 
