@@ -104,6 +104,9 @@ protected:
 	//CHandle<CSpriteTrail>	m_pGlowTrail;
 	
 	int		m_iDamage;
+	float	m_flDyingTime;	//BG2 - Tjoppen - bullets must die after a while. say ten seconds
+							//					otherwise they'll lay around the map consuming
+							//					bandwidth
 
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();
@@ -138,6 +141,7 @@ CBullet *CBullet::BoltCreate( const Vector &vecOrigin, const QAngle &angAngles, 
 	pBolt->SetOwnerEntity( pentOwner );
 
 	pBolt->m_iDamage = iDamage;
+	pBolt->m_flDyingTime = gpGlobals->curtime + 10.f;
 
 	return pBolt;
 }
@@ -261,12 +265,30 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		float	dmg = (float)m_iDamage * speed * speed / (float)(BOLT_AIR_VELOCITY*BOLT_AIR_VELOCITY),
 				dmgforcescale = 100.f / speed;
 
+		Vector vForward;
+
+		AngleVectors( GetAbsAngles(), &vForward );
+		VectorNormalize ( vForward );
+
+		//BG2 - Tjoppen - We want musket balls to hit body parts, not just HITGROUP_GENERIC
+		UTIL_TraceLine( GetAbsOrigin() - vForward * 32, GetAbsOrigin() + vForward * 32, MASK_SHOT, GetOwnerEntity(), COLLISION_GROUP_NONE, &tr );
+		if( tr.fraction == 1.0 )
+		{
+			//only hit hull - keep going
+			//move forward a bit so we don't get stuck
+			SetAbsOrigin( GetAbsOrigin() + GetAbsVelocity() * 32.f );
+			return;
+		}
+
 		Msg( "%f / %f => %f / %f\n", speed, (float)BOLT_AIR_VELOCITY, dmg, (float)m_iDamage );
+
+		UTIL_ImpactTrace( &tr, DMG_BULLET );	//BG2 - Tjoppen - surface blood
 
 		if( GetOwnerEntity() && GetOwnerEntity()->IsPlayer() && pOther->IsNPC() )
 		{
 			//CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), m_iDamage, DMG_BULLET | DMG_NEVERGIB );
-			CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
+			//BG2 - Tjoppen - Set owner as inflictor so they get the damage points. also scale damage force
+			CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
 			dmgInfo.AdjustPlayerDamageInflictedForSkillLevel();
 			CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
 			dmgInfo.SetDamagePosition( tr.endpos );
@@ -275,7 +297,8 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		else
 		{
 			//CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), m_iDamage, DMG_BULLET | DMG_NEVERGIB );
-			CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
+			//BG2 - Tjoppen - Set owner as inflictor so they get the damage points. also scale damage force
+			CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
 			CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
 			dmgInfo.SetDamagePosition( tr.endpos );
 			pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
@@ -291,11 +314,6 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 
 		// play body "thwack" sound
 		EmitSound( "Weapon_Pistol.HitBody" );
-
-		Vector vForward;
-
-		AngleVectors( GetAbsAngles(), &vForward );
-		VectorNormalize ( vForward );
 
 		UTIL_TraceLine( GetAbsOrigin(),	GetAbsOrigin() + vForward * 128, MASK_OPAQUE, pOther, COLLISION_GROUP_NONE, &tr2 );
 
@@ -424,7 +442,13 @@ void CBullet::BubbleThink( void )
 	VectorAngles( GetAbsVelocity(), angNewAngles );
 	SetAbsAngles( angNewAngles );
 
-	SetNextThink( gpGlobals->curtime + 0.05f );
+	SetNextThink( gpGlobals->curtime );	//BG2 - Tjoppen - think every frame
+
+	if( gpGlobals->curtime > m_flDyingTime )
+	{
+		SetThink( &CBullet::SUB_Remove );
+		return;
+	}
 
 	if ( GetWaterLevel()  == 0 )
 	{
@@ -432,7 +456,7 @@ void CBullet::BubbleThink( void )
 		Vector	vecDir = GetAbsVelocity();
 		float	speed = VectorNormalize( vecDir ),
 				//drag = 0.0001f;
-				drag = 0.002f;
+				drag = 0.0005f;
 
 		speed -= drag * speed*speed * gpGlobals->frametime;
 		if( speed < 1000 )
