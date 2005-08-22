@@ -135,7 +135,11 @@ CBasePlayer *BotPutInServer( bool bFrozen )
 	gBots[pPlayer->GetClientIndex()].m_pPlayer = pPlayer;
 	//BG2 - Tjoppen - start thinking immediately
 	gBots[pPlayer->GetClientIndex()].m_flNextThink = gpGlobals->curtime;
-
+	gBots[pPlayer->GetClientIndex()].reload = 0;
+	gBots[pPlayer->GetClientIndex()].attack = 0;
+	gBots[pPlayer->GetClientIndex()].attack2 = 0;
+	gBots[pPlayer->GetClientIndex()].respawn = 0;
+	
 	pPlayer->ClearFlags();
 	pPlayer->AddFlag( FL_CLIENT | FL_FAKECLIENT );
 
