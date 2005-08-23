@@ -1605,7 +1605,9 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 
 	// Note: since we're dead, it won't draw us on the client, but we don't set EF_NODRAW
 	// because we still want to transmit to the clients in our PVS.
-	CreateRagdollEntity();
+	//BG2 - Tjoppen - reenable spectators - no dead bodies raining from the sky
+	if( GetTeamNumber() > TEAM_SPECTATOR )
+		CreateRagdollEntity();
 
 	DetonateTripmines();
 
