@@ -80,6 +80,9 @@ ConVar mp_respawntime( "mp_respawntime", "5", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar sv_restartround( "sv_restartround", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_americanscore( "mp_americanscore", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_britishscore( "mp_britishscore", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar mp_autobalanceteams( "mp_autobalanceteams", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar mp_autobalancetolerance( "mp_autobalancetolerance", "2", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar mp_timeleft( "mp_timeleft", "1200", FCVAR_GAMEDLL);
 //BG2 - Draco - End
 
 
@@ -286,6 +289,8 @@ void CHL2MPRules::Think( void )
 	}
 
 	//BG2 - Draco - Start
+	//time left, this cvar loves me, and I love it.
+	mp_timeleft.SetValue((flTimeLimit - gpGlobals->curtime));
 	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
 	CTeam *pBritish = g_Teams[TEAM_BRITISH];
 	//mp_british/americanscore think
@@ -296,6 +301,45 @@ void CHL2MPRules::Think( void )
 	if (mp_americanscore.GetInt() != pAmericans->GetScore())
 	{
 		g_Teams[TEAM_AMERICANS]->SetScore(mp_americanscore.GetInt());
+	}
+	//auto team balance, a place of blackjack, hookers, hacks and really long variable names, cause I can ;)
+	if (mp_autobalanceteams.GetInt() == 1)
+	{
+		//use the right sum to find diff, I don't like negative numbers...
+		int iAutoTeamBalanceTeamDiff = 0;
+		int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+		if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
+		{
+			iAutoTeamBalanceTeamDiff = (pAmericans->GetNumPlayers() - pBritish->GetNumPlayers());
+			iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
+		}
+		else
+		{
+			iAutoTeamBalanceTeamDiff = (pBritish->GetNumPlayers() - pAmericans->GetNumPlayers());
+			iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+		}
+
+		if (iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt())
+		{
+			//here comes the tricky part, who to swap, how to swap?
+			//meh, go random for now, maybe lowest scorer later...
+			int iAutoTeamBalancePlayerToSwitchIndex = 0;
+			CBasePlayer *pPlayer = NULL;
+			switch (iAutoTeamBalanceBiggerTeam)
+			{
+				case TEAM_BRITISH:
+					iAutoTeamBalancePlayerToSwitchIndex = random->RandomInt( 0, (pBritish->GetNumPlayers() - 1) );
+					pPlayer = pBritish->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex);
+					pPlayer->ChangeTeam(TEAM_AMERICANS);
+					break;
+				case TEAM_AMERICANS:
+					iAutoTeamBalancePlayerToSwitchIndex = random->RandomInt( 0, (pAmericans->GetNumPlayers() - 1) );
+					pPlayer = pAmericans->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex);
+					pPlayer->ChangeTeam(TEAM_BRITISH);
+					break;
+			}
+		}
+		//well, if we aren't even now, there's always next think...
 	}
 	//sv_restartround think
 	if (sv_restartround.GetInt() > 0)
