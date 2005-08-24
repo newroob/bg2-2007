@@ -59,30 +59,6 @@ char *pVComms[NUM_VOICECOMMS] =
 	"9. Cease fire",
 	"0. Cancel",
 };
-#else
-char *pVComms[NUM_VOICECOMMS] =
-{
-	"Voicecomms.Yes",
-	"Voicecomms.No",
-	"Voicecomms.FollowMe",
-	"Voicecomms.LeaveItToMe",
-	"Voicecomms.UnderFire",
-	"Voicecomms.SpreadOut",
-	"",//"Voicecomms.BattleCry", //different for american and british( ABattleCry/BBattleCry )
-	"Voicecomms.Medic",
-	"",
-
-	"Voicecomms.Advance",
-	"Voicecomms.Retreat",
-	"Voicecomms.RallyTheMen",
-	"Voicecomms.Halt",
-	"Voicecomms.LineUp",
-	"Voicecomms.MakeReady",
-	"Voicecomms.PresentArms",
-	"Voicecomms.Fire",
-	"Voicecomms.CeaseFire",
-	"",
-};
 
 char *pVChats[NUM_VOICECOMMS] =
 {
@@ -105,6 +81,30 @@ char *pVChats[NUM_VOICECOMMS] =
 	"Present!",
 	"Fire at will!",
 	"Cease fire!",
+	"",
+};
+#else
+char *pVComms[NUM_VOICECOMMS] =
+{
+	"Voicecomms.Yes",
+	"Voicecomms.No",
+	"Voicecomms.FollowMe",
+	"Voicecomms.LeaveItToMe",
+	"Voicecomms.UnderFire",
+	"Voicecomms.SpreadOut",
+	"",//"Voicecomms.BattleCry", //different for american and british( ABattleCry/BBattleCry )
+	"Voicecomms.Medic",
+	"",
+
+	"Voicecomms.Advance",
+	"Voicecomms.Retreat",
+	"Voicecomms.RallyTheMen",
+	"Voicecomms.Halt",
+	"Voicecomms.LineUp",
+	"Voicecomms.MakeReady",
+	"Voicecomms.PresentArms",
+	"Voicecomms.Fire",
+	"Voicecomms.CeaseFire",
 	"",
 };
 #endif

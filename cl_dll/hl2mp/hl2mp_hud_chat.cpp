@@ -14,6 +14,9 @@
 #include "c_playerresource.h"
 #include "c_hl2mp_player.h"
 #include "hl2mp_gamerules.h"
+//BG2 - Tjoppen - #includes
+#include "../dlls/bg2/vcomm.h"
+//
 
 ConVar cl_showtextmsg( "cl_showtextmsg", "1", 0, "Enable/disable text messages printing on the screen." );
 
@@ -86,6 +89,8 @@ DECLARE_HUDELEMENT( CHudChat );
 
 DECLARE_HUD_MESSAGE( CHudChat, SayText );
 DECLARE_HUD_MESSAGE( CHudChat, TextMsg );
+//BG2 - Tjoppen - VoiceComm usermessage
+DECLARE_HUD_MESSAGE( CHudChat, VoiceComm );
 
 
 //=====================
@@ -218,6 +223,8 @@ void CHudChat::Init( void )
 //	HOOK_HUD_MESSAGE( CHudChat, RadioText );
 	HOOK_HUD_MESSAGE( CHudChat, SayText );
 	HOOK_HUD_MESSAGE( CHudChat, TextMsg );
+	//BG2 - Tjoppen - VoiceComm usermessage
+	HOOK_HUD_MESSAGE( CHudChat, VoiceComm );
 }
 
 //-----------------------------------------------------------------------------
@@ -257,6 +264,37 @@ void CHudChat::MsgFunc_SayText( bf_read &msg )
 	}
 
 	Msg( "%s", szString );
+}
+
+//BG2 - Tjoppen - VoiceComm usermessage
+void CHudChat::MsgFunc_VoiceComm( bf_read &msg )
+{
+	int client		= msg.ReadByte();
+	int commdata	= msg.ReadByte(),
+		comm		= commdata & 31,
+		isamerican	= commdata >> 5;
+
+	// flash speaking player dot
+//	if ( client > 0 )
+//		Radar_FlashPlayer( client );
+
+	Msg( "MsgFunc_VoiceComm: %i %i\n", client, comm );
+
+	player_info_t sPlayerInfo;
+	engine->GetPlayerInfo( client, &sPlayerInfo );
+
+	if( comm >= 0 && comm < NUM_VOICECOMMS )
+	{
+		if( comm == 6 )
+		{
+			if( isamerican )
+				ChatPrintf( client, "(COMMAND) %s: Freedom!", sPlayerInfo.name );
+			else
+				ChatPrintf( client, "(COMMAND) %s: For king and country!", sPlayerInfo.name );
+		}
+		else
+			ChatPrintf( client, "(COMMAND) %s: %s", sPlayerInfo.name, pVChats[comm] );
+	}
 }
 
 

@@ -1962,7 +1962,7 @@ bool CGameMovement::CheckJumpButton( void )
 #else
 	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
 #endif
-	if( pHL2Player->m_iStamina < 70 )
+	if( pHL2Player->m_iStamina < 50 )
 		return false;				//don't drain unless we can cover some height
 	//
 
@@ -2011,7 +2011,7 @@ bool CGameMovement::CheckJumpButton( void )
 	else*/
 	{
 		//BG2 - Draco - cant jump much when you're nackered
-		flMul = sqrt(2 * sv_gravity.GetFloat() * (GAMEMOVEMENT_JUMP_HEIGHT - ((100 - pHL2Player->m_iStamina)/7)));
+		flMul = sqrt(2 * sv_gravity.GetFloat() * (GAMEMOVEMENT_JUMP_HEIGHT - ((100 - pHL2Player->m_iStamina)/15)));
 		//flMul = sqrt(2 * sv_gravity.GetFloat() * (GAMEMOVEMENT_JUMP_HEIGHT - ((100 - pHL2Player->m_iStamina)/5)));
 		//BG2 - Tjoppen - fall back on default jump stuff on client for now
 		//flMul = sqrt(2 * sv_gravity.GetFloat() * GAMEMOVEMENT_JUMP_HEIGHT);
@@ -2082,7 +2082,7 @@ bool CGameMovement::CheckJumpButton( void )
 //#ifndef CLIENT_DLL
 	//BG2 - Draco - decrease stamina for jumping
 	//CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
-	pHL2Player->m_iStamina -= 25;
+	pHL2Player->m_iStamina -= 50;
 	if (pHL2Player->m_iStamina < 0)//clamp to 0
 	{
 		pHL2Player->m_iStamina = 0;
@@ -3581,7 +3581,7 @@ void CGameMovement::FinishDuck( void )
 #ifndef CLIENT_DLL
 	//BG2 - Draco - decrease stamina for ducking
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
-	pHL2Player->m_iStamina -= 10;
+	pHL2Player->m_iStamina -= 15;
 	if (pHL2Player->m_iStamina < 0)//clamp to 0
 	{
 		pHL2Player->m_iStamina = 0;

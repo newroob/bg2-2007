@@ -59,6 +59,8 @@ public:
 
 	void			MsgFunc_SayText( bf_read &msg );
 	void			MsgFunc_TextMsg( bf_read &msg );
+	//BG2 - Tjoppen - VoiceComm usermessage
+	void			MsgFunc_VoiceComm( bf_read &msg );
 	
 	void			ChatPrintf( int iPlayerIndex, const char *fmt, ... );
 

@@ -787,7 +787,7 @@ void CHL2MP_Player::PostThink( void )
 			MessageEnd();*/
 		}
 
-		m_fNextStamRegen = gpGlobals->curtime + 0.225;
+		m_fNextStamRegen = gpGlobals->curtime + 0.15;	//was 0.225
 		//m_fNextStamRegen = gpGlobals->curtime + 0.075;
 	}
 
@@ -1362,23 +1362,23 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//make sure index not out of bounds or cancel
 			if( comm >= 0 && comm < NUM_VOICECOMMS && comm != VCOMM1_NUM && comm != VCOMM2_START+VCOMM2_NUM )
 			{
-				char *chat = NULL;
-				bool say_team = true;
+				//char *chat = NULL;
+				bool teamonly = true;
 
 				if( comm == 6 )
 				{
 					//battle cry
-					say_team = false;
+					teamonly = false;
 
 					if( GetTeamNumber() == TEAM_AMERICANS )
 					{
 						EmitSound( "Voicecomms.ABattleCry" );
-						chat = "Freedom!";
+						//chat = "Freedom!";
 					}
 					else if( GetTeamNumber() == TEAM_BRITISH )
 					{
 						EmitSound( "Voicecomms.BBattleCry" );
-						chat = "For king and country!";
+						//chat = "For king and country!";
 					}
 				}
 				else
@@ -1388,19 +1388,74 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 					filter.UsePredictionRules();
 					EmitSound( filter, entindex(), pVComms[comm] );
 					//EmitSound( pVComms[comm] );
-					chat = pVChats[comm];
+					//chat = pVChats[comm];
 				}
 
 				//UTIL_SayTextAll( "speech thing", this, true );
 				//UTIL_ClientPrintAll( HUD_PRINTTALK, "testing" );
 				//Host_Say( );
-				if( chat )
+				/*if( chat )
 				{
 					if( say_team )
 						engine->ClientCommand( edict(), "say_team %s", chat );
 					else
 						engine->ClientCommand( edict(), "say %s", chat );
+				}*/
+
+				CBasePlayer *client = NULL;
+				for ( int i = 1; i <= gpGlobals->maxClients; i++ )
+				{
+					client = UTIL_PlayerByIndex( i );
+					if ( !client || !client->edict() )
+						continue;
+					
+					/*if ( client->edict() == pEdict )
+						continue;*/
+
+					if ( !(client->IsNetClient()) )	// Not a client ? (should never be true)
+						continue;
+
+					if ( teamonly && !g_pGameRules->PlayerCanHearChat( client, this ) )//!= GR_TEAMMATE )
+						continue;
+
+					if ( !client->CanHearChatFrom( this ) )
+						continue;
+
+					CSingleUserRecipientFilter user( client );
+					user.MakeReliable();
+
+					Msg( "VoiceComm: %i %i\n", client->entindex(), comm );
+					UserMessageBegin( user, "VoiceComm" );
+						WRITE_BYTE( client->entindex() );
+						WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );
+					MessageEnd();
+
+					/*if ( pszFormat )
+					{
+						UTIL_SayText2Filter( user, pPlayer, true, pszFormat, pszPlayerName, p, pszLocation );
+					}
+					else
+					{
+						UTIL_SayTextFilter( user, text, pPlayer, true );
+					}*/
 				}
+
+				/*if ( pPlayer )
+				{
+					// print to the sending client
+					CSingleUserRecipientFilter user( pPlayer );
+					user.MakeReliable();
+
+					if ( pszFormat )
+					{
+						UTIL_SayText2Filter( user, pPlayer, true, pszFormat, pszPlayerName, p, pszLocation );
+					}
+					else
+					{
+						UTIL_SayTextFilter( user, text, pPlayer, true );
+					}
+				}
+				}*/
 
 				m_flNextVoicecomm = gpGlobals->curtime + 2.0f;
 			}
