@@ -80,6 +80,9 @@ ConVar mp_limit_medium_b( "mp_limit_medium_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIF
 ConVar mp_limit_heavy_b( "mp_limit_heavy_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
 						"When != -1 : Maximum amount of Loyalists for the British" );//loyalist
 
+extern ConVar mp_autobalanceteams;
+extern ConVar mp_autobalancetolerance;
+
 
 int g_iLastCitizenModel = 0;
 int g_iLastCombineModel = 0;
@@ -1180,19 +1183,35 @@ void ClientPrinttTalkAll( char *str )
 
 bool CHL2MP_Player::ClientCommand( const char *cmd )
 {
-	//BG2 - Tjoppen - reenable spectators
-	/*if ( FStrEq( cmd, "spectate" ) )
-	{
-		// do nothing.
-		return true;
-	}*/
-	//
-
+	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
+	CTeam *pBritish = g_Teams[TEAM_BRITISH];
 	//BG2 - Tjoppen - class selection
 	if ( FStrEq( cmd, "heavy_a" ) )
 	{
 		if( GetTeamNumber() == TEAM_AMERICANS && m_iClass == CLASS_INFANTRY )
 			return true;
+		
+		if (mp_autobalanceteams.GetInt() == 1)
+		{
+			int iAutoTeamBalanceTeamDiff = 0;
+			int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+			if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
+			{
+				iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
+				iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
+			}
+			else
+			{
+				iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
+				iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+			}
+
+			if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == TEAM_AMERICANS))
+			{
+				ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
+				return true;
+			}
+		}
 
 		if( mp_limit_heavy_a.GetInt() != -1)//not unlimited?
 		{
@@ -1219,6 +1238,28 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		if( GetTeamNumber() == TEAM_AMERICANS && m_iClass == CLASS_OFFICER )
 			return true;
 
+		if (mp_autobalanceteams.GetInt() == 1)
+		{
+			int iAutoTeamBalanceTeamDiff = 0;
+			int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+			if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
+			{
+				iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
+				iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
+			}
+			else
+			{
+				iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
+				iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+			}
+
+			if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == TEAM_AMERICANS))
+			{
+				ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
+				return true;
+			}
+		}
+
 		if( mp_limit_light_a.GetInt() != -1)//not unlimited?
 		{
 			if (g_Teams[TEAM_AMERICANS]->GetLightA() >= mp_limit_light_a.GetInt())
@@ -1242,6 +1283,28 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 	{
 		if( GetTeamNumber() == TEAM_AMERICANS && m_iClass == CLASS_SNIPER )
 			return true;
+
+		if (mp_autobalanceteams.GetInt() == 1)
+		{
+			int iAutoTeamBalanceTeamDiff = 0;
+			int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+			if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
+			{
+				iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
+				iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
+			}
+			else
+			{
+				iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
+				iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+			}
+
+			if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == TEAM_AMERICANS))
+			{
+				ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
+				return true;
+			}
+		}
 
 		if( mp_limit_medium_a.GetInt() != -1)//not unlimited?
 		{
@@ -1267,6 +1330,28 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		if( GetTeamNumber() == TEAM_BRITISH && m_iClass == CLASS_INFANTRY )
 			return true;
 
+		if (mp_autobalanceteams.GetInt() == 1)
+		{
+			int iAutoTeamBalanceTeamDiff = 0;
+			int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+			if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
+			{
+				iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
+				iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
+			}
+			else
+			{
+				iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
+				iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+			}
+
+			if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == TEAM_BRITISH))
+			{
+				ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
+				return true;
+			}
+		}
+
 		if( mp_limit_medium_b.GetInt() != -1)//not unlimited?
 		{
 			if (g_Teams[TEAM_BRITISH]->GetMediumB() >= mp_limit_medium_b.GetInt())
@@ -1290,6 +1375,28 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 	{
 		if( GetTeamNumber() == TEAM_BRITISH && m_iClass == CLASS_OFFICER )
 			return true;
+
+		if (mp_autobalanceteams.GetInt() == 1)
+		{
+			int iAutoTeamBalanceTeamDiff = 0;
+			int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+			if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
+			{
+				iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
+				iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
+			}
+			else
+			{
+				iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
+				iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+			}
+
+			if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == TEAM_BRITISH))
+			{
+				ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
+				return true;
+			}
+		}
 
 		if( mp_limit_light_b.GetInt() != -1)//not unlimited?
 		{
@@ -1316,6 +1423,28 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		if( GetTeamNumber() == TEAM_BRITISH && m_iClass == CLASS_SNIPER )
 			return true;
 
+		if (mp_autobalanceteams.GetInt() == 1)
+		{
+			int iAutoTeamBalanceTeamDiff = 0;
+			int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+			if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
+			{
+				iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
+				iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
+			}
+			else
+			{
+				iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
+				iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+			}
+
+			if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == TEAM_BRITISH))
+			{
+				ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
+				return true;
+			}
+		}
+
 		if( mp_limit_heavy_b.GetInt() != -1)//not unlimited?
 		{
 			if (g_Teams[TEAM_BRITISH]->GetHeavyB() >= mp_limit_heavy_b.GetInt())
@@ -1335,21 +1464,6 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 
 		return true;
 	}
-	/*if ( FStrEq( cmd, "infantry" ) )
-	{
-		ClientPrint( this, HUD_PRINTCENTER, "When you die you will respawn as infantry\n" );
-		m_iClass = CLASS_INFANTRY;
-	}
-	else if ( FStrEq( cmd, "officer" ) )
-	{
-		ClientPrint( this, HUD_PRINTCENTER, "When you die you will respawn as an officer\n" );
-		m_iClass = CLASS_OFFICER;
-	}
-	else if ( FStrEq( cmd, "sniper" ) )
-	{
-		ClientPrint( this, HUD_PRINTCENTER, "When you die you will respawn as a sniper\n" );
-		m_iClass = CLASS_SNIPER;
-	}*/
 	//BG2 - Tjoppen - voice comms
 	else if( FStrEq( cmd, "voicecomm" ) )
 	{
