@@ -750,6 +750,42 @@ bool CHL2MP_Player::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelinde
 	return bRet;
 }
 
+void CHL2MP_Player::HandleSpeedChanges( void )
+{
+	//int buttonsChanged = m_afButtonPressed | m_afButtonReleased;
+	//BG2 - Tjoppen - walk/run speeds
+	//BG2 - Draco - stamina changes speed
+	//float scale = 0.5f + 0.5f * expf( -0.01f * (float)(100 - GetHealth()) );
+	float scale = expf( -0.01f * (float)(100 - m_iStamina) );
+	
+	if( GetActiveWeapon() && GetActiveWeapon()->m_bInReload )
+		scale *= 0.5f;
+
+	int iSpeed = 190;
+	int iSpeed2 = 150;
+
+	switch (m_iClass)
+	{
+		case 0:
+			iSpeed = 190;
+			iSpeed2 = 150;
+			break;
+		case 1:
+			iSpeed = 220;
+			iSpeed2 = 160;
+			break;
+		case 2:
+			iSpeed = 175;
+			iSpeed2 = 140;
+			break;
+	}
+
+	if( m_nButtons & IN_WALK )
+		SetMaxSpeed( iSpeed2 * scale );
+	else
+		SetMaxSpeed( iSpeed * scale );
+}
+
 void CHL2MP_Player::PreThink( void )
 {
 	QAngle vOldAngles = GetLocalAngles();
@@ -765,6 +801,8 @@ void CHL2MP_Player::PreThink( void )
 	SetLocalAngles( vTempAngles );
 
 	BaseClass::PreThink();
+
+	HandleSpeedChanges();
 
 	//Reset bullet force accumulator, only lasts one frame
 	m_vecTotalBulletForce = vec3_origin;

@@ -250,7 +250,7 @@ void CHL2_Player::EquipSuit( void )
 	
     StartAdmireGlovesAnimation();
 }
-
+/*
 void CHL2_Player::HandleSpeedChanges( void )
 {
 	//int buttonsChanged = m_afButtonPressed | m_afButtonReleased;
@@ -262,72 +262,31 @@ void CHL2_Player::HandleSpeedChanges( void )
 	if( GetActiveWeapon() && GetActiveWeapon()->m_bInReload )
 		scale *= 0.5f;
 
+	int iSpeed = 190;
+	int iSpeed2 = 150;
+
+	switch (m_iClass)
+	{
+		case 0:
+			iSpeed = 190;
+			iSpeed2 = 150;
+			break;
+		case 1:
+			iSpeed = 220;
+			iSpeed2 = 160;
+			break;
+		case 2:
+			iSpeed = 175;
+			iSpeed2 = 140;
+			break;
+	}
+
 	if( m_nButtons & IN_WALK )
-		SetMaxSpeed( HL2_WALK_SPEED * scale );
+		SetMaxSpeed( iSpeed2 * scale );
 	else
-		SetMaxSpeed( HL2_NORM_SPEED * scale );
-	/*if( m_nButtons & IN_WALK )
-		SetMaxSpeed( MaxSpeed() * 0.7f );*/
-
-	//BG2 - Tjoppen - I don't like this here
-	/*if( buttonsChanged & IN_SPEED )
-	{
-		// The state of the sprint/run button has changed.
-		if ( IsSuitEquipped() )
-		{
-			if ( !(m_afButtonPressed & IN_SPEED)  && IsSprinting() )
-			{
-				StopSprinting();
-			}
-			else if ( (m_afButtonPressed & IN_SPEED) && !IsSprinting() )
-			{
-				if ( CanSprint() )
-				{
-					StartSprinting();
-				}
-				else
-				{
-					// Reset key, so it will be activated post whatever is suppressing it.
-					m_nButtons &= ~IN_SPEED;
-				}
-			}
-		}
-		else
-		{
-			// ROBIN: We're trialling Sprint not affecting movement speed without the HEV suit
-			/*
-			// The state of the WALK button has changed. 
-			if( !IsWalking() && !(m_afButtonPressed & IN_SPEED) )
-			{
-				StartWalking();
-			}
-			else if( IsWalking() && !IsSprinting() && (m_afButtonPressed & IN_SPEED) && !(m_nButtons & IN_DUCK) )
-			{
-				StopWalking();				
-			}
-			*//*
-		}
-	}
-	else if( buttonsChanged & IN_WALK )
-	{
-		if ( IsSuitEquipped() )
-		{
-			// The state of the WALK button has changed. 
-			if( IsWalking() && !(m_afButtonPressed & IN_WALK) )
-			{
-				StopWalking();
-			}
-			else if( !IsWalking() && !IsSprinting() && (m_afButtonPressed & IN_WALK) && !(m_nButtons & IN_DUCK) )
-			{
-				StartWalking();
-			}
-		}
-	}
-
-	if ( IsSuitEquipped() && m_fIsWalking && !(m_nButtons & IN_WALK)  ) 
-		 StopWalking();*/
+		SetMaxSpeed( iSpeed * scale );
 }
-
+*/
 
 //-----------------------------------------------------------------------------
 // Purpose: Allow pre-frame adjustments on the player
@@ -402,7 +361,7 @@ void CHL2_Player::PreThink(void)
 		}
 	}
 
-	HandleSpeedChanges();
+	//HandleSpeedChanges();
 
 	if ( g_fGameOver || IsPlayerLockedInPlace() )
 		return;         // finale

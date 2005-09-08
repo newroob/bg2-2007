@@ -97,6 +97,7 @@ public:
 	//BG2 - Tjoppen - CheckSpawnPoints
 	virtual bool			CheckSpawnPoints( void );
 	//
+	void  HandleSpeedChanges( void );
 	
 	int FlashlightIsOn( void );
 	void FlashlightTurnOn( void );

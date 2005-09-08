@@ -213,7 +213,7 @@ public:
 	void  HandleAdmireGlovesAnimation( void );
 	void  StartAdmireGlovesAnimation( void );
 	
-	void  HandleSpeedChanges( void );
+	//void  HandleSpeedChanges( void );
 
 	void SetControlClass( Class_T controlClass ) { m_nControlClass = controlClass; }
 	
