@@ -153,7 +153,9 @@ private:
 	float m_flNextTeamChangeTime;
 
 	//BG2 - Tjoppen - vars in hl2mp_player
-	int		m_iClass;			//BG2 - Tjoppen - class system
+	//int		m_iClass;			//BG2 - Tjoppen - class system
+	CNetworkVar( int, m_iClass );
+	int		m_iNextClass;		//BG2 - Tjoppen - which class will we become on our next respawn?
 	float	m_flNextVoicecomm;	//BG2 - Tjoppen - voice comms
 	float	m_fNextStamRegen;	//BG2 - Draco - stamina regen timer
 	//

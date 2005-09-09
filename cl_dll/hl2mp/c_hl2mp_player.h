@@ -76,9 +76,10 @@ public:
 	void	PrecacheFootStepSounds( void );
 	const char	*GetPlayerModelSoundPrefix( void );
 
-	//BG2 - Tjoppen - m_iStamina in C_HL2MP_Player
+	//BG2 - Tjoppen - vars in C_HL2MP_Player
 	//CNetworkVar( int, m_iStamina );	//doesn't have to be a CNetworkVar appearently
 	int		m_iStamina;		//yeah it's public integer, big woop, wanna fight about it?
+	int		m_iClass;
 	//
 
 private:
@@ -119,6 +120,12 @@ private:
 	void ReleaseFlashlight( void );
 	Beam_t	*m_pFlashlightBeam;
 };
+
+//BG2 - Tjoppen - class system
+#define	CLASS_INFANTRY	0
+#define	CLASS_OFFICER	1
+#define	CLASS_SNIPER	2
+//
 
 inline C_HL2MP_Player *ToHL2MPPlayer( CBaseEntity *pEntity )
 {

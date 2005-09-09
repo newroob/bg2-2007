@@ -150,22 +150,22 @@ CBasePlayer *BotPutInServer( bool bFrozen )
 	switch( lastclass++ )
 	{
 	case 0:
-        engine->ClientCommand( pEdict, "infantrya" );
+		engine->ClientCommand( pEdict, "light_a" );
 		break;
 	case 1:
-        engine->ClientCommand( pEdict, "infantryb" );
+        engine->ClientCommand( pEdict, "medium_a" );
 		break;
 	case 2:
-		engine->ClientCommand( pEdict, "officera" );
+		engine->ClientCommand( pEdict, "heavy_a" );
 		break;
 	case 3:
-        engine->ClientCommand( pEdict, "officerb" );
+        engine->ClientCommand( pEdict, "light_b" );
 		break;
 	case 4:
-		engine->ClientCommand( pEdict, "snipera" );
+		engine->ClientCommand( pEdict, "medium_b" );
 		break;
 	case 5:
-        engine->ClientCommand( pEdict, "sniperb" );
+        engine->ClientCommand( pEdict, "heavy_b" );
 		break;
 	}
 

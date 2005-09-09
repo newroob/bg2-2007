@@ -64,6 +64,9 @@ IMPLEMENT_CLIENTCLASS_DT(C_HL2MP_Player, DT_HL2MP_Player, CHL2MP_Player)
 	//BG2 - Tjoppen - send stamina via C_HL2MP_Player <=> DT_HL2MP_Player <=> CHL2MP_Player
 	RecvPropInt( RECVINFO( m_iStamina) ),
 	//
+	//BG2 - Tjoppen - m_iClass is a network var
+	RecvPropInt( RECVINFO( m_iClass ) ),
+	//
 END_RECV_TABLE()
 
 #define	HL2_WALK_SPEED 150
@@ -640,15 +643,15 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 
 	switch (m_iClass)
 	{
-		case 0:
+		case CLASS_INFANTRY:
 			iSpeed = 190;
 			iSpeed2 = 150;
 			break;
-		case 1:
+		case CLASS_OFFICER:
 			iSpeed = 220;
 			iSpeed2 = 160;
 			break;
-		case 2:
+		case CLASS_SNIPER:
 			iSpeed = 175;
 			iSpeed2 = 140;
 			break;

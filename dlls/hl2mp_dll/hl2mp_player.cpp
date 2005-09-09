@@ -116,6 +116,9 @@ IMPLEMENT_SERVERCLASS_ST(CHL2MP_Player, DT_HL2MP_Player)
 	//BG2 - Tjoppen - send stamina via C_HL2MP_Player <=> DT_HL2MP_Player <=> CHL2MP_Player
 	SendPropInt( SENDINFO( m_iStamina ), 7, SPROP_UNSIGNED ),	//0 <= stamina <= 100, 7 bits enough
 	//
+	//BG2 - Tjoppen - m_iClass is a network var
+	SendPropInt( SENDINFO( m_iClass), 2, SPROP_UNSIGNED ),	//BG2 - Tjoppen - remember: max four classes or increase this
+	//
 
 //	SendPropExclude( "DT_ServerAnimationData" , "m_flCycle" ),	
 //	SendPropExclude( "DT_AnimTimeMustBeFirst" , "m_flAnimTime" ),
@@ -187,7 +190,7 @@ CHL2MP_Player::CHL2MP_Player() : m_PlayerAnimState( this )
 //	UseClientSideAnimation();
 
 	//BG2 - Tjoppen - default to a random class
-	m_iClass = RandomInt( 0, 2 );
+	m_iNextClass = RandomInt( 0, 2 );
 	//
 }
 
@@ -477,6 +480,8 @@ void CHL2MP_Player::Spawn(void)
 
 	m_iStamina = 100;						//BG2 - Draco - reset stamina to 100
 	m_fNextStamRegen = gpGlobals->curtime;	//BG2 - Draco - regen stam now!
+	m_iClass = m_iNextClass;				//BG2 - Tjoppen - set current class on spawn
+											//	GiveDefaultItems() is further down so currect equipment is given
 
 	pl.deadflag = false;
 	RemoveSolidFlags( FSOLID_NOT_SOLID );
@@ -766,15 +771,15 @@ void CHL2MP_Player::HandleSpeedChanges( void )
 
 	switch (m_iClass)
 	{
-		case 0:
+		case CLASS_INFANTRY:
 			iSpeed = 190;
 			iSpeed2 = 150;
 			break;
-		case 1:
+		case CLASS_OFFICER:
 			iSpeed = 220;
 			iSpeed2 = 160;
 			break;
-		case 2:
+		case CLASS_SNIPER:
 			iSpeed = 175;
 			iSpeed2 = 140;
 			break;
@@ -1226,7 +1231,7 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 	//BG2 - Tjoppen - class selection
 	if ( FStrEq( cmd, "heavy_a" ) )
 	{
-		if( GetTeamNumber() == TEAM_AMERICANS && m_iClass == CLASS_INFANTRY )
+		if( GetTeamNumber() == TEAM_AMERICANS && m_iNextClass == CLASS_INFANTRY )
 			return true;
 		
 		if (mp_autobalanceteams.GetInt() == 1)
@@ -1267,13 +1272,13 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 
 		//BG2 - Tjoppen - FIXME: should be heavy_a
 		engine->ClientCommand( edict(),"cl_playermodel models/player/american/light_a/light_a.mdl" );
-		m_iClass = CLASS_INFANTRY;
+		m_iNextClass = CLASS_INFANTRY;
 
 		return true;
 	}
 	else if ( FStrEq( cmd, "light_a" ) )
 	{
-		if( GetTeamNumber() == TEAM_AMERICANS && m_iClass == CLASS_OFFICER )
+		if( GetTeamNumber() == TEAM_AMERICANS && m_iNextClass == CLASS_OFFICER )
 			return true;
 
 		if (mp_autobalanceteams.GetInt() == 1)
@@ -1313,13 +1318,13 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		ClientPrinttTalkAll( str );
 
 		engine->ClientCommand( edict(),"cl_playermodel models/player/american/light_a/light_a.mdl" );
-		m_iClass = CLASS_OFFICER;
+		m_iNextClass = CLASS_OFFICER;
 
 		return true;
 	}
 	else if ( FStrEq( cmd, "medium_a" ) )
 	{
-		if( GetTeamNumber() == TEAM_AMERICANS && m_iClass == CLASS_SNIPER )
+		if( GetTeamNumber() == TEAM_AMERICANS && m_iNextClass == CLASS_SNIPER )
 			return true;
 
 		if (mp_autobalanceteams.GetInt() == 1)
@@ -1359,13 +1364,13 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		ClientPrinttTalkAll( str );
 
 		engine->ClientCommand( edict(),"cl_playermodel models/player/american/medium_a/medium_a.mdl" );
-		m_iClass = CLASS_SNIPER;
+		m_iNextClass = CLASS_SNIPER;
 
 		return true;
 	}
 	if ( FStrEq( cmd, "medium_b" ) )
 	{
-		if( GetTeamNumber() == TEAM_BRITISH && m_iClass == CLASS_INFANTRY )
+		if( GetTeamNumber() == TEAM_BRITISH && m_iNextClass == CLASS_INFANTRY )
 			return true;
 
 		if (mp_autobalanceteams.GetInt() == 1)
@@ -1405,13 +1410,13 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		ClientPrinttTalkAll( str );
 
 		engine->ClientCommand( edict(),"cl_playermodel models/player/british/medium_b/medium_b.mdl" );
-		m_iClass = CLASS_INFANTRY;
+		m_iNextClass = CLASS_INFANTRY;
 
 		return true;
 	}
 	else if ( FStrEq( cmd, "light_b" ) )
 	{
-		if( GetTeamNumber() == TEAM_BRITISH && m_iClass == CLASS_OFFICER )
+		if( GetTeamNumber() == TEAM_BRITISH && m_iNextClass == CLASS_OFFICER )
 			return true;
 
 		if (mp_autobalanceteams.GetInt() == 1)
@@ -1452,13 +1457,13 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 
 		//BG2 - Tjoppen - FIXME: should be light_b
 		engine->ClientCommand( edict(),"cl_playermodel models/player/british/medium_b/medium_b.mdl" );
-		m_iClass = CLASS_OFFICER;
+		m_iNextClass = CLASS_OFFICER;
 
 		return true;
 	}
 	else if ( FStrEq( cmd, "heavy_b" ) )
 	{
-		if( GetTeamNumber() == TEAM_BRITISH && m_iClass == CLASS_SNIPER )
+		if( GetTeamNumber() == TEAM_BRITISH && m_iNextClass == CLASS_SNIPER )
 			return true;
 
 		if (mp_autobalanceteams.GetInt() == 1)
@@ -1498,7 +1503,7 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		ClientPrinttTalkAll( str );
 
 		engine->ClientCommand( edict(),"cl_playermodel models/player/british/heavy_b/heavy_b.mdl" );
-		m_iClass = CLASS_SNIPER;
+		m_iNextClass = CLASS_SNIPER;
 
 		return true;
 	}
