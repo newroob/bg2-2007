@@ -133,7 +133,7 @@ const char *g_ppszRandomCitizenModels[] =
 	//BG2 - Tjoppen - models
 	"models/player/british/heavy_b/heavy_b.mdl",
 	"models/player/british/medium_b/medium_b.mdl",
-	"models/player/british/medium_b/medium_b.mdl",	//should be light_b, but doesn't exist yet
+	"models/player/british/light_b/light_b.mdl",
 	/*"models/heavy_b/heavy_b.mdl",
 	"models/medium_b/medium_b.mdl",*/
 	/*"models/humans/group03/male_01.mdl",
@@ -156,7 +156,7 @@ const char *g_ppszRandomCitizenModels[] =
 const char *g_ppszRandomCombineModels[] =
 {
 	//BG2 - Tjoppen - models
-	"models/player/american/medium_a/medium_a.mdl",	//should be heavy_a, but doesn't exist yet
+	"models/player/american/heavy_a/heavy_a.mdl",
 	"models/player/american/medium_a/medium_a.mdl",
 	"models/player/american/light_a/light_a.mdl",
 	/*"models/humans/light_a/light_a.mdl",
@@ -1270,8 +1270,7 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		strncat( str, " is going to fight as a Continental Soldier for the Americans\n", 512 );
 		ClientPrinttTalkAll( str );
 
-		//BG2 - Tjoppen - FIXME: should be heavy_a
-		engine->ClientCommand( edict(),"cl_playermodel models/player/american/light_a/light_a.mdl" );
+		engine->ClientCommand( edict(),"cl_playermodel models/player/american/heavy_a/heavy_a.mdl" );
 		m_iNextClass = CLASS_INFANTRY;
 
 		return true;
@@ -1455,8 +1454,7 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		strncat( str, " is going to fight as a Royal Commander for the British\n", 512 );
 		ClientPrinttTalkAll( str );
 
-		//BG2 - Tjoppen - FIXME: should be light_b
-		engine->ClientCommand( edict(),"cl_playermodel models/player/british/medium_b/medium_b.mdl" );
+		engine->ClientCommand( edict(),"cl_playermodel models/player/british/light_b/light_b.mdl" );
 		m_iNextClass = CLASS_OFFICER;
 
 		return true;
