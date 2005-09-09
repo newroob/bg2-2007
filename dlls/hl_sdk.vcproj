@@ -3662,6 +3662,18 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				Name="BG2"
 				Filter="">
 				<File
+					RelativePath=".\bg2\bullet.cpp">
+					<FileConfiguration
+						Name="Release HL2MP|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\bg2\bullet.h">
+				</File>
+				<File
 					RelativePath=".\bg2\flag.cpp">
 				</File>
 				<File

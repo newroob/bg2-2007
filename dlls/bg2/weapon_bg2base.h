@@ -220,6 +220,7 @@ public:
 
 	//void		ItemPostFrame( void );
 	int			Fire( int iAttack );
+	int			FireBullet( int iAttack );
 	int			Swing( int iAttack );
 
 	void		Hit( trace_t &traceHit, int iAttack );
