@@ -1625,6 +1625,11 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 
 void CHL2MP_Player::CheatImpulseCommands( int iImpulse )
 {
+	//BG2 - Tjoppen - spectators don't do impulses
+	if( GetTeamNumber() <= TEAM_SPECTATOR )
+		return;
+	//
+
 	switch ( iImpulse )
 	{
 		case 101:

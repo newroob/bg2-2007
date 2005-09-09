@@ -3119,6 +3119,11 @@ void CBasePlayer::ProcessUsercmds( CUserCmd *cmds, int numcmds, int totalcmds,
 //-----------------------------------------------------------------------------
 void CBasePlayer::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 {
+	//BG2 - Tjoppen - spectators can't +use
+	if( GetTeamNumber() <= TEAM_SPECTATOR )
+		ucmd->buttons &= ~IN_USE;
+	//
+
 	m_touchedPhysObject = false;
 
 	if ( pl.fixangle == FIXANGLE_NONE)
@@ -5087,6 +5092,11 @@ ImpulseCommands
 
 void CBasePlayer::ImpulseCommands( )
 {
+	//BG2 - Tjoppen - spectators don't do impulses
+	if( GetTeamNumber() <= TEAM_SPECTATOR )
+		return;
+	//
+
 	trace_t	tr;
 		
 	int iImpulse = (int)m_nImpulse;
@@ -5178,6 +5188,11 @@ void CBasePlayer::ImpulseCommands( )
 void CBasePlayer::CheatImpulseCommands( int iImpulse )
 {
 #if !defined( HLDEMO_BUILD )
+	//BG2 - Tjoppen - spectators don't do impulses
+	if( GetTeamNumber() <= TEAM_SPECTATOR )
+		return;
+	//
+
 	if ( !sv_cheats->GetBool() )
 	{
 		return;
