@@ -2512,7 +2512,16 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					RelativePath=".\bg2\commmenu2.h">
 				</File>
 				<File
-					RelativePath="..\dlls\hl2_dll\flag.cpp">
+					RelativePath="..\dlls\bg2\flag.cpp">
+					<FileConfiguration
+						Name="Release HL2MP|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\dlls\bg2\flag.h">
 				</File>
 				<File
 					RelativePath=".\bg2\teammenu2.cpp">
@@ -2533,7 +2542,7 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					RelativePath="..\dlls\bg2\vcomm.h">
 				</File>
 				<File
-					RelativePath="..\dlls\hl2_dll\weapon_bg2base.cpp">
+					RelativePath="..\dlls\bg2\weapon_bg2base.cpp">
 					<FileConfiguration
 						Name="Release HL2MP|Win32">
 						<Tool
@@ -2542,10 +2551,10 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\dlls\hl2_dll\weapon_bg2base.h">
+					RelativePath="..\dlls\bg2\weapon_bg2base.h">
 				</File>
 				<File
-					RelativePath="..\dlls\hl2_dll\weapon_bg2weapons.cpp">
+					RelativePath="..\dlls\bg2\weapon_bg2weapons.cpp">
 					<FileConfiguration
 						Name="Release HL2MP|Win32">
 						<Tool
@@ -3384,10 +3393,10 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				RelativePath="..\public\tier1\mempool.h">
 			</File>
 			<File
-				RelativePath="..\public\vgui_controls\Menu.h">
+				RelativePath="menu.h">
 			</File>
 			<File
-				RelativePath="menu.h">
+				RelativePath="..\public\vgui_controls\Menu.h">
 			</File>
 			<File
 				RelativePath="..\public\vgui_controls\MenuItem.h">

@@ -3662,10 +3662,10 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				Name="BG2"
 				Filter="">
 				<File
-					RelativePath=".\hl2_dll\flag.cpp">
+					RelativePath=".\bg2\flag.cpp">
 				</File>
 				<File
-					RelativePath=".\hl2_dll\flag.h">
+					RelativePath=".\bg2\flag.h">
 				</File>
 				<File
 					RelativePath=".\bg2\vcomm.cpp">
@@ -3680,7 +3680,7 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					RelativePath=".\bg2\vcomm.h">
 				</File>
 				<File
-					RelativePath=".\hl2_dll\weapon_bg2base.cpp">
+					RelativePath=".\bg2\weapon_bg2base.cpp">
 					<FileConfiguration
 						Name="Release HL2MP|Win32">
 						<Tool
@@ -3689,10 +3689,10 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\hl2_dll\weapon_bg2base.h">
+					RelativePath=".\bg2\weapon_bg2base.h">
 				</File>
 				<File
-					RelativePath=".\hl2_dll\weapon_bg2weapons.cpp">
+					RelativePath=".\bg2\weapon_bg2weapons.cpp">
 					<FileConfiguration
 						Name="Release HL2MP|Win32">
 						<Tool

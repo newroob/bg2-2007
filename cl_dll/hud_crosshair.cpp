@@ -17,7 +17,7 @@
 #include "debugoverlay_shared.h"
 
 //BG2 - Tjoppen - #includes
-#include "../dlls/hl2_dll/weapon_bg2base.h"
+#include "../dlls/bg2/weapon_bg2base.h"
 //
 
 // memdbgon must be the last include file in a .cpp file!!!
