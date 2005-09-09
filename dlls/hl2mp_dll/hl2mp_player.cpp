@@ -466,18 +466,16 @@ void CHL2MP_Player::Spawn(void)
 	m_flNextModelChangeTime = 0.0f;
 	m_flNextTeamChangeTime = 0.0f;
 
-	PickDefaultSpawnTeam();
-
-	BaseClass::Spawn();
-
-	//BG2 - Tjoppen - voice comms
-	m_flNextVoicecomm = gpGlobals->curtime;
-
 	//BG2 - Tjoppen - reenable spectators
 	if ( GetTeamNumber() == TEAM_SPECTATOR )
 		return;	//we're done
 	//
 
+	PickDefaultSpawnTeam();
+
+	BaseClass::Spawn();
+
+	m_flNextVoicecomm = gpGlobals->curtime;	//BG2 - Tjoppen - reset voicecomm timer
 	m_iStamina = 100;						//BG2 - Draco - reset stamina to 100
 	m_fNextStamRegen = gpGlobals->curtime;	//BG2 - Draco - regen stam now!
 	m_iClass = m_iNextClass;				//BG2 - Tjoppen - set current class on spawn
