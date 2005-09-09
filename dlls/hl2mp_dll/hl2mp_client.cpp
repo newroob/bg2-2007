@@ -184,6 +184,9 @@ void ClientGamePrecache( void )
 	CBaseEntity::PrecacheModel("models/player.mdl");
 	CBaseEntity::PrecacheModel( "models/gibs/agibs.mdl" );
 	CBaseEntity::PrecacheModel ("models/weapons/v_hands.mdl");
+	//BG2 - Tjoppen - this seems like a good place to precache the musket ball model
+	CBaseEntity::PrecacheModel( "models/game/musket_ball.mdl");
+	//
 
 	CBaseEntity::PrecacheScriptSound( "HUDQuickInfo.LowAmmo" );
 	CBaseEntity::PrecacheScriptSound( "HUDQuickInfo.LowHealth" );
