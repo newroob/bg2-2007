@@ -406,6 +406,21 @@ void CHL2MP_Player::GiveDefaultItems( void )
 
 void CHL2MP_Player::PickDefaultSpawnTeam( void )
 {
+	/*
+	//BG2 - Tjoppen - make players just joining the game be in intermission..
+	//	this is a bit flaky at the moment.. maybe later
+	CBaseEntity *pSpot = gEntList.FindEntityByClassname( NULL, "info_intermission");
+	if( pSpot )
+	{
+		SetAbsOrigin( pSpot->GetAbsOrigin() );
+		SnapEyeAngles( pSpot->GetAbsAngles() );
+
+		Msg( "* %f %f %f\n", pSpot->GetAbsAngles().x, pSpot->GetAbsAngles().y, pSpot->GetAbsAngles().z );
+		Msg( "* %f %f %f\n", pSpot->GetLocalAngles().x, pSpot->GetLocalAngles().y, pSpot->GetLocalAngles().z );
+		pl.fixangle = FIXANGLE_ABSOLUTE;
+	}
+	return;
+	*/
 	if ( GetTeamNumber() == 0 )
 	{
 		if ( HL2MPRules()->IsTeamplay() == false )
@@ -472,6 +487,11 @@ void CHL2MP_Player::Spawn(void)
 	//
 
 	PickDefaultSpawnTeam();
+
+	//BG2 - Tjoppen - reenable spectators
+	if ( GetTeamNumber() <= TEAM_SPECTATOR )
+		return;	//we're done
+	//
 
 	BaseClass::Spawn();
 
@@ -1732,7 +1752,6 @@ void CHL2MP_Player::CreateRagdollEntity( void )
 		pRagdoll->m_nModelIndex = m_nModelIndex;
 		pRagdoll->m_nForceBone = m_nForceBone;
 		//BG2 - Tjoppen - clamp bullet force
-		Msg( "m_vecTotalBulletForce.Length() = %f\n", m_vecTotalBulletForce.Length() );
 		if( m_vecTotalBulletForce.Length() > 512.f )
 		{
 			VectorNormalize( m_vecTotalBulletForce );
