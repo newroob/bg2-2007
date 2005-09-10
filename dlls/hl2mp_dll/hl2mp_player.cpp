@@ -1707,6 +1707,7 @@ END_SEND_TABLE()
 
 void CHL2MP_Player::CreateRagdollEntity( void )
 {
+	//BG2 - Tjoppen - here's where we put code for multiple ragdolls
 	if ( m_hRagdoll )
 	{
 		UTIL_RemoveImmediate( m_hRagdoll );
@@ -1716,6 +1717,7 @@ void CHL2MP_Player::CreateRagdollEntity( void )
 	// If we already have a ragdoll, don't make another one.
 	CHL2MPRagdoll *pRagdoll = dynamic_cast< CHL2MPRagdoll* >( m_hRagdoll.Get() );
 	
+	//BG2 - Tjoppen - here's another place where we put code for multiple ragdolls
 	if ( !pRagdoll )
 	{
 		// create a new one
@@ -1729,10 +1731,19 @@ void CHL2MP_Player::CreateRagdollEntity( void )
 		pRagdoll->m_vecRagdollVelocity = GetAbsVelocity();
 		pRagdoll->m_nModelIndex = m_nModelIndex;
 		pRagdoll->m_nForceBone = m_nForceBone;
+		//BG2 - Tjoppen - clamp bullet force
+		Msg( "m_vecTotalBulletForce.Length() = %f\n", m_vecTotalBulletForce.Length() );
+		if( m_vecTotalBulletForce.Length() > 512.f )
+		{
+			VectorNormalize( m_vecTotalBulletForce );
+			m_vecTotalBulletForce *= 512.f;
+		}
+		//
 		pRagdoll->m_vecForce = m_vecTotalBulletForce;
 		pRagdoll->SetAbsOrigin( GetAbsOrigin() );
 	}
 
+	//BG2 - Tjoppen - remember to remove all ragdolls on round restart
 	// ragdolls will be removed on round restart automatically
 	m_hRagdoll = pRagdoll;
 }
