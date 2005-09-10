@@ -1597,7 +1597,7 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 					CSingleUserRecipientFilter user( client );
 					user.MakeReliable();
 
-					Msg( "VoiceComm: %i %i\n", client->entindex(), comm );
+					//Msg( "VoiceComm: %i %i\n", client->entindex(), comm );
 					UserMessageBegin( user, "VoiceComm" );
 						WRITE_BYTE( client->entindex() );
 						WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );

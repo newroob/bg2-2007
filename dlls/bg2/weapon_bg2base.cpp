@@ -270,6 +270,14 @@ int CBaseBG2Weapon::FireBullet( int iAttack )
 	if ( pOwner == NULL )
 		return 0;
 
+	if( pOwner->GetWaterLevel() == 3 )
+	{
+		// This weapon doesn't fire underwater
+		WeaponSound(EMPTY);
+		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.2;
+		return 0;
+	}
+
 #ifndef CLIENT_DLL
 	Vector vecAiming	= pOwner->GetAutoaimVector( 0 );	
 	Vector vecSrc		= pOwner->Weapon_ShootPosition();
@@ -283,7 +291,7 @@ int CBaseBG2Weapon::FireBullet( int iAttack )
 	QAngle angDir;
 	VectorAngles( vecDir, angDir );
 
-	CBullet *pBolt = CBullet::BoltCreate( vecSrc, angDir, GetDamage(iAttack), pOwner );
+	/*CBullet *pBolt =*/ CBullet::BoltCreate( vecSrc, angDir, GetDamage(iAttack), pOwner );
 
 	/*if ( pOwner->GetWaterLevel() == 3 )
 	{
@@ -415,7 +423,7 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )//Activity nHitActivit
 		//WeaponSound( MELEE_HIT );
 		if( pHitEntity->IsPlayer() )
 		{
-			WeaponSound( MELEE_HIT );
+			//WeaponSound( MELEE_HIT );
 			ImpactEffect( traceHit );
 		}
 		else

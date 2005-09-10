@@ -278,7 +278,7 @@ void CHudChat::MsgFunc_VoiceComm( bf_read &msg )
 //	if ( client > 0 )
 //		Radar_FlashPlayer( client );
 
-	Msg( "MsgFunc_VoiceComm: %i %i\n", client, comm );
+	//Msg( "MsgFunc_VoiceComm: %i %i\n", client, comm );
 
 	player_info_t sPlayerInfo;
 	engine->GetPlayerInfo( client, &sPlayerInfo );

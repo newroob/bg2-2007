@@ -66,7 +66,7 @@
 	#include "voice_gamemgr.h"
 
 //BG2 - Draco
-#include "flag.h"
+#include "../bg2/flag.h"
 //BG2 - Tjoppen - #includes
 #include "sdk/sdk_bot_temp.h"
 
