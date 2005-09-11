@@ -174,13 +174,14 @@ void CBullet::Spawn( void )
 	SetModel( BOLT_MODEL );
 	SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_CUSTOM );
 	UTIL_SetSize( this, -Vector(1,1,1), Vector(1,1,1) );
-	SetSolid( SOLID_BBOX );
+	//SetSolid( SOLID_BBOX );
+	SetSolid( SOLID_VPHYSICS );
 	//SetGravity( 0.05f );
 	SetGravity( 1.0f );
 	//VPhysicsGetObject()->EnableDrag( true );
 	/*VPhysicsGetObject()->Wake();
 	VPhysicsGetObject()->SetMass( 1 );*/
-	SetFriction( 1000.0f );
+	//SetFriction( 1000.0f );
 
 	// Make sure we're updated if we're underwater
 	UpdateWaterState();
@@ -188,7 +189,7 @@ void CBullet::Spawn( void )
 	SetTouch( &CBullet::BoltTouch );
 
 	SetThink( &CBullet::BubbleThink );
-	SetNextThink( gpGlobals->curtime + 0.01f );
+	SetNextThink( gpGlobals->curtime );//+ 0.01f );
 	
 	CreateSprites();
 
@@ -304,7 +305,11 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		SetTouch( NULL );
 		SetThink( NULL );
 
-		UTIL_Remove( this );
+		//BG2 - Tjoppen - remove bullets immediately before they have time to mess with the target
+		//this doesn't seem to completely solve the problem of players flying when being hit by bullets though
+		//UTIL_Remove( this );
+		UTIL_RemoveImmediate( this );
+		//
 	}
 	else
 	{

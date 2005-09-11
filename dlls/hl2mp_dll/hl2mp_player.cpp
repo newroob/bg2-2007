@@ -1599,7 +1599,8 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 
 					//Msg( "VoiceComm: %i %i\n", client->entindex(), comm );
 					UserMessageBegin( user, "VoiceComm" );
-						WRITE_BYTE( client->entindex() );
+						//WRITE_BYTE( client->entindex() );
+						WRITE_BYTE( entindex() );	//voicecomm originator
 						WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );
 					MessageEnd();
 
