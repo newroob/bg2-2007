@@ -589,7 +589,8 @@ void CClient_Precipitation::Precache( )
 
 inline float CClient_Precipitation::GetWidth() const
 {
-//	return m_Width;
+	//BG2 - Tjoppen - reenable snow
+	return m_Width;
 	return s_rainwidth.GetFloat();
 }
 
@@ -601,7 +602,8 @@ inline float CClient_Precipitation::GetLength() const
 
 inline float CClient_Precipitation::GetSpeed() const
 {
-//	return m_Speed;
+	//BG2 - Tjoppen - reenable snow
+	return m_Speed;
 	return s_rainspeed.GetFloat();
 }
 
