@@ -30,6 +30,12 @@ float g_flSplashLifetime = 0.5f;
 float g_flSplashAlpha = 0.3f;
 ConVar r_RainSplashPercentage( "r_RainSplashPercentage", "20" ); // N% chance of a rain particle making a splash.
 
+//BG2 - Tjoppen - snow fix
+#define PRECIP_PARTICLE_MAX 5000	//might be possible to increase slightly, I can't be bothered
+									//if it's above 6000 the game crashes with high snow density
+									//so the sweet spot is between 5000-6000
+//
+
 
 float GUST_INTERVAL_MIN = 1;
 float GUST_INTERVAL_MAX = 2;
@@ -533,6 +539,10 @@ CClient_Precipitation::CClient_Precipitation() : m_Remainder(0.0f)
 	m_MatHandle = INVALID_MATERIAL_HANDLE;
 	m_flHalfScreenWidth = 1;
 	
+	//BG2 - Tjoppen - snow fix
+	if( g_Precipitations.Count() >= PRECIP_PARTICLE_MAX )
+		return;
+	//
 	g_Precipitations.AddToTail( this );
 }
 
@@ -624,6 +634,11 @@ inline float CClient_Precipitation::GetRemainingLifetime( CPrecipitationParticle
 
 inline CPrecipitationParticle* CClient_Precipitation::CreateParticle()
 {
+	//BG2 - Tjoppen - snow fix
+	if( m_Particles.Count() >= PRECIP_PARTICLE_MAX )
+		return NULL;
+	//
+
 	int i = m_Particles.AddToTail();
 	CPrecipitationParticle* pParticle = &m_Particles[i];
 
