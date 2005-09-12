@@ -131,7 +131,9 @@ CBullet::~CBullet( void )
 bool CBullet::CreateVPhysics( void )
 {
 	// Create the object in the physics system
-	VPhysicsInitNormal( SOLID_BBOX, FSOLID_NOT_STANDABLE, false );
+	//BG2 - Tjoppen - SOLID_VPHYSICS
+	//VPhysicsInitNormal( SOLID_BBOX, FSOLID_NOT_STANDABLE, false );
+	VPhysicsInitNormal( SOLID_VPHYSICS, FSOLID_NOT_STANDABLE, false );	
 
 	return true;
 }
@@ -173,9 +175,10 @@ void CBullet::Spawn( void )
 	//SetModel( "models/crossbow_bolt.mdl" );
 	SetModel( BOLT_MODEL );
 	SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_CUSTOM );
-	UTIL_SetSize( this, -Vector(1,1,1), Vector(1,1,1) );
+	//UTIL_SetSize( this, -Vector(1,1,1), Vector(1,1,1) );
 	//SetSolid( SOLID_BBOX );
 	SetSolid( SOLID_VPHYSICS );
+	SetSolidFlags( FSOLID_NOT_STANDABLE );
 	//SetGravity( 0.05f );
 	SetGravity( 1.0f );
 	//VPhysicsGetObject()->EnableDrag( true );
@@ -239,13 +242,19 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		VectorNormalize ( vForward );
 
 		//BG2 - Tjoppen - We want musket balls to hit body parts, not just HITGROUP_GENERIC
-		UTIL_TraceLine( GetAbsOrigin() - vForward * 32, GetAbsOrigin() + vForward * 32, MASK_SHOT, GetOwnerEntity(), COLLISION_GROUP_NONE, &tr );
-		if( tr.fraction == 1.0 )
+		UTIL_TraceLine( GetAbsOrigin() - vForward * 32, GetAbsOrigin() + vForward * 32, MASK_SHOT, GetOwnerEntity(), COLLISION_GROUP_NONE, &tr2 );
+		if( tr2.fraction == 1.0 )
 		{
-			//only hit hull - keep going
+			//BG2 - Tjoppen - that didn't work well
+            //only hit hull - keep going
 			//move forward a bit so we don't get stuck
-			SetAbsOrigin( GetAbsOrigin() + GetAbsVelocity() * 32.f );
-			return;
+			/*SetAbsOrigin( GetAbsOrigin() + GetAbsVelocity() * 32.f );
+			return;*/
+		}
+		else
+		{
+			//revert
+			tr = tr2;
 		}
 
 		//Msg( "%f / %f => %f / %f\n", speed, (float)BOLT_AIR_VELOCITY, dmg, (float)m_iDamage );

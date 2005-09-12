@@ -790,7 +790,7 @@ void CHL2MP_Player::HandleSpeedChanges( void )
 	switch (m_iClass)
 	{
 		case CLASS_INFANTRY:
-			iSpeed = 190;
+			iSpeed = 210;
 			iSpeed2 = 150;
 			break;
 		case CLASS_OFFICER:
@@ -798,7 +798,7 @@ void CHL2MP_Player::HandleSpeedChanges( void )
 			iSpeed2 = 160;
 			break;
 		case CLASS_SNIPER:
-			iSpeed = 175;
+			iSpeed = 200;
 			iSpeed2 = 140;
 			break;
 	}
