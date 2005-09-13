@@ -231,7 +231,11 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 
 		float	speed = GetAbsVelocity().Length();
 		if( speed < 100 )
-			speed = 100;
+		{
+			//too slow. die
+			UTIL_RemoveImmediate( this );
+			return;
+		}
 
 		float	dmg = (float)m_iDamage * speed * speed / (float)(BOLT_AIR_VELOCITY*BOLT_AIR_VELOCITY),
 				dmgforcescale = 100.f / speed;

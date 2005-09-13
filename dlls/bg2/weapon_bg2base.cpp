@@ -324,7 +324,7 @@ int CBaseBG2Weapon::FireBullet( int iAttack )
 	if( sv_turboshots.GetInt() == 0 )
 		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate( iAttack );
 	else
-		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.03f;
+		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.1f;
 
 	if( sv_infiniteammo.GetInt() == 0 )
 		m_iClip1--;
