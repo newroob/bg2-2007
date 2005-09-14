@@ -342,7 +342,10 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 			float hitDot = DotProduct( tr.plane.normal, -vecDir );
 			
 			// BG2 - BP original was( hitDot < 0.5f ) but a musket ball should not bounce off walls if the angle is too big
-			if ( ( hitDot < 0.2f ) && ( speed > 100 ) )
+			//BG2 - Tjoppen - don't ricochet unless we're hitting a surface at a 60 degree horisontal angle or more
+			//					this is a hack so that bullets don't ricochet off the ground
+			//if ( ( hitDot < 0.2f ) && ( speed > 100 ) )
+			if ( ( hitDot < 0.2f ) && ( speed > 100 ) && tr.plane.normal.z < 0.5f )
 			{
 				Vector vReflection = 2.0f * tr.plane.normal * hitDot + vecDir;
 				
