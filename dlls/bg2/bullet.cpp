@@ -444,7 +444,7 @@ void CBullet::BubbleThink( void )
 		Vector	vecDir = GetAbsVelocity();
 		float	speed = VectorNormalize( vecDir ),
 				//drag = 0.0001f;
-				drag = 0.0005f;
+				drag = 0.0003f;
 
 		speed -= drag * speed*speed * gpGlobals->frametime;
 		if( speed < 1000 )
