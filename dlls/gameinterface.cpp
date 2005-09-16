@@ -99,6 +99,11 @@
 #include "util.h"
 #include "vstdlib/ICommandLine.h"
 #include "engine/iserverplugin.h"
+//BG2 - Tjoppen - #includes
+#ifndef CLIENT_DLL
+	#include "hl2mp_gamerules.h"
+	#include "sdk/sdk_bot_temp.h"
+#endif
 
 #ifdef CSTRIKE_DLL // BOTPORT: TODO: move these ifdefs out
 #include "bot/bot.h"
@@ -674,6 +679,13 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	VPROF("CServerGameDLL::LevelInit");
 	ResetWindspeed();
 	UpdateChapterRestrictions( pMapName );
+
+	//BG2 - Tjoppen - exec <mapname>.cfg
+	char	szExec[256];
+	Q_snprintf( szExec, sizeof(szExec), "exec %s.cfg\n", pMapName );
+	engine->ServerCommand( szExec );
+	engine->ServerExecute();
+	//
 
 	// IGameSystem::LevelInitPreEntityAllSystems() is called when the world is precached
 	// That happens either in LoadGameState() or in MapEntity_ParseAllEntities()

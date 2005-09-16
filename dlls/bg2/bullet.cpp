@@ -442,9 +442,10 @@ void CBullet::BubbleThink( void )
 	{
 		//apply drag
 		Vector	vecDir = GetAbsVelocity();
+		extern	ConVar sv_simulatedbullets_drag;
 		float	speed = VectorNormalize( vecDir ),
 				//drag = 0.0001f;
-				drag = 0.0003f;
+				drag = sv_simulatedbullets_drag.GetFloat();
 
 		speed -= drag * speed*speed * gpGlobals->frametime;
 		if( speed < 1000 )
