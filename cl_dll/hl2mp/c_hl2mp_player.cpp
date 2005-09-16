@@ -644,16 +644,16 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 	switch (m_iClass)
 	{
 		case CLASS_INFANTRY:
-			iSpeed = 210;
-			iSpeed2 = 150;
+			iSpeed = 190;
+			iSpeed2 = 130;
 			break;
 		case CLASS_OFFICER:
-			iSpeed = 220;
-			iSpeed2 = 160;
-			break;
-		case CLASS_SNIPER:
 			iSpeed = 200;
 			iSpeed2 = 140;
+			break;
+		case CLASS_SNIPER:
+			iSpeed = 180;
+			iSpeed2 = 120;
 			break;
 	}
 

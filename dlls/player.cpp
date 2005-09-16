@@ -829,6 +829,7 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 		{
 		case HITGROUP_GENERIC:
 			//Msg( "HITGROUP_GENERIC\n" );
+			info.ScaleDamage( HIT_ARM_DMG );	//at least give them something for hitting the generic.. let's be nice
 			break;
 		case HITGROUP_HEAD:
 			//Msg( "HITGROUP_HEAD\n" );
