@@ -680,13 +680,6 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	ResetWindspeed();
 	UpdateChapterRestrictions( pMapName );
 
-	//BG2 - Tjoppen - exec <mapname>.cfg
-	char	szExec[256];
-	Q_snprintf( szExec, sizeof(szExec), "exec %s.cfg\n", pMapName );
-	engine->ServerCommand( szExec );
-	engine->ServerExecute();
-	//
-
 	// IGameSystem::LevelInitPreEntityAllSystems() is called when the world is precached
 	// That happens either in LoadGameState() or in MapEntity_ParseAllEntities()
 	if ( loadGame )
@@ -754,6 +747,13 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	g_AIFriendliesTalkSemaphore.Release();
 	g_AIFoesTalkSemaphore.Release();
 	g_OneWayTransition = false;
+
+	//BG2 - Tjoppen - exec <mapname>.cfg
+	char	szExec[256];
+	Q_snprintf( szExec, sizeof(szExec), "exec %s.cfg\n", pMapName );
+	engine->ServerCommand( szExec );
+	engine->ServerExecute();
+	//
 	return true;
 }
 
