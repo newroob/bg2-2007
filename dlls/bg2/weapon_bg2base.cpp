@@ -61,8 +61,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar sv_simulatedbullets( "sv_simulatedbullets", "0", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
-		"EXPERIMENTAL!\nWhen non-zero, makes all firearms shoot \"real\" bullets. They have some issues with lag though.");
+ConVar sv_simulatedbullets( "sv_simulatedbullets", "1", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
+		"EXPERIMENTAL!\nWhen non-zero, makes all firearms shoot \"real\" bullets.");
 
 ConVar sv_simulatedbullets_drag( "sv_simulatedbullets_drag", "0.0003", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
 	   "Tweak this value to affect how fast the speed and thus damage of bullets drop off with distance.\n\tLower values => more damage over distance" );
