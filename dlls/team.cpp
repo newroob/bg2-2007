@@ -10,6 +10,7 @@
 #include "team_spawnpoint.h"
 //BG2 - Tjoppen - #includes
 #include "hl2mp_player.h"
+#include "hl2mp_gamerules.h"
 //
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -281,12 +282,31 @@ CBasePlayer *CTeam::GetPlayer( int iIndex )
 //-----------------------------------------------------------------------------
 void CTeam::AddScore( int iScore )
 {
-	m_iScore += iScore;
+	//BG2 - Tjoppen - scoreboard fix
+	//m_iScore += iScore;
+	SetScore( m_iScore + iScore );
+	//
 }
 
 void CTeam::SetScore( int iScore )
 {
 	m_iScore = iScore;
+	//BG2 - Tjoppen - scoreboard fix
+	extern ConVar	mp_americanscore,
+					mp_britishscore;
+
+	switch( GetTeamNumber() )
+	{
+	case TEAM_AMERICANS:
+		mp_americanscore.SetValue( GetScore() );
+		break;
+	case TEAM_BRITISH:
+		mp_britishscore.SetValue( GetScore() );
+		break;
+	default:
+		break;
+	}
+	//
 }
 
 //-----------------------------------------------------------------------------
