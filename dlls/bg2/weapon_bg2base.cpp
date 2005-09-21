@@ -72,6 +72,9 @@ ConVar sv_turboshots( "sv_turboshots", "0", FCVAR_CHEAT | FCVAR_NOTIFY | FCVAR_R
 ConVar sv_perfectaim( "sv_perfectaim", "0", FCVAR_CHEAT | FCVAR_NOTIFY | FCVAR_REPLICATED, "No spread for bullet weapons\n" );
 ConVar sv_steadyhand( "sv_steadyhand", "0", FCVAR_CHEAT | FCVAR_NOTIFY | FCVAR_REPLICATED, "No recoil for bullet weapons\n" );
 
+ConVar mp_disable_melee( "mp_disable_melee", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "When non-zero, melee weapons are disabled" );
+ConVar mp_disable_firearms( "mp_disable_firearms", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "When non-zero, firearms are disabled" );
+
 
 //-----------------------------------------------------------------------------
 // CBaseBG2Weapon
@@ -617,10 +620,16 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 		if( GetOwner() && (GetOwner()->GetFlags() & FL_DUCKING) )
 			return;
 
+		if( mp_disable_melee.GetInt() )
+			return;
+
 		drain = Swing( ATTACK_PRIMARY );
 	}
 	else if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_FIREARM )
 	{
+		if( mp_disable_firearms.GetInt() )
+			return;
+
 		if( sv_simulatedbullets.GetInt() )
 			drain = FireBullet( ATTACK_PRIMARY );
 		else
@@ -649,10 +658,16 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 		if( GetOwner() && (GetOwner()->GetFlags() & FL_DUCKING) )
 			return;
 
+		if( mp_disable_melee.GetInt() )
+			return;
+
 		drain = Swing( ATTACK_SECONDARY );
 	}
 	else if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_FIREARM )
 	{
+		if( mp_disable_firearms.GetInt() )
+			return;
+
 		if( sv_simulatedbullets.GetInt() )
 			drain = FireBullet( ATTACK_SECONDARY );
 		else
