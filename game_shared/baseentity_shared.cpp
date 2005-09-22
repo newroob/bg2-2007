@@ -1450,8 +1450,6 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 				//BG2 - Tjoppen - damage ramps based on range
 				float factor = 1.0f - (tr.startpos - tr.endpos).Length() / info.m_flDistance;
 
-				Msg( "%f\t", factor );
-
 				factor = min( 1.0f, factor + 0.5f );	//start ramping down to 50% after 50% range covered
 				flActualDamage *= factor;
 				//
