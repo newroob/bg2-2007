@@ -1447,10 +1447,23 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 
 			if ( !bHitWater || ((info.m_nFlags & FIRE_BULLETS_DONT_HIT_UNDERWATER) == 0) )
 			{
+				//BG2 - Tjoppen - damage ramps based on range
+				float factor = 1.0f - (tr.startpos - tr.endpos).Length() / info.m_flDistance;
+
+				Msg( "%f\t", factor );
+
+				factor = min( 1.0f, factor + 0.5f );	//start ramping down to 50% after 50% range covered
+				flActualDamage *= factor;
+				//
+
 				// Damage specified by function parameter
 				CTakeDamageInfo dmgInfo( this, pAttacker, flActualDamage, nActualDamageType );
 				CalculateBulletDamageForce( &dmgInfo, info.m_iAmmoType, vecDir, tr.endpos );
 				dmgInfo.ScaleDamageForce( info.m_flDamageForceScale );
+				//BG2 - Tjoppen - don't send airborne players flying
+				if( !(tr.m_pEnt->GetFlags() & FL_ONGROUND) )
+					dmgInfo.ScaleDamageForce( 0.001 );
+				//
 				dmgInfo.SetAmmoType( info.m_iAmmoType );
 				tr.m_pEnt->DispatchTraceAttack( dmgInfo, vecDir, &tr );
 			

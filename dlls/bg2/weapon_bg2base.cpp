@@ -61,7 +61,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar sv_simulatedbullets( "sv_simulatedbullets", "1", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
+ConVar sv_simulatedbullets( "sv_simulatedbullets", "0", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
 		"EXPERIMENTAL!\nWhen non-zero, makes all firearms shoot \"real\" bullets.");
 
 ConVar sv_simulatedbullets_drag( "sv_simulatedbullets_drag", "0.0003", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
@@ -223,8 +223,8 @@ int CBaseBG2Weapon::Fire( int iAttack )
 							GetRange( iAttack ), m_iPrimaryAmmoType );
 	info.m_pAttacker = pPlayer;
 	info.m_iPlayerDamage = GetDamage( iAttack );
-	info.m_iDamage = -1;	//ancient chinese secret..
-	info.m_iTracerFreq = 1;		//allways to tracers
+	info.m_iDamage = -1;		//ancient chinese secret..
+	info.m_iTracerFreq = 1;		//always do tracers
 
 	// Fire the bullets, and force the first shot to be perfectly accuracy
 	pPlayer->FireBullets( info );
@@ -406,6 +406,10 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )//Activity nHitActivit
 			else
 				CalculateMeleeDamageForce( &info, hitDirection, traceHit.endpos, 0.1f );
 				//info.SetDamageForce( vec3_origin );	//no force in slashing weapons..
+
+			//BG2 - Tjoppen - don't send airborne players flying
+			if( !(pHitEntity->GetFlags() & FL_ONGROUND) )
+				info.ScaleDamageForce( 0.001 );
 
 			pHitEntity->DispatchTraceAttack( info, hitDirection, &traceHit ); 
 			ApplyMultiDamage();

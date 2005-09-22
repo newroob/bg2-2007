@@ -33,7 +33,7 @@
 
 #include "weapon_bg2base.h"
 
-const float FIREARM_RANGE = 4096.0;		//firearms one reach so far...
+const float FIREARM_RANGE = 200 * 3 * 12;		//200 yards - this is roughly the default sight range
 
 //BG2 - Tjoppen - these constants from weapon_data.h @ BG 1.0F RC14
 // damage values for each attack on each weapon

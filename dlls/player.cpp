@@ -169,8 +169,8 @@ ConVar	sk_player_stomach( "sk_player_stomach","1" );
 ConVar	sk_player_arm( "sk_player_arm","1" );
 ConVar	sk_player_leg( "sk_player_leg","1" );
 //BG2 - Tjoppen - hitgroup modifiers. these are taken from BG 1.0F
-const double HIT_HEAD_DMG = 3.4;
-const double HIT_CHEST_DMG = 1.85;
+const double HIT_HEAD_DMG = 5.8;//3.4;	//BG2 - Tjoppen - adjusted so that all firearms are leathal at range. if you manage
+const double HIT_CHEST_DMG = 1.85;		//					to hit someone in the head at 200 yards you should be rewarded
 const double HIT_STOMACH_DMG = 1.75;
 const double HIT_ARM_DMG = 1.25;
 const double HIT_LEG_DMG = 1.35;
