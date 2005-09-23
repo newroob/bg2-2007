@@ -750,78 +750,8 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 		{
 			if ( !g_pGameRules->FPlayerCanTakeDamage( this, info.GetAttacker() ) )
 				return;
-
-			//BG2 - Tjoppen - print hit verification
-			CBasePlayer *pVictim = this,
-						*pAttacker = ToBasePlayer( info.GetAttacker() );
-			Assert( pAttacker != NULL );
-
-			char attackerstr[512], victimstr[512];
-
-            strcpy( attackerstr, "You hit " );
-			strcat( attackerstr, STRING(pVictim->pl.netname) );
-			strcat( attackerstr, " in the " );
-
-			strcpy( victimstr, "You were hit in the " );
-
-			switch ( ptr->hitgroup )
-			{
-			case HITGROUP_GENERIC:
-				//special case
-				strcpy( attackerstr, "You hit " );
-				strcat( attackerstr, STRING(pVictim->pl.netname) );
-
-				strcpy( victimstr, "You were hit" );
-				break;
-			case HITGROUP_HEAD:
-				strcat( attackerstr, "head" );
-				strcat( victimstr, "head" );
-				break;
-			case HITGROUP_CHEST:
-				strcat( attackerstr, "chest" );
-				strcat( victimstr, "chest" );
-				break;
-			case HITGROUP_STOMACH:
-				strcat( attackerstr, "stomach" );
-				strcat( victimstr, "stomach" );
-				break;
-			case HITGROUP_LEFTARM:
-				strcat( attackerstr, "left arm" );
-				strcat( victimstr, "left arm" );
-				break;
-			case HITGROUP_RIGHTARM:
-				strcat( attackerstr, "right arm" );
-				strcat( victimstr, "right arm" );
-				break;
-			case HITGROUP_LEFTLEG:
-				strcat( attackerstr, "left leg" );
-				strcat( victimstr, "left leg" );
-				break;
-			case HITGROUP_RIGHTLEG:
-				strcat( attackerstr, "right leg" );
-				strcat( victimstr, "right leg" );
-				break;
-			default:
-				strcat( attackerstr, "unknown default case" );
-				strcat( victimstr, "unknown default case" );
-				break;
-			}
-
-			/*if( info.GetDamage() >= pVictim->GetHealth() )
-				strcat( attackerstr, ", who died" );*/
-
-			ClientPrint( pAttacker, HUD_PRINTCENTER, attackerstr );
-
-			strcat( victimstr, " by " );
-			strcat( victimstr, STRING(pAttacker->pl.netname) );
-
-			/*if( info.GetDamage() >= pVictim->GetHealth() )
-				strcat( victimstr, ", and died" );*/
-
-			ClientPrint( pVictim, HUD_PRINTCENTER, victimstr );
-			//
 		}
-
+		
 		SetLastHitGroup( ptr->hitgroup );
 
 		//BG2 - Tjoppen - some Msg()'s here..
@@ -861,6 +791,84 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 		default:
 			break;
 		}
+
+		//BG2 - Tjoppen - print hit verification
+		if ( info.GetAttacker()->IsPlayer() )
+		{
+			CBasePlayer *pVictim = this,
+						*pAttacker = ToBasePlayer( info.GetAttacker() );
+			Assert( pAttacker != NULL );
+
+			char attackerstr[512], victimstr[512];
+
+            Q_strncpy( attackerstr, "You hit ", 512 );
+			strncat( attackerstr, STRING(pVictim->pl.netname), 512 );
+			strncat( attackerstr, " in the ", 512 );
+
+			Q_strncpy( victimstr, "You were hit in the ", 512 );
+
+			switch ( ptr->hitgroup )
+			{
+			case HITGROUP_GENERIC:
+				//special case
+				Q_strncpy( attackerstr, "You hit ", 512 );
+				strncat( attackerstr, STRING(pVictim->pl.netname), 512 );
+
+				Q_strncpy( victimstr, "You were hit", 512 );
+				break;
+			case HITGROUP_HEAD:
+				strncat( attackerstr, "head", 512 );
+				strncat( victimstr, "head", 512 );
+				break;
+			case HITGROUP_CHEST:
+				strncat( attackerstr, "chest", 512 );
+				strncat( victimstr, "chest", 512 );
+				break;
+			case HITGROUP_STOMACH:
+				strncat( attackerstr, "stomach", 512 );
+				strncat( victimstr, "stomach", 512 );
+				break;
+			case HITGROUP_LEFTARM:
+				strncat( attackerstr, "left arm", 512 );
+				strncat( victimstr, "left arm", 512 );
+				break;
+			case HITGROUP_RIGHTARM:
+				strncat( attackerstr, "right arm", 512 );
+				strncat( victimstr, "right arm", 512 );
+				break;
+			case HITGROUP_LEFTLEG:
+				strncat( attackerstr, "left leg", 512 );
+				strncat( victimstr, "left leg", 512 );
+				break;
+			case HITGROUP_RIGHTLEG:
+				strncat( attackerstr, "right leg", 512 );
+				strncat( victimstr, "right leg", 512 );
+				break;
+			default:
+				strncat( attackerstr, "unknown default case", 512 );
+				strncat( victimstr, "unknown default case", 512 );
+				break;
+			}
+
+			/*if( info.GetDamage() >= pVictim->GetHealth() )
+				strcat( attackerstr, ", who died" );*/
+
+			char tmp[256];
+			Q_snprintf( tmp, 256, " for %i points of damage", (int)info.GetDamage() );
+
+			strncat( attackerstr, tmp, 512 );
+			ClientPrint( pAttacker, HUD_PRINTCENTER, attackerstr );
+
+			strncat( victimstr, " by ", 512 );
+			strncat( victimstr, STRING(pAttacker->pl.netname), 512 );
+			strncat( victimstr, tmp, 512 ),
+
+			/*if( info.GetDamage() >= pVictim->GetHealth() )
+				strcat( victimstr, ", and died" );*/
+
+			ClientPrint( pVictim, HUD_PRINTCENTER, victimstr );
+		}
+		//
 
 		SpawnBlood(ptr->endpos, vecDir, BloodColor(), info.GetDamage());// a little surface blood.
 		TraceBleed( info.GetDamage(), vecDir, ptr, info.GetDamageType() );

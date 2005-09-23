@@ -153,6 +153,8 @@ private:
 	float m_flNextTeamChangeTime;
 
 	//BG2 - Tjoppen - vars in hl2mp_player
+	const char*	PlayermodelTeamClass( int team, int classid );
+
 	//int		m_iClass;			//BG2 - Tjoppen - class system
 	CNetworkVar( int, m_iClass );
 	int		m_iNextClass;		//BG2 - Tjoppen - which class will we become on our next respawn?

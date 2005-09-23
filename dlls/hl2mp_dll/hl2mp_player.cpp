@@ -498,8 +498,6 @@ void CHL2MP_Player::Spawn(void)
 	m_flNextVoicecomm = gpGlobals->curtime;	//BG2 - Tjoppen - reset voicecomm timer
 	m_iStamina = 100;						//BG2 - Draco - reset stamina to 100
 	m_fNextStamRegen = gpGlobals->curtime;	//BG2 - Draco - regen stam now!
-	m_iClass = m_iNextClass;				//BG2 - Tjoppen - set current class on spawn
-											//	GiveDefaultItems() is further down so currect equipment is given
 
 	pl.deadflag = false;
 	RemoveSolidFlags( FSOLID_NOT_SOLID );
@@ -1242,6 +1240,41 @@ void ClientPrinttTalkAll( char *str )
 }
 //
 
+//BG2 - Tjoppen - PlayermodelTeamClass - gives models for specified team/class
+const char* CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
+{
+	switch( team )
+	{
+	case TEAM_AMERICANS:
+		switch( classid )
+		{
+		case CLASS_INFANTRY:
+			return "models/player/american/heavy_a/heavy_a.mdl";
+
+		case CLASS_OFFICER:
+			return "models/player/american/light_a/light_a.mdl";
+
+		case CLASS_SNIPER:
+			return "models/player/american/medium_a/medium_a.mdl";
+		}
+	case TEAM_BRITISH:
+		switch( classid )
+		{
+		case CLASS_INFANTRY:
+			return "models/player/british/medium_b/medium_b.mdl";
+
+		case CLASS_OFFICER:
+			return "models/player/british/light_b/light_b.mdl";
+
+		case CLASS_SNIPER:
+			return "models/player/british/heavy_b/heavy_b.mdl";
+		}
+	}
+
+	//default model
+	return "models/player/british/heavy_b/heavy_b.mdl";
+}
+
 bool CHL2MP_Player::ClientCommand( const char *cmd )
 {
 	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
@@ -1288,8 +1321,18 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		strncat( str, " is going to fight as a Continental Soldier for the Americans\n", 512 );
 		ClientPrinttTalkAll( str );
 
-		engine->ClientCommand( edict(),"cl_playermodel models/player/american/heavy_a/heavy_a.mdl" );
 		m_iNextClass = CLASS_INFANTRY;
+		if( GetTeamNumber() != TEAM_AMERICANS )
+		{
+			//change model/team immediately
+			m_iClass = m_iNextClass;
+
+			char cmd[512];
+			Q_strncpy( cmd, "cl_playermodel ", 512 );
+			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
+
+			engine->ClientCommand( edict(), cmd );
+		}
 
 		return true;
 	}
@@ -1334,8 +1377,18 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		strncat( str, " is going to fight as a Continental Officer for the Americans\n", 512 );
 		ClientPrinttTalkAll( str );
 
-		engine->ClientCommand( edict(),"cl_playermodel models/player/american/light_a/light_a.mdl" );
 		m_iNextClass = CLASS_OFFICER;
+		if( GetTeamNumber() != TEAM_AMERICANS )
+		{
+			//change model/team immediately
+			m_iClass = m_iNextClass;
+
+			char cmd[512];
+			Q_strncpy( cmd, "cl_playermodel ", 512 );
+			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
+
+			engine->ClientCommand( edict(), cmd );
+		}
 
 		return true;
 	}
@@ -1380,8 +1433,18 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		strncat( str, " is going to fight as a Minute Man for the Americans\n", 512 );
 		ClientPrinttTalkAll( str );
 
-		engine->ClientCommand( edict(),"cl_playermodel models/player/american/medium_a/medium_a.mdl" );
 		m_iNextClass = CLASS_SNIPER;
+		if( GetTeamNumber() != TEAM_AMERICANS )
+		{
+			//change model/team immediately
+			m_iClass = m_iNextClass;
+
+			char cmd[512];
+			Q_strncpy( cmd, "cl_playermodel ", 512 );
+			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
+
+			engine->ClientCommand( edict(), cmd );
+		}
 
 		return true;
 	}
@@ -1426,8 +1489,18 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		strncat( str, " is going to fight as Royal Infantry for the British\n", 512 );
 		ClientPrinttTalkAll( str );
 
-		engine->ClientCommand( edict(),"cl_playermodel models/player/british/medium_b/medium_b.mdl" );
 		m_iNextClass = CLASS_INFANTRY;
+		if( GetTeamNumber() != TEAM_BRITISH )
+		{
+			//change model/team immediately
+			m_iClass = m_iNextClass;
+
+			char cmd[512];
+			Q_strncpy( cmd, "cl_playermodel ", 512 );
+			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
+
+			engine->ClientCommand( edict(), cmd );
+		}
 
 		return true;
 	}
@@ -1472,8 +1545,18 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		strncat( str, " is going to fight as a Royal Commander for the British\n", 512 );
 		ClientPrinttTalkAll( str );
 
-		engine->ClientCommand( edict(),"cl_playermodel models/player/british/light_b/light_b.mdl" );
 		m_iNextClass = CLASS_OFFICER;
+		if( GetTeamNumber() != TEAM_BRITISH )
+		{
+			//change model/team immediately
+			m_iClass = m_iNextClass;
+
+			char cmd[512];
+			Q_strncpy( cmd, "cl_playermodel ", 512 );
+			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
+
+			engine->ClientCommand( edict(), cmd );
+		}
 
 		return true;
 	}
@@ -1518,8 +1601,18 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		strncat( str, " is going to fight as a Loyalist for the British\n", 512 );
 		ClientPrinttTalkAll( str );
 
-		engine->ClientCommand( edict(),"cl_playermodel models/player/british/heavy_b/heavy_b.mdl" );
 		m_iNextClass = CLASS_SNIPER;
+		if( GetTeamNumber() != TEAM_BRITISH )
+		{
+			//change model/team immediately
+			m_iClass = m_iNextClass;
+
+			char cmd[512];
+			Q_strncpy( cmd, "cl_playermodel ", 512 );
+			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
+
+			engine->ClientCommand( edict(), cmd );
+		}
 
 		return true;
 	}
@@ -1852,6 +1945,19 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 	//BG2 - Tjoppen - reenable spectators - no dead bodies raining from the sky
 	if( GetTeamNumber() > TEAM_SPECTATOR )
 		CreateRagdollEntity();
+
+	//BG2 - Tjoppen - if class changed, change model
+	if( m_iClass != m_iNextClass )
+	{
+		m_iClass = m_iNextClass;
+
+		char cmd[512];
+		Q_strncpy( cmd, "cl_playermodel ", 512 );
+		strncat( cmd, PlayermodelTeamClass( GetTeamNumber(), GetClass() ), 512 );
+
+		engine->ClientCommand( edict(), cmd );
+	}
+	//
 
 	DetonateTripmines();
 
