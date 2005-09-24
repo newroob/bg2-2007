@@ -81,6 +81,10 @@ public:
 	int		m_iStamina;		//yeah it's public integer, big woop, wanna fight about it?
 	int		m_iClass;
 	//
+	//BG@ - Draco - Rewards
+	int m_iInfantryReward;
+	int m_iOfficerReward;
+	int m_iSniperReward;
 
 private:
 	

@@ -125,11 +125,15 @@ public:
 	//BG2 - Draco - Start
 	float m_fLastRespawnWave;
 	float m_fNextGameReset;
+	float m_fAdditionTime;
+	float m_fEndRoundTime;
+	float m_fNextFlagUpdate;
 	//BG2 - Draco - End
 	//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed
 	float	m_flNextRoundRestart;
 	bool	m_bIsRestartingRound;
 	//
+	CNetworkVar( int, m_iWaveTime );
 	
 private:
 	

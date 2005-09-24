@@ -32,7 +32,8 @@ enum EScoreboardSections
 {
 	SCORESECTION_COMBINE = 1,
 	SCORESECTION_REBELS = 2,
-	SCORESECTION_FREEFORALL = 3,
+	SCORESECTION_SPECTATOR = 3,
+	SCORESECTION_UNASSIGNED = 3,
 };
 
 const int NumSegments = 7;
@@ -336,6 +337,7 @@ void CHL2MPClientScoreBoardDialog::InitScoreboardSections()
 		// add the team sections
 		AddSection( TYPE_TEAM, TEAM_AMERICANS );
 		AddSection( TYPE_TEAM, TEAM_BRITISH );
+		AddSection( TYPE_TEAM, TEAM_SPECTATOR );
 	}
 	else
 	{
@@ -495,10 +497,14 @@ int CHL2MPClientScoreBoardDialog::GetSectionFromTeamNumber( int teamNumber )
 		return SCORESECTION_COMBINE;
 	case TEAM_BRITISH:
 		return SCORESECTION_REBELS;
+	case TEAM_SPECTATOR:
+		return SCORESECTION_SPECTATOR;
+	case TEAM_UNASSIGNED:
+		return SCORESECTION_UNASSIGNED;
 	default:
-		return SCORESECTION_FREEFORALL;
+		return SCORESECTION_UNASSIGNED;
 	}
-	return SCORESECTION_FREEFORALL;
+	return SCORESECTION_UNASSIGNED;
 }
 
 //-----------------------------------------------------------------------------

@@ -260,7 +260,11 @@ void CHudAmmo::UpdateVehicleAmmo( C_BasePlayer *player, IClientVehicle *pVehicle
 //-----------------------------------------------------------------------------
 void CHudAmmo::OnThink()
 {
-	UpdateAmmoDisplays();
+	//feck off dammit
+	SetPaintEnabled(false);
+	SetPaintBackgroundEnabled(false);
+	return;
+	//UpdateAmmoDisplays();
 }
 
 //-----------------------------------------------------------------------------
@@ -397,6 +401,11 @@ public:
 protected:
 	virtual void OnThink()
 	{
+		//feck off dammit
+		SetPaintEnabled(false);
+		SetPaintBackgroundEnabled(false);
+		return;
+		/*
 		// set whether or not the panel draws based on if we have a weapon that supports secondary ammo
 		C_BaseCombatWeapon *wpn = GetActiveWeapon();
 		C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
@@ -415,6 +424,7 @@ protected:
 		}
 
 		UpdateAmmoState();
+		*/
 	}
 
 	void UpdateAmmoState()

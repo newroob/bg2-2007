@@ -67,6 +67,10 @@ IMPLEMENT_CLIENTCLASS_DT(C_HL2MP_Player, DT_HL2MP_Player, CHL2MP_Player)
 	//BG2 - Tjoppen - m_iClass is a network var
 	RecvPropInt( RECVINFO( m_iClass ) ),
 	//
+	//BG@ - Draco - Rewards
+	RecvPropInt( RECVINFO( m_iOfficerReward ) ),
+	RecvPropInt( RECVINFO( m_iSniperReward ) ),
+	RecvPropInt( RECVINFO( m_iInfantryReward ) ),
 END_RECV_TABLE()
 
 #define	HL2_WALK_SPEED 150
@@ -648,8 +652,25 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 			iSpeed2 = 130;
 			break;
 		case CLASS_OFFICER:
-			iSpeed = 200;
-			iSpeed2 = 140;
+			/*switch (m_iOfficerLevel)
+			{
+				case 1:*/
+					iSpeed = 200;
+					iSpeed2 = 140;
+					/*break;
+				case 2:
+					iSpeed = 205;
+					iSpeed2 = 145;
+					break;
+				case 3:
+					iSpeed = 210;
+					iSpeed2 = 150;
+					break;
+				case 4:
+					iSpeed = 215;
+					iSpeed2 = 155;
+					break;
+			}*/
 			break;
 		case CLASS_SNIPER:
 			iSpeed = 180;

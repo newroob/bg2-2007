@@ -336,6 +336,8 @@ public:
 						{
 							case TEAM_AMERICANS:
 								pPlayer->IncrementFragCount(m_iPlayerBonus);
+								CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
+								pPlayer2->IncreaseReward(1);
 								break;
 						}
 					}
@@ -376,6 +378,8 @@ public:
 						{
 							case TEAM_BRITISH:
 								pPlayer->IncrementFragCount(m_iPlayerBonus);
+								CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
+								pPlayer2->IncreaseReward(1);
 								break;
 						}
 					}
@@ -404,6 +408,7 @@ public:
 			}
 			//noone here
 			m_iLastTeam = TEAM_UNASSIGNED;
+			m_flNextCapture = 0;
 		}
 
 		ClientPrintAll( msg );
@@ -653,13 +658,48 @@ void CFlagHandler::Update( void )
 		neutral_flags = 0;
 	int	foramericans = 0;
 	int	forbritish = 0;
+	int iNumFlags = 0;
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
+	{
+		iNumFlags++;
+	}
 
+	CBasePlayer *pPlayer = NULL;
+	while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassname( pPlayer, "player" )) != NULL )
+	{
+		CSingleUserRecipientFilter user(pPlayer);
+		user.MakeReliable();
+		UserMessageBegin( user, "flagstatus" );
+		WRITE_BYTE(iNumFlags);
+		char szTemp[512] = "";
+		while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
+		{
+			CFlag *pFlag = (CFlag*)pEntity;
+			if( !pFlag )
+				continue;
+			Q_snprintf( szTemp, 512, "%s", STRING(pFlag->m_sFlagName));
+			WRITE_STRING(szTemp);
+			WRITE_BYTE(pFlag->GetTeamNumber());
+			if (pFlag->m_flNextCapture <= gpGlobals->curtime)
+			{
+				WRITE_SHORT(0);
+			}
+			else
+			{
+				WRITE_SHORT((int)(pFlag->m_flNextCapture - gpGlobals->curtime));
+			}
+			WRITE_BYTE(pFlag->m_iCapturePlayers);
+			WRITE_BYTE(pFlag->m_iForTeam);
+			WRITE_SHORT((int)pFlag->m_flCaptureTime);
+			WRITE_BYTE(pFlag->m_iLastTeam);
+		}
+		MessageEnd();
+	}
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{
 		CFlag *pFlag = (CFlag*)pEntity;
 		if( !pFlag )
 			continue;
-		
 		switch( pFlag->GetTeamNumber() )
 		{
 		case TEAM_AMERICANS:

@@ -119,6 +119,9 @@ IMPLEMENT_SERVERCLASS_ST(CHL2MP_Player, DT_HL2MP_Player)
 	//BG2 - Tjoppen - m_iClass is a network var
 	SendPropInt( SENDINFO( m_iClass), 2, SPROP_UNSIGNED ),	//BG2 - Tjoppen - remember: max four classes or increase this
 	//
+	SendPropInt( SENDINFO( m_iOfficerReward), 7, SPROP_UNSIGNED ),	//BG2 - Draco - Rewards
+	SendPropInt( SENDINFO( m_iSniperReward), 7, SPROP_UNSIGNED ),	//BG2 - Draco - Rewards
+	SendPropInt( SENDINFO( m_iInfantryReward), 7, SPROP_UNSIGNED ),	//BG2 - Draco - Rewards
 
 //	SendPropExclude( "DT_ServerAnimationData" , "m_flCycle" ),	
 //	SendPropExclude( "DT_AnimTimeMustBeFirst" , "m_flAnimTime" ),
@@ -771,6 +774,102 @@ bool CHL2MP_Player::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelinde
 	return bRet;
 }
 
+//=============================================================
+//CHL2MP_Player's IncreaseReward
+//increases the points towards a bonus, 1 for class, 2 for team
+//=============================================================
+void CHL2MP_Player::IncreaseReward(int iType)
+{
+/*	switch (iType)
+	{
+		case 1://class specific
+			switch (m_iClass)
+			{
+				case CLASS_INFANTRY:
+					m_iInfantryReward++;
+					switch (m_iInfantryReward)
+					{
+						case 10:
+							m_iInfantryLevel = 2;
+							break;
+						case 20:
+							m_iInfantryLevel = 3;
+							break;
+						case 30:
+							m_iInfantryLevel = 4;
+							break;
+					}
+					break;
+				case CLASS_OFFICER:
+					m_iOfficerReward++;
+					switch (m_iOfficerReward)
+					{
+						case 10:
+							m_iOfficerLevel = 2;
+							break;
+						case 6:
+							m_iOfficerLevel = 3;
+							break;
+						case 9:
+							m_iOfficerLevel = 4;
+							break;
+					}
+					break;
+				case CLASS_SNIPER:
+					m_iSniperReward++;
+					switch (m_iSniperReward)
+					{
+						case 3:
+							m_iSniperLevel = 2;
+							break;
+						case 6:
+							m_iSniperLevel = 3;
+							break;
+						case 9:
+							m_iSniperLevel = 4;
+							break;
+					}
+					break;
+			}
+			break;
+		case 2://team specific
+			switch (GetTeamNumber())
+			{
+				case TEAM_AMERICANS:
+					m_iAmericanReward++;
+					switch (m_iAmericanReward)
+					{
+						case 3:
+							m_iAmericanLevel = 2;
+							break;
+						case 6:
+							m_iAmericanLevel = 3;
+							break;
+						case 9:
+							m_iAmericanLevel = 4;
+							break;
+					}
+					break;
+				case TEAM_BRITISH:
+					m_iBritishReward++;
+					switch (m_iBritishReward)
+					{
+						case 3:
+							m_iBritishLevel = 2;
+							break;
+						case 6:
+							m_iBritishLevel = 3;
+							break;
+						case 9:
+							m_iBritishLevel = 4;
+							break;
+					}
+					break;
+			}
+			break;
+	}*/
+}
+
 void CHL2MP_Player::HandleSpeedChanges( void )
 {
 	//int buttonsChanged = m_afButtonPressed | m_afButtonReleased;
@@ -792,8 +891,25 @@ void CHL2MP_Player::HandleSpeedChanges( void )
 			iSpeed2 = 130;
 			break;
 		case CLASS_OFFICER:
-			iSpeed = 200;
-			iSpeed2 = 140;
+			/*switch (m_iOfficerLevel)
+			{
+				case 1:*/
+					iSpeed = 200;
+					iSpeed2 = 140;
+					/*break;
+				case 2:
+					iSpeed = 205;
+					iSpeed2 = 145;
+					break;
+				case 3:
+					iSpeed = 210;
+					iSpeed2 = 150;
+					break;
+				case 4:
+					iSpeed = 215;
+					iSpeed2 = 155;
+					break;
+			}*/
 			break;
 		case CLASS_SNIPER:
 			iSpeed = 180;

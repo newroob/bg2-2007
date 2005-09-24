@@ -38,6 +38,9 @@ void RegisterUserMessages( void )
 	usermessages->Register( "CreditsMsg", 1 );
 	//BG2 - Draco - stamina message to HUD
 	//usermessages->Register( "Stamina", 2 );
+	usermessages->Register( "classreward", -1 );
+	usermessages->Register( "teamreward", -1 );
+	usermessages->Register( "flagstatus", -1 );
 	//BG2 - Tjoppen - VoiceComm usermessage
 	usermessages->Register( "VoiceComm", 2 );
 }

@@ -148,6 +148,11 @@ void CHudHealth::VidInit()
 //-----------------------------------------------------------------------------
 void CHudHealth::OnThink()
 {
+	//feck off dammit
+	SetPaintEnabled(false);
+	SetPaintBackgroundEnabled(false);
+	return;
+	/*
 	int newHealth = 0;
 	C_BasePlayer *local = C_BasePlayer::GetLocalPlayer();
 	if ( local )
@@ -174,7 +179,7 @@ void CHudHealth::OnThink()
 		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("HealthLow");
 	}
 
-	SetDisplayValue(m_iHealth);
+	SetDisplayValue(m_iHealth);*/
 }
 
 //-----------------------------------------------------------------------------

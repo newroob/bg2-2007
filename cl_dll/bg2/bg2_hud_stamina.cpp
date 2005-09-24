@@ -141,13 +141,18 @@ void CHudStamina::VidInit()
 //-----------------------------------------------------------------------------
 void CHudStamina::OnThink()
 {
+	//feck off dammit
+	SetPaintEnabled(false);
+	SetPaintBackgroundEnabled(false);
+	return;
+	/*
 	C_HL2MP_Player *local = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
 
 	if( local )
 		SetDisplayValue( local->m_iStamina );
 	else
 		SetDisplayValue( -1 );
-	//SetDisplayValue(m_iStamina);
+	//SetDisplayValue(m_iStamina);*/
 }
 
 //-----------------------------------------------------------------------------

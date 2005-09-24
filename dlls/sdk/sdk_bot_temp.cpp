@@ -265,9 +265,62 @@ CBasePlayer *FindClosestEnemy( CSDKBot *pBot, bool insight, float *pdist )
 	int otherteam = team == TEAM_AMERICANS ? TEAM_BRITISH : TEAM_AMERICANS;
 
 	CBasePlayer *pClosest = NULL;
-	float		mindist = 1000000000.0f;
+	float		mindist = 3000.0f;
 
 	CTeam *pTeam = g_Teams[otherteam];
+	for( int x = 0; x < pTeam->GetNumPlayers(); x++ )
+	{
+		CBasePlayer *pEnemy = pTeam->GetPlayer(x);
+		if( !pEnemy->IsAlive() )
+			continue;
+
+		float dist = (pEnemy->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin()).Length();
+		if( dist < mindist )
+		{
+			if( insight )
+			{
+				//check to make sure enemy is in sight
+				trace_t tr;	
+				UTIL_TraceLine( pBot->m_pPlayer->GetLocalOrigin() + Vector(0,0,36), 
+								pEnemy->GetLocalOrigin() + Vector(0,0,36),
+								MASK_SOLID, pBot->m_pPlayer, COLLISION_GROUP_DEBRIS_TRIGGER, &tr );
+
+				if( tr.DidHitWorld() )
+					continue;
+			}
+
+			mindist = dist;
+			pClosest = pEnemy;
+		}
+	}
+
+	/*Msg( "%s closest enemy is ", pBot->m_pPlayer->PlayerData()->netname );
+	if( pClosest )
+		Msg( "%s\n", pClosest->PlayerData()->netname );
+	else
+		Msg( "(null)\n" );*/
+
+	if( pdist )
+		*pdist = mindist;
+
+	return pClosest;
+}
+
+CBasePlayer *FindClosestFriend( CSDKBot *pBot, bool insight, float *pdist )
+{
+	//Msg( "FindClosestEnemy(insight=%s)\n", insight ? "true" : "false" );
+	if( !pBot->m_pPlayer->IsAlive() )
+		return NULL;
+
+	int team = pBot->m_pPlayer->GetTeam()->GetTeamNumber();
+
+	if( team < TEAM_AMERICANS && team < TEAM_BRITISH )
+		return NULL;	//spectator or unassigned
+
+	CBasePlayer *pClosest = NULL;
+	float		mindist = 3000.0f;
+
+	CTeam *pTeam = g_Teams[team];
 	for( int x = 0; x < pTeam->GetNumPlayers(); x++ )
 	{
 		CBasePlayer *pEnemy = pTeam->GetPlayer(x);
@@ -306,7 +359,7 @@ CBasePlayer *FindClosestEnemy( CSDKBot *pBot, bool insight, float *pdist )
 	return pClosest;
 }
 
-CBasePlayer *FindClosestFriend( CSDKBot *pBot, bool insight, float *pdist )
+CBaseEntity *FindClosestFlag( CSDKBot *pBot, bool insight, float *pdist )
 {
 	//Msg( "FindClosestEnemy(insight=%s)\n", insight ? "true" : "false" );
 	if( !pBot->m_pPlayer->IsAlive() )
@@ -317,17 +370,32 @@ CBasePlayer *FindClosestFriend( CSDKBot *pBot, bool insight, float *pdist )
 	if( team < TEAM_AMERICANS && team < TEAM_BRITISH )
 		return NULL;	//spectator or unassigned
 
-	CBasePlayer *pClosest = NULL;
+	CBaseEntity *pClosest = NULL;
 	float		mindist = 1000000000.0f;
 
 	CTeam *pTeam = g_Teams[team];
-	for( int x = 0; x < pTeam->GetNumPlayers(); x++ )
+	CBaseEntity *pEntity = NULL;
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{
-		CBasePlayer *pEnemy = pTeam->GetPlayer(x);
-		if( !pEnemy->IsAlive() )
+		if (pEntity->GetTeam()->GetTeamNumber() != team)
+		{
+			float dist = (pEntity->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin()).Length();
+			mindist = dist;
+			pClosest = pEntity;
+		}
+		else
+		{
 			continue;
+		}
+	}
 
-		float dist = (pEnemy->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin()).Length();
+	//for( int x = 0; x < pTeam->GetNumPlayers(); x++ )
+	//{
+		//CBasePlayer *pEnemy = pTeam->GetPlayer(x);
+	//	if( !pEnemy->IsAlive() )
+		//	continue;
+
+		/*float dist = (pEnemy->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin()).Length();
 		if( dist < mindist )
 		{
 			if( insight )
@@ -344,8 +412,8 @@ CBasePlayer *FindClosestFriend( CSDKBot *pBot, bool insight, float *pdist )
 
 			mindist = dist;
 			pClosest = pEnemy;
-		}
-	}
+		}*/
+	//}
 
 	/*Msg( "%s closest enemy is ", pBot->m_pPlayer->PlayerData()->netname );
 	if( pClosest )
@@ -459,12 +527,24 @@ void Bot_UpdateDirection( CSDKBot *pBot )
 	{
 		float dist;
 		CBasePlayer *pEnemy = FindClosestEnemy( pBot, true, &dist );
+		CBaseEntity *pFlag = FindClosestFlag( pBot, true, &dist );
 		if( pEnemy )
 		{
 			QAngle angles;
 			//Vector forward = pEnemy->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin();
 			//aim for the head if you can find it...
 			Vector forward = pEnemy->Weapon_ShootPosition() - pBot->m_pPlayer->Weapon_ShootPosition();
+			forward.z -= 8;	//slightly below
+			VectorAngles( forward, angles );
+			pBot->m_pPlayer->SetLocalAngles( angles );
+			return;
+		}
+		else if( pFlag )
+		{
+			QAngle angles;
+			//Vector forward = pEnemy->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin();
+			//aim for the head if you can find it...
+			Vector forward = pFlag->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin();
 			forward.z -= 8;	//slightly below
 			VectorAngles( forward, angles );
 			pBot->m_pPlayer->SetLocalAngles( angles );
