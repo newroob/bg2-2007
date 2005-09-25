@@ -31,50 +31,46 @@
 	//BG2 - <name of contributer>[ - <small description>]
 */
 
-/*#ifdef CLIENT_DLL
-#define CFlag C_Flag
-#endif*/
+#include "cbase.h"
+#include "c_flag.h"
 
-class CFlag : public CBaseAnimating
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
+
+IMPLEMENT_CLIENTCLASS_DT( C_Flag, DT_Flag, CFlag )
+	RecvPropInt( RECVINFO( m_iLastTeam ) ),
+	RecvPropFloat( RECVINFO( m_flNextCapture ) ),
+	RecvPropInt( RECVINFO( m_iCapturePlayers ) ),
+	RecvPropInt( RECVINFO( m_iForTeam ) ),
+	RecvPropFloat( RECVINFO( m_flCaptureTime ) ),
+	RecvPropString( RECVINFO( m_sFlagName ) ),
+END_RECV_TABLE()
+
+// Global list of client side team entities
+CUtlVector< C_Flag * > g_Flags;
+
+//=================================================================================================
+// C_Team functionality
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+C_Flag::C_Flag()
 {
-	DECLARE_CLASS( CFlag, CBaseAnimating );
-	DECLARE_NETWORKCLASS(); 
-	DECLARE_PREDICTABLE();
-	DECLARE_DATADESC();
+	/*m_iScore = 0;
+	memset( m_szTeamname, 0, sizeof(m_szTeamname) );
 
-	CNetworkVar( int, m_iLastTeam );		//which team is near this flag?
-	CNetworkVar( float, m_flNextCapture );
+	m_iDeaths = 0;
+	m_iPing = 0;
+	m_iPacketloss = 0;*/
 
-	CNetworkVar( int, m_iCapturePlayers );	//how many player must be nearby to capture this flag?
-	CNetworkVar( int, m_iForTeam );
+	m_sFlagName[0] = 0;	//nullterm just in case
 
-	int		m_iUncap,
-			m_iTeamBonus,
-			m_iTeamBonusInterval,
-			m_iPlayerBonus;
+	// Add myself to the global list of team entities
+	g_Flags.AddToTail( this );
+}
 
-	float	m_flNextTeamBonus;
-
-	CNetworkVar( float,	m_flCaptureTime );	//.. and for how long?
-	float	m_flCaptureRadius;				//.. and how close?
-
-	CNetworkVar( string_t, m_sFlagName );
-
-public:
-
-	void Spawn( void );
-	void Precache( void );
-	void Think( void );
-	void ChangeTeam( int iTeamNum );
-	virtual int UpdateTransmitState();
-};
-
-class CFlagHandler
+C_Flag::~C_Flag()
 {
-public:
-	static void RespawnAll( char *pSound );
-	static void RespawnWave();
-	//static void PlayCaptureSound( void );
-	static void ResetFlags( void );
-	static void Update( void );
-};
+	g_Flags.FindAndRemove( this );
+}

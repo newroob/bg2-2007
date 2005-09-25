@@ -33,24 +33,20 @@
 
 #include "cbase.h"
 #include "flag.h"
-#ifdef CLIENT_DLL
+/*#ifdef CLIENT_DLL
 	#include "c_hl2mp_player.h"
-#else
+#else*/
 	#include "hl2mp_player.h"
 	#include "hl2mp_gamerules.h"
 	#include "gamerules.h"
 	#include "team.h"
 	#include "engine/IEngineSound.h"
-#endif
+//#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-#ifdef CLIENT_DLL
-#define CFlag C_Flag
-#endif
-
-#ifndef CLIENT_DLL
+//#ifndef CLIENT_DLL
 //BG2 - Tjoppen - just make these global so we can reset them
 float	flNextClientPrintAll = 0;
 bool	bNextClientPrintAllForce = false;
@@ -83,63 +79,329 @@ void ClientPrintAll( char *str, bool printfordeadplayers = false, bool forcenext
 
 	//Msg( "done\n" );
 }
-#endif
+//#endif
 
-class CFlag : public CBaseAnimating
+
+
+void CFlag::Spawn( void )
 {
-	DECLARE_CLASS( CFlag, CBaseAnimating );
-	DECLARE_NETWORKCLASS(); 
-	DECLARE_PREDICTABLE();
-	DECLARE_DATADESC();
+	Precache( );
 
-	//int		m_iLastTeam;
-	CNetworkVar( int, m_iLastTeam );
-	float	m_flNextCapture;
-
-	int		m_iCapturePlayers;	//how many player must be nearby to capture this flag?
-	int m_iUncap;
-	int m_iTeamBonus;
-	int m_iTeamBonusInterval;
-	int m_iPlayerBonus;
-	int m_iForTeam;
-	float m_flNextTeamBonus;
-	float	m_flCaptureTime,	//.. and for how long?
-			m_flCaptureRadius;	//.. and how close?
-
-	string_t	m_sFlagName;
-
-public:
-
-	void Spawn( void )
+	/*switch( m_iForTeam )
 	{
-		Precache( );
+	default:
+		SetModel( "models/other/flag_n.mdl" );
+#ifndef CLIENT_DLL
+		m_iLastTeam = TEAM_UNASSIGNED;
+		ChangeTeam( TEAM_UNASSIGNED );
+#endif
+		break;
+	case 1:
+		SetModel( "models/other/flag_a.mdl" );
+#ifndef CLIENT_DLL
+		m_iLastTeam = TEAM_AMERICANS;
+		ChangeTeam( TEAM_AMERICANS );
+#endif
+		break;
+	case 2:
+		SetModel( "models/other/flag_b.mdl" );
+#ifndef CLIENT_DLL
+		m_iLastTeam = TEAM_BRITISH;
+		ChangeTeam( TEAM_BRITISH );
+#endif
+		break;
+	}*/
 
-		/*switch( m_iForTeam )
-		{
+	/*switch (m_iForTeam)
+	{
+		case 1://amer
+			SetModel( "models/other/flag_b.mdl" );
+			break;
+		case 2://brit
+			SetModel( "models/other/flag_a.mdl" );
+			break;
 		default:
 			SetModel( "models/other/flag_n.mdl" );
-#ifndef CLIENT_DLL
-			m_iLastTeam = TEAM_UNASSIGNED;
-			ChangeTeam( TEAM_UNASSIGNED );
-#endif
 			break;
-		case 1:
-			SetModel( "models/other/flag_a.mdl" );
-#ifndef CLIENT_DLL
-			m_iLastTeam = TEAM_AMERICANS;
-			ChangeTeam( TEAM_AMERICANS );
-#endif
-			break;
-		case 2:
-			SetModel( "models/other/flag_b.mdl" );
-#ifndef CLIENT_DLL
-			m_iLastTeam = TEAM_BRITISH;
-			ChangeTeam( TEAM_BRITISH );
-#endif
-			break;
-		}*/
+	}*/
 
-		/*switch (m_iForTeam)
+	//m_iLastTeam = TEAM_UNASSIGNED;
+
+	ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
+	m_iLastTeam = TEAM_UNASSIGNED;
+
+	/*int m_nIdealSequence = SelectWeightedSequence( ACT_VM_IDLE );
+	//SetActivity( ACT_VM_IDLE );
+	SetSequence( m_nIdealSequence );	
+	//SendViewModelAnim( m_nIdealSequence );
+	//SetIdealActivity( ACT_VM_IDLE );
+	//SetTouch(&CFlag::MyTouch);*/
+	
+	//SetSequence( SelectWeightedSequence( ACT_VM_IDLE ) );
+	//SetSequence(0);
+	
+	BaseClass::Spawn( );
+
+	SetThink( &CFlag::Think );
+	SetNextThink( gpGlobals->curtime );
+
+	//SetSolid( SOLID_BBOX );
+	//SetSolid( SOLID_BBOX );
+	//m_iTeam = TEAM_UNASSIGNED;
+}
+void CFlag::Precache( void )
+{
+	PrecacheModel ("models/other/flag_n.mdl");
+	PrecacheModel ("models/other/flag_a.mdl");
+	PrecacheModel ("models/other/flag_b.mdl");
+
+	PrecacheScriptSound( "British.win" );
+	PrecacheScriptSound( "Americans.win" );
+	PrecacheScriptSound( "Flag.capture" );
+
+	//PrecacheScriptSound( "ItemBattery.Touch" );
+
+}
+/*void MyTouch( CBaseEntity *pEntity )
+{
+#ifndef CLIENT_DLL
+	CBasePlayer *pPlayer = (CBasePlayer*)pEntity;
+	if( !pPlayer )
+		return;
+	
+	if( pPlayer->GetTeamNumber() != GetTeamNumber() )
+	{
+		Msg( "%s touched the flag\n", pPlayer->PlayerData()->netname );
+		ChangeTeam( pPlayer->GetTeamNumber() );
+		CFlagHandler::Update();
+	}
+
+	//PhysicsRemoveTouchedList( this );
+
+#endif
+	/*SetCheckUntouch( true );
+	EndTouch( pEntity );
+	SetTouch(&CFlag::MyTouch);*//*
+}*/
+
+void CFlag::Think( void )
+{
+	//SetSequence( SelectWeightedSequence( ACT_VM_IDLE ) );
+	//StudioFrameAdvance();
+
+//#ifndef CLIENT_DLL
+	CBasePlayer *pPlayer = NULL;
+
+	int americans = 0,
+		british = 0;
+
+	switch( GetTeamNumber() )
+	{
+		case TEAM_AMERICANS:
+			if (m_iTeamBonusInterval != 0)
+			{
+				if (m_flNextTeamBonus <= gpGlobals->curtime)
+				{
+					g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
+					m_flNextTeamBonus += m_iTeamBonusInterval;
+				}
+			}
+			break;
+		case TEAM_BRITISH:
+			if (m_iTeamBonusInterval != 0)
+			{
+				if (m_flNextTeamBonus <= gpGlobals->curtime)
+				{
+					g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
+					m_flNextTeamBonus += m_iTeamBonusInterval;
+				}
+			}
+			break;
+		default:
+			switch (m_iForTeam)
+			{
+				case 1://amer
+					if (m_iTeamBonusInterval != 0)
+					{
+						if (m_flNextTeamBonus <= gpGlobals->curtime)
+						{
+							g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
+							m_flNextTeamBonus += m_iTeamBonusInterval;
+						}
+					}
+					break;
+				case 2://brit
+					if (m_iTeamBonusInterval != 0)
+					{
+						if (m_flNextTeamBonus <= gpGlobals->curtime)
+						{
+							g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
+							m_flNextTeamBonus += m_iTeamBonusInterval;
+						}
+					}
+					break;
+			}
+	}
+
+	while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
+	{
+		if( !pPlayer->IsAlive() )	//dead players don't cap
+			continue;
+
+		switch( pPlayer->GetTeamNumber() )
+		{
+		case TEAM_AMERICANS:
+			if ((m_iForTeam == 1) || (m_iForTeam == 0))
+			{
+				americans++;
+			}
+			break;
+		case TEAM_BRITISH:
+			if ((m_iForTeam == 2) || (m_iForTeam == 0))
+			{
+				british++;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	char *msg = NULL;
+
+	if( americans + british > 0 && (americans <= 0 || british <= 0) )
+	{
+		//Msg( "\namericans = %i  british = %i\n", americans, british );
+
+		//only americans or british at the flag
+		//if we don't already own it, and we've been here for at least three seconds - capture
+
+		if( americans > 0 &&
+			americans >= min( m_iCapturePlayers, g_Teams[TEAM_AMERICANS]->GetNumPlayers() ) &&
+			GetTeamNumber() != TEAM_AMERICANS )
+		{
+			//Msg( "americans\n" );
+			if( m_iLastTeam != TEAM_AMERICANS )
+			{
+				char msg2[512];
+				//Msg( "americans are capturing a flag(\"%s\")\n", STRING( m_sFlagName.Get() ) );
+				Q_snprintf( msg2, 512, "The americans are capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
+				msg = msg2;
+				m_iLastTeam = TEAM_AMERICANS;
+				m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
+			}
+			else if( gpGlobals->curtime >= m_flNextCapture )
+			{
+				char msg2[512];
+                //CFlagHandler::PlayCaptureSound();
+				Q_snprintf( msg2, 512, "The americans captured a flag(%s)", STRING( m_sFlagName.Get() ) );
+				msg = msg2;
+				EmitSound( "Flag.capture" );
+				g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
+				m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
+
+				while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
+				{
+					if( !pPlayer->IsAlive() )	//dead players don't cap
+						continue;
+
+					switch( pPlayer->GetTeamNumber() )
+					{
+						case TEAM_AMERICANS:
+							pPlayer->IncrementFragCount(m_iPlayerBonus);
+							CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
+							pPlayer2->IncreaseReward(1);
+							break;
+					}
+				}
+				ChangeTeam( TEAM_AMERICANS );
+				CFlagHandler::Update();
+			}
+		}
+		else if( british > 0 &&
+			british >= min( m_iCapturePlayers, g_Teams[TEAM_BRITISH]->GetNumPlayers() ) &&
+			GetTeamNumber() != TEAM_BRITISH )
+		{
+			//Msg( "british\n" );
+			if( m_iLastTeam != TEAM_BRITISH )
+			{
+				char msg2[512];
+                //Msg( "british are capturing a flag(\"%s\")\n", STRING( m_sFlagName.Get() ) );
+				Q_snprintf( msg2, 512, "The british are capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
+				msg = msg2;
+				m_iLastTeam = TEAM_BRITISH;
+				m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
+			}
+			else if( gpGlobals->curtime >= m_flNextCapture )
+			{
+				char msg2[512];
+				//CFlagHandler::PlayCaptureSound();
+				Q_snprintf( msg2, 512, "The british captured a flag(%s)", STRING( m_sFlagName.Get() ) );
+				msg = msg2;
+				EmitSound( "Flag.capture" );
+				g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
+				m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
+
+				while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
+				{
+					if( !pPlayer->IsAlive() )	//dead players don't cap
+						continue;
+
+					switch( pPlayer->GetTeamNumber() )
+					{
+						case TEAM_BRITISH:
+							pPlayer->IncrementFragCount(m_iPlayerBonus);
+							CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
+							pPlayer2->IncreaseReward(1);
+							break;
+					}
+				}
+				ChangeTeam( TEAM_BRITISH );
+				CFlagHandler::Update();
+			}
+		}
+	}
+	else
+	{
+		if( m_iLastTeam != TEAM_UNASSIGNED )
+		{
+			//Msg( "stopped capturing a flag\n" );
+			if( m_iLastTeam == TEAM_AMERICANS && GetTeamNumber() != TEAM_AMERICANS )
+			{
+				char msg2[512];
+				Q_snprintf( msg2, 512, "The americans stopped capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
+				msg = msg2;
+			}
+			else if( m_iLastTeam == TEAM_BRITISH && GetTeamNumber() != TEAM_BRITISH )
+			{
+				char msg2[512];
+				Q_snprintf( msg2, 512, "The british stopped capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
+				msg = msg2;
+			}
+		}
+		//noone here
+		m_iLastTeam = TEAM_UNASSIGNED;
+		m_flNextCapture = 0;
+	}
+
+	ClientPrintAll( msg );
+//#endif
+	SetNextThink( gpGlobals->curtime + 0.5f );
+}
+
+void CFlag::ChangeTeam( int iTeamNum )
+{
+//#ifndef CLIENT_DLL
+	switch( iTeamNum )
+	{
+	case TEAM_AMERICANS:
+		SetModel( "models/other/flag_a.mdl" );
+		break;
+	case TEAM_BRITISH:
+		SetModel( "models/other/flag_b.mdl" );
+		break;
+	default:
+		switch( m_iForTeam )
 		{
 			case 1://amer
 				SetModel( "models/other/flag_b.mdl" );
@@ -150,315 +412,31 @@ public:
 			default:
 				SetModel( "models/other/flag_n.mdl" );
 				break;
-		}*/
-
-		//m_iLastTeam = TEAM_UNASSIGNED;
-
-		ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
-		m_iLastTeam = TEAM_UNASSIGNED;
-
-		/*int m_nIdealSequence = SelectWeightedSequence( ACT_VM_IDLE );
-		//SetActivity( ACT_VM_IDLE );
-		SetSequence( m_nIdealSequence );	
-		//SendViewModelAnim( m_nIdealSequence );
-		//SetIdealActivity( ACT_VM_IDLE );
-		//SetTouch(&CFlag::MyTouch);*/
-		
-		//SetSequence( SelectWeightedSequence( ACT_VM_IDLE ) );
-		//SetSequence(0);
-		
-		BaseClass::Spawn( );
-
-		SetThink( &CFlag::Think );
-		SetNextThink( gpGlobals->curtime );
-
-		//SetSolid( SOLID_BBOX );
-		//SetSolid( SOLID_BBOX );
-		//m_iTeam = TEAM_UNASSIGNED;
+		}
+		//SetModel( "models/other/flag_n.mdl" );
+		break;
 	}
-	void Precache( void )
-	{
-		PrecacheModel ("models/other/flag_n.mdl");
-		PrecacheModel ("models/other/flag_a.mdl");
-		PrecacheModel ("models/other/flag_b.mdl");
+//#endif
+	//m_iLastTeam = iTeamNum;
+	//m_iLastTeam = TEAM_UNASSIGNED;
 
-		PrecacheScriptSound( "British.win" );
-		PrecacheScriptSound( "Americans.win" );
-		PrecacheScriptSound( "Flag.capture" );
+	BaseClass::ChangeTeam( iTeamNum );
+}
 
-		//PrecacheScriptSound( "ItemBattery.Touch" );
-
-	}
-	/*void MyTouch( CBaseEntity *pEntity )
-	{
-#ifndef CLIENT_DLL
-		CBasePlayer *pPlayer = (CBasePlayer*)pEntity;
-		if( !pPlayer )
-			return;
-		
-		if( pPlayer->GetTeamNumber() != GetTeamNumber() )
-		{
-			Msg( "%s touched the flag\n", pPlayer->PlayerData()->netname );
-			ChangeTeam( pPlayer->GetTeamNumber() );
-			CFlagHandler::Update();
-		}
-
-		//PhysicsRemoveTouchedList( this );
-
-#endif
-		/*SetCheckUntouch( true );
-		EndTouch( pEntity );
-		SetTouch(&CFlag::MyTouch);*//*
-	}*/
-
-	void Think( void )
-	{
-		//SetSequence( SelectWeightedSequence( ACT_VM_IDLE ) );
-		//StudioFrameAdvance();
-
-#ifndef CLIENT_DLL
-		CBasePlayer *pPlayer = NULL;
-
-		int americans = 0,
-			british = 0;
-
-		switch( GetTeamNumber() )
-		{
-			case TEAM_AMERICANS:
-				if (m_iTeamBonusInterval != 0)
-				{
-					if (m_flNextTeamBonus <= gpGlobals->curtime)
-					{
-						g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
-						m_flNextTeamBonus += m_iTeamBonusInterval;
-					}
-				}
-				break;
-			case TEAM_BRITISH:
-				if (m_iTeamBonusInterval != 0)
-				{
-					if (m_flNextTeamBonus <= gpGlobals->curtime)
-					{
-						g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
-						m_flNextTeamBonus += m_iTeamBonusInterval;
-					}
-				}
-				break;
-			default:
-				switch (m_iForTeam)
-				{
-					case 1://amer
-						if (m_iTeamBonusInterval != 0)
-						{
-							if (m_flNextTeamBonus <= gpGlobals->curtime)
-							{
-								g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
-								m_flNextTeamBonus += m_iTeamBonusInterval;
-							}
-						}
-						break;
-					case 2://brit
-						if (m_iTeamBonusInterval != 0)
-						{
-							if (m_flNextTeamBonus <= gpGlobals->curtime)
-							{
-								g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
-								m_flNextTeamBonus += m_iTeamBonusInterval;
-							}
-						}
-						break;
-				}
-		}
-
-		while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
-		{
-			if( !pPlayer->IsAlive() )	//dead players don't cap
-				continue;
-
-			switch( pPlayer->GetTeamNumber() )
-			{
-			case TEAM_AMERICANS:
-				if ((m_iForTeam == 1) || (m_iForTeam == 0))
-				{
-					americans++;
-				}
-				break;
-			case TEAM_BRITISH:
-				if ((m_iForTeam == 2) || (m_iForTeam == 0))
-				{
-					british++;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-
-		char *msg = NULL;
-
-		if( americans + british > 0 && (americans <= 0 || british <= 0) )
-		{
-			//Msg( "\namericans = %i  british = %i\n", americans, british );
-
-			//only americans or british at the flag
-			//if we don't already own it, and we've been here for at least three seconds - capture
-
-			if( americans > 0 &&
-				americans >= min( m_iCapturePlayers, g_Teams[TEAM_AMERICANS]->GetNumPlayers() ) &&
-				GetTeamNumber() != TEAM_AMERICANS )
-			{
-				//Msg( "americans\n" );
-				if( m_iLastTeam != TEAM_AMERICANS )
-				{
-					char msg2[512];
-					//Msg( "americans are capturing a flag(\"%s\")\n", STRING( m_sFlagName ) );
-					Q_snprintf( msg2, 512, "The americans are capturing a flag(%s)", STRING( m_sFlagName ) );
-					msg = msg2;
-					m_iLastTeam = TEAM_AMERICANS;
-					m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
-				}
-				else if( gpGlobals->curtime >= m_flNextCapture )
-				{
-					char msg2[512];
-                    //CFlagHandler::PlayCaptureSound();
-					Q_snprintf( msg2, 512, "The americans captured a flag(%s)", STRING( m_sFlagName ) );
-					msg = msg2;
-					EmitSound( "Flag.capture" );
-					g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
-					m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
-
-					while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
-					{
-						if( !pPlayer->IsAlive() )	//dead players don't cap
-							continue;
-
-						switch( pPlayer->GetTeamNumber() )
-						{
-							case TEAM_AMERICANS:
-								pPlayer->IncrementFragCount(m_iPlayerBonus);
-								CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
-								pPlayer2->IncreaseReward(1);
-								break;
-						}
-					}
-					ChangeTeam( TEAM_AMERICANS );
-					CFlagHandler::Update();
-				}
-			}
-			else if( british > 0 &&
-				british >= min( m_iCapturePlayers, g_Teams[TEAM_BRITISH]->GetNumPlayers() ) &&
-				GetTeamNumber() != TEAM_BRITISH )
-			{
-				//Msg( "british\n" );
-				if( m_iLastTeam != TEAM_BRITISH )
-				{
-					char msg2[512];
-                    //Msg( "british are capturing a flag(\"%s\")\n", STRING( m_sFlagName ) );
-					Q_snprintf( msg2, 512, "The british are capturing a flag(%s)", STRING( m_sFlagName ) );
-					msg = msg2;
-					m_iLastTeam = TEAM_BRITISH;
-					m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
-				}
-				else if( gpGlobals->curtime >= m_flNextCapture )
-				{
-					char msg2[512];
-					//CFlagHandler::PlayCaptureSound();
-					Q_snprintf( msg2, 512, "The british captured a flag(%s)", STRING( m_sFlagName ) );
-					msg = msg2;
-					EmitSound( "Flag.capture" );
-					g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
-					m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
-
-					while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
-					{
-						if( !pPlayer->IsAlive() )	//dead players don't cap
-							continue;
-
-						switch( pPlayer->GetTeamNumber() )
-						{
-							case TEAM_BRITISH:
-								pPlayer->IncrementFragCount(m_iPlayerBonus);
-								CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
-								pPlayer2->IncreaseReward(1);
-								break;
-						}
-					}
-					ChangeTeam( TEAM_BRITISH );
-					CFlagHandler::Update();
-				}
-			}
-		}
-		else
-		{
-			if( m_iLastTeam != TEAM_UNASSIGNED )
-			{
-				//Msg( "stopped capturing a flag\n" );
-				if( m_iLastTeam == TEAM_AMERICANS && GetTeamNumber() != TEAM_AMERICANS )
-				{
-					char msg2[512];
-					Q_snprintf( msg2, 512, "The americans stopped capturing a flag(%s)", STRING( m_sFlagName ) );
-					msg = msg2;
-				}
-				else if( m_iLastTeam == TEAM_BRITISH && GetTeamNumber() != TEAM_BRITISH )
-				{
-					char msg2[512];
-					Q_snprintf( msg2, 512, "The british stopped capturing a flag(%s)", STRING( m_sFlagName ) );
-					msg = msg2;
-				}
-			}
-			//noone here
-			m_iLastTeam = TEAM_UNASSIGNED;
-			m_flNextCapture = 0;
-		}
-
-		ClientPrintAll( msg );
-#endif
-		SetNextThink( gpGlobals->curtime + 0.5f );
-	}
-
-	void ChangeTeam( int iTeamNum )
-	{
-#ifndef CLIENT_DLL
-		switch( iTeamNum )
-		{
-		case TEAM_AMERICANS:
-			SetModel( "models/other/flag_a.mdl" );
-			break;
-		case TEAM_BRITISH:
-			SetModel( "models/other/flag_b.mdl" );
-			break;
-		default:
-			switch( m_iForTeam )
-			{
-				case 1://amer
-					SetModel( "models/other/flag_b.mdl" );
-					break;
-				case 2://brit
-					SetModel( "models/other/flag_a.mdl" );
-					break;
-				default:
-					SetModel( "models/other/flag_n.mdl" );
-					break;
-			}
-			//SetModel( "models/other/flag_n.mdl" );
-			break;
-		}
-#endif
-		//m_iLastTeam = iTeamNum;
-		//m_iLastTeam = TEAM_UNASSIGNED;
-
-		BaseClass::ChangeTeam( iTeamNum );
-	}
-};
+int CFlag::UpdateTransmitState()
+{
+	return SetTransmitState( FL_EDICT_ALWAYS );
+}
 
 IMPLEMENT_NETWORKCLASS_ALIASED( Flag, DT_Flag )
 
 BEGIN_NETWORK_TABLE( CFlag, DT_Flag )
-#ifdef CLIENT_DLL
-	RecvPropInt( RECVINFO( m_iLastTeam ) ),
-#else
-	SendPropInt( SENDINFO( m_iLastTeam ) , Q_log2(NUM_TEAMS), SPROP_UNSIGNED ),
-#endif
+	SendPropInt( SENDINFO( m_iLastTeam ), Q_log2(NUM_TEAMS), SPROP_UNSIGNED ),
+	SendPropFloat( SENDINFO( m_flNextCapture ) ),
+	SendPropInt( SENDINFO( m_iCapturePlayers ), Q_log2(MAX_PLAYERS), SPROP_UNSIGNED ),
+	SendPropInt( SENDINFO( m_iForTeam ), 2, SPROP_UNSIGNED ),
+	SendPropFloat( SENDINFO( m_flCaptureTime ) ),
+	SendPropStringT( SENDINFO( m_sFlagName ) ),
 END_NETWORK_TABLE()
 
 BEGIN_PREDICTION_DATA( CFlag )
@@ -664,7 +642,7 @@ void CFlagHandler::Update( void )
 		iNumFlags++;
 	}
 
-	CBasePlayer *pPlayer = NULL;
+	/*CBasePlayer *pPlayer = NULL;
 	while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassname( pPlayer, "player" )) != NULL )
 	{
 		CSingleUserRecipientFilter user(pPlayer);
@@ -677,7 +655,7 @@ void CFlagHandler::Update( void )
 			CFlag *pFlag = (CFlag*)pEntity;
 			if( !pFlag )
 				continue;
-			Q_snprintf( szTemp, 512, "%s", STRING(pFlag->m_sFlagName));
+			Q_snprintf( szTemp, 512, "%s", STRING( pFlag->m_sFlagName.Get() ));
 			WRITE_STRING(szTemp);
 			WRITE_BYTE(pFlag->GetTeamNumber());
 			if (pFlag->m_flNextCapture <= gpGlobals->curtime)
@@ -694,7 +672,8 @@ void CFlagHandler::Update( void )
 			WRITE_BYTE(pFlag->m_iLastTeam);
 		}
 		MessageEnd();
-	}
+	}*/
+
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{
 		CFlag *pFlag = (CFlag*)pEntity;

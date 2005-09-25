@@ -31,50 +31,28 @@
 	//BG2 - <name of contributer>[ - <small description>]
 */
 
-/*#ifdef CLIENT_DLL
-#define CFlag C_Flag
-#endif*/
-
-class CFlag : public CBaseAnimating
+class C_Flag : public C_BaseAnimating
 {
-	DECLARE_CLASS( CFlag, CBaseAnimating );
-	DECLARE_NETWORKCLASS(); 
-	DECLARE_PREDICTABLE();
-	DECLARE_DATADESC();
+	DECLARE_CLASS( C_Flag, C_BaseAnimating );
+public:
+	DECLARE_CLIENTCLASS();
 
-	CNetworkVar( int, m_iLastTeam );		//which team is near this flag?
-	CNetworkVar( float, m_flNextCapture );
+					C_Flag();
+	virtual			~C_Flag();
 
-	CNetworkVar( int, m_iCapturePlayers );	//how many player must be nearby to capture this flag?
-	CNetworkVar( int, m_iForTeam );
-
-	int		m_iUncap,
-			m_iTeamBonus,
-			m_iTeamBonusInterval,
-			m_iPlayerBonus;
-
-	float	m_flNextTeamBonus;
-
-	CNetworkVar( float,	m_flCaptureTime );	//.. and for how long?
-	float	m_flCaptureRadius;				//.. and how close?
-
-	CNetworkVar( string_t, m_sFlagName );
+	//virtual void	PreDataUpdate( DataUpdateType_t updateType );
+	//virtual	void	ClientThink();
 
 public:
 
-	void Spawn( void );
-	void Precache( void );
-	void Think( void );
-	void ChangeTeam( int iTeamNum );
-	virtual int UpdateTransmitState();
+	int		m_iLastTeam;
+	float	m_flNextCapture;
+
+	int		m_iCapturePlayers;
+	int		m_iForTeam;
+	float	m_flCaptureTime;
+	
+	char	m_sFlagName[256];
 };
 
-class CFlagHandler
-{
-public:
-	static void RespawnAll( char *pSound );
-	static void RespawnWave();
-	//static void PlayCaptureSound( void );
-	static void ResetFlags( void );
-	static void Update( void );
-};
+extern CUtlVector< C_Flag * > g_Flags;
