@@ -2079,7 +2079,7 @@ bool CGameMovement::CheckJumpButton( void )
 	// Flag that we jumped.
 	mv->m_nOldButtons |= IN_JUMP;	// don't jump again until released
 
-//#ifndef CLIENT_DLL
+#ifndef CLIENT_DLL
 	//BG2 - Draco - decrease stamina for jumping
 	//CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
 	pHL2Player->m_iStamina -= 50;
@@ -2087,7 +2087,7 @@ bool CGameMovement::CheckJumpButton( void )
 	{
 		pHL2Player->m_iStamina = 0;
 	}
-//#endif
+#endif
 
 	return true;
 }

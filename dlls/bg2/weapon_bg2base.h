@@ -81,7 +81,8 @@ public:
 	struct attackinfo
 	{
 		int		m_iAttacktype;
-		Activity	m_iAttackActivity;
+		Activity	m_iAttackActivity,
+					m_iAttackActivityEmpty;
 
 		float	m_flRange,
 				m_flDamage,
@@ -205,7 +206,13 @@ public:
 
 	Activity	GetActivity( int iAttack )
 	{
-		return iAttack != ATTACK_NONE ? m_Attackinfos[iAttack].m_iAttackActivity : (Activity)0;
+		if( iAttack == ATTACK_NONE )
+			return (Activity)0;
+
+		if( m_iClip1 == 0 && m_Attackinfos[iAttack].m_iAttacktype == ATTACKTYPE_STAB )
+			return m_Attackinfos[iAttack].m_iAttackActivityEmpty;
+
+		return m_Attackinfos[iAttack].m_iAttackActivity;
 	}
 
 	float	GetCosTolerance( int iAttack )
@@ -229,6 +236,9 @@ public:
 	void		ImpactEffect( trace_t &traceHit );
 
 	void		Drop( const Vector &vecVelocity );
+
+	virtual void		WeaponIdle( void );
+	virtual Activity	GetDrawActivity( void );
 
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();

@@ -2491,6 +2491,12 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				Name="BG2"
 				Filter="">
 				<File
+					RelativePath=".\bg2\bg2_hud_flags.cpp">
+				</File>
+				<File
+					RelativePath=".\bg2\bg2_hud_main.cpp">
+				</File>
+				<File
 					RelativePath=".\bg2\bg2_hud_stamina.cpp">
 				</File>
 				<File
@@ -3405,10 +3411,10 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				RelativePath="..\public\tier1\mempool.h">
 			</File>
 			<File
-				RelativePath="..\public\vgui_controls\Menu.h">
+				RelativePath="menu.h">
 			</File>
 			<File
-				RelativePath="menu.h">
+				RelativePath="..\public\vgui_controls\Menu.h">
 			</File>
 			<File
 				RelativePath="..\public\vgui_controls\MenuItem.h">

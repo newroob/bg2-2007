@@ -168,7 +168,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		else
 		{
 			WeaponSound( EMPTY );
-			m_flNextPrimaryAttack = 0.15;
+			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.15;
 		}
 
 		return 0;
@@ -265,7 +265,7 @@ int CBaseBG2Weapon::FireBullet( int iAttack )
 		else
 		{
 			WeaponSound( EMPTY );
-			m_flNextPrimaryAttack = 0.15;
+			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.15;
 		}
 
 		return 0;
@@ -335,8 +335,10 @@ int CBaseBG2Weapon::FireBullet( int iAttack )
 	if( sv_infiniteammo.GetInt() == 0 )
 		m_iClip1--;
 
+#ifndef CLIENT_DLL
 	if( sv_steadyhand.GetInt() == 0 )
 		pOwner->ViewPunch( QAngle( -2, 0, 0 ) );
+#endif
 
 	SendWeaponAnim( GetActivity( iAttack ) );
 
@@ -645,13 +647,14 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 	//BG2 - Draco - decrease stam when attacking
 #ifndef CLIENT_DLL
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
-#else
+/*#else
 	C_HL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
-#endif
+#endif*/
 
 	pHL2Player->m_iStamina -= drain;
 	if( pHL2Player->m_iStamina < 0 )
 		pHL2Player->m_iStamina = 0;
+#endif
 }
 
 void CBaseBG2Weapon::SecondaryAttack( void )
@@ -683,14 +686,14 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 	//BG2 - Draco - decrease stam when attacking
 #ifndef CLIENT_DLL
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
-#else
+/*#else
 	C_HL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
-#endif
+#endif*/
 
 	pHL2Player->m_iStamina -= drain;
 	if( pHL2Player->m_iStamina < 0 )
 		pHL2Player->m_iStamina = 0;
-
+#endif
 }
 
 int CBaseBG2Weapon::Swing( int iAttack )
@@ -801,10 +804,12 @@ int CBaseBG2Weapon::Swing( int iAttack )
 	SendWeaponAnim( GetActivity( iAttack ) );
 	pOwner->SetAnimation( PLAYER_ATTACK2 );
 
+#ifndef CLIENT_DLL
 	if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
         pOwner->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(iAttack) );
 	else if( GetAttackType(iAttack) == ATTACKTYPE_SLASH )
 		pOwner->ViewPunch( QAngle( random->RandomFloat( -2, 2 ), random->RandomFloat( -8, 8 ), 0 ) * GetRecoil(iAttack) );
+#endif
 
 	//Setup our next attack times
 	//m_flNextPrimaryAttack = gpGlobals->curtime + GetFireRate();
@@ -817,6 +822,7 @@ int CBaseBG2Weapon::Swing( int iAttack )
 #else
 	C_HL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
 #endif
+
 	if (pHL2Player->m_iStamina <= 35)
 		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate(iAttack) + 0.25f;
 	else
@@ -830,4 +836,27 @@ void CBaseBG2Weapon::Drop( const Vector &vecVelocity )
 #ifndef CLIENT_DLL
 	UTIL_Remove( this );
 #endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Allows the weapon to choose proper weapon idle animation
+//-----------------------------------------------------------------------------
+void CBaseBG2Weapon::WeaponIdle( void )
+{
+	//See if we should idle high or low
+	if ( HasWeaponIdleTimeElapsed() ) 
+	{
+		if( m_iClip1 == 0 )
+			SendWeaponAnim( ACT_VM_IDLE_EMPTY );
+		else
+			SendWeaponAnim( ACT_VM_IDLE );
+	}
+}
+
+Activity CBaseBG2Weapon::GetDrawActivity( void )
+{
+	if( m_iClip1 == 0 )
+		return ACT_VM_DRAW_EMPTY;
+
+	return ACT_VM_DRAW;
 }

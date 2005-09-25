@@ -114,6 +114,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_Attackinfos[1].m_flRange				= REVOL_BAYONET_RANGE;
 	m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
+	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
 
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= REVOL_BAYONET_RANGE;
@@ -152,6 +153,7 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_Attackinfos[1].m_flRange				= BESS_BAYONET_RANGE;
 	m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
+	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
 
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= BESS_BAYONET_RANGE;
@@ -190,6 +192,7 @@ DECLARE_BG2_WEAPON( charleville )
 	m_Attackinfos[1].m_flRange				= CHARLE_BAYONET_RANGE;
 	m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
+	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
 
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= CHARLE_BAYONET_RANGE;

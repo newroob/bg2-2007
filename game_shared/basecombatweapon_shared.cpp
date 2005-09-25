@@ -1874,7 +1874,9 @@ bool CBaseCombatWeapon::SetIdealActivity( Activity ideal )
 	int nextSequence = FindTransitionSequence( GetSequence(), m_nIdealSequence, NULL );
 
 	// Don't use transitions when we're deploying
-	if ( ideal != ACT_VM_DRAW && IsWeaponVisible() && nextSequence != m_nIdealSequence )
+	//BG2 - Tjoppen - fixed for empty draw anim
+	//if ( ideal != ACT_VM_DRAW && IsWeaponVisible() && nextSequence != m_nIdealSequence )
+	if ( ideal != GetDrawActivity() && IsWeaponVisible() && nextSequence != m_nIdealSequence )
 	{
 		//Set our activity to the next transitional animation
 		SetActivity( ACT_TRANSITION );
@@ -1890,7 +1892,9 @@ bool CBaseCombatWeapon::SetIdealActivity( Activity ideal )
 	}
 
 	//Set the next time the weapon will idle
-	SetWeaponIdleTime( gpGlobals->curtime + SequenceDuration() );
+	//BG2 - Tjoppen - don't idle immediately a.k.a. behave like HL1
+	//SetWeaponIdleTime( gpGlobals->curtime + SequenceDuration() );
+	SetWeaponIdleTime( gpGlobals->curtime + SequenceDuration() + random->RandomFloat( 5.f, 15.f ) );
 	return true;
 }
 
