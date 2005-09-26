@@ -33,7 +33,9 @@
 
 #include "weapon_bg2base.h"
 
-const float FIREARM_RANGE = 200 * 3 * 12;		//200 yards - this is roughly the default sight range
+const float	PISTOL_RANGE = 40 * 3 * 12,		//40 yards
+			MUSKET_RANGE = 175 * 3 * 12,	//175 yards
+			RIFLE_RANGE = 195 * 3 * 12;		//195 yards
 
 //BG2 - Tjoppen - these constants from weapon_data.h @ BG 1.0F RC14
 // damage values for each attack on each weapon
@@ -95,7 +97,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_Attackinfos[0].m_flDamage				= REVOL_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0f;
 	m_Attackinfos[0].m_flRecoil				= 0.3;
-	m_Attackinfos[0].m_flRange				= FIREARM_RANGE;
+	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 11.0f;
 	m_Attackinfos[0].m_flCrouchStill		= 1.75f;
 	m_Attackinfos[0].m_flStandMoving		= 9.0f;
@@ -105,7 +107,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;
-	m_fMaxRange1	= FIREARM_RANGE;
+	m_fMaxRange1	= RIFLE_RANGE;
 	
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
@@ -134,7 +136,7 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_Attackinfos[0].m_flDamage				= BESS_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
-	m_Attackinfos[0].m_flRange				= FIREARM_RANGE;
+	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 12.0f;
 	m_Attackinfos[0].m_flCrouchStill		= 4.0f;
 	m_Attackinfos[0].m_flStandMoving		= 12.0f;
@@ -144,7 +146,7 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;
-	m_fMaxRange1	= FIREARM_RANGE;
+	m_fMaxRange1	= MUSKET_RANGE;
 
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
@@ -173,7 +175,7 @@ DECLARE_BG2_WEAPON( charleville )
 	m_Attackinfos[0].m_flDamage				= CHARLE_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.6;
-	m_Attackinfos[0].m_flRange				= FIREARM_RANGE;
+	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 11.5f;
 	m_Attackinfos[0].m_flCrouchStill		= 3.5f;
 	m_Attackinfos[0].m_flStandMoving		= 11.5f;
@@ -183,7 +185,7 @@ DECLARE_BG2_WEAPON( charleville )
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;
-	m_fMaxRange1	= FIREARM_RANGE;
+	m_fMaxRange1	= MUSKET_RANGE;
 
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
@@ -212,7 +214,7 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_Attackinfos[0].m_flDamage				= PENNY_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.3;
-	m_Attackinfos[0].m_flRange				= FIREARM_RANGE;
+	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 10.0f;
 	m_Attackinfos[0].m_flCrouchStill		= 1.5f;
 	m_Attackinfos[0].m_flStandMoving		= 8.0f;
@@ -222,7 +224,7 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;
-	m_fMaxRange1	= FIREARM_RANGE;
+	m_fMaxRange1	= RIFLE_RANGE;
 
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
@@ -242,7 +244,7 @@ DECLARE_BG2_WEAPON( pistol_a )
 	m_Attackinfos[0].m_flDamage				= PISTOLA_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 1.0;
-	m_Attackinfos[0].m_flRange				= FIREARM_RANGE;
+	m_Attackinfos[0].m_flRange				= PISTOL_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 7.5f;
 	m_Attackinfos[0].m_flCrouchStill		= 5.0f;
 	m_Attackinfos[0].m_flStandMoving		= 9.0f;
@@ -252,7 +254,7 @@ DECLARE_BG2_WEAPON( pistol_a )
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;
-	m_fMaxRange1	= FIREARM_RANGE;
+	m_fMaxRange1	= PISTOL_RANGE;
 
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
@@ -272,7 +274,7 @@ DECLARE_BG2_WEAPON( pistol_b )
 	m_Attackinfos[0].m_flDamage				= PISTOLB_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 1.0;
-	m_Attackinfos[0].m_flRange				= FIREARM_RANGE;
+	m_Attackinfos[0].m_flRange				= PISTOL_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 7.5f;
 	m_Attackinfos[0].m_flCrouchStill		= 5.0f;
 	m_Attackinfos[0].m_flStandMoving		= 9.0f;
@@ -282,7 +284,7 @@ DECLARE_BG2_WEAPON( pistol_b )
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;
-	m_fMaxRange1	= FIREARM_RANGE;
+	m_fMaxRange1	= PISTOL_RANGE;
 
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;

@@ -501,6 +501,7 @@ void CHL2MP_Player::Spawn(void)
 	m_flNextVoicecomm = gpGlobals->curtime;	//BG2 - Tjoppen - reset voicecomm timer
 	m_iStamina = 100;						//BG2 - Draco - reset stamina to 100
 	m_fNextStamRegen = gpGlobals->curtime;	//BG2 - Draco - regen stam now!
+	m_iClass = m_iNextClass;				//BG2 - Tjoppen - sometimes these may not match
 
 	pl.deadflag = false;
 	RemoveSolidFlags( FSOLID_NOT_SOLID );
@@ -1443,11 +1444,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			char cmd[512];
+			/*char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );
+			engine->ClientCommand( edict(), cmd );*/
+			SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
 		}
 
 		return true;
@@ -1499,11 +1501,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			char cmd[512];
+			/*char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );
+			engine->ClientCommand( edict(), cmd );*/
+			SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
 		}
 
 		return true;
@@ -1555,11 +1558,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			char cmd[512];
+			/*char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );
+			engine->ClientCommand( edict(), cmd );*/
+			SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
 		}
 
 		return true;
@@ -1611,11 +1615,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			char cmd[512];
+			/*char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );
+			engine->ClientCommand( edict(), cmd );*/
+			SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
 		}
 
 		return true;
@@ -1667,11 +1672,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			char cmd[512];
+			/*char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );
+			engine->ClientCommand( edict(), cmd );*/
+			SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
 		}
 
 		return true;
@@ -1723,11 +1729,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			char cmd[512];
+			/*char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );
+			engine->ClientCommand( edict(), cmd );*/
+			SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
 		}
 
 		return true;
@@ -2067,11 +2074,12 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 	{
 		m_iClass = m_iNextClass;
 
-		char cmd[512];
+		/*char cmd[512];
 		Q_strncpy( cmd, "cl_playermodel ", 512 );
 		strncat( cmd, PlayermodelTeamClass( GetTeamNumber(), GetClass() ), 512 );
 
-		engine->ClientCommand( edict(), cmd );
+		engine->ClientCommand( edict(), cmd );*/
+		SetModel( PlayermodelTeamClass( GetTeamNumber(), GetClass() ) );
 	}
 	//
 
