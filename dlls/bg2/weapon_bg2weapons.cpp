@@ -122,6 +122,24 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_fMaxRange2	= REVOL_BAYONET_RANGE;
 }
 
+#ifndef CLIENT_DLL
+acttable_t CWeaponrevolutionnaire::m_acttable[] = 
+{
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_SHOTGUN,					false },
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_SHOTGUN,					false },
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_SHOTGUN,			false },
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_SHOTGUN,			false },
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN,	false },
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,		false },
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_SHOTGUN,					false },
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SHOTGUN,				false },
+
+	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,					false },
+};
+
+IMPLEMENT_ACTTABLE( CWeaponrevolutionnaire );
+#endif
+
 #ifdef CLIENT_DLL
 #define CWeaponbrownbess C_Weaponbrownbess
 #endif
@@ -160,6 +178,24 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= BESS_BAYONET_RANGE;
 }
+
+#ifndef CLIENT_DLL
+acttable_t CWeaponbrownbess::m_acttable[] = 
+{
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_SHOTGUN,					false },
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_SHOTGUN,					false },
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_SHOTGUN,			false },
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_SHOTGUN,			false },
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN,	false },
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,		false },
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_SHOTGUN,					false },
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SHOTGUN,				false },
+
+	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,					false },
+};
+
+IMPLEMENT_ACTTABLE( CWeaponbrownbess );
+#endif
 
 #ifdef CLIENT_DLL
 #define CWeaponcharleville C_Weaponcharleville
@@ -200,6 +236,24 @@ DECLARE_BG2_WEAPON( charleville )
 	m_fMaxRange2	= CHARLE_BAYONET_RANGE;
 }
 
+#ifndef CLIENT_DLL
+acttable_t CWeaponcharleville::m_acttable[] = 
+{
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_SHOTGUN,					false },
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_SHOTGUN,					false },
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_SHOTGUN,			false },
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_SHOTGUN,			false },
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN,	false },
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,		false },
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_SHOTGUN,					false },
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SHOTGUN,				false },
+
+	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,					false },
+};
+
+IMPLEMENT_ACTTABLE( CWeaponcharleville );
+#endif
+
 #ifdef CLIENT_DLL
 #define CWeaponpennsylvania C_Weaponpennsylvania
 #endif
@@ -229,6 +283,24 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
 }
+
+#ifndef CLIENT_DLL
+acttable_t CWeaponpennsylvania::m_acttable[] = 
+{
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_SHOTGUN,					false },
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_SHOTGUN,					false },
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_SHOTGUN,			false },
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_SHOTGUN,			false },
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN,	false },
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,		false },
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_SHOTGUN,					false },
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SHOTGUN,				false },
+
+	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,					false },
+};
+
+IMPLEMENT_ACTTABLE( CWeaponpennsylvania );
+#endif
 
 #ifdef CLIENT_DLL
 #define CWeaponpistol_a C_Weaponpistol_a
@@ -260,6 +332,24 @@ DECLARE_BG2_WEAPON( pistol_a )
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
 }
 
+#ifndef CLIENT_DLL
+acttable_t CWeaponpistol_a::m_acttable[] = 
+{
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_PISTOL,					false },
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_PISTOL,					false },
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_PISTOL,			false },
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_PISTOL,			false },
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,	false },
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_PISTOL,		false },
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_PISTOL,					false },
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_PISTOL,				false },
+
+	{ ACT_RANGE_ATTACK2,				ACT_VM_SECONDARYATTACK,					false },
+};
+
+IMPLEMENT_ACTTABLE( CWeaponpistol_a );
+#endif
+
 #ifdef CLIENT_DLL
 #define CWeaponpistol_b C_Weaponpistol_b
 #endif
@@ -290,6 +380,24 @@ DECLARE_BG2_WEAPON( pistol_b )
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
 }
 
+#ifndef CLIENT_DLL
+acttable_t CWeaponpistol_b::m_acttable[] = 
+{
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_PISTOL,					false },
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_PISTOL,					false },
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_PISTOL,			false },
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_PISTOL,			false },
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,	false },
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_PISTOL,		false },
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_PISTOL,					false },
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_PISTOL,				false },
+
+	{ ACT_RANGE_ATTACK2,				ACT_VM_SECONDARYATTACK,					false },
+};
+
+IMPLEMENT_ACTTABLE( CWeaponpistol_b );
+#endif
+
 #ifdef CLIENT_DLL
 #define CWeaponsabre C_Weaponsabre
 #endif
@@ -314,6 +422,24 @@ DECLARE_BG2_WEAPON( sabre )
 	m_Attackinfos[1] = m_Attackinfos[0];
 }
 
+#ifndef CLIENT_DLL
+acttable_t CWeaponsabre::m_acttable[] = 
+{
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SLAM,					true },
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_MELEE,					false },
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_MELEE,					false },
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_MELEE,			false },
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_MELEE,			false },
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_MELEE,			false },
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_MELEE,					false },
+
+	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
+};
+
+IMPLEMENT_ACTTABLE( CWeaponsabre );
+#endif
+
 #ifdef CLIENT_DLL
 #define CWeaponknife C_Weaponknife
 #endif
@@ -337,3 +463,21 @@ DECLARE_BG2_WEAPON( knife )
 	//secondary
 	m_Attackinfos[1] = m_Attackinfos[0];
 }
+
+#ifndef CLIENT_DLL
+acttable_t CWeaponknife::m_acttable[] = 
+{
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SLAM,					true },
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_MELEE,					false },
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_MELEE,					false },
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_MELEE,			false },
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_MELEE,			false },
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_MELEE,			false },
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_MELEE,					false },
+
+	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
+};
+
+IMPLEMENT_ACTTABLE( CWeaponknife );
+#endif

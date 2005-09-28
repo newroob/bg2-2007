@@ -71,9 +71,14 @@ class IPhysicsConstraint;
 
 // Put this in your derived class definition to declare it's activity table
 // UNDONE: Cascade these?
+//BG2 - Tjoppen - DECLARE_ACTTABLE only on server..
+#ifndef CLIENT_DLL
 #define DECLARE_ACTTABLE()		static acttable_t m_acttable[];\
 	acttable_t *ActivityList( void );\
 	int ActivityListCount( void );
+#else
+#define DECLARE_ACTTABLE()
+#endif
 
 // You also need to include the activity table itself in your class' implementation:
 // e.g.

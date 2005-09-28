@@ -92,7 +92,7 @@ END_PREDICTION_DATA()
 PRECACHE_WEAPON_REGISTER( weapon_revolutionnaire );*/
 
 #ifndef CLIENT_DLL
-acttable_t CBaseBG2Weapon::m_acttable[] = 
+/*acttable_t CBaseBG2Weapon::m_acttable[] = 
 {
 
 	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_PISTOL,					false },
@@ -108,9 +108,9 @@ acttable_t CBaseBG2Weapon::m_acttable[] =
 
 	//this is to catch the default fire animation...
 	//{ ACT_WALK,							ACT_HL2MP_JUMP_PISTOL,					false },
-};
+};*/
 
-IMPLEMENT_ACTTABLE( CBaseBG2Weapon );
+//IMPLEMENT_ACTTABLE( CBaseBG2Weapon );
 
 #endif
 

@@ -1210,6 +1210,14 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 
 		return;
 	}
+	//BG2 - Tjoppen - ACT_RANGE_ATTACK2
+	else if ( idealActivity == ACT_RANGE_ATTACK2 )
+	{
+		RestartGesture( Weapon_TranslateActivity( idealActivity ) );
+		Weapon_SetActivity( Weapon_TranslateActivity( ACT_RANGE_ATTACK2 ), 0 );
+		return;
+	}
+	//
 	else if ( idealActivity == ACT_HL2MP_GESTURE_RELOAD )
 	{
 		RestartGesture( Weapon_TranslateActivity( idealActivity ) );
@@ -1444,12 +1452,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			/*char cmd[512];
+			char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );*/
-			SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
+			engine->ClientCommand( edict(), cmd );
+			//SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );	//doesn't change team and stuff
 		}
 
 		return true;
@@ -1501,12 +1509,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			/*char cmd[512];
+			char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );*/
-			SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
+			engine->ClientCommand( edict(), cmd );
+			//SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
 		}
 
 		return true;
@@ -1558,12 +1566,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			/*char cmd[512];
+			char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );*/
-			SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
+			engine->ClientCommand( edict(), cmd );
+			//SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
 		}
 
 		return true;
@@ -1615,12 +1623,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			/*char cmd[512];
+			char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );*/
-			SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
+			engine->ClientCommand( edict(), cmd );
+			//SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
 		}
 
 		return true;
@@ -1672,12 +1680,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			/*char cmd[512];
+			char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );*/
-			SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
+			engine->ClientCommand( edict(), cmd );
+			//SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
 		}
 
 		return true;
@@ -1729,12 +1737,12 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			/*char cmd[512];
+			char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );*/
-			SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
+			engine->ClientCommand( edict(), cmd );
+			//SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
 		}
 
 		return true;
@@ -2074,12 +2082,12 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 	{
 		m_iClass = m_iNextClass;
 
-		/*char cmd[512];
+		char cmd[512];
 		Q_strncpy( cmd, "cl_playermodel ", 512 );
 		strncat( cmd, PlayermodelTeamClass( GetTeamNumber(), GetClass() ), 512 );
 
-		engine->ClientCommand( edict(), cmd );*/
-		SetModel( PlayermodelTeamClass( GetTeamNumber(), GetClass() ) );
+		engine->ClientCommand( edict(), cmd );
+		//SetModel( PlayermodelTeamClass( GetTeamNumber(), GetClass() ) );
 	}
 	//
 

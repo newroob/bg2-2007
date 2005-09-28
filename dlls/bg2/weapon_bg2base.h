@@ -243,9 +243,9 @@ public:
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
 
-#ifndef CLIENT_DLL
+/*#ifndef CLIENT_DLL
 	DECLARE_ACTTABLE();
-#endif
+#endif*/
 
 private:
 	CBaseBG2Weapon( const CBaseBG2Weapon & );
@@ -264,6 +264,7 @@ public:															\
 	CWeapon##name( void );										\
 	DECLARE_NETWORKCLASS();										\
 	DECLARE_PREDICTABLE();										\
+	DECLARE_ACTTABLE();											\
 private:														\
 	CWeapon##name( const CWeapon##name & );						\
 };																\
