@@ -500,6 +500,89 @@ void IN_ScoreUp(void)
 	}
 }
 
+//BG2 - Tjoppen - enable togglescores and spec_menu
+void ToggleScores( void )
+{
+	if( gViewPortInterface )
+	{
+		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_SCOREBOARD );
+		if( panel )
+		{
+			if( panel->IsVisible() )
+			{
+				panel->ShowPanel( false );
+				GetClientVoiceMgr()->StopSquelchMode();
+			}
+			else
+				panel->ShowPanel( true );
+		}
+	}
+}
+
+void SpecMenu( void )
+{
+	if( gViewPortInterface )
+	{
+		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_SPECMENU );
+		if( panel )
+		{
+			//toggle
+			panel->ShowPanel( !panel->IsVisible() );
+		}
+	}
+}
+//
+
+//BG2 - Tjoppen - make vgui stuff into proper commands that can be issued via console
+void ClassMenu( void )
+{
+	if( gViewPortInterface )
+	{
+		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_CLASSES );
+		if( panel )
+		{
+			//toggle
+			panel->ShowPanel( !panel->IsVisible() );
+		}
+
+		gViewPortInterface->ShowPanel( PANEL_COMM, false );
+		gViewPortInterface->ShowPanel( PANEL_COMM2, false );
+	}
+}
+
+void CommMenu( void )
+{
+	if( gViewPortInterface )
+	{
+		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_COMM );
+		if( panel )
+		{
+			//toggle
+			panel->ShowPanel( !panel->IsVisible() );
+		}
+
+		gViewPortInterface->ShowPanel( PANEL_CLASSES, false );
+		gViewPortInterface->ShowPanel( PANEL_COMM2, false );
+	}
+}
+
+void CommMenu2( void )
+{
+	if( gViewPortInterface )
+	{
+		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_COMM2 );
+		if( panel )
+		{
+			//toggle
+			panel->ShowPanel( !panel->IsVisible() );
+		}
+
+		gViewPortInterface->ShowPanel( PANEL_CLASSES, false );
+		gViewPortInterface->ShowPanel( PANEL_COMM, false );
+	}
+}
+//
+
 
 /*
 ============
@@ -1280,6 +1363,15 @@ static ConCommand startscore("+score", IN_ScoreDown);
 static ConCommand endscore("-score", IN_ScoreUp);
 static ConCommand startshowscores("+showscores", IN_ScoreDown);
 static ConCommand endshowscores("-showscores", IN_ScoreUp);
+//BG2 - Tjoppen - Enable togglescores and spec_menu
+static ConCommand togglescores("togglescores", ToggleScores);
+static ConCommand spec_menu("spec_menu", SpecMenu);
+//
+//BG2 - Tjoppen - make vgui stuff into proper commands that can be issued via console
+static ConCommand classmenu(PANEL_CLASSES, ClassMenu);
+static ConCommand commmenu(PANEL_COMM, CommMenu);
+static ConCommand commmenu2(PANEL_COMM2, CommMenu2);
+//
 static ConCommand startgraph("+graph", IN_GraphDown);
 static ConCommand endgraph("-graph", IN_GraphUp);
 static ConCommand startbreak("+break",IN_BreakDown);

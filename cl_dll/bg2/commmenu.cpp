@@ -69,6 +69,7 @@ private:
 CCommMenu::CCommMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_COMM )
 {
 	slot1 = slot2 = slot3 = slot4 = slot5 = slot6 = slot7 = slot8 = /*slot9 =*/ slot10 = -1;
+	classmenu = commmenu = commmenu2 = -1;
 		
 	m_pViewPort = pViewPort;
 
@@ -235,7 +236,7 @@ void CCommMenu::OnKeyCodePressed(KeyCode code)
 		m_pViewPort->ShowPanel( this, false );
 	}*/
 
-#define ifkey( index, index2 ) if( iLastTrappedKey == slot##index ) { engine->ServerCmd( "voicecomm " #index2 ); m_pViewPort->ShowPanel( this, false ); }
+#define ifkey( index, index2 ) if( iLastTrappedKey == slot##index ) { engine->ServerCmd( "voicecomm " #index2 ); ShowPanel( false ); }
 			ifkey( 1, 0 )
 	else	ifkey( 2, 1 )
 	else	ifkey( 3, 2 )
@@ -246,6 +247,30 @@ void CCommMenu::OnKeyCodePressed(KeyCode code)
 	else	ifkey( 8, 7 )
 	else if( iLastTrappedKey == slot10 )
 		m_pViewPort->ShowPanel( this, false );
+	else if( iLastTrappedKey == classmenu )
+	{
+		m_pViewPort->ShowPanel( PANEL_CLASSES, true );
+		m_pViewPort->ShowPanel( PANEL_COMM, false );
+		m_pViewPort->ShowPanel( PANEL_COMM2, false );
+
+		return;
+	}
+	else if( iLastTrappedKey == commmenu )
+	{
+		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+		m_pViewPort->ShowPanel( PANEL_COMM, false );
+		m_pViewPort->ShowPanel( PANEL_COMM2, false );
+		
+		return;
+	}
+	else if( iLastTrappedKey == commmenu2 )
+	{
+		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+		m_pViewPort->ShowPanel( PANEL_COMM, false );
+		m_pViewPort->ShowPanel( PANEL_COMM2, true );
+		
+		return;
+	}
 
 	/*else if( iLastTrappedKey == m_iLightAKey )
 	{
@@ -665,6 +690,10 @@ void CCommMenu::Update( void )
 	getkey( 7 );
 	getkey( 8 );
 	getkey( 10 );
+
+	if( classmenu < 0 ) classmenu = gameuifuncs->GetEngineKeyCodeForBind( "classmenu" );
+	if( commmenu < 0 ) commmenu = gameuifuncs->GetEngineKeyCodeForBind( "commmenu" );
+	if( commmenu2 < 0 ) commmenu2 = gameuifuncs->GetEngineKeyCodeForBind( "commmenu2" );
 
 	/*if( m_iLightAKey < 0 ) m_iLightAKey = gameuifuncs->GetEngineKeyCodeForBind( "slot4" );
 	if( m_iMediumAKey < 0 ) m_iMediumAKey = gameuifuncs->GetEngineKeyCodeForBind( "slot5" );

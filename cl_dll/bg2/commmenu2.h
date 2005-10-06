@@ -143,7 +143,11 @@ private:
 		slot7,
 		slot8,
 		slot9,
-		slot10;
+		slot10,
+
+		classmenu,
+		commmenu,
+		commmenu2;
 };
 
 #endif // COMMMENU2_H

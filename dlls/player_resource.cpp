@@ -70,6 +70,16 @@ void CPlayerResource::Spawn( void )
 	m_nUpdateCounter = 0;
 }
 
+//BG2 - Tjoppen - health fix
+//-----------------------------------------------------------------------------
+// Purpose: Sets health value for a particular client (used to set on spawn so the data will be sent synchronously)
+//-----------------------------------------------------------------------------
+void CPlayerResource::SetPlayerHealth(int entindex, int health)
+{
+	m_iHealth.Set(entindex, health);
+}
+//
+
 //-----------------------------------------------------------------------------
 // Purpose: The Player resource is always transmitted to clients
 //-----------------------------------------------------------------------------

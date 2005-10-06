@@ -100,7 +100,10 @@ public:
 
 	// Data handlers
 	virtual bool	IsPlayer( void ) const { return true; };
-	virtual int		GetHealth() const { return m_iHealth; };
+	//BG2 - Tjoppen - health fix
+	//virtual int		GetHealth() const { return m_iHealth; };
+	virtual int             GetHealth() const;
+	//
 
 	// observer mode
 	virtual int			GetObserverMode() const;
@@ -345,7 +348,9 @@ private:
 	EHANDLE			m_hOldVehicle;
 	
 	float			m_flMaxspeed;
-	int				m_iHealth;
+	//BG2 - Tjoppen - health fix
+	//int				m_iHealth;
+	//
 
 	CInterpolatedVar< Vector >	m_iv_vecViewOffset;
 

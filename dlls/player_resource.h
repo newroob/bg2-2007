@@ -25,6 +25,9 @@ public:
 	virtual void ResourceThink( void );
 	virtual void UpdatePlayerData( void );
 	virtual int  UpdateTransmitState(void);
+	//BG2 - Tjoppen - health fix
+	void SetPlayerHealth(int entindex, int health);
+	//
 
 protected:
 	// Data for each player that's propagated to all clients

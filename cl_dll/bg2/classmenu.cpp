@@ -167,6 +167,7 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 {
 	m_iInfantryKey = m_iOfficerKey = m_iSniperKey = -1;
 	m_iCancelKey = -1;
+	classmenu = commmenu = commmenu2 = -1;
 		
 	m_pViewPort = pViewPort;
 
@@ -309,6 +310,30 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 		ToggleButtons(1);
 		m_pViewPort->ShowPanel( this, false );
 	}
+	else if( iLastTrappedKey == classmenu )
+	{
+		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+		m_pViewPort->ShowPanel( PANEL_COMM, false );
+		m_pViewPort->ShowPanel( PANEL_COMM2, false );
+		
+		return;
+	}
+	else if( iLastTrappedKey == commmenu )
+	{
+		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+		m_pViewPort->ShowPanel( PANEL_COMM, true );
+		m_pViewPort->ShowPanel( PANEL_COMM2, false );
+		
+		return;
+	}
+	else if( iLastTrappedKey == commmenu2 )
+	{
+		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+		m_pViewPort->ShowPanel( PANEL_COMM, false );
+		m_pViewPort->ShowPanel( PANEL_COMM2, true );
+		
+		return;
+	}
 }
 
 void CClassMenu::ShowPanel(bool bShow)
@@ -350,6 +375,10 @@ void CClassMenu::Update( void )
 	if( m_iSniperKey < 0 ) m_iSniperKey = gameuifuncs->GetEngineKeyCodeForBind( "slot3" );
 
 	if( m_iCancelKey < 0 ) m_iCancelKey = gameuifuncs->GetEngineKeyCodeForBind( "slot10" );
+
+	if( classmenu < 0 ) classmenu = gameuifuncs->GetEngineKeyCodeForBind( "classmenu" );
+	if( commmenu < 0 ) commmenu = gameuifuncs->GetEngineKeyCodeForBind( "commmenu" );
+	if( commmenu2 < 0 ) commmenu2 = gameuifuncs->GetEngineKeyCodeForBind( "commmenu2" );
 }
 
 void CClassMenu::OnThink()

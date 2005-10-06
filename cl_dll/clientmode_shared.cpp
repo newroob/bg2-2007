@@ -444,7 +444,7 @@ int	ClientModeShared::KeyInput( int down, int keynum, const char *pszCurrentBind
 	}
 
 	//BG2 - Tjoppen - class selection menu
-	if( down && pszCurrentBinding && Q_strcmp( pszCurrentBinding, PANEL_CLASSES ) == 0 )
+	/*if( down && pszCurrentBinding && Q_strcmp( pszCurrentBinding, PANEL_CLASSES ) == 0 )
 	{
 		m_pViewport->ShowPanel( PANEL_CLASSES, true );
 		return 0;
@@ -453,7 +453,7 @@ int	ClientModeShared::KeyInput( int down, int keynum, const char *pszCurrentBind
 	{
 		m_pViewport->ShowPanel( PANEL_TEAMS, true );
 		return 0;
-	}*/
+	}*//*
 	if( down && pszCurrentBinding && Q_strcmp( pszCurrentBinding, PANEL_COMM ) == 0 )
 	{
 		m_pViewport->ShowPanel( PANEL_COMM, true );
@@ -463,7 +463,7 @@ int	ClientModeShared::KeyInput( int down, int keynum, const char *pszCurrentBind
 	{
 		m_pViewport->ShowPanel( PANEL_COMM2, true );
 		return 0;
-	}
+	}*/
 	//
 
 	C_BaseCombatWeapon *pWeapon = GetActiveWeapon();

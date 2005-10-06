@@ -1017,10 +1017,16 @@ int CHL2MPRules::PlayerRelationship( CBaseEntity *pPlayer, CBaseEntity *pTarget 
 
 const char *CHL2MPRules::GetGameDescription( void )
 { 
-	if ( IsTeamplay() )
+	//BG2 - Tjoppen - our game descriptions - putting the current version number in these might be a good idea
+	if( IsTeamplay() )
+		return "The Battle Grounds 2";
+
+	return "The Battle Grounds 2 - free for all";
+	/*if ( IsTeamplay() )
 		return "Team Deathmatch"; 
 
-	return "Deathmatch"; 
+	return "Deathmatch"; */
+	//
 } 
 
 //-----------------------------------------------------------------------------

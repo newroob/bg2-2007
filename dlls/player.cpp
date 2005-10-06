@@ -90,6 +90,9 @@
 #include "hltvdirector.h"
 #include "nav_mesh.h"
 #include "env_zoom.h"
+//BG2 - Tjoppen - health fix
+#include "player_resource.h"
+//
 
 #ifdef HL2_DLL
 #include "combine_mine.h"
@@ -4374,6 +4377,12 @@ void CBasePlayer::Spawn( void )
 
 	m_lastNavArea = NULL;
 
+	//BG2 - Tjoppen - health fix
+	// update now so that our new health gets sent with the respawn notice
+	g_pPlayerResource->SetPlayerHealth(entindex(), m_iHealth);
+	//
+
+
 	/// @todo Do this once per round instead of once per player
 	if (TheNavMesh)
 	{
@@ -6569,7 +6578,9 @@ void SendProxy_CropFlagsToPlayerFlagBitsLength( const SendProp *pProp, const voi
 		SendPropDataTable(SENDINFO_DT(pl), &REFERENCE_SEND_TABLE(DT_PlayerState), SendProxy_DataTableToDataTable),
 		SendPropEHandle(SENDINFO(m_hVehicle)),
 		SendPropInt		(SENDINFO(m_MoveType),MOVETYPE_MAX_BITS, SPROP_UNSIGNED ),
-		SendPropInt		(SENDINFO(m_iHealth), 10 ),
+		//BG2 - Tjoppen - health fix
+		//SendPropInt		(SENDINFO(m_iHealth), 10 ),
+		//
 		SendPropInt		(SENDINFO(m_lifeState), 3, SPROP_UNSIGNED ),
 		SendPropFloat	(SENDINFO(m_flMaxspeed), 12, SPROP_ROUNDDOWN, 0.0f, 2048.0f ),  // CL
 		SendPropInt		(SENDINFO(m_fFlags), PLAYER_FLAG_BITS, SPROP_UNSIGNED|SPROP_CHANGES_OFTEN, SendProxy_CropFlagsToPlayerFlagBitsLength ),

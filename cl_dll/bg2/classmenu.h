@@ -91,7 +91,11 @@ private:
 					m_iSniperKey;
 
 	CClassButton	*m_pCancelButton;
-	int				m_iCancelKey;
+	int				m_iCancelKey,
+
+					classmenu,
+					commmenu,
+					commmenu2;
 };
 
 #endif // CLASSMENU_H

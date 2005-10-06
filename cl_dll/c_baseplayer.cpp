@@ -208,7 +208,9 @@ END_RECV_TABLE()
 		RecvPropEHandle( RECVINFO(m_hVehicle) ),
 		RecvPropInt		(RECVINFO(m_MoveType) ),
 
-		RecvPropInt		(RECVINFO(m_iHealth)),
+		//BG2 - Tjoppen - health fix
+		//RecvPropInt		(RECVINFO(m_iHealth)),
+		//
 		RecvPropInt		(RECVINFO(m_lifeState)),
 
 		RecvPropFloat	(RECVINFO(m_flMaxspeed)),
@@ -1831,3 +1833,9 @@ IRagdoll* C_BasePlayer::GetRepresentativeRagdoll() const
 }
 
 
+//BG2 - Tjoppen - health fix
+int C_BasePlayer::GetHealth() const
+{
+	return g_PR->GetHealth(entindex());
+}
+//
