@@ -56,8 +56,8 @@ void CHudCrosshair::ApplySchemeSettings( IScheme *scheme )
 }
 
 //BG2 - Tjoppen - cl_crosshairstyle
-static ConVar cl_crosshair( "cl_crosshair", "1", 0, "Bitmask describing how to draw the crosshair\n  1 = dynamic circular\n  2 = static three-lined\n  4 = dot(square) in the middle" );
-static ConVar cl_crosshair_scale( "cl_crosshair_scale", "1", 0, "Scale of cl_crosshairstyle 1 and 2" );
+static ConVar cl_crosshair( "cl_crosshair", "8", 0, "Bitmask describing how to draw the crosshair\n  1 = dynamic circular\n  2 = static three-lined\n  4 = dot(square) in the middle\n  8 = hud/crosshair.vtf" );
+static ConVar cl_crosshair_scale( "cl_crosshair_scale", "1", 0, "Scale of cl_crosshairstyle 1, 2 and 4" );
 
 static ConVar cl_crosshair_r( "cl_crosshair_r", "0", 0, "Crosshair redness. 0-255" );
 static ConVar cl_crosshair_g( "cl_crosshair_g", "221", 0, "Crosshair greenness. 0-255" );
@@ -272,55 +272,72 @@ void CHudCrosshair::Paint( void )
 
 		if( cl_crosshair.GetInt() & 1 )
 		{
-		int step = 10;
+			int step = 10;
 
 			surface()->DrawSetColor( Color( (cl_crosshair_r.GetInt()*2)/3, (cl_crosshair_g.GetInt()*2)/3,
 											(cl_crosshair_b.GetInt()*2)/3, cl_crosshair_a.GetInt()/3 ) );
-		for( int dx = -1; dx <= 1; dx++ )
-			for( int dy = -1; dy <= 1; dy++ )
-			{
-				if( dx == 0 && dy == 0 )
-					continue;
-
-				int cx2 = cx + dx,
-					cy2 = cy + dy;
-
-				int lastx = (int)(cx2 + r*cosf((float)-step * M_PI / 180.f)),
-					lasty =	(int)(cy2 + r*sinf((float)-step * M_PI / 180.f));
-
-				for( int i = 0, j = 0; i < 360; i += step, j++ )
+			for( int dx = -1; dx <= 1; dx++ )
+				for( int dy = -1; dy <= 1; dy++ )
 				{
-					float	a = (float)i * M_PI / 180.f;
+					if( dx == 0 && dy == 0 )
+						continue;
 
-					int x = (int)(cx2 + r*cosf(a)),
-						y = (int)(cy2 + r*sinf(a));
+					int cx2 = cx + dx,
+						cy2 = cy + dy;
 
-					//surface()->DrawSetColor( Color( (j&1)*255, (j&1)*255, (j&1)*255, 255 ) );
+					int lastx = (int)(cx2 + r*cosf((float)-step * M_PI / 180.f)),
+						lasty =	(int)(cy2 + r*sinf((float)-step * M_PI / 180.f));
 
-					surface()->DrawLine( lastx, lasty, x, y );
+					for( int i = 0, j = 0; i < 360; i += step, j++ )
+					{
+						float	a = (float)i * M_PI / 180.f;
 
-					lastx = x;
-					lasty = y;
+						int x = (int)(cx2 + r*cosf(a)),
+							y = (int)(cy2 + r*sinf(a));
+
+						//surface()->DrawSetColor( Color( (j&1)*255, (j&1)*255, (j&1)*255, 255 ) );
+
+						surface()->DrawLine( lastx, lasty, x, y );
+
+						lastx = x;
+						lasty = y;
+					}
 				}
-			}
 
-        int lastx = (int)(cx + r*cosf((float)-step * M_PI / 180.f)),
-			lasty =	(int)(cy + r*sinf((float)-step * M_PI / 180.f));
+			int lastx = (int)(cx + r*cosf((float)-step * M_PI / 180.f)),
+				lasty =	(int)(cy + r*sinf((float)-step * M_PI / 180.f));
 
 			surface()->DrawSetColor( Color( cl_crosshair_r.GetInt(), cl_crosshair_g.GetInt(),
 											cl_crosshair_b.GetInt(), cl_crosshair_a.GetInt() ) );
-		for( int i = 0, j = 0; i < 360; i += step, j++ )
-		{
-			float	a = (float)i * M_PI / 180.f;
 
-			int x = (int)(cx + r*cosf(a)),
-				y = (int)(cy + r*sinf(a));
+			for( int i = 0, j = 0; i < 360; i += step, j++ )
+			{
+				float	a = (float)i * M_PI / 180.f;
 
-			surface()->DrawLine( lastx, lasty, x, y );
+				int x = (int)(cx + r*cosf(a)),
+					y = (int)(cy + r*sinf(a));
 
-			lastx = x;
-			lasty = y;
+				surface()->DrawLine( lastx, lasty, x, y );
+
+				lastx = x;
+				lasty = y;
 			}
+		}
+
+		if( cl_crosshair.GetInt() & 8 )
+		{
+			CHudTexture *icon = gHUD.GetIcon( "hud_crosshair" );
+			if( !icon )
+				return;
+
+			Color iconColor( 255, 80, 0, 255 );
+
+			r *= cl_crosshair_scale.GetFloat();
+
+			int x = ScreenWidth()/2 - r,
+				y = ScreenHeight()/2 - r;
+
+			icon->DrawSelf( x, y, 2*r, 2*r, iconColor );
 		}
 	}
 

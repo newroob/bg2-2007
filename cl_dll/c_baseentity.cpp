@@ -50,7 +50,9 @@ void cc_cl_interp_changed( ConVar *var, const char *pOldString )
 
 static ConVar  cl_extrapolate( "cl_extrapolate", "1", FCVAR_CHEAT, "Enable/disable extrapolation if interpolation history runs out." );
 static ConVar  cl_interpolate( "cl_interpolate", "1.0", 0, "Interpolate entities on the client." );
-static ConVar  cl_interp	 ( "cl_interp", "0.1", FCVAR_USERINFO, "Interpolate object positions starting this many seconds in past", 0, 0, 0, 0, cc_cl_interp_changed );  
+//BG2 - Tjoppen - other cl_interp default value
+static ConVar  cl_interp	 ( "cl_interp", "0.02"/*"0.1"*/, FCVAR_USERINFO, "Interpolate object positions starting this many seconds in past", 0, 0, 0, 0, cc_cl_interp_changed );  
+//
 static ConVar  cl_interp_npcs( "cl_interp_npcs", "0.0", FCVAR_USERINFO, "Interpolate NPC positions starting this many seconds in past (or cl_interp, if greater)", 0, 0, 0, 0, cc_cl_interp_changed );  
 ConVar  r_drawmodeldecals( "r_drawmodeldecals", "1" );
 
