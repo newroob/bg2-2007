@@ -979,6 +979,12 @@ void CHL2MPRules::ClientSettingsChanged( CBasePlayer *pPlayer )
 		}
 		else
 		{
+			//BG2 - Tjoppen - don't designate team!
+			if( pHL2Player->GetClass() == -1 )
+			{
+				BaseClass::ClientSettingsChanged( pPlayer );
+				return;
+			}
 			//BG2 - Tjoppen - player models
 			//if ( Q_stristr( szModelName, "models/human") )
 			if ( Q_stristr( szModelName, "models/player/american") )

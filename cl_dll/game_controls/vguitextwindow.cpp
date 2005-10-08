@@ -244,6 +244,9 @@ void CTextWindow::OnCommand( const char *command)
 		}
 		
 		m_pViewPort->ShowPanel( this, false );
+		//BG2 - Tjoppen - show classmenu after info panel is closed
+		m_pViewPort->ShowPanel( PANEL_CLASSES, true );
+		//
 	}
 
 	BaseClass::OnCommand(command);

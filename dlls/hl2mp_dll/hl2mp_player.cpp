@@ -192,8 +192,8 @@ CHL2MP_Player::CHL2MP_Player() : m_PlayerAnimState( this )
 
 //	UseClientSideAnimation();
 
-	//BG2 - Tjoppen - default to a random class
-	m_iNextClass = RandomInt( 0, 2 );
+	//BG2 - Tjoppen - don't pick a class..
+	m_iClass = m_iNextClass = -1;//RandomInt( 0, 2 );
 	//
 }
 
@@ -407,23 +407,52 @@ void CHL2MP_Player::GiveDefaultItems( void )
 	}*/
 }
 
+//BG2 - Tjoppen - g_pLastIntermission
+CBaseEntity	*g_pLastIntermission = NULL;;
+//
+
 void CHL2MP_Player::PickDefaultSpawnTeam( void )
 {
-	/*
 	//BG2 - Tjoppen - make players just joining the game be in intermission..
 	//	this is a bit flaky at the moment.. maybe later
-	CBaseEntity *pSpot = gEntList.FindEntityByClassname( NULL, "info_intermission");
-	if( pSpot )
-	{
-		SetAbsOrigin( pSpot->GetAbsOrigin() );
-		SnapEyeAngles( pSpot->GetAbsAngles() );
+	//BG2 - Tjoppen - temp
+	Msg( "PickDefaultSpawnTeam: team = %i\n", GetTeamNumber() );
 
-		Msg( "* %f %f %f\n", pSpot->GetAbsAngles().x, pSpot->GetAbsAngles().y, pSpot->GetAbsAngles().z );
-		Msg( "* %f %f %f\n", pSpot->GetLocalAngles().x, pSpot->GetLocalAngles().y, pSpot->GetLocalAngles().z );
-		pl.fixangle = FIXANGLE_ABSOLUTE;
+	if( GetTeamNumber() != TEAM_UNASSIGNED )
+		return;		//we get called on spawn, so anyone that has a team shouldn't get teleported around and stuff
+
+	//show classmenu
+	//engine->ClientCommand( edict(), "classmenu" );
+	SetModel( "models/player/british/heavy_b/heavy_b.mdl" );	//shut up about no model already!
+
+	//try to find a spot..
+	CBaseEntity *pSpot = gEntList.FindEntityByClassname( g_pLastIntermission, "info_intermission");
+	if( !pSpot )
+	{
+		//reached end, start over
+		g_pLastIntermission = pSpot = gEntList.FindEntityByClassname( NULL, "info_intermission");
+
+		if( !pSpot )
+		{
+			Msg( "WARNING: no info_intermission in current map. tell the mapper\n" );
+			return;	//oh no! no info_intermission
+		}
 	}
+	else
+	{
+		g_pLastIntermission = pSpot;
+	}
+
+	SetAbsOrigin( pSpot->GetAbsOrigin() );
+	SnapEyeAngles( pSpot->GetAbsAngles() );
+
+	//Msg( "* %f %f %f\n", pSpot->GetAbsAngles().x, pSpot->GetAbsAngles().y, pSpot->GetAbsAngles().z );
+	//Msg( "* %f %f %f\n", pSpot->GetLocalAngles().x, pSpot->GetLocalAngles().y, pSpot->GetLocalAngles().z );
+	pl.fixangle = FIXANGLE_ABSOLUTE;
+
 	return;
-	*/
+	//
+
 	if ( GetTeamNumber() == 0 )
 	{
 		if ( HL2MPRules()->IsTeamplay() == false )
@@ -636,6 +665,11 @@ void CHL2MP_Player::SetPlayerTeamModel( void )
 	SetModel( szModelName );
 	SetupPlayerSoundsByModel( szModelName );
 
+	//BG2 - Tjoppen - TEAM_UNASSIGNED doesn't limit teamchange.. and stuff
+	if( GetTeamNumber() == TEAM_UNASSIGNED )
+		m_flNextModelChangeTime = gpGlobals->curtime;
+	else
+	//
 	m_flNextModelChangeTime = gpGlobals->curtime + MODEL_CHANGE_INTERVAL;
 }
 
@@ -723,6 +757,11 @@ void CHL2MP_Player::SetPlayerModel( void )
 	SetModel( szModelName );
 	SetupPlayerSoundsByModel( szModelName );
 
+	//BG2 - Tjoppen - TEAM_UNASSIGNED doesn't limit teamchange.. and stuff
+	if( GetTeamNumber() == TEAM_UNASSIGNED )
+		m_flNextModelChangeTime = gpGlobals->curtime;
+	else
+	//
 	m_flNextModelChangeTime = gpGlobals->curtime + MODEL_CHANGE_INTERVAL;
 }
 
@@ -1452,12 +1491,20 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			char cmd[512];
+			/*char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );
-			//SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );	//doesn't change team and stuff
+			engine->ClientCommand( edict(), cmd );*/
+			SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );	//doesn't change team and stuff
+
+			if( GetTeamNumber() == TEAM_UNASSIGNED )
+			{
+				ChangeTeam( TEAM_AMERICANS );
+				Spawn();
+			}
+			else
+				ChangeTeam( TEAM_AMERICANS );
 		}
 
 		return true;
@@ -1509,12 +1556,20 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			char cmd[512];
+			/*char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );
-			//SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
+			engine->ClientCommand( edict(), cmd );*/
+			SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
+
+			if( GetTeamNumber() == TEAM_UNASSIGNED )
+			{
+				ChangeTeam( TEAM_AMERICANS );
+				Spawn();
+			}
+			else
+				ChangeTeam( TEAM_AMERICANS );
 		}
 
 		return true;
@@ -1566,12 +1621,20 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			char cmd[512];
+			/*char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );
-			//SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
+			engine->ClientCommand( edict(), cmd );*/
+			SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
+			
+			if( GetTeamNumber() == TEAM_UNASSIGNED )
+			{
+				ChangeTeam( TEAM_AMERICANS );
+				Spawn();
+			}
+			else
+				ChangeTeam( TEAM_AMERICANS );
 		}
 
 		return true;
@@ -1623,12 +1686,20 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			char cmd[512];
+			/*char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );
-			//SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
+			engine->ClientCommand( edict(), cmd );*/
+			SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
+			
+			if( GetTeamNumber() == TEAM_UNASSIGNED )
+			{
+				ChangeTeam( TEAM_BRITISH );
+				Spawn();
+			}
+			else
+				ChangeTeam( TEAM_BRITISH );
 		}
 
 		return true;
@@ -1680,12 +1751,20 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			char cmd[512];
+			/*char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );
-			//SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
+			engine->ClientCommand( edict(), cmd );*/
+			SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
+			
+			if( GetTeamNumber() == TEAM_UNASSIGNED )
+			{
+				ChangeTeam( TEAM_BRITISH );
+				Spawn();
+			}
+			else
+				ChangeTeam( TEAM_BRITISH );
 		}
 
 		return true;
@@ -1737,12 +1816,20 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			char cmd[512];
+			/*char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );
-			//SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
+			engine->ClientCommand( edict(), cmd );*/
+			SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
+			
+			if( GetTeamNumber() == TEAM_UNASSIGNED )
+			{
+				ChangeTeam( TEAM_BRITISH );
+				Spawn();
+			}
+			else
+				ChangeTeam( TEAM_BRITISH );
 		}
 
 		return true;
