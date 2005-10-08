@@ -53,6 +53,7 @@
 #include "team.h"
 #include "hl2mp_gamerules.h"
 #include "sdk_bot_temp.h"
+#include "hl2mp_player.h"
 
 class CSDKBot;
 void Bot_Think( CSDKBot *pBot );
@@ -139,38 +140,49 @@ CBasePlayer *BotPutInServer( bool bFrozen )
 	gBots[pPlayer->GetClientIndex()].attack = 0;
 	gBots[pPlayer->GetClientIndex()].attack2 = 0;
 	gBots[pPlayer->GetClientIndex()].respawn = 0;
-	
-	pPlayer->ClearFlags();
-	pPlayer->AddFlag( FL_CLIENT | FL_FAKECLIENT );
 
 	/*if ( bFrozen )
 		pPlayer->AddEFlags( EFL_BOT_FROZEN );*/
 
-	static int lastclass = 0;
+	//this doesn't work anymore.. for some reason. maybe it never worked?
+	/*static int lastclass = 0;
 	switch( lastclass++ )
 	{
 	case 0:
 		engine->ClientCommand( pEdict, "light_a" );
 		break;
 	case 1:
-        engine->ClientCommand( pEdict, "medium_a" );
+		engine->ClientCommand( pEdict, "medium_a" );
 		break;
 	case 2:
 		engine->ClientCommand( pEdict, "heavy_a" );
 		break;
 	case 3:
-        engine->ClientCommand( pEdict, "light_b" );
+		engine->ClientCommand( pEdict, "light_b" );
 		break;
 	case 4:
 		engine->ClientCommand( pEdict, "medium_b" );
 		break;
 	case 5:
-        engine->ClientCommand( pEdict, "heavy_b" );
+		engine->ClientCommand( pEdict, "heavy_b" );
 		break;
-	}
+	}*/
+
+	pPlayer->ClearFlags();
+	pPlayer->AddFlag( FL_CLIENT | FL_FAKECLIENT );
 
     //pPlayer->ChangeTeam( TEAM_UNASSIGNED );
-	pPlayer->RemoveAllItems( true );
+	//pPlayer->RemoveAllItems( true );
+	//pPlayer->Spawn();
+
+	//new team/class picking code. it works.
+	static int last = 0, last2 = 0;
+	((CHL2MP_Player*)pPlayer)->SetNextClass( last2 );
+	last2 = (last2 + 1) % 3;
+
+	pPlayer->ChangeTeam( TEAM_AMERICANS + last );
+	last = !last;
+
 	pPlayer->Spawn();
 
 	g_CurBotNumber++;
@@ -747,6 +759,7 @@ void Bot_HandleRespawn( CSDKBot *pBot, CUserCmd &cmd )
 //-----------------------------------------------------------------------------
 // Run this Bot's AI for one frame.
 //-----------------------------------------------------------------------------
+int lastclass = 0;
 void Bot_Think( CSDKBot *pBot )
 {
 	if( !pBot )
@@ -756,7 +769,6 @@ void Bot_Think( CSDKBot *pBot )
 
 	// Make sure we stay being a bot
 	pBot->m_pPlayer->AddFlag( FL_FAKECLIENT );
-
 
 	CUserCmd cmd;
 	Q_memset( &cmd, 0, sizeof( cmd ) );

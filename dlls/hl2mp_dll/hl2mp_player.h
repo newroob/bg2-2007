@@ -143,6 +143,7 @@ public:
 
 	//BG2 - Tjoppen - GetClass()
 	int	GetClass( void ) { return m_iClass; }
+	void SetNextClass( int iNextClass ) { m_iNextClass = iNextClass; }
 		
 private:
 
