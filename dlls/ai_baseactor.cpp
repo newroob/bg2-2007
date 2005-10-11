@@ -1152,9 +1152,12 @@ bool CAI_BaseActor::PickRandomLookTarget( AILookTargetArgs_t *pArgs )
 		VectorNormalize( delta );
 
 		int iImportance;
-#if 0
+		//BG2 - Tjoppen - turn head to look at player the player intends to look at...
+#if 1//0
 		// consider things in front to be more important than things to the sides
-		iImportance = (DotProduct( delta, HeadDirection3D() );
+		//iImportance = (DotProduct( delta, HeadDirection3D() );
+		iImportance = (int)(1024.f * DotProduct( delta, HeadDirection3D() ));
+		//
 #else
 		// No, for now, give all targets random priority (as long as they're in front)
 		iImportance = random->RandomInt( 1, 100 );

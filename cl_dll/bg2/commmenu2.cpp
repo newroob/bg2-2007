@@ -272,6 +272,8 @@ void CCommMenu2::OnKeyCodePressed(KeyCode code)
 		
 		return;
 	}
+	else
+		BaseClass::OnKeyCodePressed( code );
 
 	/*else if( iLastTrappedKey == m_iLightAKey )
 	{

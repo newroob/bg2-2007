@@ -365,6 +365,8 @@ void CTeamMenu2::OnKeyCodePressed(KeyCode code)
 	{
 		m_pViewPort->ShowPanel( this, false );
 	}
+	else
+		BaseClass::OnKeyCodePressed( code );
 }
 
 void CTeamMenu2::ShowPanel(bool bShow)

@@ -67,7 +67,8 @@ public:
 
 	CTeamButton		*m_pBritishButton,
 					*m_pAmericanButton,
-					*m_pSpectateButton;
+					*m_pSpectateButton,
+					*m_pAutoassignButton;
 
 	int m_iTeamSelection;
 
@@ -88,7 +89,8 @@ private:
 
 	int				m_iInfantryKey,
 					m_iOfficerKey,
-					m_iSniperKey;
+					m_iSniperKey,
+					m_iSpectateKey;
 
 	CClassButton	*m_pCancelButton;
 	int				m_iCancelKey,
@@ -96,6 +98,9 @@ private:
 					classmenu,
 					commmenu,
 					commmenu2;
+
+public:
+	bool			hideautoassign;
 };
 
 #endif // CLASSMENU_H

@@ -22,6 +22,7 @@
 
 //#include "spectatorgui.h"
 #include "classmenu.h"
+#include "c_team.h"
 
 #include <cl_dll/iviewport.h>
 #include "commandmenu.h"
@@ -135,18 +136,39 @@ public:
 
 	void OnMousePressed(MouseCode code)
 	{
+		CClassMenu *pThisMenu = (CClassMenu *)GetParent();
+		SetSelected( false );
+
 		if( m_iCommand == TEAM_UNASSIGNED )
 		{
 			//join spectators
 			engine->ServerCmd( "spectate", true );
-			GetParent()->SetVisible( false );
-			SetSelected( false );
+			pThisMenu->hideautoassign = false;
+			pThisMenu->ToggleButtons(1);
+			pThisMenu->ShowPanel( false );
 			return;
 		}
 
-		CClassMenu * pThisMenu = (CClassMenu *)GetParent();
+		pThisMenu->hideautoassign = true;
 		pThisMenu->ToggleButtons(2);
-		SetSelected( false );
+		
+		if( m_iCommand == -1 )
+		{
+			//autoassign
+			int americans = g_Teams[TEAM_AMERICANS]->Get_Number_Players(),
+				british = g_Teams[TEAM_BRITISH]->Get_Number_Players();
+
+			//pick team with least players. or if equal, pick random
+			if( americans > british )
+				pThisMenu->m_iTeamSelection = TEAM_BRITISH;
+			else if( americans < british )
+				pThisMenu->m_iTeamSelection = TEAM_AMERICANS;
+			else
+				pThisMenu->m_iTeamSelection = random->RandomInt( TEAM_AMERICANS, TEAM_BRITISH );
+		
+			return;
+		}
+
 		PerformCommand();
 	}
 
@@ -167,7 +189,9 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 {
 	m_iInfantryKey = m_iOfficerKey = m_iSniperKey = -1;
 	m_iCancelKey = -1;
+	m_iSpectateKey = -1;
 	classmenu = commmenu = commmenu2 = -1;
+	hideautoassign = false;
 		
 	m_pViewPort = pViewPort;
 
@@ -185,7 +209,8 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 
 	m_pBritishButton = new CTeamButton( this, "britbutton", "1. British" );
 	m_pAmericanButton = new CTeamButton( this, "amerbutton", "2. American" );
-	m_pSpectateButton = new CTeamButton( this, "specbutton", "3. Spectate" );
+	m_pAutoassignButton = new CTeamButton( this, "specbutton", "3. Autoassign team" );
+	m_pSpectateButton = new CTeamButton( this, "specbutton", "4. Spectate" );
 	
 	m_pInfantryButton = new CClassButton( this, "infantrybutton", "1. Infantry" );
 	m_pOfficerButton = new CClassButton( this, "officerbutton", "2. Officer" );
@@ -204,7 +229,12 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pAmericanButton->SetCommand(TEAM_AMERICANS);
 	m_pAmericanButton->SetVisible( true );
 
-	m_pSpectateButton->SetPos( 50, 150 );
+	m_pAutoassignButton->SetPos( 50, 150 );
+	m_pAutoassignButton->SetSize( 200, 30 );
+	m_pAutoassignButton->SetCommand(-1);
+	m_pAutoassignButton->SetVisible( true );
+
+	m_pSpectateButton->SetPos( 50, 200 );
 	m_pSpectateButton->SetSize( 200, 30 );
 	m_pSpectateButton->SetCommand(TEAM_UNASSIGNED);
 	m_pSpectateButton->SetVisible( true );
@@ -224,7 +254,7 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pSniperButton->SetCommand( 3 );
 	m_pSniperButton->SetVisible( false );
 
-	m_pCancelButton->SetPos( 50, 225 );
+	m_pCancelButton->SetPos( 50, 250 );
 	m_pCancelButton->SetSize( 150, 30 );
 }
 
@@ -294,19 +324,27 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	}
 	else if( iLastTrappedKey == m_iSniperKey )
 	{
-		if( m_pSpectateButton->IsVisible() )
-		{
-			m_pSpectateButton->OnMousePressed( code2 );
-			m_pViewPort->ShowPanel( this, false );
-		}
-		else
+		if( m_pAutoassignButton->IsVisible() )
+			m_pAutoassignButton->OnMousePressed( code2 );
+		else if( m_pSniperButton->IsVisible() )
 		{
 			m_pSniperButton->OnMousePressed( code2 );
 			m_pViewPort->ShowPanel( this, false );
 		}
 	}
+	else if( iLastTrappedKey == m_iSpectateKey )
+	{
+		if( m_pSpectateButton->IsVisible() )
+		{
+			m_pSpectateButton->OnMousePressed( code2 );
+			m_pViewPort->ShowPanel( this, false );
+		}
+	}
 	else if( iLastTrappedKey == m_iCancelKey )
 	{
+		//cancel => we will return to main screen. figure out hideautoassign
+		hideautoassign = C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR ? false : true;
+
 		ToggleButtons(1);
 		m_pViewPort->ShowPanel( this, false );
 	}
@@ -334,6 +372,8 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 		
 		return;
 	}
+	else
+		BaseClass::OnKeyCodePressed( code );
 }
 
 void CClassMenu::ShowPanel(bool bShow)
@@ -373,6 +413,7 @@ void CClassMenu::Update( void )
 	if( m_iInfantryKey < 0 ) m_iInfantryKey = gameuifuncs->GetEngineKeyCodeForBind( "slot1" );
 	if( m_iOfficerKey < 0 ) m_iOfficerKey = gameuifuncs->GetEngineKeyCodeForBind( "slot2" );
 	if( m_iSniperKey < 0 ) m_iSniperKey = gameuifuncs->GetEngineKeyCodeForBind( "slot3" );
+	if( m_iSpectateKey < 0 ) m_iSpectateKey = gameuifuncs->GetEngineKeyCodeForBind( "slot4" );
 
 	if( m_iCancelKey < 0 ) m_iCancelKey = gameuifuncs->GetEngineKeyCodeForBind( "slot10" );
 
@@ -407,6 +448,7 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 		case 1:
 			m_pBritishButton->SetVisible(true);
 			m_pAmericanButton->SetVisible(true);
+			m_pAutoassignButton->SetVisible( hideautoassign ? false : true );
 			m_pSpectateButton->SetVisible(true);
 			m_pOfficerButton->SetVisible(false);
 			m_pInfantryButton->SetVisible(false);
@@ -415,6 +457,7 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 		case 2:
 			m_pBritishButton->SetVisible(false);
 			m_pAmericanButton->SetVisible(false);
+			m_pAutoassignButton->SetVisible(false);
 			m_pSpectateButton->SetVisible(false);
 			m_pOfficerButton->SetVisible(true);
 			m_pInfantryButton->SetVisible(true);
