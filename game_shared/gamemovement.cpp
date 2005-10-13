@@ -1996,8 +1996,7 @@ bool CGameMovement::CheckJumpButton( void )
 	}
 
 	float flMul;
-	//BG2 - Tjoppen - no g_bMovementOptimizations 
-	/*if ( g_bMovementOptimizations )
+	if ( g_bMovementOptimizations )
 	{
 #if defined(HL2_DLL) || defined(HL2_CLIENT_DLL)
 		Assert( sv_gravity.GetFloat() == 600.0f );
@@ -2008,13 +2007,9 @@ bool CGameMovement::CheckJumpButton( void )
 #endif
 
 	}
-	else*/
+	else
 	{
-		//BG2 - Draco - cant jump much when you're nackered
-		flMul = sqrt(2 * sv_gravity.GetFloat() * (GAMEMOVEMENT_JUMP_HEIGHT - ((100 - pHL2Player->m_iStamina)/15)));
-		//flMul = sqrt(2 * sv_gravity.GetFloat() * (GAMEMOVEMENT_JUMP_HEIGHT - ((100 - pHL2Player->m_iStamina)/5)));
-		//BG2 - Tjoppen - fall back on default jump stuff on client for now
-		//flMul = sqrt(2 * sv_gravity.GetFloat() * GAMEMOVEMENT_JUMP_HEIGHT);
+		flMul = sqrt(2 * sv_gravity.GetFloat() * GAMEMOVEMENT_JUMP_HEIGHT);
 	}
 
 	// Acclerate upward
