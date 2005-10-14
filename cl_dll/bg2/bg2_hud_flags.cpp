@@ -123,7 +123,7 @@ CHudFlags::CHudFlags( const char *pElementName ) :
 	SetParent( pParent );
 	Color ColourWhite( 255, 255, 255, 255 );
 	SetHiddenBits( HIDEHUD_MISCSTATUS );
-
+	//vgui::HFont font = pScheme->GetFont( "DracoLucidaRawks" );
 	for( int i = 0; i < MAX_FLAGS; i++ )
 	{
 		m_IconFlag[i] = NULL;
@@ -135,6 +135,7 @@ CHudFlags::CHudFlags( const char *pElementName ) :
 		m_pLabelFlag[i]->SetContentAlignment( vgui::Label::a_west );
 		m_pLabelFlag[i]->SetFgColor( ColourWhite );
 		m_pLabelFlag[i]->SetVisible(false);
+		//m_pLabelFlag[i]->SetFont(font);
 	}
 }
 
@@ -145,6 +146,11 @@ CHudFlags::CHudFlags( const char *pElementName ) :
 void CHudFlags::ApplySchemeSettings( IScheme *scheme )
 {
 	BaseClass::ApplySchemeSettings( scheme );
+	vgui::HFont font = scheme->GetFont( "DracoLucidaRawks" );
+	for( int i = 0; i < MAX_FLAGS; i++ )
+	{
+		m_pLabelFlag[i]->SetFont(font);
+	}
 	SetPaintBackgroundEnabled( false );
 }
 
@@ -154,18 +160,6 @@ void CHudFlags::ApplySchemeSettings( IScheme *scheme )
 //==============================================
 void CHudFlags::Init( void )
 {	
-	/*HOOK_HUD_MESSAGE( CHudFlags, flagstatus );
-	int i = 0;
-	iNumFlags = 0;
-	while (i < MAX_FLAGS)
-	{
-		//STRING( g_Flags[i]->m_sFlagName ) = (char[512])"lolhi";
-		myflags[i].m_iOwner = 0;
-		myflags[i].m_iTimeToCap = 0;
-		g_Flags[i]->m_iCapturePlayers = 0;
-		myflags[i].m_iForTeam = 0;
-		i++;
-	}*/
 }
 
 //==============================================
@@ -208,26 +202,31 @@ void CHudFlags::Paint()
 	{
 		case 0:
 			for( i = 0; i < MAX_FLAGS; i++ )
+			{
 				m_pLabelFlag[i]->SetVisible(false);
-
+			}
 			break;
 		case 1:
 			for( i = 0; i < MAX_FLAGS; i++ )
+			{
 				m_pLabelFlag[i]->SetVisible(false);
+			}
 
 			for( i = 0; i < g_Flags.Count() && i < 12; i++ )
 			{
 				if( !g_Flags[i] )
+				{
 					break;
+				}
 
-				int iTimeToCap = g_Flags[i]->m_flNextCapture - gpGlobals->curtime;
+				float iTimeToCap = g_Flags[i]->m_flNextCapture - gpGlobals->curtime;
 
 				switch( g_Flags[i]->m_iForTeam )
 				{
 					case 0:
-						if( iTimeToCap > 0 )
+						if( iTimeToCap > 0.1f )
 						{
-							Q_snprintf( msg2, 512, "%s - Requires %i to Capture - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, iTimeToCap );
+							Q_snprintf( msg2, 512, "%s - Requires %i to Capture - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
 						}
 						else
 						{
@@ -235,9 +234,9 @@ void CHudFlags::Paint()
 						}
 						break;
 					case 1:
-						if( iTimeToCap > 0 )
+						if( iTimeToCap > 0.1f )
 						{
-							Q_snprintf( msg2, 512, "%s - American Only Traget - Requires %i to Capture - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, iTimeToCap );
+							Q_snprintf( msg2, 512, "%s - American Only Traget - Requires %i to Capture - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
 						}
 						else
 						{
@@ -245,9 +244,9 @@ void CHudFlags::Paint()
 						}
 						break;
 					case 2:
-						if( iTimeToCap > 0 )
+						if( iTimeToCap > 0.1f )
 						{
-							Q_snprintf( msg2, 512, "%s - British Only Traget - Requires %i to Capture - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, iTimeToCap );
+							Q_snprintf( msg2, 512, "%s - British Only Traget - Requires %i to Capture - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
 						}
 						else
 						{
@@ -255,21 +254,69 @@ void CHudFlags::Paint()
 						}
 						break;
 				}
-
-				switch( g_Flags[i]->GetTeamNumber() )
+				float r = 0;
+				float g = 0;
+				float b = 0;
+				switch( g_Flags[i]->m_iLastTeam )
 				{
 					case TEAM_AMERICANS:
-						m_pLabelFlag[i]->SetFgColor(ColourBlue);
+						r = 66;
+						g = 115;
+						b = 247;
+						r += 188 * (sin(iTimeToCap*4) + 1)/2;
+						g += 139 * (sin(iTimeToCap*4) + 1)/2;
+						b += 7 * (sin(iTimeToCap*4) + 1)/2;
 						break;
 					case TEAM_BRITISH:
-						m_pLabelFlag[i]->SetFgColor(ColourRed);
+						r = 255;
+						g = 16;
+						b = 16;
+						g += 238 * (sin(iTimeToCap*4) + 1)/2;
+						b += 238 * (sin(iTimeToCap*4) + 1)/2;
 						break;
 					default:
 					case TEAM_UNASSIGNED:
-						m_pLabelFlag[i]->SetFgColor(ColourWhite);
+						switch (g_Flags[i]->GetTeamNumber())
+						{
+							case TEAM_AMERICANS:
+								r = 66;
+								g = 115;
+								b = 247;
+								break;
+							case TEAM_BRITISH:
+								r = 255;
+								g = 16;
+								b = 16;
+								break;
+							case TEAM_UNASSIGNED:
+								switch (g_Flags[i]->m_iRequestingCappers)
+								{
+									case TEAM_BRITISH:
+										r = 255;
+										g = 16;
+										b = 16;
+										g += 238 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
+										b += 238 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
+										break;
+									case TEAM_AMERICANS:
+										r = 66;
+										g = 115;
+										b = 247;
+										r += 188 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
+										g += 139 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
+										b += 7 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
+										break;
+									case TEAM_UNASSIGNED:
+										r = 255;
+										g = 255;
+										b = 255;
+										break;
+								}
+								break;
+						}
 						break;
 				}
-
+				m_pLabelFlag[i]->SetFgColor(Color(r,g,b,255));
 				m_pLabelFlag[i]->SetText( msg2 );
 				m_pLabelFlag[i]->SizeToContents();
 				m_pLabelFlag[i]->SetVisible( true );
@@ -345,30 +392,4 @@ void CHudFlags::Paint()
 			}
 			break;
 	}
-	
 }
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-/*void CHudFlags::MsgFunc_flagstatus( bf_read &msg )
-{
-	int i = 0;
-	iNumFlags = 0;
-	iNumFlags = msg.ReadByte();
-	if (iNumFlags > MAX_FLAGS)
-	{
-		iNumFlags = MAX_FLAGS;
-	}
-	while (i < iNumFlags)
-	{
-		msg.ReadString(STRING( g_Flags[i]->m_sFlagName ), sizeof(STRING( g_Flags[i]->m_sFlagName )));
-		myflags[i].m_iOwner = msg.ReadByte();
-		myflags[i].m_iTimeToCap = msg.ReadShort();
-		g_Flags[i]->m_iCapturePlayers = msg.ReadByte();
-		myflags[i].m_iForTeam = msg.ReadByte();
-		myflags[i].m_iTimeNeeded = msg.ReadShort();
-		myflags[i].m_iCappers = msg.ReadByte();
-		i++;
-	}
-}*/

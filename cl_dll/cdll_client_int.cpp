@@ -519,6 +519,14 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 	ClientWorldFactoryInit();
 
+	filesystem->AddSearchPath("hl2mp", "GAME");
+	filesystem->AddSearchPath("hl2", "GAME");
+	filesystem->AddSearchPath("cstrike", "GAME");
+	filesystem->AddSearchPath("dod", "GAME");
+	filesystem->MountSteamContent(320);
+	filesystem->MountSteamContent(300);
+	filesystem->MountSteamContent(240);
+
 	return true;
 }
 

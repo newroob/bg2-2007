@@ -39,6 +39,7 @@
 
 IMPLEMENT_CLIENTCLASS_DT( C_Flag, DT_Flag, CFlag )
 	RecvPropInt( RECVINFO( m_iLastTeam ) ),
+	RecvPropInt( RECVINFO( m_iRequestingCappers ) ),
 	RecvPropFloat( RECVINFO( m_flNextCapture ) ),
 	RecvPropInt( RECVINFO( m_iCapturePlayers ) ),
 	RecvPropInt( RECVINFO( m_iForTeam ) ),

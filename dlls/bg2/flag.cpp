@@ -128,6 +128,7 @@ void CFlag::Spawn( void )
 	//m_iLastTeam = TEAM_UNASSIGNED;
 
 	ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
+	m_iRequestingCappers = TEAM_UNASSIGNED;
 	m_iLastTeam = TEAM_UNASSIGNED;
 
 	/*int m_nIdealSequence = SelectWeightedSequence( ACT_VM_IDLE );
@@ -276,88 +277,96 @@ void CFlag::Think( void )
 		//only americans or british at the flag
 		//if we don't already own it, and we've been here for at least three seconds - capture
 
-		if( americans > 0 &&
-			americans >= min( m_iCapturePlayers, g_Teams[TEAM_AMERICANS]->GetNumPlayers() ) &&
-			GetTeamNumber() != TEAM_AMERICANS )
+		if(americans > 0)
 		{
-			//Msg( "americans\n" );
-			if( m_iLastTeam != TEAM_AMERICANS )
+			m_iRequestingCappers = TEAM_AMERICANS;
+			if (americans >= min( m_iCapturePlayers, g_Teams[TEAM_AMERICANS]->GetNumPlayers() ) && GetTeamNumber() != TEAM_AMERICANS )
 			{
-				char msg2[512];
-				//Msg( "americans are capturing a flag(\"%s\")\n", STRING( m_sFlagName.Get() ) );
-				Q_snprintf( msg2, 512, "The americans are capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
-				msg = msg2;
-				m_iLastTeam = TEAM_AMERICANS;
-				m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
-			}
-			else if( gpGlobals->curtime >= m_flNextCapture )
-			{
-				char msg2[512];
-                //CFlagHandler::PlayCaptureSound();
-				Q_snprintf( msg2, 512, "The americans captured a flag(%s)", STRING( m_sFlagName.Get() ) );
-				msg = msg2;
-				EmitSound( "Flag.capture" );
-				g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
-				m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
-
-				while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
+				//Msg( "americans\n" );
+				if( m_iLastTeam != TEAM_AMERICANS )
 				{
-					if( !pPlayer->IsAlive() )	//dead players don't cap
-						continue;
-
-					switch( pPlayer->GetTeamNumber() )
-					{
-						case TEAM_AMERICANS:
-							pPlayer->IncrementFragCount(m_iPlayerBonus);
-							CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
-							pPlayer2->IncreaseReward(1);
-							break;
-					}
+					char msg2[512];
+					//Msg( "americans are capturing a flag(\"%s\")\n", STRING( m_sFlagName.Get() ) );
+					Q_snprintf( msg2, 512, "The americans are capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
+					msg = msg2;
+					m_iLastTeam = TEAM_AMERICANS;
+					m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
 				}
-				ChangeTeam( TEAM_AMERICANS );
-				CFlagHandler::Update();
+				else if( gpGlobals->curtime >= m_flNextCapture )
+				{
+					char msg2[512];
+					//CFlagHandler::PlayCaptureSound();
+					Q_snprintf( msg2, 512, "The americans captured a flag(%s)", STRING( m_sFlagName.Get() ) );
+					msg = msg2;
+					EmitSound( "Flag.capture" );
+					g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
+					m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
+
+					while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
+					{
+						if( !pPlayer->IsAlive() )	//dead players don't cap
+							continue;
+
+						switch( pPlayer->GetTeamNumber() )
+						{
+							case TEAM_AMERICANS:
+								pPlayer->IncrementFragCount(m_iPlayerBonus);
+								CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
+								pPlayer2->IncreaseReward(1);
+								break;
+						}
+					}
+					m_iLastTeam = TEAM_UNASSIGNED;
+					m_iRequestingCappers = TEAM_UNASSIGNED;
+					ChangeTeam( TEAM_AMERICANS );
+					CFlagHandler::Update();
+				}
 			}
 		}
-		else if( british > 0 &&
-			british >= min( m_iCapturePlayers, g_Teams[TEAM_BRITISH]->GetNumPlayers() ) &&
-			GetTeamNumber() != TEAM_BRITISH )
+		else if(british > 0)
 		{
-			//Msg( "british\n" );
-			if( m_iLastTeam != TEAM_BRITISH )
+			m_iRequestingCappers = TEAM_BRITISH;
+			if (british >= min( m_iCapturePlayers, g_Teams[TEAM_BRITISH]->GetNumPlayers() ) && GetTeamNumber() != TEAM_BRITISH )
 			{
-				char msg2[512];
-                //Msg( "british are capturing a flag(\"%s\")\n", STRING( m_sFlagName.Get() ) );
-				Q_snprintf( msg2, 512, "The british are capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
-				msg = msg2;
-				m_iLastTeam = TEAM_BRITISH;
-				m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
-			}
-			else if( gpGlobals->curtime >= m_flNextCapture )
-			{
-				char msg2[512];
-				//CFlagHandler::PlayCaptureSound();
-				Q_snprintf( msg2, 512, "The british captured a flag(%s)", STRING( m_sFlagName.Get() ) );
-				msg = msg2;
-				EmitSound( "Flag.capture" );
-				g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
-				m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
-
-				while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
+				//Msg( "british\n" );
+				if( m_iLastTeam != TEAM_BRITISH )
 				{
-					if( !pPlayer->IsAlive() )	//dead players don't cap
-						continue;
-
-					switch( pPlayer->GetTeamNumber() )
-					{
-						case TEAM_BRITISH:
-							pPlayer->IncrementFragCount(m_iPlayerBonus);
-							CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
-							pPlayer2->IncreaseReward(1);
-							break;
-					}
+					char msg2[512];
+					//Msg( "british are capturing a flag(\"%s\")\n", STRING( m_sFlagName.Get() ) );
+					Q_snprintf( msg2, 512, "The british are capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
+					msg = msg2;
+					m_iLastTeam = TEAM_BRITISH;
+					m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
 				}
-				ChangeTeam( TEAM_BRITISH );
-				CFlagHandler::Update();
+				else if( gpGlobals->curtime >= m_flNextCapture )
+				{
+					char msg2[512];
+					//CFlagHandler::PlayCaptureSound();
+					Q_snprintf( msg2, 512, "The british captured a flag(%s)", STRING( m_sFlagName.Get() ) );
+					msg = msg2;
+					EmitSound( "Flag.capture" );
+					g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
+					m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
+
+					while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
+					{
+						if( !pPlayer->IsAlive() )	//dead players don't cap
+							continue;
+
+						switch( pPlayer->GetTeamNumber() )
+						{
+							case TEAM_BRITISH:
+								pPlayer->IncrementFragCount(m_iPlayerBonus);
+								CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
+								pPlayer2->IncreaseReward(1);
+								break;
+						}
+					}
+					ChangeTeam( TEAM_BRITISH );
+					CFlagHandler::Update();
+					m_iRequestingCappers = TEAM_UNASSIGNED;
+					m_iLastTeam = TEAM_UNASSIGNED;
+				}
 			}
 		}
 	}
@@ -381,6 +390,8 @@ void CFlag::Think( void )
 		}
 		//noone here
 		m_iLastTeam = TEAM_UNASSIGNED;
+		m_iRequestingCappers = TEAM_UNASSIGNED;
+		
 		m_flNextCapture = 0;
 	}
 
@@ -432,6 +443,7 @@ IMPLEMENT_NETWORKCLASS_ALIASED( Flag, DT_Flag )
 
 BEGIN_NETWORK_TABLE( CFlag, DT_Flag )
 	SendPropInt( SENDINFO( m_iLastTeam ), Q_log2(NUM_TEAMS), SPROP_UNSIGNED ),
+	SendPropInt( SENDINFO( m_iRequestingCappers ), Q_log2(NUM_TEAMS), SPROP_UNSIGNED ),
 	SendPropFloat( SENDINFO( m_flNextCapture ) ),
 	SendPropInt( SENDINFO( m_iCapturePlayers ), Q_log2(MAX_PLAYERS), SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO( m_iForTeam ), 2, SPROP_UNSIGNED ),
@@ -624,6 +636,7 @@ void CFlagHandler::ResetFlags( void )
 
 		pFlag->ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
 		pFlag->m_iLastTeam = TEAM_UNASSIGNED;
+		pFlag->m_iRequestingCappers = TEAM_UNASSIGNED;
 	}
 }
 
@@ -641,38 +654,6 @@ void CFlagHandler::Update( void )
 	{
 		iNumFlags++;
 	}
-
-	/*CBasePlayer *pPlayer = NULL;
-	while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassname( pPlayer, "player" )) != NULL )
-	{
-		CSingleUserRecipientFilter user(pPlayer);
-		user.MakeReliable();
-		UserMessageBegin( user, "flagstatus" );
-		WRITE_BYTE(iNumFlags);
-		char szTemp[512] = "";
-		while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
-		{
-			CFlag *pFlag = (CFlag*)pEntity;
-			if( !pFlag )
-				continue;
-			Q_snprintf( szTemp, 512, "%s", STRING( pFlag->m_sFlagName.Get() ));
-			WRITE_STRING(szTemp);
-			WRITE_BYTE(pFlag->GetTeamNumber());
-			if (pFlag->m_flNextCapture <= gpGlobals->curtime)
-			{
-				WRITE_SHORT(0);
-			}
-			else
-			{
-				WRITE_SHORT((int)(pFlag->m_flNextCapture - gpGlobals->curtime));
-			}
-			WRITE_BYTE(pFlag->m_iCapturePlayers);
-			WRITE_BYTE(pFlag->m_iForTeam);
-			WRITE_SHORT((int)pFlag->m_flCaptureTime);
-			WRITE_BYTE(pFlag->m_iLastTeam);
-		}
-		MessageEnd();
-	}*/
 
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{

@@ -43,6 +43,7 @@ class CFlag : public CBaseAnimating
 	DECLARE_DATADESC();
 
 	CNetworkVar( int, m_iLastTeam );		//which team is near this flag?
+	CNetworkVar( int, m_iRequestingCappers); //yeah, extra int, im too drunk to think of a better way :o
 	CNetworkVar( float, m_flNextCapture );
 
 	CNetworkVar( int, m_iCapturePlayers );	//how many player must be nearby to capture this flag?

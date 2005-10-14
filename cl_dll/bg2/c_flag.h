@@ -46,6 +46,7 @@ public:
 public:
 
 	int		m_iLastTeam;
+	int     m_iRequestingCappers;
 	float	m_flNextCapture;
 
 	int		m_iCapturePlayers;
