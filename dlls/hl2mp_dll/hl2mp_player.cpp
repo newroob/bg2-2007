@@ -415,8 +415,6 @@ void CHL2MP_Player::PickDefaultSpawnTeam( void )
 {
 	//BG2 - Tjoppen - make players just joining the game be in intermission..
 	//	this is a bit flaky at the moment.. maybe later
-	//BG2 - Tjoppen - temp
-	Msg( "PickDefaultSpawnTeam: team = %i\n", GetTeamNumber() );
 
 	if( GetTeamNumber() != TEAM_UNASSIGNED )
 		return;		//we get called on spawn, so anyone that has a team shouldn't get teleported around and stuff
@@ -1491,20 +1489,20 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			/*char cmd[512];
+			char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );*/
-			SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );	//doesn't change team and stuff
-
+			engine->ClientCommand( edict(), cmd );
+			/*SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );	//doesn't change team and stuff
+			*/
 			if( GetTeamNumber() == TEAM_UNASSIGNED )
 			{
 				ChangeTeam( TEAM_AMERICANS );
 				Spawn();
 			}
-			else
-				ChangeTeam( TEAM_AMERICANS );
+			/*else
+				ChangeTeam( TEAM_AMERICANS );*/
 		}
 
 		return true;
@@ -1556,20 +1554,20 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			/*char cmd[512];
+			char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );*/
-			SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
-
+			engine->ClientCommand( edict(), cmd );
+			/*SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
+			*/
 			if( GetTeamNumber() == TEAM_UNASSIGNED )
 			{
 				ChangeTeam( TEAM_AMERICANS );
 				Spawn();
 			}
-			else
-				ChangeTeam( TEAM_AMERICANS );
+			/*else
+				ChangeTeam( TEAM_AMERICANS );*/
 		}
 
 		return true;
@@ -1621,20 +1619,20 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			/*char cmd[512];
+			char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );*/
-			SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
-			
+			engine->ClientCommand( edict(), cmd );
+			/*SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
+			*/
 			if( GetTeamNumber() == TEAM_UNASSIGNED )
 			{
 				ChangeTeam( TEAM_AMERICANS );
 				Spawn();
 			}
-			else
-				ChangeTeam( TEAM_AMERICANS );
+			/*else
+				ChangeTeam( TEAM_AMERICANS );*/
 		}
 
 		return true;
@@ -1686,20 +1684,20 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			/*char cmd[512];
+			char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );*/
-			SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
-			
+			engine->ClientCommand( edict(), cmd );
+			/*SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
+			*/
 			if( GetTeamNumber() == TEAM_UNASSIGNED )
 			{
 				ChangeTeam( TEAM_BRITISH );
 				Spawn();
 			}
-			else
-				ChangeTeam( TEAM_BRITISH );
+			/*else
+				ChangeTeam( TEAM_BRITISH );*/
 		}
 
 		return true;
@@ -1751,20 +1749,20 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			/*char cmd[512];
+			char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );*/
-			SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
-			
+			engine->ClientCommand( edict(), cmd );
+			/*SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
+			*/
 			if( GetTeamNumber() == TEAM_UNASSIGNED )
 			{
 				ChangeTeam( TEAM_BRITISH );
 				Spawn();
 			}
-			else
-				ChangeTeam( TEAM_BRITISH );
+			/*else
+				ChangeTeam( TEAM_BRITISH );*/
 		}
 
 		return true;
@@ -1816,20 +1814,20 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			//change model/team immediately
 			m_iClass = m_iNextClass;
 
-			/*char cmd[512];
+			char cmd[512];
 			Q_strncpy( cmd, "cl_playermodel ", 512 );
 			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
 
-			engine->ClientCommand( edict(), cmd );*/
-			SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
-			
+			engine->ClientCommand( edict(), cmd );
+			/*SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
+			*/
 			if( GetTeamNumber() == TEAM_UNASSIGNED )
 			{
 				ChangeTeam( TEAM_BRITISH );
 				Spawn();
 			}
-			else
-				ChangeTeam( TEAM_BRITISH );
+			/*else
+				ChangeTeam( TEAM_BRITISH );*/
 		}
 
 		return true;
