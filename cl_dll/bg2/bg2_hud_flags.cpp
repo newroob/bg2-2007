@@ -49,6 +49,7 @@
 #include "tier0/memdbgon.h"
 
 static ConVar cl_flagstatus( "cl_flagstatus", "1", 0, "0 - Off, 1 - Text, 2 - Icons" );
+static ConVar cl_flagstatusdetail( "cl_flagstatusdetail", "2", 0, "0 - No Details, 1 - Compact Details, 2 - Full Details" );
 
 enum
 {
@@ -192,21 +193,22 @@ bool CHudFlags::ShouldDraw( void )
 //==============================================
 void CHudFlags::Paint()
 {
-	char msg2[512];
+	char text[512];
 	int i;// = 0;
-	int yoff = 0;
+	int x_offset = 5;
+	int y_offset = 5;
 	Color ColourWhite( 255, 255, 255, 255 );
 	Color ColourRed( 255, 0, 0, 255 );
 	Color ColourBlue( 0, 0, 255, 255 );
 	switch (cl_flagstatus.GetInt())
 	{
-		case 0:
+		case 0: // not display anything
 			for( i = 0; i < MAX_FLAGS; i++ )
 			{
 				m_pLabelFlag[i]->SetVisible(false);
 			}
 			break;
-		case 1:
+		case 1: // display flag status as text 
 			for( i = 0; i < MAX_FLAGS; i++ )
 			{
 				m_pLabelFlag[i]->SetVisible(false);
@@ -224,33 +226,65 @@ void CHudFlags::Paint()
 				switch( g_Flags[i]->m_iForTeam )
 				{
 					case 0:
-						if( iTimeToCap > 0.1f )
+						Q_snprintf( text, sizeof(text), "%s", g_Flags[i]->m_sFlagName);
+						switch (cl_flagstatusdetail.GetInt())
 						{
-							Q_snprintf( msg2, 512, "%s - Requires %i to Capture - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
-						}
-						else
-						{
-							Q_snprintf( msg2, 512, "%s - Requires %i to Capture", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers );
+							case 0: // No Details
+								if( iTimeToCap > 0.1f )
+								{
+									char text_add[128];
+									Q_snprintf( text_add, sizeof(text_add), "- %i", (int)iTimeToCap);
+									strcat(	text, text_add);
+								}
+								break;
+							case 1: // Compact Details
+								if( iTimeToCap > 0.1f )
+								{
+									char text_add[128];
+									Q_snprintf( text_add, sizeof(text_add), " - %i P - T %i", g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap);
+									strcat(	text, text_add);
+								}
+								else
+								{
+									char text_add[128];
+									Q_snprintf( text_add, sizeof(text_add), " - %i P", g_Flags[i]->m_iCapturePlayers);
+									strcat(	text, text_add);
+								}
+								break;
+							case 2: // Full Details
+								if( iTimeToCap > 0.1f )
+								{
+									char text_add[128];
+									Q_snprintf( text_add, sizeof(text_add), " - %i Players - Time %i", g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+									strcat(	text, text_add);
+								}
+								else
+								{
+									char text_add[128];
+									Q_snprintf( text_add, sizeof(text_add), " - %i Players", g_Flags[i]->m_iCapturePlayers);
+									strcat(	text, text_add);
+								}
+								break;
 						}
 						break;
 					case 1:
 						if( iTimeToCap > 0.1f )
 						{
-							Q_snprintf( msg2, 512, "%s - American Only Traget - Requires %i to Capture - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+							Q_snprintf( text, sizeof(text), "%s - American Only Target - %i Players - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
 						}
 						else
 						{
-							Q_snprintf( msg2, 512, "%s - American Only Traget - Requires %i to Capture", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers);
+							Q_snprintf( text, sizeof(text), "%s - American Only Target - %i Players", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers);
 						}
 						break;
 					case 2:
 						if( iTimeToCap > 0.1f )
 						{
-							Q_snprintf( msg2, 512, "%s - British Only Traget - Requires %i to Capture - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+							Q_snprintf( text, sizeof(text), "%s - British Only Target - %i Players - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
 						}
 						else
 						{
-							Q_snprintf( msg2, 512, "%s - British Only Traget - Requires %i to Capture", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers);
+							Q_snprintf( text, sizeof(text), "%s - British Only Target - %i Players", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers);
 						}
 						break;
 				}
@@ -317,55 +351,57 @@ void CHudFlags::Paint()
 						break;
 				}
 				m_pLabelFlag[i]->SetFgColor(Color(r,g,b,255));
-				m_pLabelFlag[i]->SetText( msg2 );
+				m_pLabelFlag[i]->SetText( text );
 				m_pLabelFlag[i]->SizeToContents();
-				m_pLabelFlag[i]->SetVisible( true );
-				m_pLabelFlag[i]->SetPos(0,yoff);
+				
+				//BP hack to widen the label so no cropping can occur
+				m_pLabelFlag[i]->SetWide(m_pLabelFlag[i]->GetWide() + 5);
 
-				yoff += 20;
+				m_pLabelFlag[i]->SetVisible( true );
+				m_pLabelFlag[i]->SetPos(x_offset,y_offset);
+
+				y_offset += 20;
 			}
 			break;
-		case 2:
+		case 2: // Display Flag status as Icons
 			i = 0;
 			while (i < MAX_FLAGS)
 			{
 				m_pLabelFlag[i]->SetVisible(false);
 				i++;
 			}
-			//i = 0;
-			int xoff = 0;
-			//while (i < iNumFlags)
+			int x_offset = 0;
 			for( i = 0; i < g_Flags.Count(); i++ )
 			{
 				switch( g_Flags[i]->m_iLastTeam )
 				{
 				case TEAM_UNASSIGNED:
-						m_IconFlag[i]->DrawSelf(xoff,0,ColourWhite);
-						Q_snprintf( msg2, 512, "%i", g_Flags[i]->m_iCapturePlayers);
-						m_pLabelFlag[i]->SetText( msg2 );
+						m_IconFlag[i]->DrawSelf(x_offset,0,ColourWhite);
+						Q_snprintf( text, 512, "%i", g_Flags[i]->m_iCapturePlayers);
+						m_pLabelFlag[i]->SetText( text );
 						m_pLabelFlag[i]->SizeToContents();
 						m_pLabelFlag[i]->SetVisible( true );
-						m_pLabelFlag[i]->SetPos((xoff + 16),32);
+						m_pLabelFlag[i]->SetPos((x_offset + 16),32);
 						m_pLabelFlag[i]->SetFgColor(ColourWhite);
 						m_pLabelFlag[i]->SetVisible(true);
 						break;
 					case TEAM_AMERICANS:
-						m_IconFlag[i]->DrawSelf(xoff,0,ColourBlue);
-						Q_snprintf( msg2, 512, "%i", g_Flags[i]->m_iCapturePlayers);
-						m_pLabelFlag[i]->SetText( msg2 );
+						m_IconFlag[i]->DrawSelf(x_offset,0,ColourBlue);
+						Q_snprintf( text, 512, "%i", g_Flags[i]->m_iCapturePlayers);
+						m_pLabelFlag[i]->SetText( text );
 						m_pLabelFlag[i]->SizeToContents();
 						m_pLabelFlag[i]->SetVisible( true );
-						m_pLabelFlag[i]->SetPos((xoff + 16),32);
+						m_pLabelFlag[i]->SetPos((x_offset + 16),32);
 						m_pLabelFlag[i]->SetFgColor(ColourBlue);
 						m_pLabelFlag[i]->SetVisible(true);
 						break;
 					case TEAM_BRITISH:
-						m_IconFlag[i]->DrawSelf(xoff,0,ColourRed);
-						Q_snprintf( msg2, 512, "%i", g_Flags[i]->m_iCapturePlayers);
-						m_pLabelFlag[i]->SetText( msg2 );
+						m_IconFlag[i]->DrawSelf(x_offset,0,ColourRed);
+						Q_snprintf( text, 512, "%i", g_Flags[i]->m_iCapturePlayers);
+						m_pLabelFlag[i]->SetText( text );
 						m_pLabelFlag[i]->SizeToContents();
 						m_pLabelFlag[i]->SetVisible( true );
-						m_pLabelFlag[i]->SetPos((xoff + 16),32);
+						m_pLabelFlag[i]->SetPos((x_offset + 16),32);
 						m_pLabelFlag[i]->SetFgColor(ColourRed);
 						m_pLabelFlag[i]->SetVisible(true);
 						break;
@@ -377,18 +413,18 @@ void CHudFlags::Paint()
 					switch( g_Flags[i]->m_iLastTeam )
 					{
 						case TEAM_UNASSIGNED:
-							m_IconCover[i]->DrawSelfCropped(xoff, 0, xoff, 0, 32 - coverw, 32, ColourWhite);
+							m_IconCover[i]->DrawSelfCropped(x_offset, 0, x_offset, 0, 32 - coverw, 32, ColourWhite);
 							break;
 						case TEAM_BRITISH:
-							m_IconCover[i]->DrawSelfCropped(xoff, 0, xoff, 0, 32 - coverw, 32, ColourRed);
+							m_IconCover[i]->DrawSelfCropped(x_offset, 0, x_offset, 0, 32 - coverw, 32, ColourRed);
 							break;
 						case TEAM_AMERICANS:
-							m_IconCover[i]->DrawSelfCropped(xoff, 0, xoff, 0, 32 - coverw, 32, ColourBlue);
+							m_IconCover[i]->DrawSelfCropped(x_offset, 0, x_offset, 0, 32 - coverw, 32, ColourBlue);
 							break;
 					}
 				}
 
-				xoff += 40;
+				x_offset += 40;
 			}
 			break;
 	}
