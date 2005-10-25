@@ -98,9 +98,6 @@ private:
 					classmenu,
 					commmenu,
 					commmenu2;
-
-public:
-	bool			hideautoassign;
 };
 
 #endif // CLASSMENU_H

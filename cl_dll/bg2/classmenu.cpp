@@ -143,13 +143,11 @@ public:
 		{
 			//join spectators
 			engine->ServerCmd( "spectate", true );
-			pThisMenu->hideautoassign = false;
 			pThisMenu->ToggleButtons(1);
 			pThisMenu->ShowPanel( false );
 			return;
 		}
 
-		pThisMenu->hideautoassign = true;
 		pThisMenu->ToggleButtons(2);
 		
 		if( m_iCommand == -1 )
@@ -191,7 +189,6 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_iCancelKey = -1;
 	m_iSpectateKey = -1;
 	classmenu = commmenu = commmenu2 = -1;
-	hideautoassign = false;
 		
 	m_pViewPort = pViewPort;
 
@@ -342,9 +339,6 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	}
 	else if( iLastTrappedKey == m_iCancelKey )
 	{
-		//cancel => we will return to main screen. figure out hideautoassign
-		hideautoassign = C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR ? false : true;
-
 		ToggleButtons(1);
 		m_pViewPort->ShowPanel( this, false );
 	}
@@ -425,6 +419,8 @@ void CClassMenu::Update( void )
 void CClassMenu::OnThink()
 {
 	BaseClass::OnThink();
+	//BG2 - Tjoppen - show autoassign button if we're not in the class part and we're unassigned or spectator
+	m_pAutoassignButton->SetVisible( m_pInfantryButton->IsVisible() ? false : C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR );
 	//BG2 - Draco - set the proper names for the classes
 	switch( m_iTeamSelection )
 	{
@@ -448,7 +444,9 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 		case 1:
 			m_pBritishButton->SetVisible(true);
 			m_pAmericanButton->SetVisible(true);
-			m_pAutoassignButton->SetVisible( hideautoassign ? false : true );
+			//BG2 - Tjoppen - show autoassign button if we're not in the class part and we're unassigned or spectator
+			m_pAutoassignButton->SetVisible( m_pInfantryButton->IsVisible() ? false : C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR );
+			//
 			m_pSpectateButton->SetVisible(true);
 			m_pOfficerButton->SetVisible(false);
 			m_pInfantryButton->SetVisible(false);
