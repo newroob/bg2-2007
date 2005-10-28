@@ -311,7 +311,7 @@ void CHL2MP_Player::GiveDefaultItems( void )
 	CBasePlayer::GiveAmmo( 45,	"SMG1");
 	CBasePlayer::GiveAmmo( 1,	"grenade" );
 	CBasePlayer::GiveAmmo( 6,	"Buckshot");*/
-	CBasePlayer::GiveAmmo( 6,	"357" );
+	CBasePlayer::GiveAmmo( 60,	"357" );
 	
 	if( GetTeam()->GetTeamNumber() == TEAM_AMERICANS )	//Americans
 	{
