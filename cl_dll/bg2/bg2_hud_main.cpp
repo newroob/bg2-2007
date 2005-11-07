@@ -205,20 +205,20 @@ void CHudBG2::Paint()
 	
 	C_Team *pAmer = GetGlobalTeam(TEAM_AMERICANS);
 	C_Team *pBrit = GetGlobalTeam(TEAM_BRITISH);
-	Q_snprintf( msg2, 512, "%i", pBrit->Get_Score());
+	Q_snprintf( msg2, 512, "%i ", pBrit->Get_Score());
 	m_pLabelBScore->SetText(msg2);
 	m_pLabelBScore->SetPos(95,ystart + 65);
 	m_pLabelBScore->SizeToContents();
 	m_pLabelBScore->SetVisible(ShouldDraw());
 	
-	Q_snprintf( msg2, 512, "%i", pAmer->Get_Score());
+	Q_snprintf( msg2, 512, "%i ", pAmer->Get_Score());
 	m_pLabelAScore->SetText(msg2);
 	m_pLabelAScore->SetPos(128,ystart + 65);
 	m_pLabelAScore->SizeToContents();
 	m_pLabelAScore->SetVisible(ShouldDraw());
 
 	int iAmmoCount = player->GetAmmoCount(wpn->GetPrimaryAmmoType()) + wpn->Clip1();
-	Q_snprintf( msg2, 512, "%i", iAmmoCount);
+	Q_snprintf( msg2, 512, "%i ", iAmmoCount);
 	m_pLabelAmmo->SetText(msg2);
 	if (wpn->Clip1() != 1)
 	{
@@ -232,7 +232,7 @@ void CHudBG2::Paint()
 	m_pLabelAmmo->SizeToContents();
 	m_pLabelAmmo->SetVisible(ShouldDraw());
 
-	Q_snprintf( msg2, 512, "%i:%i", (HL2MPRules()->m_iWaveTime / 60), (HL2MPRules()->m_iWaveTime % 60));
+	Q_snprintf( msg2, 512, "%i:%i ", (HL2MPRules()->m_iWaveTime / 60), (HL2MPRules()->m_iWaveTime % 60));
 	m_pLabelWaveTime->SetText(msg2);
 	m_pLabelWaveTime->SetPos(120,ystart + 85);
 	m_pLabelWaveTime->SizeToContents();
