@@ -548,8 +548,20 @@ void CFlagHandler::RespawnAll( char *pSound )
 		/*if( pPlayer->IsAlive() )
 			pPlayer->Kill();*/
 
+		//BG2 - Tjoppen - remove ragdoll - remember to change this to remove multiple ones if we decide to enable more corpses
+		if( pPlayer->m_hRagdoll )
+		{
+			UTIL_RemoveImmediate( pPlayer->m_hRagdoll );
+			pPlayer->m_hRagdoll = NULL;
+		}
+
 		if( spawn )
 			pPlayer->Spawn();
+		else if( pPlayer->IsAlive() )
+		{
+			//if there's no spawn points and the player isn't dead - just kill 'em!
+			pPlayer->TakeDamage( CTakeDamageInfo( GetContainingEntity(INDEXENT(0)), GetContainingEntity(INDEXENT(0)), 300, DMG_GENERIC ) );
+		}
 
 		if( pSound )
 		{
