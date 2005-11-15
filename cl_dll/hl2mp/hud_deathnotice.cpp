@@ -189,7 +189,7 @@ void CHudDeathNotice::Paint()
 		}
 		else
 		{
-			float scale = ( (float)ScreenHeight() / 480.0f );	//scale based on 640x480
+			float scale = ( (float)ScreenHeight() / 768.0f );	//scale based on 1024x768
 			iconWide = (int)( scale * (float)icon->Width() );
 			iconTall = (int)( scale * (float)icon->Height() );
 		}
@@ -229,7 +229,8 @@ void CHudDeathNotice::Paint()
 
 		// Draw death weapon
 		//If we're using a font char, this will ignore iconTall and iconWide
-		icon->DrawSelf( x, y, iconWide, iconTall, iconColor );
+		icon->DrawSelf( x, y - iconTall/4, iconWide, iconTall, iconColor );
+
 		x += iconWide;		
 
 		SetColorForNoticePlayer( iVictimTeam );
