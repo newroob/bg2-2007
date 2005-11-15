@@ -151,6 +151,8 @@ CBaseBG2Weapon::CBaseBG2Weapon( void )
 
 int CBaseBG2Weapon::Fire( int iAttack )
 {
+	m_bLastAttackStab = false;
+
 	// Only the player fires this way so we can cast
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
 
@@ -256,6 +258,8 @@ int CBaseBG2Weapon::Fire( int iAttack )
 
 int CBaseBG2Weapon::FireBullet( int iAttack )
 {
+	m_bLastAttackStab = false;
+
 	if ( m_iClip1 <= 0 )
 	{
 		if ( !m_bFireOnEmpty )
@@ -704,6 +708,11 @@ int CBaseBG2Weapon::Swing( int iAttack )
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 	if ( !pOwner )
 		return 0;
+
+	if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
+		m_bLastAttackStab = true;
+	else
+		m_bLastAttackStab = false;
 
 	Vector swingStart = pOwner->Weapon_ShootPosition( );
 	Vector forward;

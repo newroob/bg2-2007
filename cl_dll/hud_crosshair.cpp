@@ -51,6 +51,7 @@ void CHudCrosshair::ApplySchemeSettings( IScheme *scheme )
 {
 	BaseClass::ApplySchemeSettings( scheme );
 
+	m_pCrosshair = gHUD.GetIcon( "hud_crosshair" );
 	//m_pDefaultCrosshair = gHUD.GetIcon("crosshair_default");
 	SetPaintBackgroundEnabled( false );
 }
@@ -73,8 +74,8 @@ void CHudCrosshair::Paint( void )
 	if ( !g_pClientMode->ShouldDrawCrosshair() )
 		return;
 
-	/*if ( !m_pCrosshair )
-		return;*/
+	if ( !m_pCrosshair )
+		return;
 
 	if ( engine->IsDrawingLoadingImage() || engine->IsPaused() )
 		return;
@@ -326,10 +327,6 @@ void CHudCrosshair::Paint( void )
 
 		if( cl_crosshair.GetInt() & 8 )
 		{
-			CHudTexture *icon = gHUD.GetIcon( "hud_crosshair" );
-			if( !icon )
-				return;
-
 			Color iconColor( 255, 80, 0, 255 );
 
 			r *= cl_crosshair_scale.GetFloat();
@@ -337,7 +334,7 @@ void CHudCrosshair::Paint( void )
 			int x = ScreenWidth()/2 - r,
 				y = ScreenHeight()/2 - r;
 
-			icon->DrawSelf( x, y, 2*r, 2*r, iconColor );
+			m_pCrosshair->DrawSelf( x, y, 2*r, 2*r, iconColor );
 		}
 	}
 

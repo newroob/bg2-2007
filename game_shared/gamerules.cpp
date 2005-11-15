@@ -22,6 +22,9 @@
 	#include "voice_gamemgr.h"
 	#include "globalstate.h"
 	#include "player_resource.h"
+	//BG2 - Tjoppen - #includes
+	#include "bg2/spawnpoint.h"
+	//
 
 #endif
 
@@ -156,6 +159,11 @@ CBaseEntity *CGameRules::GetPlayerSpawnSpot( CBasePlayer *pPlayer )
 	CBaseEntity *pSpawnSpot = pPlayer->EntSelectSpawnPoint();
 	Assert( pSpawnSpot );
 
+	//BG2 - Tjoppen - don't do squat in GetPlayerSpawnSpot if we get NULL.. we might be a spectator or something
+	if( !pSpawnSpot )
+		return NULL;
+	//
+
 	pPlayer->SetLocalOrigin( pSpawnSpot->GetAbsOrigin() + Vector(0,0,1) );
 	pPlayer->SetAbsVelocity( vec3_origin );
 	pPlayer->SetLocalAngles( pSpawnSpot->GetLocalAngles() );
@@ -175,6 +183,11 @@ bool CGameRules::IsSpawnPointValid( CBaseEntity *pSpot, CBasePlayer *pPlayer  )
 	{
 		return false;
 	}
+
+	//BG2 - Tjoppen - CSpawnPoint
+	if( (CSpawnPoint*)pSpot && !((CSpawnPoint*)pSpot)->IsEnabled() )
+		return false;
+	//
 
 	for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 128 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 	{

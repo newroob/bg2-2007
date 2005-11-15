@@ -467,6 +467,9 @@ void CHL2MPRules::Think( void )
 				m_flNextRoundRestart = gpGlobals->curtime + 1;	//don't check for dead players for
 																//one second to debounce with respect
 																//to any non-spawned players
+
+				CFlagHandler::ResetFlags();		//reset spawns and flags before respawning anyone..
+
 				if( aliveamericans == 0 && alivebritish == 0 )
 				{
 					//draw
@@ -514,6 +517,8 @@ void CHL2MPRules::Think( void )
 			else if ((m_bIsRestartingRound) && (m_flNextRoundRestart < gpGlobals->curtime))
 			{
 				//draw
+				CFlagHandler::ResetFlags();		//reset spawns and flags before respawning anyone..
+
 				CFlagHandler::RespawnAll( NULL );
 				if (mp_respawntime.GetInt() > 0)
 				{
@@ -876,7 +881,8 @@ void CHL2MPRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info
 					// If the inflictor is the killer,  then it must be their current weapon doing the damage
 					if ( pScorer->GetActiveWeapon() )
 					{
-						killer_weapon_name = pScorer->GetActiveWeapon()->GetClassname();
+						//BG2 - Tjoppen - GetDeathNoticeName!
+						killer_weapon_name = pScorer->GetActiveWeapon()->GetDeathNoticeName();//GetClassname();
 					}
 				}
 				else

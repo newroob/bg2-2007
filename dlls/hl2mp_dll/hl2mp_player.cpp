@@ -54,6 +54,7 @@
 
 //BG2 - Tjoppen - #include
 #include "bg2/vcomm.h"
+#include "bg2/spawnpoint.h"
 //
 
 #include "engine/IEngineSound.h"
@@ -96,11 +97,19 @@ void DropPrimedFragGrenade( CHL2MP_Player *pPlayer, CBaseCombatWeapon *pGrenade 
 
 LINK_ENTITY_TO_CLASS( player, CHL2MP_Player );
 
-LINK_ENTITY_TO_CLASS( info_player_combine, CPointEntity );
-LINK_ENTITY_TO_CLASS( info_player_rebel, CPointEntity );
+//BG2 - Tjoppen - CSpawnPoint
+BEGIN_DATADESC( CSpawnPoint )
+	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "Toggle", InputToggle ),
+END_DATADESC()
+//
+
+LINK_ENTITY_TO_CLASS( info_player_combine, CSpawnPoint );
+LINK_ENTITY_TO_CLASS( info_player_rebel, CSpawnPoint );
 //BG2 - Tjoppen - info_player_american/british
-LINK_ENTITY_TO_CLASS( info_player_american, CPointEntity );
-LINK_ENTITY_TO_CLASS( info_player_british, CPointEntity );
+LINK_ENTITY_TO_CLASS( info_player_american, CSpawnPoint );
+LINK_ENTITY_TO_CLASS( info_player_british, CSpawnPoint );
 //
 
 IMPLEMENT_SERVERCLASS_ST(CHL2MP_Player, DT_HL2MP_Player)
@@ -2301,6 +2310,8 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 	const char *pSpawnpointName2 = "info_player_deathmatch";
 	//
 
+	if( GetTeamNumber() <= TEAM_SPECTATOR ) return NULL;	//BG2 - Tjoppen - spectators/unassigned don't spawn..
+
 	if ( HL2MPRules()->IsTeamplay() == true )
 	{
 		if ( GetTeamNumber() == TEAM_AMERICANS )
@@ -2342,6 +2353,37 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
 	if ( !pSpot )  // skip over the null point
 		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
+
+	//BG2 - Tjoppen - find next enabled spawnpoint
+	CBaseEntity *pBefore = pSpot;
+	for( int n = 0; n < 100; n++ )
+	{
+		//skip NULL
+		if( !pSpot )
+			pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
+
+		Assert( pSpot != NULL );
+
+		if( ((CSpawnPoint*)pSpot)->IsEnabled() )
+			break;					//found one!
+
+		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
+
+		Assert( pSpot != pBefore );	//if we've gone all the way around.. which we never should
+		if( pSpot == pBefore )
+		{
+			//release mode - whine and force spawn on the t we have..
+			Msg( "spawn system ran out of enabled %s - tell the mapper\n", pSpawnpointName );
+			Msg( "what this means is that somehow all spawnpoints for this team are disabled\n" );
+			break;
+		}
+	}
+
+	if( n >= 100 )
+	{
+		Msg( "spawn system got into long loop on %s - tell the mapper\n", pSpawnpointName );
+		Msg( "what this means is that somehow all spawnpoints for this team are disabled, and that the code to detect this failed\n" );
+	}
 
 	CBaseEntity *pFirstSpot = pSpot;
 
@@ -2419,6 +2461,8 @@ bool CHL2MP_Player::CheckSpawnPoints( void )
 	const char *pSpawnpointName2 = "info_player_deathmatch";
 	//
 
+	if( GetTeamNumber() <= TEAM_SPECTATOR ) return false;	//BG2 - Tjoppen - spectators/unassigned don't spawn..
+
 	if ( HL2MPRules()->IsTeamplay() == true )
 	{
 		if ( GetTeamNumber() == TEAM_AMERICANS )
@@ -2460,6 +2504,32 @@ bool CHL2MP_Player::CheckSpawnPoints( void )
 		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
 	if ( !pSpot )  // skip over the null point
 		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
+
+	//BG2 - Tjoppen - find next enabled spawnpoint
+	CBaseEntity *pBefore = pSpot;
+	for( int n = 0; n < 100; n++ )
+	{
+		//skip NULL
+		if( !pSpot )
+			pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
+
+		Assert( pSpot != NULL );
+
+		if( ((CSpawnPoint*)pSpot)->IsEnabled() )
+			break;					//found one!
+
+		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
+
+		if( pSpot == pBefore )
+			return false;			//we would Assert() here in EntSelectSpawnPoint(), but this return false should prevent it
+	}
+
+	if( n >= 100 )
+	{
+		Msg( "spawn system got into long loop on %s - tell the mapper\n", pSpawnpointName );
+		Msg( "what this means is that somehow all spawnpoints for this team are disabled, and that the code to detect this failed\n" );
+		return false;
+	}
 
 	CBaseEntity *pFirstSpot = pSpot;
 

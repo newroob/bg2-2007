@@ -220,6 +220,18 @@ public:
 		return iAttack != ATTACK_NONE ? m_Attackinfos[iAttack].m_flCosAngleTolerance : 0;
 	}
 
+	//minor hack to get bayonet deathnotice
+	bool m_bLastAttackStab;
+	char *GetDeathNoticeName( void )
+	{
+		Msg( "GetDeathNoticeName: %i\n", m_bLastAttackStab );
+
+		if( m_bLastAttackStab )
+			return "bayonet";
+
+		return (char*)GetClassname();
+	}
+
 	/*bool	IsMeleeWeapon( void )
 	{
 		return m_Attackinfos[ATTACK_PRIMARY].m_iAttacktype == ATTACKTYPE_STAB ? true : false;

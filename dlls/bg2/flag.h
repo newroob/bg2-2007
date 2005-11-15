@@ -49,6 +49,32 @@ class CFlag : public CBaseAnimating
 	CNetworkVar( int, m_iCapturePlayers );	//how many player must be nearby to capture this flag?
 	CNetworkVar( int, m_iForTeam );
 
+	CNetworkVar( bool, m_bActive );		//BG2 - Tjoppen - adding SaintGreg's flag stuff from way back as a placeholder
+										//				  until the new flag code is done.
+#ifndef CLIENT_DLL
+	//BG2 - SaintGreg - Output functions similar to BG's
+	COutputEvent m_OnAmericanStartCapture;
+	COutputEvent m_OnBritishStartCapture;
+	COutputEvent m_OnStartCapture;
+	COutputEvent m_OnAmericanCapture;
+	COutputEvent m_OnBritishCapture;
+	COutputEvent m_OnCapture;
+	COutputEvent m_OnAmericanStopCapture;
+	COutputEvent m_OnBritishStopCapture;
+	COutputEvent m_OnStopCapture;
+	COutputEvent m_OnAmericanLosePoint;
+	COutputEvent m_OnBritishLosePoint;
+	COutputEvent m_OnLosePoint;
+	COutputEvent m_OnEnable;
+	COutputEvent m_OnDisable;
+#endif // CLIENT_DLL
+
+	bool IsActive( void );
+	void InputEnable( inputdata_t &inputData );
+	void InputDisable( inputdata_t &inputData );
+	void InputToggle( inputdata_t &inputData );
+
+
 	int		m_iUncap,
 			m_iTeamBonus,
 			m_iTeamBonusInterval,

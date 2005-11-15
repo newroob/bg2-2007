@@ -41,6 +41,7 @@
 	#include "gamerules.h"
 	#include "team.h"
 	#include "engine/IEngineSound.h"
+	#include "bg2/spawnpoint.h"
 //#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -50,6 +51,8 @@
 //BG2 - Tjoppen - just make these global so we can reset them
 float	flNextClientPrintAll = 0;
 bool	bNextClientPrintAllForce = false;
+
+const int CFlag_START_DISABLED = 1;		// spawnflag definition
 
 void ClientPrintAll( char *str, bool printfordeadplayers = false, bool forcenextclientprintall = false )
 {
@@ -82,6 +85,60 @@ void ClientPrintAll( char *str, bool printfordeadplayers = false, bool forcenext
 //#endif
 
 
+//BG2 - SaintGreg - dynamic flag settings
+//input functions
+#ifndef CLIENT_DLL
+bool CFlag::IsActive( void )
+{
+	return m_bActive;
+}
+
+void CFlag::InputEnable( inputdata_t &inputData )
+{
+	if( m_bActive )
+		return;
+	char msg[512];
+	Q_snprintf( msg, 512, "flag(%s) has been enabled", STRING( GetEntityName() ) );
+	ClientPrintAll( msg, true, true ); // saying whether it is enabled or not is important, so force
+	m_bActive = true;
+	ChangeTeam( TEAM_UNASSIGNED );
+	m_iLastTeam = TEAM_UNASSIGNED;
+	SetModel( "models/other/flag_n.mdl" );
+	m_OnEnable.FireOutput( inputData.pActivator, this );
+	Think(); // think immediately and restart the thinking cycle
+}
+void CFlag::InputDisable( inputdata_t &inputData )
+{
+	if( !m_bActive )
+		return;
+	char msg[512];
+	Q_snprintf( msg, 512, "flag(%s) has been disabled", STRING( GetEntityName() ) );
+	ClientPrintAll( msg, true, true ); // saying whether it is enabled or not is important, so force
+	m_bActive = false;
+	if( GetTeamNumber() == TEAM_AMERICANS )
+	{
+		m_OnAmericanLosePoint.FireOutput( this, this );
+		m_OnLosePoint.FireOutput( this, this );
+	}
+	else if( GetTeamNumber() == TEAM_BRITISH )
+	{
+		m_OnBritishLosePoint.FireOutput( this, this );
+		m_OnLosePoint.FireOutput( this, this );
+	}
+	ChangeTeam( TEAM_UNASSIGNED );
+	m_iLastTeam = TEAM_UNASSIGNED;
+	SetModel( "models/other/flag_w.mdl" );
+	m_OnDisable.FireOutput( inputData.pActivator, this );
+	CFlagHandler::Update();
+}
+void CFlag::InputToggle( inputdata_t &inputData )
+{
+	if (m_bActive)
+		InputDisable( inputData );
+	else
+		InputEnable( inputData );
+}
+#endif // CLIENT_DLL
 
 void CFlag::Spawn( void )
 {
@@ -131,6 +188,19 @@ void CFlag::Spawn( void )
 	m_iRequestingCappers = TEAM_UNASSIGNED;
 	m_iLastTeam = TEAM_UNASSIGNED;
 
+#ifndef CLIENT_DLL
+	if (HasSpawnFlags( CFlag_START_DISABLED ))
+	{
+		m_bActive = false;
+		SetModel( "models/other/flag_w.mdl" );
+	}
+	else
+	{
+		m_bActive = true;
+		//SetModel( "models/other/flag_n.mdl" );
+	}
+#endif // CLIENT_DLL
+
 	/*int m_nIdealSequence = SelectWeightedSequence( ACT_VM_IDLE );
 	//SetActivity( ACT_VM_IDLE );
 	SetSequence( m_nIdealSequence );	
@@ -155,6 +225,8 @@ void CFlag::Precache( void )
 	PrecacheModel ("models/other/flag_n.mdl");
 	PrecacheModel ("models/other/flag_a.mdl");
 	PrecacheModel ("models/other/flag_b.mdl");
+	//BG2 - Tjoppen - temp
+	//PrecacheModel ("models/other/flag_w.mdl");  // BG2 - SaintGreg - flag when disabled
 
 	PrecacheScriptSound( "British.win" );
 	PrecacheScriptSound( "Americans.win" );
@@ -190,7 +262,11 @@ void CFlag::Think( void )
 	//SetSequence( SelectWeightedSequence( ACT_VM_IDLE ) );
 	//StudioFrameAdvance();
 
-//#ifndef CLIENT_DLL
+#ifndef CLIENT_DLL
+	if (!m_bActive)	// if inactive, stop the thinking cycle
+		return;
+#endif
+
 	CBasePlayer *pPlayer = NULL;
 
 	int americans = 0,
@@ -291,6 +367,9 @@ void CFlag::Think( void )
 					msg = msg2;
 					m_iLastTeam = TEAM_AMERICANS;
 					m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
+
+					m_OnAmericanStartCapture.FireOutput( this, this );
+					m_OnStartCapture.FireOutput( this, this );
 				}
 				else if( gpGlobals->curtime >= m_flNextCapture )
 				{
@@ -318,8 +397,19 @@ void CFlag::Think( void )
 					}
 					m_iLastTeam = TEAM_UNASSIGNED;
 					m_iRequestingCappers = TEAM_UNASSIGNED;
+
+					// before we change team, if they stole the point, fire the output
+					if (GetTeamNumber() == TEAM_BRITISH)
+					{
+						m_OnBritishLosePoint.FireOutput( this, this );
+						m_OnLosePoint.FireOutput( this, this );
+					}
+
 					ChangeTeam( TEAM_AMERICANS );
 					CFlagHandler::Update();
+
+					m_OnAmericanCapture.FireOutput( this, this );
+					m_OnCapture.FireOutput( this, this );
 				}
 			}
 		}
@@ -337,6 +427,9 @@ void CFlag::Think( void )
 					msg = msg2;
 					m_iLastTeam = TEAM_BRITISH;
 					m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
+
+					m_OnBritishStartCapture.FireOutput( this, this );
+					m_OnStartCapture.FireOutput( this, this );
 				}
 				else if( gpGlobals->curtime >= m_flNextCapture )
 				{
@@ -362,10 +455,21 @@ void CFlag::Think( void )
 								break;
 						}
 					}
+
+					// before we change team, if they stole the point, fire the output
+					if (GetTeamNumber() == TEAM_AMERICANS)
+					{
+						m_OnAmericanLosePoint.FireOutput( this, this );
+						m_OnLosePoint.FireOutput( this, this );
+					}
+
 					ChangeTeam( TEAM_BRITISH );
 					CFlagHandler::Update();
 					m_iRequestingCappers = TEAM_UNASSIGNED;
 					m_iLastTeam = TEAM_UNASSIGNED;
+
+					m_OnBritishCapture.FireOutput( this, this );
+					m_OnCapture.FireOutput( this, this );
 				}
 			}
 		}
@@ -380,12 +484,18 @@ void CFlag::Think( void )
 				char msg2[512];
 				Q_snprintf( msg2, 512, "The americans stopped capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
 				msg = msg2;
+
+				m_OnAmericanStopCapture.FireOutput( this, this );
+				m_OnStopCapture.FireOutput( this, this );
 			}
 			else if( m_iLastTeam == TEAM_BRITISH && GetTeamNumber() != TEAM_BRITISH )
 			{
 				char msg2[512];
 				Q_snprintf( msg2, 512, "The british stopped capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
 				msg = msg2;
+
+				m_OnBritishStopCapture.FireOutput( this, this );
+				m_OnStopCapture.FireOutput( this, this );
 			}
 		}
 		//noone here
@@ -403,6 +513,17 @@ void CFlag::Think( void )
 void CFlag::ChangeTeam( int iTeamNum )
 {
 //#ifndef CLIENT_DLL
+#ifndef CLIENT_DLL
+		if (HasSpawnFlags( CFlag_START_DISABLED ))
+		{
+			m_bActive = false;
+			SetModel( "models/other/flag_w.mdl" );
+			return;
+		}
+		
+		m_bActive = true;
+#endif // CLIENT_DLL
+
 	switch( iTeamNum )
 	{
 	case TEAM_AMERICANS:
@@ -470,6 +591,29 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_THINKFUNC( Think ),
 #endif
 
+#ifndef CLIENT_DLL
+	//BG2 - SaintGreg - dynamic flags
+	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "Toggle", InputToggle ),
+
+	//BG2 - SaintGreg - Output functions similar to BG's
+	DEFINE_OUTPUT( m_OnAmericanStartCapture, "OnAmericanStartCapture" ),
+	DEFINE_OUTPUT( m_OnBritishStartCapture, "OnBritishStartCapture" ),
+	DEFINE_OUTPUT( m_OnStartCapture, "OnStartCapture" ),
+	DEFINE_OUTPUT( m_OnAmericanCapture, "OnAmericanCapture" ),
+	DEFINE_OUTPUT( m_OnBritishCapture, "OnBritishCapture" ),
+	DEFINE_OUTPUT( m_OnCapture, "OnCapture" ),
+	DEFINE_OUTPUT( m_OnAmericanStopCapture, "OnAmericanStopCapture" ),
+	DEFINE_OUTPUT( m_OnBritishStopCapture, "OnBritishStopCapture" ),
+	DEFINE_OUTPUT( m_OnStopCapture, "OnStopCapture" ),
+	DEFINE_OUTPUT( m_OnAmericanLosePoint, "OnAmericanLosePoint" ),
+	DEFINE_OUTPUT( m_OnBritishLosePoint, "OnBritishLosePoint" ),
+	DEFINE_OUTPUT( m_OnLosePoint, "OnLosePoint" ),
+	DEFINE_OUTPUT( m_OnEnable, "OnEnable" ),
+	DEFINE_OUTPUT( m_OnDisable, "OnDisable" ),
+#endif // CLIENT_DLL
+
 END_DATADESC()
 
 LINK_ENTITY_TO_CLASS(flag, CFlag);
@@ -496,6 +640,7 @@ void CFlagHandler::RespawnAll( char *pSound )
 		if( !pPlayer )
 			continue;
 
+		//check if we've run out of spawn points. if we alread have, we can skip this step
 		if( spawn && !pPlayer->CheckSpawnPoints() )
 			spawn = false;
 
@@ -503,19 +648,20 @@ void CFlagHandler::RespawnAll( char *pSound )
 		/*if( pPlayer->IsAlive() )
 			pPlayer->Kill();*/
 
-		//BG2 - Tjoppen - remove ragdoll - remember to change this to remove multiple ones if we decide to enable more corpses
-		if( pPlayer->m_hRagdoll )
-		{
-			UTIL_RemoveImmediate( pPlayer->m_hRagdoll );
-			pPlayer->m_hRagdoll = NULL;
-		}
-
 		if( spawn )
 			pPlayer->Spawn();
 		else if( pPlayer->IsAlive() )
 		{
 			//if there's no spawn points and the player isn't dead - just kill 'em!
 			pPlayer->TakeDamage( CTakeDamageInfo( GetContainingEntity(INDEXENT(0)), GetContainingEntity(INDEXENT(0)), 300, DMG_GENERIC ) );
+			pPlayer->SetNextThink( gpGlobals->curtime + 3.0f );	//don't respawn in a while
+		}
+
+		//BG2 - Tjoppen - remove ragdoll - remember to change this to remove multiple ones if we decide to enable more corpses
+		if( pPlayer->m_hRagdoll )
+		{
+			UTIL_RemoveImmediate( pPlayer->m_hRagdoll );
+			pPlayer->m_hRagdoll = NULL;
 		}
 
 		if( pSound )
@@ -541,6 +687,7 @@ void CFlagHandler::RespawnAll( char *pSound )
 		if( !pPlayer )
 			continue;
 
+		//check if we've run out of spawn points. if we alread have, we can skip this step
 		if( spawn && !pPlayer->CheckSpawnPoints() )
 			spawn = false;
 
@@ -548,19 +695,20 @@ void CFlagHandler::RespawnAll( char *pSound )
 		/*if( pPlayer->IsAlive() )
 			pPlayer->Kill();*/
 
-		//BG2 - Tjoppen - remove ragdoll - remember to change this to remove multiple ones if we decide to enable more corpses
-		if( pPlayer->m_hRagdoll )
-		{
-			UTIL_RemoveImmediate( pPlayer->m_hRagdoll );
-			pPlayer->m_hRagdoll = NULL;
-		}
-
 		if( spawn )
 			pPlayer->Spawn();
 		else if( pPlayer->IsAlive() )
 		{
 			//if there's no spawn points and the player isn't dead - just kill 'em!
 			pPlayer->TakeDamage( CTakeDamageInfo( GetContainingEntity(INDEXENT(0)), GetContainingEntity(INDEXENT(0)), 300, DMG_GENERIC ) );
+			pPlayer->SetNextThink( gpGlobals->curtime + 3.0f );	//don't respawn in a while
+		}
+
+		//BG2 - Tjoppen - remove ragdoll - remember to change this to remove multiple ones if we decide to enable more corpses
+		if( pPlayer->m_hRagdoll )
+		{
+			UTIL_RemoveImmediate( pPlayer->m_hRagdoll );
+			pPlayer->m_hRagdoll = NULL;
 		}
 
 		if( pSound )
@@ -639,17 +787,84 @@ void CFlagHandler::RespawnWave()
 void CFlagHandler::ResetFlags( void )
 {
 	CBaseEntity *pEntity = NULL;
-	
+
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{
 		CFlag *pFlag = (CFlag*)pEntity;
 		if( !pFlag )
 			continue;
 
+		if( pFlag->GetTeamNumber() == TEAM_AMERICANS )
+		{
+			pFlag->m_OnAmericanLosePoint.FireOutput( pFlag, pFlag );
+			pFlag->m_OnLosePoint.FireOutput( pFlag, pFlag );
+		}
+		else if( pFlag->GetTeamNumber() == TEAM_BRITISH )
+		{
+			pFlag->m_OnBritishLosePoint.FireOutput( pFlag, pFlag );
+			pFlag->m_OnLosePoint.FireOutput( pFlag, pFlag );
+		}
+
 		pFlag->ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
 		pFlag->m_iLastTeam = TEAM_UNASSIGNED;
 		pFlag->m_iRequestingCappers = TEAM_UNASSIGNED;
+
+#ifndef CLIENT_DLL
+		if (pFlag->HasSpawnFlags( CFlag_START_DISABLED ))
+		{
+			pFlag->m_bActive = false;
+			pFlag->SetModel( "models/other/flag_w.mdl" );
+		}
+		else
+		{
+			pFlag->m_bActive = true;
+			//SetModel( "models/other/flag_n.mdl" );
+		}
+#endif // CLIENT_DLL
 	}
+
+	//BG2 - Tjoppen - reset spawnpoints aswell.. this is a hack. we should really have a proper RoundRestart() function somewhere
+	//also, I'm considering removing support for info_player_rebel and info_player_combine..
+	pEntity = NULL;
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "info_player_rebel" )) != NULL )
+	{
+		CSpawnPoint *pPoint = (CSpawnPoint*)pEntity;
+		if( !pPoint )
+			continue;
+
+		pPoint->Reset();
+	}
+
+	pEntity = NULL;
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "info_player_combine" )) != NULL )
+	{
+		CSpawnPoint *pPoint = (CSpawnPoint*)pEntity;
+		if( !pPoint )
+			continue;
+
+		pPoint->Reset();
+	}
+
+	pEntity = NULL;
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "info_player_american" )) != NULL )
+	{
+		CSpawnPoint *pPoint = (CSpawnPoint*)pEntity;
+		if( !pPoint )
+			continue;
+
+		pPoint->Reset();
+	}
+
+	pEntity = NULL;
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "info_player_british" )) != NULL )
+	{
+		CSpawnPoint *pPoint = (CSpawnPoint*)pEntity;
+		if( !pPoint )
+			continue;
+
+		pPoint->Reset();
+	}
+	//end of spawnpoint resettings
 }
 
 void CFlagHandler::Update( void )
@@ -661,17 +876,19 @@ void CFlagHandler::Update( void )
 		neutral_flags = 0;
 	int	foramericans = 0;
 	int	forbritish = 0;
-	int iNumFlags = 0;
+	//BG2 - Tjoppen - not needed
+	/*int iNumFlags = 0;
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{
 		iNumFlags++;
-	}
+	}*/
 
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{
 		CFlag *pFlag = (CFlag*)pEntity;
-		if( !pFlag )
+		if( !pFlag || !pFlag->IsActive() )
 			continue;
+
 		switch( pFlag->GetTeamNumber() )
 		{
 		case TEAM_AMERICANS:
