@@ -229,7 +229,11 @@ void CHudDeathNotice::Paint()
 
 		// Draw death weapon
 		//If we're using a font char, this will ignore iconTall and iconWide
-		icon->DrawSelf( x, y - iconTall/4, iconWide, iconTall, iconColor );
+		
+		if (iconTall < 5)
+			icon->DrawSelf( x, y + iconTall * 1.5, iconWide, iconTall, iconColor );
+		else
+			icon->DrawSelf( x, y, iconWide, iconTall, iconColor );
 
 		x += iconWide;		
 
