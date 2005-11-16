@@ -3680,6 +3680,9 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					RelativePath=".\bg2\flag.h">
 				</File>
 				<File
+					RelativePath=".\bg2\spawnpoint.h">
+				</File>
+				<File
 					RelativePath=".\bg2\vcomm.cpp">
 					<FileConfiguration
 						Name="Release HL2MP|Win32">
@@ -4191,9 +4194,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 			</File>
 			<File
 				RelativePath="soundscape_system.h">
-			</File>
-			<File
-				RelativePath=".\bg2\spawnpoint.h">
 			</File>
 			<File
 				RelativePath="..\public\stdstring.h">

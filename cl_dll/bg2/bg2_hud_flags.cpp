@@ -380,37 +380,34 @@ void CHudFlags::Paint()
 			m_pLabelFlag[i]->SetVisible(false);
 			i++;
 		}
-		int x_offset = 0;
+		int xinc = 0;	//incremental x.. for old flags
 		for( i = 0; i < g_Flags.Count(); i++ )
 		{
-			//BG2 - Tjoppen - first draw the color of the team holding the flag, then progress bar of capture
-			Color TextColour;
+			int x_offset;
+			if( g_Flags[i]->m_iHUDSlot <= 0 )
+			{
+				x_offset = xinc;
+				xinc += 80;
+			}
+			else
+				x_offset = (g_Flags[i]->m_iHUDSlot - 1) * 80;
 
-			int iTimeToCap = g_Flags[i]->m_flNextCapture - gpGlobals->curtime;
+			//BG2 - Tjoppen - first draw the color of the team holding the flag, then progress bar of capture
+			float fTimeToCap = g_Flags[i]->m_flNextCapture - gpGlobals->curtime;
+			int iTimeToCap = (int)fTimeToCap;
 			//switch( g_Flags[i]->m_iLastTeam )
 			switch( g_Flags[i]->GetTeamNumber() )
 			{
 			case TEAM_UNASSIGNED:
 				m_pIconBlank->DrawSelf( x_offset, 0, ColourWhite );
-				TextColour = ColourWhite;
 				break;
 			case TEAM_AMERICANS:
 				m_pIconBlue->DrawSelf( x_offset, 0, ColourWhite );
-				TextColour = ColourBlue;
 				break;
 			case TEAM_BRITISH:
 				m_pIconRed->DrawSelf( x_offset, 0, ColourWhite );
-				TextColour = ColourRed;
 				break;
 			}
-
-			Q_snprintf( text, 512, "%i", g_Flags[i]->m_iCapturePlayers );
-			m_pLabelFlag[i]->SetText( text );
-			m_pLabelFlag[i]->SizeToContents();
-			m_pLabelFlag[i]->SetVisible( true );
-			m_pLabelFlag[i]->SetPos((x_offset + 32),64);
-			m_pLabelFlag[i]->SetFgColor(TextColour);
-			m_pLabelFlag[i]->SetVisible(true);
 			
 			if( iTimeToCap >= 0 )
 			{
@@ -418,7 +415,7 @@ void CHudFlags::Paint()
 				//int coverw = (64 * (iTimeToCap+1)) / (int)(g_Flags[i]->m_flCaptureTime + 1);
 
 				//dod:s style smooth transition
-				int coverw = (int)(64.f * (g_Flags[i]->m_flNextCapture - gpGlobals->curtime + 1) / (g_Flags[i]->m_flCaptureTime + 1));
+				int coverw = (int)(64.f * (fTimeToCap + 1) / (g_Flags[i]->m_flCaptureTime + 1));
 
 				if( coverw < 0 )
 					coverw = 0;
@@ -441,7 +438,82 @@ void CHudFlags::Paint()
 				}
 			}
 
-			x_offset += 80;
+            int r=0,g=0,b=0;
+			switch( g_Flags[i]->m_iLastTeam )
+			{
+				case TEAM_AMERICANS:
+					r = 66;
+					g = 115;
+					b = 247;
+					r += 188 * (sin(fTimeToCap*4) + 1)/2;
+					g += 139 * (sin(fTimeToCap*4) + 1)/2;
+					b += 7 * (sin(fTimeToCap*4) + 1)/2;
+					break;
+				case TEAM_BRITISH:
+					r = 255;
+					g = 16;
+					b = 16;
+					g += 238 * (sin(fTimeToCap*4) + 1)/2;
+					b += 238 * (sin(fTimeToCap*4) + 1)/2;
+					break;
+				default:
+				case TEAM_UNASSIGNED:
+					switch (g_Flags[i]->GetTeamNumber())
+					{
+						case TEAM_AMERICANS:
+							r = 66;
+							g = 115;
+							b = 247;
+							break;
+						case TEAM_BRITISH:
+							r = 255;
+							g = 16;
+							b = 16;
+							break;
+						case TEAM_UNASSIGNED:
+							switch (g_Flags[i]->m_iRequestingCappers)
+							{
+								case TEAM_BRITISH:
+									r = 255;
+									g = 16;
+									b = 16;
+									g += 238 * (int)((sin(fTimeToCap*8) + 2.7f)/2);
+									b += 238 * (int)((sin(fTimeToCap*8) + 2.7f)/2);
+									break;
+								case TEAM_AMERICANS:
+									r = 66;
+									g = 115;
+									b = 247;
+									r += 188 * (int)((sin(fTimeToCap*8) + 2.7f)/2);
+									g += 139 * (int)((sin(fTimeToCap*8) + 2.7f)/2);
+									b += 7 * (int)((sin(fTimeToCap*8) + 2.7f)/2);
+									break;
+								case TEAM_UNASSIGNED:
+									r = 255;
+									g = 255;
+									b = 255;
+									break;
+							}
+							break;
+					}
+					break;
+			}
+
+			Q_snprintf( text, 512, "%i", g_Flags[i]->m_iCapturePlayers );
+			m_pLabelFlag[i]->SetText( text );
+			m_pLabelFlag[i]->SizeToContents();
+			m_pLabelFlag[i]->SetVisible( true );
+
+			//m_pLabelFlag[i]->SetPos( (x_offset + 32), 64 );
+			//center on icon
+			int w,h;
+			m_pLabelFlag[i]->GetSize( w, h );
+			m_pLabelFlag[i]->SetPos( (x_offset + 32) - w/2, 32 - h/2 );
+
+			m_pLabelFlag[i]->SetFgColor( Color(r,g,b,255) );
+			m_pLabelFlag[i]->SetVisible(true);
+
+			//x_offset += 80;
 		}
 		break;
 	}

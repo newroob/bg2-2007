@@ -54,6 +54,9 @@ public:
 	float	m_flCaptureTime;
 	
 	char	m_sFlagName[256];
+
+	int		m_iHUDSlot;		//in which slot is the icon for this flag?
+	bool	m_bActive;
 };
 
 extern CUtlVector< C_Flag * > g_Flags;

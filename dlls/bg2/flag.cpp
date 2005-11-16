@@ -570,6 +570,8 @@ BEGIN_NETWORK_TABLE( CFlag, DT_Flag )
 	SendPropInt( SENDINFO( m_iForTeam ), 2, SPROP_UNSIGNED ),
 	SendPropFloat( SENDINFO( m_flCaptureTime ) ),
 	SendPropStringT( SENDINFO( m_sFlagName ) ),
+	SendPropInt( SENDINFO( m_iHUDSlot ), 4, SPROP_UNSIGNED ),	//15 slots.. 0 = sequential tile
+	SendPropBool( SENDINFO( m_bActive ) ),
 END_NETWORK_TABLE()
 
 BEGIN_PREDICTION_DATA( CFlag )
@@ -586,6 +588,7 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_KEYFIELD( m_iPlayerBonus, FIELD_INTEGER, "PlayerBonus" ),
 	DEFINE_KEYFIELD( m_iForTeam, FIELD_INTEGER, "ForTeam" ),
 	DEFINE_KEYFIELD( m_sFlagName, FIELD_STRING, "FlagName" ),
+	DEFINE_KEYFIELD( m_iHUDSlot, FIELD_STRING, "HUDSlot" ),
 
 #ifndef CLIENT_DLL
 	DEFINE_THINKFUNC( Think ),

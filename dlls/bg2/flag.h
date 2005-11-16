@@ -49,6 +49,8 @@ class CFlag : public CBaseAnimating
 	CNetworkVar( int, m_iCapturePlayers );	//how many player must be nearby to capture this flag?
 	CNetworkVar( int, m_iForTeam );
 
+	CNetworkVar( int, m_iHUDSlot );		//in which slot is the icon for this flag?
+
 	CNetworkVar( bool, m_bActive );		//BG2 - Tjoppen - adding SaintGreg's flag stuff from way back as a placeholder
 										//				  until the new flag code is done.
 #ifndef CLIENT_DLL

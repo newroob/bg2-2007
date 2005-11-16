@@ -45,6 +45,8 @@ IMPLEMENT_CLIENTCLASS_DT( C_Flag, DT_Flag, CFlag )
 	RecvPropInt( RECVINFO( m_iForTeam ) ),
 	RecvPropFloat( RECVINFO( m_flCaptureTime ) ),
 	RecvPropString( RECVINFO( m_sFlagName ) ),
+	RecvPropInt( RECVINFO( m_iHUDSlot ) ),
+	RecvPropBool( RECVINFO( m_bActive ) ),
 END_RECV_TABLE()
 
 // Global list of client side team entities
