@@ -224,8 +224,7 @@ public:
 	bool m_bLastAttackStab;
 	char *GetDeathNoticeName( void )
 	{
-		Msg( "GetDeathNoticeName: %i\n", m_bLastAttackStab );
-
+		//Msg( "GetDeathNoticeName: %i\n", m_bLastAttackStab );
 		if( m_bLastAttackStab )
 			return "bayonet";
 
