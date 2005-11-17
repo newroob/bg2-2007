@@ -92,7 +92,7 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
 
-	SetHiddenBits( HIDEHUD_MISCSTATUS );
+	SetHiddenBits( HIDEHUD_ALL );//HIDEHUD_MISCSTATUS );
 
 	m_Base = NULL; 
 	m_Stamina = NULL;
@@ -192,7 +192,7 @@ void CHudBG2::Paint()
 	}
 	char msg2[512];
 
-	
+	int w,h;
 	int ystart = GetTall() - m_Base->Height();
 
 	m_Base->DrawSelf(0,ystart,ColourWhite);
@@ -207,35 +207,44 @@ void CHudBG2::Paint()
 	C_Team *pBrit = GetGlobalTeam(TEAM_BRITISH);
 	Q_snprintf( msg2, 512, "%i ", pBrit->Get_Score());
 	m_pLabelBScore->SetText(msg2);
-	m_pLabelBScore->SetPos(95,ystart + 65);
 	m_pLabelBScore->SizeToContents();
+	m_pLabelWaveTime->GetSize( w, h );
+	m_pLabelBScore->SetPos(95,ystart + 76 - h/2);		//center font independant of resolution
 	m_pLabelBScore->SetVisible(ShouldDraw());
 	
 	Q_snprintf( msg2, 512, "%i ", pAmer->Get_Score());
 	m_pLabelAScore->SetText(msg2);
-	m_pLabelAScore->SetPos(128,ystart + 65);
 	m_pLabelAScore->SizeToContents();
+	m_pLabelWaveTime->GetSize( w, h );
+	m_pLabelAScore->SetPos(128,ystart + 76 - h/2);		//center font independant of resolution
 	m_pLabelAScore->SetVisible(ShouldDraw());
 
 	int iAmmoCount = player->GetAmmoCount(wpn->GetPrimaryAmmoType()) + wpn->Clip1();
-	Q_snprintf( msg2, 512, "%i ", iAmmoCount);
-	m_pLabelAmmo->SetText(msg2);
-	if (wpn->Clip1() != 1)
+	if( iAmmoCount >= 0 )
 	{
-		m_pLabelAmmo->SetFgColor(ColourRed);
+		Q_snprintf( msg2, 512, "%i ", iAmmoCount);
+		m_pLabelAmmo->SetText(msg2);
+		if (wpn->Clip1() != 1)
+		{
+			m_pLabelAmmo->SetFgColor(ColourRed);
+		}
+		else
+		{
+			m_pLabelAmmo->SetFgColor(ColourWhite);
+		}
+		m_pLabelAmmo->SizeToContents();
+		m_pLabelAmmo->GetSize( w, h );
+		m_pLabelAmmo->SetPos(210,ystart + 111 - h/2);	//center font independant of resolution
+		m_pLabelAmmo->SetVisible(ShouldDraw());
 	}
 	else
-	{
-		m_pLabelAmmo->SetFgColor(ColourWhite);
-	}
-	m_pLabelAmmo->SetPos(210,ystart + 105);
-	m_pLabelAmmo->SizeToContents();
-	m_pLabelAmmo->SetVisible(ShouldDraw());
+		m_pLabelAmmo->SetVisible( false );
 
 	Q_snprintf( msg2, 512, "%i:%i ", (HL2MPRules()->m_iWaveTime / 60), (HL2MPRules()->m_iWaveTime % 60));
 	m_pLabelWaveTime->SetText(msg2);
-	m_pLabelWaveTime->SetPos(120,ystart + 85);
 	m_pLabelWaveTime->SizeToContents();
+	m_pLabelWaveTime->GetSize( w, h );
+	m_pLabelWaveTime->SetPos(115,ystart + 93 - h/2);	//center font independant of resolution
 	m_pLabelWaveTime->SetVisible(ShouldDraw());
 }
 

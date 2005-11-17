@@ -519,13 +519,15 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 	ClientWorldFactoryInit();
 
-	filesystem->AddSearchPath("hl2mp", "GAME");
+	//BG2 - Tjoppen - AddSearchPath and MountSteamContent for hl2mp, hl2, cstrike and dod.. not right now
+	//					not all people have these games installed and it also makes starting BG2 horribly slow
+	/*filesystem->AddSearchPath("hl2mp", "GAME");
 	filesystem->AddSearchPath("hl2", "GAME");
 	filesystem->AddSearchPath("cstrike", "GAME");
 	filesystem->AddSearchPath("dod", "GAME");
 	filesystem->MountSteamContent(320);
 	filesystem->MountSteamContent(300);
-	filesystem->MountSteamContent(240);
+	filesystem->MountSteamContent(240);*/
 
 	return true;
 }
