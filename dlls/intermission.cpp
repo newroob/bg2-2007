@@ -29,10 +29,12 @@ void CInfoIntermission::Spawn( void )
 	SetSolid( SOLID_NONE );
 	AddEffects( EF_NODRAW );
 	//BG2 - Tjoppen - info_intermission should't reset angles. this way we can specify its angles if we like,
-	//					instead of using the lookat entity
+	//					instead of using the lookat entity.
+	//					also, think faster!
 	//SetLocalAngles( vec3_angle );
 	//
-	SetNextThink( gpGlobals->curtime + 2 );// let targets spawn !
+	//SetNextThink( gpGlobals->curtime + 2 );// let targets spawn !
+	SetNextThink( gpGlobals->curtime + 0.5 );// let targets spawn !
 }
 
 void CInfoIntermission::Think ( void )

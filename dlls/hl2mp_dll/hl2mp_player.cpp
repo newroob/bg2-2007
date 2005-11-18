@@ -450,6 +450,8 @@ void CHL2MP_Player::PickDefaultSpawnTeam( void )
 		g_pLastIntermission = pSpot;
 	}
 
+	m_pIntermission = pSpot;
+
 	SetAbsOrigin( pSpot->GetAbsOrigin() );
 	SnapEyeAngles( pSpot->GetAbsAngles() );
 
@@ -1028,6 +1030,14 @@ void CHL2MP_Player::PostThink( void )
 	QAngle angles = GetLocalAngles();
 	angles[PITCH] = 0;
 	SetLocalAngles( angles );
+
+	//BG2 - Tjoppen - follow info_intermission
+	if( m_pIntermission && GetTeamNumber() == TEAM_UNASSIGNED )
+	{
+		SetAbsOrigin( m_pIntermission->GetAbsOrigin() );
+		SnapEyeAngles( m_pIntermission->GetAbsAngles() );
+		pl.fixangle = FIXANGLE_ABSOLUTE;
+	}
 }
 
 void CHL2MP_Player::FireBullets ( const FireBulletsInfo_t &info )

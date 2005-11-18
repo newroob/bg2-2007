@@ -166,6 +166,8 @@ private:
 	int		m_iNextClass;		//BG2 - Tjoppen - which class will we become on our next respawn?
 	float	m_flNextVoicecomm;	//BG2 - Tjoppen - voice comms
 	float	m_fNextStamRegen;	//BG2 - Draco - stamina regen timer
+
+	CBaseEntity	*m_pIntermission;	//follow that info_intermission!
 	//
 };
 

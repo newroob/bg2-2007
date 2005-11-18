@@ -1783,6 +1783,11 @@ void CBasePlayer::WaterMove()
 	if (m_iHealth < 0)
 		return;
 
+	//BG2 - Tjoppen - unassigned and spectators..
+	if( GetTeamNumber() <= TEAM_SPECTATOR )
+		return;
+	//
+
 	// waterlevel 0 - not in water
 	// waterlevel 1 - feet in water
 	// waterlevel 2 - waist in water
