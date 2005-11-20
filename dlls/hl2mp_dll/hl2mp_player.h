@@ -167,6 +167,7 @@ private:
 	float	m_flNextVoicecomm;	//BG2 - Tjoppen - voice comms
 	float	m_fNextStamRegen;	//BG2 - Draco - stamina regen timer
 
+public:
 	CBaseEntity	*m_pIntermission;	//follow that info_intermission!
 	//
 };

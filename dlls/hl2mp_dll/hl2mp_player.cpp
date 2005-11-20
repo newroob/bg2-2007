@@ -417,7 +417,7 @@ void CHL2MP_Player::GiveDefaultItems( void )
 }
 
 //BG2 - Tjoppen - g_pLastIntermission
-CBaseEntity	*g_pLastIntermission = NULL;;
+CBaseEntity	*g_pLastIntermission = NULL;
 //
 
 void CHL2MP_Player::PickDefaultSpawnTeam( void )
@@ -426,7 +426,10 @@ void CHL2MP_Player::PickDefaultSpawnTeam( void )
 	//	this is a bit flaky at the moment.. maybe later
 
 	if( GetTeamNumber() != TEAM_UNASSIGNED )
-		return;		//we get called on spawn, so anyone that has a team shouldn't get teleported around and stuff
+	{
+		m_pIntermission = NULL;	//just to be safe
+		return;					//we get called on spawn, so anyone that has a team shouldn't get teleported around and stuff
+	}
 
 	//show classmenu
 	//engine->ClientCommand( edict(), "classmenu" );

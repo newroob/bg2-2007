@@ -199,6 +199,9 @@ CHL2MPRules::CHL2MPRules()
 
 	extern float nextwinsong;
 	nextwinsong = 0;
+
+	extern CBaseEntity *g_pLastIntermission;
+	g_pLastIntermission = NULL;
 	//
 	mp_britishscore.SetValue(0);
 	mp_americanscore.SetValue(0);
@@ -1031,9 +1034,9 @@ const char *CHL2MPRules::GetGameDescription( void )
 { 
 	//BG2 - Tjoppen - our game descriptions - putting the current version number in these might be a good idea
 	if( IsTeamplay() )
-		return "The Battle Grounds 2";
+		return "Battle Grounds 2 0.15";
 
-	return "The Battle Grounds 2 - free for all";
+	return "Battle Grounds 2 0.15 - free for all";
 	/*if ( IsTeamplay() )
 		return "Team Deathmatch"; 
 
