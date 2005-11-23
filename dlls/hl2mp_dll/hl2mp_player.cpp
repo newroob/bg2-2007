@@ -320,7 +320,7 @@ void CHL2MP_Player::GiveDefaultItems( void )
 	CBasePlayer::GiveAmmo( 45,	"SMG1");
 	CBasePlayer::GiveAmmo( 1,	"grenade" );
 	CBasePlayer::GiveAmmo( 6,	"Buckshot");*/
-	CBasePlayer::GiveAmmo( 60,	"357" );
+	CBasePlayer::GiveAmmo( 24,	"357" );
 	
 	if( GetTeam()->GetTeamNumber() == TEAM_AMERICANS )	//Americans
 	{
@@ -1256,6 +1256,12 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 				}
 			}
 		}
+
+		//BG2 - Tjoppen - idle weapons.. but not until smoke and stuff have come out
+		if( GetActiveWeapon() && GetActiveWeapon()->m_flNextPrimaryAttack < gpGlobals->curtime &&
+			GetActiveWeapon()->m_flNextSecondaryAttack < gpGlobals->curtime )
+			Weapon_SetActivity( Weapon_TranslateActivity( ACT_HL2MP_IDLE ), 0 );
+		//
 
 		idealActivity = TranslateTeamActivity( idealActivity );
 	}
