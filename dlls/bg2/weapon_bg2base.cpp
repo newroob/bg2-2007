@@ -240,9 +240,9 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		angles.y += random->RandomInt( -1, 1 ) * GetRecoil(iAttack);
 		angles.z = 0;
 
-#ifndef CLIENT_DLL
+/*#ifndef CLIENT_DLL
 	pPlayer->SnapEyeAngles( angles );
-#endif
+#endif*/
 
 		pPlayer->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(iAttack) );
 	}
@@ -256,7 +256,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	return 15;
 }
 
-int CBaseBG2Weapon::FireBullet( int iAttack )
+/*int CBaseBG2Weapon::FireBullet( int iAttack )
 {
 	m_bLastAttackStab = false;
 
@@ -292,8 +292,6 @@ int CBaseBG2Weapon::FireBullet( int iAttack )
 	Vector vecAiming	= pOwner->GetAutoaimVector( 0 );	
 	Vector vecSrc		= pOwner->Weapon_ShootPosition();
 	
-	/*QAngle angAiming;
-	VectorAngles( vecAiming, angAiming );*/
 
     CShotManipulator Manipulator( vecAiming );
 	Vector vecDir		= Manipulator.ApplySpread( GetSpread( iAttack ) );
@@ -301,18 +299,7 @@ int CBaseBG2Weapon::FireBullet( int iAttack )
 	QAngle angDir;
 	VectorAngles( vecDir, angDir );
 
-	/*CBullet *pBolt =*/ CBullet::BoltCreate( vecSrc, angDir, GetDamage(iAttack), pOwner );
-
-	/*if ( pOwner->GetWaterLevel() == 3 )
-	{
-		//pBolt->SetAbsVelocity( vecAiming * BOLT_WATER_VELOCITY );
-		pBolt->SetAbsVelocity( vecDir * BOLT_WATER_VELOCITY );
-	}
-	else
-	{
-		//pBolt->SetAbsVelocity( vecAiming * BOLT_AIR_VELOCITY );
-		pBolt->SetAbsVelocity( vecDir * BOLT_AIR_VELOCITY );
-	}*/
+	CBullet::BoltCreate( vecSrc, angDir, GetDamage(iAttack), pOwner );
 
 #endif
 
@@ -352,10 +339,113 @@ int CBaseBG2Weapon::FireBullet( int iAttack )
 		pOwner->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
 	}
 
-	/*m_flNextPrimaryAttack = m_flNextSecondaryAttack	= gpGlobals->curtime + 0.75;
+	return 15;
+}*/
 
-	DoLoadEffect();
-	SetChargerState( CHARGER_STATE_DISCHARGE );*/
+int CBaseBG2Weapon::FireBullet( int iAttack )
+{
+	m_bLastAttackStab = false;
+
+	// Only the player fires this way so we can cast
+	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+
+	if ( !pPlayer )
+	{
+		return 0;
+	}
+
+	if ( m_iClip1 <= 0 )
+	{
+		if ( !m_bFireOnEmpty )
+		{
+			Reload();
+		}
+		else
+		{
+			WeaponSound( EMPTY );
+			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.15;
+		}
+
+		return 0;
+	}
+
+	if( pPlayer->GetWaterLevel() == 3 )
+	{
+		// This weapon doesn't fire underwater
+		WeaponSound(EMPTY);
+		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.2;
+		return 0;
+	}
+
+	/*WeaponSound( SINGLE );
+
+	if( sv_turboshots.GetInt() == 0 )
+	{
+		//don't spam sprites with sv_turboshots
+		pPlayer->DoMuzzleFlash();
+		pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	}
+
+	SendWeaponAnim( GetActivity( iAttack ) );*/
+
+	WeaponSound(SINGLE);
+
+	if( sv_turboshots.GetInt() == 0 )
+	{
+		pPlayer->DoMuzzleFlash();
+
+		//BG2 - Tjoppen -	the weapon animation !!MUST!! play before the player animation or there's
+		//					 no muzzle flash. don't forget this! ever! it's annoying as hell!
+		SendWeaponAnim( GetPrimaryAttackActivity() );
+
+		// player "shoot" animation
+		pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	}
+	
+	if( sv_turboshots.GetInt() == 0 )
+		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate( iAttack );
+	else
+		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.1f;
+
+	if( sv_infiniteammo.GetInt() == 0 )
+		m_iClip1--;
+
+#ifndef CLIENT_DLL
+	Vector vecAiming	= pPlayer->GetAutoaimVector( 0 );	
+	Vector vecSrc		= pPlayer->Weapon_ShootPosition();
+	
+
+    CShotManipulator Manipulator( vecAiming );
+	Vector vecDir		= Manipulator.ApplySpread( GetSpread( iAttack ) );
+
+	QAngle angDir;
+	VectorAngles( vecDir, angDir );
+
+	CBullet::BoltCreate( vecSrc, angDir, GetDamage(iAttack), pPlayer );
+
+#endif
+
+	//Disorient the player
+	QAngle angles = pPlayer->GetLocalAngles();
+
+	if( sv_steadyhand.GetInt() == 0 )
+	{
+		angles.x += random->RandomInt( -1, 1 ) * GetRecoil(iAttack);
+		angles.y += random->RandomInt( -1, 1 ) * GetRecoil(iAttack);
+		angles.z = 0;
+
+/*#ifndef CLIENT_DLL
+	pPlayer->SnapEyeAngles( angles );
+#endif*/
+
+		pPlayer->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(iAttack) );
+	}
+
+	if ( !m_iClip1 && pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 )
+	{
+		// HEV suit - indicate out of ammo condition
+		pPlayer->SetSuitUpdate( "!HEV_AMO0", FALSE, 0 ); 
+	}
 
 	return 15;
 }
