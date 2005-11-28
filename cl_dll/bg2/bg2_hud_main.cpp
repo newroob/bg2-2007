@@ -76,6 +76,7 @@ private:
 	vgui::Label * m_pLabelAScore; 
 	vgui::Label * m_pLabelAmmo; 
 	vgui::Label * m_pLabelWaveTime; 
+	vgui::Label * m_pLabelBGVersion; 
 };
 
 using namespace vgui;
@@ -127,6 +128,14 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_pLabelWaveTime->SizeToContents();
 	m_pLabelWaveTime->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelWaveTime->SetFgColor( ColourWhite );
+
+	m_pLabelBGVersion = new vgui::Label( this, "bg_version", "BG Version loading");
+	m_pLabelBGVersion->SetPaintBackgroundEnabled( false );
+	m_pLabelBGVersion->SetPaintBorderEnabled( false );
+	m_pLabelBGVersion->SizeToContents();
+	m_pLabelBGVersion->SetContentAlignment( vgui::Label::a_west );
+	m_pLabelBGVersion->SetFgColor( ColourWhite );
+	
 }
 
 //==============================================
@@ -212,6 +221,16 @@ void CHudBG2::Paint()
 	m_pLabelBScore->SetPos(95,ystart + 76 - h/2);		//center font independant of resolution
 	m_pLabelBScore->SetVisible(ShouldDraw());
 	
+	// BP - BG version display at lower right bottom of screen
+	// FIXME, something is bugged here. text disappears after player spawns
+	Q_snprintf( msg2, 512, "%s", HL2MPRules()->GetGameDescription());
+	m_pLabelBGVersion->SetText(msg2);
+	m_pLabelBGVersion->SetFgColor(ColourWhite);
+	m_pLabelBGVersion->SizeToContents();
+	m_pLabelBGVersion->GetSize( w, h );
+	m_pLabelBGVersion->SetPos(ScreenWidth()-w-3,ScreenHeight()-h-3);	
+	m_pLabelBGVersion->SetVisible(ShouldDraw());
+
 	Q_snprintf( msg2, 512, "%i ", pAmer->Get_Score());
 	m_pLabelAScore->SetText(msg2);
 	m_pLabelAScore->SizeToContents();
