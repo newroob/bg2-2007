@@ -421,6 +421,21 @@ void CClassMenu::OnThink()
 	BaseClass::OnThink();
 	//BG2 - Tjoppen - show autoassign button if we're not in the class part and we're unassigned or spectator
 	m_pAutoassignButton->SetVisible( m_pInfantryButton->IsVisible() ? false : C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR );
+
+	//show number of players in teams..
+	char tmp[256];
+	if( g_Teams[TEAM_BRITISH] )		//check just in case..
+	{
+		sprintf( tmp, "1. British (%i)", g_Teams[TEAM_BRITISH]->Get_Number_Players() );
+		m_pBritishButton->SetText( tmp );
+	}
+
+	if( g_Teams[TEAM_AMERICANS] )	//check just in case..
+	{
+		sprintf( tmp, "2. American (%i)", g_Teams[TEAM_AMERICANS]->Get_Number_Players() );
+		m_pAmericanButton->SetText( tmp );
+	}
+
 	//BG2 - Draco - set the proper names for the classes
 	switch( m_iTeamSelection )
 	{
