@@ -86,6 +86,7 @@ int GetNumberOfTeams( void )
 CTeam::CTeam( void )
 {
 	memset( m_szTeamname.GetForModify(), 0, sizeof(m_szTeamname) );
+	m_flMorale = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -102,6 +103,22 @@ CTeam::~CTeam( void )
 //-----------------------------------------------------------------------------
 void CTeam::Think( void )
 {
+	if (gpGlobals->curtime > m_flMoraleTime)
+	{
+		m_flMorale = 0;// awwwwww...
+	}
+	m_flMoraleBonus = 0;//lets recalculate!
+	for( i = 0; i < m_aMoralePoints.Count() && i < 12; i++ )
+	{
+		if( !m_aMoralePoints[i] )
+		{
+			break;
+		}
+		if (m_aMoralePoints[i]->IsActive())
+		{
+			m_flMoraleBonus += m_aMoralePoints[i]->GetBonus();
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -408,4 +425,38 @@ int CTeam::GetHeavyB()
 	}
 	return iAmount;
 }
+
+void CTeam::AddMorale(float New, float Time)
+{
+	m_flMorale += New;
+	if (gpGlobals->curtime > m_flMoraleTime)
+	{
+		m_flMoraleTime = Time + gpGlobals->curtime;
+	}
+	else
+	{
+		m_flMoraleTime += Time;
+	}
+}
+
+void CTeam::AddMoraleBonus(float New)
+{
+	m_flMoraleBonus += New;
+}
+
+float CTeam::GetMorale()
+{
+	return (m_flMorale + m_flMoraleBonus); 
+}
+
+void CTeam::AddMoralePoint(CBaseEntity * pEnt)
+{
+	m_aMoralePoints.AddToTail( pEnt );
+}
+
+void CTeam::RemoveMoralePoint(CBaseEntity * pEnt)
+{
+	m_aMoralePoints.FindAndRemove( pEnt );
+}
+
 //BG2 - Draco - End

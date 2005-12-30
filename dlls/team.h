@@ -67,6 +67,10 @@ public:
 	int GetLightB();
 	int GetMediumB();
 	int GetHeavyB();
+	float GetMorale();
+	void AddMorale(float New, float Time);
+	void AddMoralePoint(CBaseEntity * pEnt);
+	void RemoveMoralePoint(CBaseEntity * pEnt);
 
 	//-----------------------------------------------------------------------------
 	// Scoring
@@ -78,11 +82,15 @@ public:
 public:
 	CUtlVector< CTeamSpawnPoint * > m_aSpawnPoints;
 	CUtlVector< CBasePlayer * >		m_aPlayers;
+	CUtlVector< CBaseEntity * >		m_aMoralePoints;
 
 	// Data
 	CNetworkString( m_szTeamname, MAX_TEAM_NAME_LENGTH );
 	CNetworkVar( int, m_iScore );
 	int		m_iDeaths;
+	float   m_flMorale;
+	float   m_flMoraleTime;
+	float   m_flMoraleBonus;
 
 	// Spawnpoints
 	int		m_iLastSpawn;		// Index of the last spawnpoint used

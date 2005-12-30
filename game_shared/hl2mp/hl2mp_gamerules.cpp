@@ -417,6 +417,9 @@ void CHL2MPRules::Think( void )
 		CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
 		CTeam *pBritish = g_Teams[TEAM_BRITISH];
 
+		pAmericans->Think();
+		pBritish->Think();
+
 		if( pAmericans->GetNumPlayers() == 0 )
 			return;
 
