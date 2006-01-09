@@ -26,12 +26,21 @@
 	#include <ctype.h>
 	#include "voice_gamemgr.h"
 	#include "iscorer.h"
+	#include "../bg2/flag.h"
+	#include "team.h"
 	
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+enum
+{
+	TEAM_AMERICANS = 2,
+	TEAM_BRITISH,
+	//BG2 - Tjoppen - NUM_TEAMS is useful
+	NUM_TEAMS,	//!! must be last !!
+};
 
 REGISTER_GAMERULES_CLASS( CMultiplayRules );
 
@@ -47,6 +56,8 @@ ConVar	mp_timelimit( "mp_timelimit",
 					  "0",
 					  FCVAR_NOTIFY|FCVAR_REPLICATED,
 					  "game time per map in minutes" );
+
+extern ConVar mp_respawnstyle;
 					  					  
 
 
@@ -492,7 +503,10 @@ bool CMultiplayRules::IsMultiplayer( void )
 		{
 			// if a player dies in a deathmatch game and the killer is a client, award the killer some points
 			//BG2 - Draco
-			//pScorer->IncrementFragCount( IPointsForKill( pScorer, pVictim ) );
+			if (mp_respawnstyle.GetInt() == 2)
+			{
+			    pScorer->IncrementFragCount( 1 );
+			}
 			
 			// Allow the scorer to immediately paint a decal
 			pScorer->AllowImmediateDecalPainting();

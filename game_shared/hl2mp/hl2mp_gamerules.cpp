@@ -209,6 +209,10 @@ CHL2MPRules::CHL2MPRules()
 	m_fEndRoundTime = -1;
 	m_fNextFlagUpdate = 0;
 	m_iWaveTime = 0;
+	m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+	m_fLastRespawnWave = gpGlobals->curtime;
+	m_iTDMTeamThatWon = 0;
+	m_bHasDoneWinSong = false;
 #endif
 }
 	
@@ -278,12 +282,36 @@ void CHL2MPRules::Think( void )
 #ifndef CLIENT_DLL
 
 	CGameRules::Think();
-
+	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
+	CTeam *pBritish = g_Teams[TEAM_BRITISH];
+	void ClientPrintAll( char *str, bool printfordeadplayers, bool forcenextclientprintall );
 	if ( g_fGameOver )   // someone else quit the game already
 	{
+		if (!m_bHasDoneWinSong)
+		{
+			m_bHasDoneWinSong = true;
+			if (pAmericans->GetScore() < pBritish->GetScore())
+			{
+				ClientPrintAll( "British win!", true, true );
+				CFlagHandler::WinSong("British.win");
+			}
+
+			if (pAmericans->GetScore() > pBritish->GetScore())
+			{
+				ClientPrintAll( "Americans win!", true, true );
+				CFlagHandler::WinSong("Americans.win");
+			}
+
+			if (pAmericans->GetScore() == pBritish->GetScore())
+			{
+				ClientPrintAll( "Draw!", true, true );
+			}
+		}
+		
 		// check to see if we should change levels now
 		if ( (m_flIntermissionEndTime + m_fAdditionTime) < gpGlobals->curtime )
 		{
+			m_bHasDoneWinSong = false;
 			ChangeLevel(); // intermission is over
 		}
 
@@ -300,8 +328,8 @@ void CHL2MPRules::Think( void )
 	}
 
 	//BG2 - Draco - Start
-	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
-	CTeam *pBritish = g_Teams[TEAM_BRITISH];
+	//CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
+	//CTeam *pBritish = g_Teams[TEAM_BRITISH];
 	m_iWaveTime = ((m_fLastRespawnWave + mp_respawntime.GetFloat()) - gpGlobals->curtime);
 //	CFlagHandler::FlagThink();//make the flags think.
 	if (m_fNextFlagUpdate <= gpGlobals->curtime)
@@ -359,12 +387,18 @@ void CHL2MPRules::Think( void )
 				case TEAM_BRITISH:
 					iAutoTeamBalancePlayerToSwitchIndex = random->RandomInt( 0, (pBritish->GetNumPlayers() - 1) );
 					pPlayer = pBritish->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex);
-					pPlayer->ChangeTeam(TEAM_AMERICANS);
+					if (!pPlayer->IsAlive())
+					{
+						pPlayer->ChangeTeam(TEAM_AMERICANS);
+					}
 					break;
 				case TEAM_AMERICANS:
 					iAutoTeamBalancePlayerToSwitchIndex = random->RandomInt( 0, (pAmericans->GetNumPlayers() - 1) );
 					pPlayer = pAmericans->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex);
-					pPlayer->ChangeTeam(TEAM_BRITISH);
+					if (!pPlayer->IsAlive())
+					{
+						pPlayer->ChangeTeam(TEAM_BRITISH);
+					}
 					break;
 			}
 		}
@@ -408,17 +442,14 @@ void CHL2MPRules::Think( void )
 	//=========================
 	if( mp_respawnstyle.GetInt() == 2 )//if line battle all at once spawn style - Draco
 	{
-		if (m_fEndRoundTime <= 0)
+		if (mp_respawntime.GetInt() == 0)
 		{
-			m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+			m_fEndRoundTime = 0;
 		}
 		//Tjoppen - start
 		//count alive players in each team
 		CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
 		CTeam *pBritish = g_Teams[TEAM_BRITISH];
-
-		pAmericans->Think();
-		pBritish->Think();
 
 		if( pAmericans->GetNumPlayers() == 0 )
 			return;
@@ -428,7 +459,7 @@ void CHL2MPRules::Think( void )
 			if( pAmericans->GetPlayer(x)->IsAlive() )
 				aliveamericans++;
 
-		if( pBritish->GetNumPlayers() == 0 )
+		if (pBritish->GetNumPlayers() == 0)
 			return;
 
 		int alivebritish = 0;
@@ -439,32 +470,59 @@ void CHL2MPRules::Think( void )
 		//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed
 		//wins
 		
-		if( (aliveamericans == 0 || alivebritish == 0) 	//is either team dead yet?
-			&& (m_bIsRestartingRound || (!m_bIsRestartingRound && m_flNextRoundRestart < gpGlobals->curtime)) )
+		if ((aliveamericans == 0) || (alivebritish == 0) || (m_fEndRoundTime <= gpGlobals->curtime) || (m_bIsRestartingRound))
 		{
 			if( !m_bIsRestartingRound )
 			{
-				void ClientPrintAll( char *str, bool printfordeadplayers, bool forcenextclientprintall );
-
 				m_flNextRoundRestart = gpGlobals->curtime + 5;
 				m_bIsRestartingRound = true;
+				
+				if((aliveamericans > 0) && (alivebritish > 0))
+				{
+					if (aliveamericans > alivebritish)
+					{
+						ClientPrintAll( "Out of time! Americans win!", true, true );
+						m_iTDMTeamThatWon = 1;
+						pAmericans->AddScore( 1 );
+						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+					}
+					else if (aliveamericans < alivebritish)
+					{
+						ClientPrintAll( "Out of time! British win!", true, true );
+						m_iTDMTeamThatWon = 2;
+						pBritish->AddScore( 1 );
+						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+					}
+					else
+					{
+						ClientPrintAll( "Out of time! Draw!", true, true );
+						m_iTDMTeamThatWon = 0;
+						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+					}
+				}
 
 				if( aliveamericans == 0 && alivebritish == 0 )
 				{
 					//draw
 					ClientPrintAll( "This round became a draw", true, true );
+					m_iTDMTeamThatWon = 0;
+					m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 				}
 				else if( aliveamericans == 0 )
 				{
 					//british
 					pBritish->AddScore( 1 );
+					m_iTDMTeamThatWon = 2;
 					ClientPrintAll( "The british won this round!", true, true );
+					m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 				}
 				else if( alivebritish == 0 )
 				{
 					//americans
 					pAmericans->AddScore( 1 );
+					m_iTDMTeamThatWon = 1;
 					ClientPrintAll( "The americans won this round!", true, true );
+					m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 				}
 			}
 			else if( m_flNextRoundRestart < gpGlobals->curtime )
@@ -476,59 +534,36 @@ void CHL2MPRules::Think( void )
 
 				CFlagHandler::ResetFlags();		//reset spawns and flags before respawning anyone..
 
-				if( aliveamericans == 0 && alivebritish == 0 )
+
+				if( m_iTDMTeamThatWon == 0 )
 				{
 					//draw
 					CFlagHandler::RespawnAll( NULL );
 					if (mp_respawntime.GetInt() > 0)
 					{
 						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+						m_fLastRespawnWave = gpGlobals->curtime;
 					}
 				}
-				else if( aliveamericans == 0 )
+				else if( m_iTDMTeamThatWon == 2 )
 				{
 					//british
 					CFlagHandler::RespawnAll("British.win");
 					if (mp_respawntime.GetInt() > 0)
 					{
 						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+						m_fLastRespawnWave = gpGlobals->curtime;
 					}
 				}
-				else if( alivebritish == 0 )
+				else if( m_iTDMTeamThatWon == 1 )
 				{
 					//americans
 					CFlagHandler::RespawnAll("Americans.win");
 					if (mp_respawntime.GetInt() > 0)
 					{
 						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+						m_fLastRespawnWave = gpGlobals->curtime;
 					}
-				}
-			}
-		}
-		else if (m_fEndRoundTime < gpGlobals->curtime)
-		{
-			if( !m_bIsRestartingRound )
-			{
-				void ClientPrintAll( char *str, bool printfordeadplayers, bool forcenextclientprintall );
-
-				m_flNextRoundRestart = gpGlobals->curtime + 5;
-				m_bIsRestartingRound = true;
-
-				if( aliveamericans == 0 && alivebritish == 0 )
-				{
-					//draw
-					ClientPrintAll( "This round became a draw", true, true );
-				}
-			}
-			else if ((m_bIsRestartingRound) && (m_flNextRoundRestart < gpGlobals->curtime))
-			{
-				//draw
-				CFlagHandler::ResetFlags();		//reset spawns and flags before respawning anyone..
-
-				CFlagHandler::RespawnAll( NULL );
-				if (mp_respawntime.GetInt() > 0)
-				{
-					m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 				}
 			}
 		}

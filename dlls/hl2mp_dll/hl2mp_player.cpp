@@ -434,7 +434,7 @@ void CHL2MP_Player::PickDefaultSpawnTeam( void )
 	//show classmenu
 	//engine->ClientCommand( edict(), "classmenu" );
 	SetModel( "models/player/british/heavy_b/heavy_b.mdl" );	//shut up about no model already!
-
+	AddEffects( EF_NODRAW );
 	//try to find a spot..
 	CBaseEntity *pSpot = gEntList.FindEntityByClassname( g_pLastIntermission, "info_intermission");
 	if( !pSpot )

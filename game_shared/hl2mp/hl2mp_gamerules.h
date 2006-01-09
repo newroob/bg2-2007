@@ -132,6 +132,8 @@ public:
 	//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed
 	float	m_flNextRoundRestart;
 	bool	m_bIsRestartingRound;
+	int		m_iTDMTeamThatWon;
+	bool	m_bHasDoneWinSong;
 	//
 	CNetworkVar( int, m_iWaveTime );
 	

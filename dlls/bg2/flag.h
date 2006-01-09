@@ -53,9 +53,6 @@ class CFlag : public CBaseAnimating
 
 	CNetworkVar( bool, m_bActive );		//BG2 - Tjoppen - adding SaintGreg's flag stuff from way back as a placeholder
 										//				  until the new flag code is done.
-	float m_flMoraleAdd;
-	float m_flMoraleAddTime;
-
 #ifndef CLIENT_DLL
 	//BG2 - SaintGreg - Output functions similar to BG's
 	COutputEvent m_OnAmericanStartCapture;
@@ -101,44 +98,13 @@ public:
 	virtual int UpdateTransmitState();
 };
 
-/*class CCapturePoint : public CBaseTrigger
-{
-	void Spawn( void );
-	void Precache( void );
-	void FlagThink( void );
-}*/
-
-class CMoraleBooster : public CBaseAnimating
-{
-	DECLARE_CLASS( CMoraleBooster, CBaseAnimating );
-	DECLARE_NETWORKCLASS(); 
-	DECLARE_PREDICTABLE();
-	DECLARE_DATADESC();
-
-	bool IsActive( void );
-	
-	void InputEnable( inputdata_t &inputData );
-	void InputDisable( inputdata_t &inputData );
-	void InputAmerican( inputdata_t &inputData );
-	void InputBritish( inputdata_t &inputData );
-	
-	void InputToggle( inputdata_t &inputData );
-
-	float	m_flMoraleBonus;
-
-public:
-
-	void Spawn( void );
-	void Precache( void );
-	void ChangeTeam( int iTeamNum );
-};
-
 class CFlagHandler
 {
 public:
 	static void RespawnAll( char *pSound );
 	static void RespawnWave();
 	//static void PlayCaptureSound( void );
+	static void WinSong( char *pSound );
 	static void ResetFlags( void );
 	static void Update( void );
 };

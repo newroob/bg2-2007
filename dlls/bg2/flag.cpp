@@ -277,7 +277,7 @@ void CFlag::Think( void )
 		case TEAM_AMERICANS:
 			if (m_iTeamBonusInterval != 0)
 			{
-				if (m_flNextTeamBonus <= gpGlobals->curtime)
+				if ((m_flNextTeamBonus <= gpGlobals->curtime) && (m_iForTeam != 1))
 				{
 					g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
 					m_flNextTeamBonus += m_iTeamBonusInterval;
@@ -287,7 +287,7 @@ void CFlag::Think( void )
 		case TEAM_BRITISH:
 			if (m_iTeamBonusInterval != 0)
 			{
-				if (m_flNextTeamBonus <= gpGlobals->curtime)
+				if ((m_flNextTeamBonus <= gpGlobals->curtime) && (m_iForTeam != 2))
 				{
 					g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
 					m_flNextTeamBonus += m_iTeamBonusInterval;
@@ -524,17 +524,12 @@ void CFlag::ChangeTeam( int iTeamNum )
 		m_bActive = true;
 #endif // CLIENT_DLL
 
-	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
-	CTeam *pBritish = g_Teams[TEAM_BRITISH];
-	
 	switch( iTeamNum )
 	{
 	case TEAM_AMERICANS:
 		SetModel( "models/other/flag_a.mdl" );
-		pAmericans->AddMorale(m_flMoraleAdd, m_flMoraleAddTime);
 		break;
 	case TEAM_BRITISH:
-		pBritish->AddMorale(m_flMoraleAdd, m_flMoraleAddTime);
 		SetModel( "models/other/flag_b.mdl" );
 		break;
 	default:
@@ -594,8 +589,7 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_KEYFIELD( m_iForTeam, FIELD_INTEGER, "ForTeam" ),
 	DEFINE_KEYFIELD( m_sFlagName, FIELD_STRING, "FlagName" ),
 	DEFINE_KEYFIELD( m_iHUDSlot, FIELD_INTEGER, "HUDSlot" ),
-	DEFINE_KEYFIELD( m_flMoraleAdd, FIELD_FLOAT, "MoraleAdd" ),
-	DEFINE_KEYFIELD( m_flMoraleAddTime, FIELD_FLOAT, "MoraleAddTime" ),
+
 #ifndef CLIENT_DLL
 	DEFINE_THINKFUNC( Think ),
 #endif
@@ -627,120 +621,6 @@ END_DATADESC()
 
 LINK_ENTITY_TO_CLASS(flag, CFlag);
 PRECACHE_REGISTER(flag);
-
-
-
-bool CMoraleBooster::IsActive( void )
-{
-	return m_bActive;
-}
-
-void CMoraleBooster::InputAmerican( inputdata_t &inputData )
-{
-	ChangeTeam( TEAM_AMERICAN );
-}
-void CMoraleBooster::InputBritish( inputdata_t &inputData )
-{
-	ChangeTeam( TEAM_BRITISH );
-}
-
-void CMoraleBooster::InputEnable( inputdata_t &inputData )
-{
-	if( m_bActive )
-		return;
-	m_bActive = true;
-	ChangeTeam( TEAM_UNASSIGNED );
-}
-void CMoraleBooster::InputDisable( inputdata_t &inputData )
-{
-	if( !m_bActive )
-		return;
-	m_bActive = false;
-	ChangeTeam( TEAM_UNASSIGNED );
-}
-void CMoraleBooster::InputToggle( inputdata_t &inputData )
-{
-	if (m_bActive)
-		InputDisable( inputData );
-	else
-		InputEnable( inputData );
-}
-
-void CMoraleBooster::Spawn( void )
-{
-	Precache( );
-
-	ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
-
-	BaseClass::Spawn( );
-}
-void CMoraleBooster::Precache( void )
-{
-}
-
-void CMoraleBooster::ChangeTeam( int iTeamNum )
-{
-	if (GetTeamNumber() != iTeamNum)
-	{
-		switch(GetTeamNumber())
-		{
-			case TEAM_AMERICAN:
-				if (iTeamNum == TEAM_BRITISH)
-				{
-					g_Teams[TEAM_BRITISH]->AddMoralePoint(this);
-				}
-				g_Teams[TEAM_AMERICAN]->RemoveMoralePoint(this);
-				break;
-			case TEAM_BRITISH:
-				if (iTeamNum == TEAM_AMERICAN)
-				{
-					g_Teams[TEAM_AMERICAN]->AddMoralePoint(this);
-				}
-				g_Teams[TEAM_AMERICAN]->RemoveMoralePoint(this);
-				break;
-			default:
-				switch (iTeamNum)
-				{
-					case TEAM_BRITISH:
-						g_Teams[TEAM_BRITISH]->AddMoralePoint(this);
-						break;
-					case TEAM_AMERICAN:
-						g_Teams[TEAM_AMERICAN]->AddMoralePoint(this);
-						break;
-				}
-				g_Teams[iTeamNum]->AddMoralePoint(this);
-				break;
-		}
-		BaseClass::ChangeTeam( iTeamNum );
-	}
-}
-
-IMPLEMENT_NETWORKCLASS_ALIASED( MoraleBooster, DT_MoraleBooster )
-
-BEGIN_NETWORK_TABLE( CMoraleBooster, DT_MoraleBooster )
-	SendPropBool( SENDINFO( m_bActive ) ),
-END_NETWORK_TABLE()
-
-BEGIN_PREDICTION_DATA( CMoraleBooster )
-END_PREDICTION_DATA()
-
-BEGIN_DATADESC( CMoraleBooster )
-
-	DEFINE_KEYFIELD( m_flMoraleAdd, FIELD_FLOAT, "MoraleAdd" ),
-
-	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "Toggle", InputToggle ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "British", InputBritish ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "American", InputAmerican ),
-
-END_DATADESC()
-
-LINK_ENTITY_TO_CLASS(moralebooster, CMoraleBooster);
-PRECACHE_REGISTER(moralebooster);
-
-
-
 
 #ifndef CLIENT_DLL
 //BG2 - Tjoppen - just make this global so we can reset it
@@ -846,6 +726,41 @@ void CFlagHandler::RespawnAll( char *pSound )
 
 	/*HL2MPRules()->m_bIsRestartingRound = false;
 	HL2MPRules()->m_flNextRoundRestart = gpGlobals->curtime + 1;*/
+}
+
+void CFlagHandler::WinSong( char *pSound )
+{
+	int x;
+
+	for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
+	{
+		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_AMERICANS]->GetPlayer( x ) );
+
+		if( !pPlayer )
+			continue;
+
+		if( pSound )
+		{
+			CPASAttenuationFilter filter( pPlayer, 10.0f );	//high attenuation so only this player hears it
+			filter.UsePredictionRules();
+			pPlayer->EmitSound( filter, pPlayer->entindex(), pSound );
+		}
+	}
+
+	for( x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
+	{
+		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
+
+		if( !pPlayer )
+			continue;
+
+		if( pSound )
+		{
+			CPASAttenuationFilter filter( pPlayer, 10.0f );	//high attenuation so only this player hears it
+			filter.UsePredictionRules();
+			pPlayer->EmitSound( filter, pPlayer->entindex(), pSound );
+		}
+	}
 }
 
 void CFlagHandler::RespawnWave()
