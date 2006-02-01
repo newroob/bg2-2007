@@ -11,6 +11,7 @@
 //BG2 - Tjoppen - #includes
 #include "hl2mp_player.h"
 #include "hl2mp_gamerules.h"
+#include "flag.h"
 //
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -107,7 +108,7 @@ void CTeam::Think( void )
 	{
 		m_flMorale = 0;// awwwwww...
 	}
-	m_flMoraleBonus = 0;//lets recalculate!
+	/*m_flMoraleBonus = 0;//lets recalculate!
 	int i;
 	for( i = 0; i < m_aMoralePoints.Count() && i < 12; i++ )
 	{
@@ -115,11 +116,12 @@ void CTeam::Think( void )
 		{
 			break;
 		}
+		CBonusPoint * pBonusPoint
 		if (m_aMoralePoints[i]->IsActive())
 		{
 			m_flMoraleBonus += m_aMoralePoints[i]->GetBonus();
 		}
-	}
+	}*/
 }
 
 //-----------------------------------------------------------------------------
