@@ -11,7 +11,6 @@
 //BG2 - Tjoppen - #includes
 #include "hl2mp_player.h"
 #include "hl2mp_gamerules.h"
-#include "flag.h"
 //
 
 // memdbgon must be the last include file in a .cpp file!!!
