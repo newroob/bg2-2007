@@ -108,6 +108,7 @@ void CTeam::Think( void )
 		m_flMorale = 0;// awwwwww...
 	}
 	m_flMoraleBonus = 0;//lets recalculate!
+	int i;
 	for( i = 0; i < m_aMoralePoints.Count() && i < 12; i++ )
 	{
 		if( !m_aMoralePoints[i] )

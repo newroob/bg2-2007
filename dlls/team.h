@@ -70,6 +70,7 @@ public:
 	float GetMorale();
 	void AddMorale(float New, float Time);
 	void AddMoralePoint(CBaseEntity * pEnt);
+	void AddMoraleBonus(float New);
 	void RemoveMoralePoint(CBaseEntity * pEnt);
 
 	//-----------------------------------------------------------------------------
