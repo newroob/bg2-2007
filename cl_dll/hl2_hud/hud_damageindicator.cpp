@@ -96,7 +96,9 @@ struct DamageAnimation_t
 //-----------------------------------------------------------------------------
 static DamageAnimation_t g_DamageAnimations[] =
 {
-	{ "HudTakeDamageDrown",		DMG_DROWN,	ANGLE_ANY,	ANGLE_ANY,	DAMAGE_ANY },
+	//BG2 - Tjoppen - no drown indicator..
+	//{ "HudTakeDamageDrown",		DMG_DROWN,	ANGLE_ANY,	ANGLE_ANY,	DAMAGE_ANY },
+	//
 	{ "HudTakeDamagePoison",	DMG_POISON,	ANGLE_ANY,	ANGLE_ANY,	DAMAGE_ANY },
 	{ "HudTakeDamageBurn",		DMG_BURN,	ANGLE_ANY,	ANGLE_ANY,	DAMAGE_ANY },
 	{ "HudTakeDamageRadiation",	DMG_RADIATION,	ANGLE_ANY,	ANGLE_ANY,	DAMAGE_ANY },
