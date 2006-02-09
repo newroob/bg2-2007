@@ -36,7 +36,7 @@ public:
 	bool				IsSprinting( void ) { return m_HL2Local.m_bitsActiveDevices & bits_SUIT_DEVICE_SPRINT; }
 	bool				IsFlashlightActive( void ) { return m_HL2Local.m_bitsActiveDevices & bits_SUIT_DEVICE_FLASHLIGHT; }
 	bool				IsBreatherActive( void ) { return m_HL2Local.m_bitsActiveDevices & bits_SUIT_DEVICE_BREATHER; }
-
+	
 	virtual int			DrawModel( int flags );
 
 	LadderMove_t		*GetLadderMove() { return &m_HL2Local.m_LadderMove; }

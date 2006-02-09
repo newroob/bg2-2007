@@ -20,6 +20,7 @@ using namespace vgui;
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#if 0	//BG2 - Tjoppen - removing "AUX POWER"
 DECLARE_HUDELEMENT( CHudSuitPower );
 
 #define SUITPOWER_INIT -1
@@ -237,3 +238,4 @@ void CHudSuitPower::Paint()
 }
 
 
+#endif	//BG2 - Tjoppen - removing "AUX POWER"

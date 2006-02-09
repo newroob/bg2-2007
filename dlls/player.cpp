@@ -1878,6 +1878,10 @@ void CBasePlayer::WaterMove()
 	{
 		if ( m_bPlayerUnderwater == false )
 		{
+			//BG2 - Tjoppen - getting under water means screwing up your shot, forcing you to reload later
+			if( GetActiveWeapon() )
+				GetActiveWeapon()->m_iClip1 = 0;	//simply empty the "clip"
+			//
 			EmitSound( "Player.AmbientUnderWater" );
 			SetPlayerUnderwater( true );
 		}

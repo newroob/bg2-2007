@@ -786,6 +786,7 @@ void CHL2_Player::StopSprinting( void )
 	{
 		SuitPower_RemoveDevice( SuitDeviceSprint );
 	}
+
 	SetMaxSpeed( HL2_NORM_SPEED );
 	m_fIsSprinting = false;
 }

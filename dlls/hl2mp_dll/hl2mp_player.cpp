@@ -525,6 +525,12 @@ void CHL2MP_Player::Spawn(void)
 	m_flNextModelChangeTime = 0.0f;
 	m_flNextTeamChangeTime = 0.0f;
 
+	//BG2 - Tjoppen - stop water sounds
+	StopSound( "Player.AmbientUnderWater" );
+	StopSound( "Player.DrownStart" );
+	StopSound( "Player.Wade" );
+	//
+
 	//BG2 - Tjoppen - reenable spectators
 	if ( GetTeamNumber() == TEAM_SPECTATOR )
 		return;	//we're done
