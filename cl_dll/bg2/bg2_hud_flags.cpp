@@ -230,6 +230,13 @@ void CHudFlags::Paint()
 			{
 				break;
 			}
+			//BG2 - Tjoppen - obey HUDSlot
+			if( g_Flags[i]->m_iHUDSlot < 0 )
+			{
+				m_pLabelFlag[i]->SetVisible( false );
+				continue;
+			}
+			//
 
 			float iTimeToCap = g_Flags[i]->m_flNextCapture - gpGlobals->curtime;
 
@@ -368,9 +375,18 @@ void CHudFlags::Paint()
 			m_pLabelFlag[i]->SetWide(m_pLabelFlag[i]->GetWide() + 5);
 
 			m_pLabelFlag[i]->SetVisible( true );
-			m_pLabelFlag[i]->SetPos(x_offset,y_offset);
 
-			y_offset += 20;
+			//BG2 - Tjoppen - obey HUDSlot
+			if( g_Flags[i]->m_iHUDSlot == 0 )
+			{
+				m_pLabelFlag[i]->SetPos(x_offset,y_offset);
+				y_offset += 20;
+			}
+			else
+			{
+				m_pLabelFlag[i]->SetPos(x_offset, 20*(g_Flags[i]->m_iHUDSlot - 1) + 5 );
+			}
+			//
 		}
 		break;
 	case 2: // Display Flag status as Icons
@@ -384,7 +400,12 @@ void CHudFlags::Paint()
 		for( i = 0; i < g_Flags.Count(); i++ )
 		{
 			int x_offset;
-			if( g_Flags[i]->m_iHUDSlot <= 0 )
+			if( g_Flags[i]->m_iHUDSlot < 0 )
+			{
+				m_pLabelFlag[i]->SetVisible( false );
+				continue;
+			}
+			else if( g_Flags[i]->m_iHUDSlot == 0 )
 			{
 				x_offset = xinc;
 				xinc += 80;

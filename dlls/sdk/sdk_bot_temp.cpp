@@ -177,11 +177,26 @@ CBasePlayer *BotPutInServer( bool bFrozen )
 
 	//new team/class picking code. it works.
 	static int last = 0, last2 = 0;
+
+	int tmp = last2;
 	((CHL2MP_Player*)pPlayer)->SetNextClass( last2 );
 	last2 = (last2 + 1) % 3;
 
 	pPlayer->ChangeTeam( TEAM_AMERICANS + last );
 	last = !last;
+
+	//HACKHACKHACK
+	const char	*szNewModelName = ((CHL2MP_Player*)pPlayer)->PlayermodelTeamClass( pPlayer->GetTeamNumber(), tmp );
+
+	//if( Q_strncmp( szOldModelName, szNewModelName, 256 ) )
+	{
+		//((CHL2MP_Player*)pPlayer)->m_flNextModelChangeTime = gpGlobals->curtime - 1;
+
+		char cmd[512];
+		Q_snprintf( cmd, sizeof (cmd), "cl_playermodel %s\n", szNewModelName );
+		engine->ClientCommand ( pPlayer->edict(), cmd );
+	}
+	//
 
 	pPlayer->Spawn();
 

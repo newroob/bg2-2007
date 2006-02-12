@@ -1783,8 +1783,8 @@ void CBasePlayer::WaterMove()
 	if (m_iHealth < 0)
 		return;
 
-	//BG2 - Tjoppen - unassigned and spectators..
-	if( GetTeamNumber() <= TEAM_SPECTATOR )
+	//BG2 - Tjoppen - unassigned and spectators.. and ghosts don't make water sounds either
+	if( GetTeamNumber() <= TEAM_SPECTATOR || !IsAlive() )
 		return;
 	//
 

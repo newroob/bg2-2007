@@ -570,7 +570,7 @@ BEGIN_NETWORK_TABLE( CFlag, DT_Flag )
 	SendPropInt( SENDINFO( m_iForTeam ), 2, SPROP_UNSIGNED ),
 	SendPropFloat( SENDINFO( m_flCaptureTime ) ),
 	SendPropStringT( SENDINFO( m_sFlagName ) ),
-	SendPropInt( SENDINFO( m_iHUDSlot ), 4, SPROP_UNSIGNED ),	//15 slots.. 0 = sequential tile
+	SendPropInt( SENDINFO( m_iHUDSlot ), 5 ),	//15 slots.. 0 = sequential tile, -1 = hidden(don't draw)
 	SendPropBool( SENDINFO( m_bActive ) ),
 END_NETWORK_TABLE()
 

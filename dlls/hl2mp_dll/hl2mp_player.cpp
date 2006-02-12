@@ -543,12 +543,27 @@ void CHL2MP_Player::Spawn(void)
 		return;	//we're done
 	//
 
+	//BG2 - Tjoppen - pick correct model
+	m_iClass = m_iNextClass;				//BG2 - Tjoppen - sometimes these may not match
+
+	const char	//*szOldModelName = engine->GetClientConVarValue( engine->IndexOfEdict( edict() ), "cl_playermodel" ),
+				*szNewModelName = PlayermodelTeamClass( GetTeamNumber(), m_iClass );
+
+	//if( Q_strncmp( szOldModelName, szNewModelName, 256 ) )
+	{
+		m_flNextModelChangeTime = gpGlobals->curtime - 1; //HACKHACKHACK
+
+		char cmd[512];
+		Q_snprintf( cmd, sizeof (cmd), "cl_playermodel %s\n", szNewModelName );
+		engine->ClientCommand ( edict(), cmd );
+	}
+	//
+
 	BaseClass::Spawn();
 
 	m_flNextVoicecomm = gpGlobals->curtime;	//BG2 - Tjoppen - reset voicecomm timer
 	m_iStamina = 100;						//BG2 - Draco - reset stamina to 100
 	m_fNextStamRegen = gpGlobals->curtime;	//BG2 - Draco - regen stam now!
-	m_iClass = m_iNextClass;				//BG2 - Tjoppen - sometimes these may not match
 
 	pl.deadflag = false;
 	RemoveSolidFlags( FSOLID_NOT_SOLID );
@@ -1520,23 +1535,9 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		m_iNextClass = CLASS_INFANTRY;
 		if( GetTeamNumber() != TEAM_AMERICANS )
 		{
-			//change model/team immediately
-			m_iClass = m_iNextClass;
-
-			char cmd[512];
-			Q_strncpy( cmd, "cl_playermodel ", 512 );
-			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
-
-			engine->ClientCommand( edict(), cmd );
-			/*SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );	//doesn't change team and stuff
-			*/
-			if( GetTeamNumber() == TEAM_UNASSIGNED )
-			{
-				ChangeTeam( TEAM_AMERICANS );
-				Spawn();
-			}
-			/*else
-				ChangeTeam( TEAM_AMERICANS );*/
+			//let Spawn() figure the model out
+			ClientKill( edict() );
+			ChangeTeam( TEAM_AMERICANS );
 		}
 
 		return true;
@@ -1585,23 +1586,9 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		m_iNextClass = CLASS_OFFICER;
 		if( GetTeamNumber() != TEAM_AMERICANS )
 		{
-			//change model/team immediately
-			m_iClass = m_iNextClass;
-
-			char cmd[512];
-			Q_strncpy( cmd, "cl_playermodel ", 512 );
-			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
-
-			engine->ClientCommand( edict(), cmd );
-			/*SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
-			*/
-			if( GetTeamNumber() == TEAM_UNASSIGNED )
-			{
-				ChangeTeam( TEAM_AMERICANS );
-				Spawn();
-			}
-			/*else
-				ChangeTeam( TEAM_AMERICANS );*/
+			//let Spawn() figure the model out
+			ClientKill( edict() );
+			ChangeTeam( TEAM_AMERICANS );
 		}
 
 		return true;
@@ -1650,23 +1637,9 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		m_iNextClass = CLASS_SNIPER;
 		if( GetTeamNumber() != TEAM_AMERICANS )
 		{
-			//change model/team immediately
-			m_iClass = m_iNextClass;
-
-			char cmd[512];
-			Q_strncpy( cmd, "cl_playermodel ", 512 );
-			strncat( cmd, PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ), 512 );
-
-			engine->ClientCommand( edict(), cmd );
-			/*SetModel( PlayermodelTeamClass( TEAM_AMERICANS, m_iClass ) );
-			*/
-			if( GetTeamNumber() == TEAM_UNASSIGNED )
-			{
-				ChangeTeam( TEAM_AMERICANS );
-				Spawn();
-			}
-			/*else
-				ChangeTeam( TEAM_AMERICANS );*/
+			//let Spawn() figure the model out
+			ClientKill( edict() );
+			ChangeTeam( TEAM_AMERICANS );
 		}
 
 		return true;
@@ -1715,23 +1688,9 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		m_iNextClass = CLASS_INFANTRY;
 		if( GetTeamNumber() != TEAM_BRITISH )
 		{
-			//change model/team immediately
-			m_iClass = m_iNextClass;
-
-			char cmd[512];
-			Q_strncpy( cmd, "cl_playermodel ", 512 );
-			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
-
-			engine->ClientCommand( edict(), cmd );
-			/*SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
-			*/
-			if( GetTeamNumber() == TEAM_UNASSIGNED )
-			{
-				ChangeTeam( TEAM_BRITISH );
-				Spawn();
-			}
-			/*else
-				ChangeTeam( TEAM_BRITISH );*/
+			//let Spawn() figure the model out
+			ClientKill( edict() );
+			ChangeTeam( TEAM_BRITISH );
 		}
 
 		return true;
@@ -1780,23 +1739,9 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		m_iNextClass = CLASS_OFFICER;
 		if( GetTeamNumber() != TEAM_BRITISH )
 		{
-			//change model/team immediately
-			m_iClass = m_iNextClass;
-
-			char cmd[512];
-			Q_strncpy( cmd, "cl_playermodel ", 512 );
-			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
-
-			engine->ClientCommand( edict(), cmd );
-			/*SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
-			*/
-			if( GetTeamNumber() == TEAM_UNASSIGNED )
-			{
-				ChangeTeam( TEAM_BRITISH );
-				Spawn();
-			}
-			/*else
-				ChangeTeam( TEAM_BRITISH );*/
+			//let Spawn() figure the model out
+			ClientKill( edict() );
+			ChangeTeam( TEAM_BRITISH );
 		}
 
 		return true;
@@ -1845,23 +1790,9 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		m_iNextClass = CLASS_SNIPER;
 		if( GetTeamNumber() != TEAM_BRITISH )
 		{
-			//change model/team immediately
-			m_iClass = m_iNextClass;
-
-			char cmd[512];
-			Q_strncpy( cmd, "cl_playermodel ", 512 );
-			strncat( cmd, PlayermodelTeamClass( TEAM_BRITISH, m_iClass ), 512 );
-
-			engine->ClientCommand( edict(), cmd );
-			/*SetModel( PlayermodelTeamClass( TEAM_BRITISH, m_iClass ) );
-			*/
-			if( GetTeamNumber() == TEAM_UNASSIGNED )
-			{
-				ChangeTeam( TEAM_BRITISH );
-				Spawn();
-			}
-			/*else
-				ChangeTeam( TEAM_BRITISH );*/
+			//let Spawn() figure the model out
+			ClientKill( edict() );
+			ChangeTeam( TEAM_BRITISH );
 		}
 
 		return true;
@@ -2002,6 +1933,21 @@ void CHL2MP_Player::CheatImpulseCommands( int iImpulse )
 				}
 			}
 			break;
+		//BG2 - Tjoppen - impulse for figuring out weapon/model/class of player we're looking at
+		case 102:
+			if( sv_cheats->GetBool() )
+			{
+				CBaseEntity *FindEntityForward( CBasePlayer *pMe, bool fHull );
+
+				CHL2MP_Player *pPlayer = ToHL2MPPlayer( FindEntityForward( this, true ) );
+
+				if ( pPlayer )
+				{
+					Msg( "model: %s, class: %i, weapon: %s\n", pPlayer->GetModelName(), pPlayer->m_iClass, pPlayer->GetActiveWeapon() ? pPlayer->GetActiveWeapon()->GetClassname() : "none" );				
+				}
+			}
+			break;
+		//
 
 		default:
 			BaseClass::CheatImpulseCommands( iImpulse );
@@ -2197,7 +2143,8 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 		CreateRagdollEntity();
 
 	//BG2 - Tjoppen - if class changed, change model
-	if( m_iClass != m_iNextClass )
+	//let Spawn() sort it out
+	/*if( m_iClass != m_iNextClass )
 	{
 		m_iClass = m_iNextClass;
 
@@ -2207,7 +2154,7 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 
 		engine->ClientCommand( edict(), cmd );
 		//SetModel( PlayermodelTeamClass( GetTeamNumber(), GetClass() ) );
-	}
+	}*/
 	//
 
 	DetonateTripmines();
