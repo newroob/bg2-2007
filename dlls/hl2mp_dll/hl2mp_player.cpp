@@ -1537,7 +1537,14 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		{
 			//let Spawn() figure the model out
 			ClientKill( edict() );
-			ChangeTeam( TEAM_AMERICANS );
+
+			if( GetTeamNumber() <= TEAM_SPECTATOR )
+			{
+				ChangeTeam( TEAM_AMERICANS );
+				Spawn();
+			}
+			else
+				ChangeTeam( TEAM_AMERICANS );
 		}
 
 		return true;
@@ -1588,7 +1595,14 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		{
 			//let Spawn() figure the model out
 			ClientKill( edict() );
-			ChangeTeam( TEAM_AMERICANS );
+			
+			if( GetTeamNumber() <= TEAM_SPECTATOR )
+			{
+				ChangeTeam( TEAM_AMERICANS );
+				Spawn();
+			}
+			else
+				ChangeTeam( TEAM_AMERICANS );
 		}
 
 		return true;
@@ -1639,7 +1653,14 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		{
 			//let Spawn() figure the model out
 			ClientKill( edict() );
-			ChangeTeam( TEAM_AMERICANS );
+			
+			if( GetTeamNumber() <= TEAM_SPECTATOR )
+			{
+				ChangeTeam( TEAM_AMERICANS );
+				Spawn();
+			}
+			else
+				ChangeTeam( TEAM_AMERICANS );
 		}
 
 		return true;
@@ -1690,7 +1711,14 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		{
 			//let Spawn() figure the model out
 			ClientKill( edict() );
-			ChangeTeam( TEAM_BRITISH );
+			
+			if( GetTeamNumber() <= TEAM_SPECTATOR )
+			{
+				ChangeTeam( TEAM_BRITISH );
+				Spawn();
+			}
+			else
+				ChangeTeam( TEAM_BRITISH );
 		}
 
 		return true;
@@ -1741,7 +1769,14 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		{
 			//let Spawn() figure the model out
 			ClientKill( edict() );
-			ChangeTeam( TEAM_BRITISH );
+			
+			if( GetTeamNumber() <= TEAM_SPECTATOR )
+			{
+				ChangeTeam( TEAM_BRITISH );
+				Spawn();
+			}
+			else
+				ChangeTeam( TEAM_BRITISH );
 		}
 
 		return true;
@@ -1792,7 +1827,14 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		{
 			//let Spawn() figure the model out
 			ClientKill( edict() );
-			ChangeTeam( TEAM_BRITISH );
+			
+			if( GetTeamNumber() <= TEAM_SPECTATOR )
+			{
+				ChangeTeam( TEAM_BRITISH );
+				Spawn();
+			}
+			else
+				ChangeTeam( TEAM_BRITISH );
 		}
 
 		return true;

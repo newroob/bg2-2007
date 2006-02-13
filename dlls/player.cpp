@@ -1551,7 +1551,10 @@ void CBasePlayer::Event_Dying()
 {
 	// NOT GIBBED, RUN THIS CODE
 
-	DeathSound();
+	//BG2 - Tjoppen - no death scream for unassigned/spectators
+	if( GetTeamNumber() > TEAM_SPECTATOR )
+		DeathSound();
+	//
 
 	// The dead body rolls out of the vehicle.
 	if ( IsInAVehicle() )
