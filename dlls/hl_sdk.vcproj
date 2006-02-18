@@ -127,13 +127,13 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="Copying to destination folder"
-				CommandLine="if exist &quot;d:\program\valve\steam\steamapps\SourceMods\BG2\bin\server.dll&quot; attrib -r &quot;d:\program\valve\steam\steamapps\SourceMods\BG2\bin\server.dll&quot;
-if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.dll &quot;d:\program\valve\steam\steamapps\SourceMods\BG2\bin\server.dll&quot;
-if exist &quot;d:\program\valve\steam\steamapps\SourceMods\BG2\bin\server.pdb&quot; attrib -r &quot;d:\program\valve\steam\steamapps\SourceMods\BG2\bin\server.pdb&quot;
-if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.pdb &quot;d:\program\valve\steam\steamapps\SourceMods\BG2\bin&quot;
+				Description="Compiling The Battlegrounds II 0.16 Alpha server binary for Draco(copying to C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin)"
+				CommandLine="if exist &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.dll&quot; attrib -r &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.dll&quot;
+if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.dll &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.dll&quot;
+if exist &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.pdb&quot; attrib -r &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.pdb&quot;
+if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.pdb &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin&quot;
 "
-				Outputs="d:\program\valve\steam\steamapps\SourceMods\BG2\bin\server.dll;d:\program\valve\steam\steamapps\SourceMods\BG2\bin\server.pdb"/>
+				Outputs="C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.dll;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="TRUE"
@@ -3678,6 +3678,12 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath=".\bg2\flag.h">
+				</File>
+				<File
+					RelativePath=".\bg2\mapfilter.cpp">
+				</File>
+				<File
+					RelativePath=".\bg2\mapfilter.h">
 				</File>
 				<File
 					RelativePath=".\bg2\spawnpoint.h">

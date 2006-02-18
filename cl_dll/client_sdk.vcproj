@@ -130,13 +130,13 @@ copy &quot;$(TargetDir)&quot;client.dll &quot;d:\program\valve\steam\steamapps\S
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="Copying to destination folder"
-				CommandLine="if exist &quot;d:\program\valve\steam\steamapps\SourceMods\BG2\bin\client.dll&quot; attrib -r &quot;d:\program\valve\steam\steamapps\SourceMods\BG2\bin\client.dll&quot;
-copy &quot;$(TargetDir)&quot;client.dll &quot;d:\program\valve\steam\steamapps\SourceMods\BG2\bin&quot;
-if exist d:\program\valve\steam\steamapps\SourceMods\BG2\bin\client.pdb attrib -r &quot;d:\program\valve\steam\steamapps\SourceMods\BG2\bin\client.pdb&quot;
-if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.pdb &quot;d:\program\valve\steam\steamapps\SourceMods\BG2\bin\client.pdb&quot;
+				Description="Compiling The Battlegrounds II 0.16 Alpha client binary for Draco(copying to C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin)"
+				CommandLine="if exist &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\client.dll&quot; attrib -r &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\client.dll&quot;
+if exist &quot;$(TargetDir)&quot;client.dll copy &quot;$(TargetDir)&quot;client.dll &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\client.dll&quot;
+if exist &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\client.pdb&quot; attrib -r &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\client.pdb&quot;
+if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.pdb &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin&quot;
 "
-				Outputs="d:\program\valve\steam\steamapps\SourceMods\BG2\bin\client.dll;d:\program\valve\steam\steamapps\SourceMods\BG2\bin\client.pdb"/>
+				Outputs="C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\client.dll;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\client.pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="TRUE"

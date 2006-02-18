@@ -26,6 +26,7 @@
 	#include <ctype.h>
 	#include "voice_gamemgr.h"
 	#include "iscorer.h"
+	#include "triggers.h"
 	#include "../bg2/flag.h"
 	#include "team.h"
 	

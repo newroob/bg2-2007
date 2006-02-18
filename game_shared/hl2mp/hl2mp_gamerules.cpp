@@ -50,6 +50,7 @@
 	#include "c_hl2mp_player.h"
 #else
 
+	#include "bg2\mapfilter.h"
 	#include "eventqueue.h"
 	#include "player.h"
 	#include "gamerules.h"
@@ -66,6 +67,7 @@
 	#include "voice_gamemgr.h"
 
 //BG2 - Draco
+#include "triggers.h"
 #include "../bg2/flag.h"
 //BG2 - Tjoppen - #includes
 #include "sdk/sdk_bot_temp.h"
@@ -276,12 +278,59 @@ bool CHL2MPRules::IsIntermission( void )
 	return false;
 }
 
+void CHL2MPRules::ResetMap()
+{
+#ifndef CLIENT_DLL
+	CMapEntityFilter filter;
+	filter.AddKeep("worldspawn");
+	filter.AddKeep("soundent");
+	filter.AddKeep("hl2mp_gamerules");
+	filter.AddKeep("scene_manager");
+	filter.AddKeep("predicted_viewmodel");
+	filter.AddKeep("team_manager");
+	filter.AddKeep("event_queue_saveload_proxy");
+	filter.AddKeep("player_manager");
+	filter.AddKeep("player");
+	filter.AddKeep("flag");
+	CBaseEntity *pEnt;
+	CBaseEntity *tmpEnt;
+	// find the first entity in the entity list
+	pEnt = gEntList.FirstEnt();
+	// as long as we've got a valid pointer, keep looping through the list
+	while (pEnt != NULL) {
+		if (filter.ShouldCreateEntity (pEnt->GetClassname() ) )
+		{
+			// if we don't need to keep the entity, we remove it from the list
+			tmpEnt = gEntList.NextEnt (pEnt);
+			UTIL_Remove (pEnt);
+			pEnt = tmpEnt;
+		}	
+		else
+		{
+			// if we need to keep it, we move on to the next entity
+			pEnt = gEntList.NextEnt (pEnt);
+		}
+	} 
+    // force the entities we've set to be removed to actually be removed
+    gEntList.CleanupDeleteList();
+	// with any unrequired entities removed, we use MapEntity_ParseAllEntities to reparse the map entities
+	// this in effect causes them to spawn back to their normal position.
+	MapEntity_ParseAllEntities( engine->GetMapEntitiesString(), &filter, true);
+#endif
+}
+
 void CHL2MPRules::Think( void )
 {
 
 #ifndef CLIENT_DLL
 
 	CGameRules::Think();
+	CBasePoint * pPoint = (CBasePoint *)gEntList.FindEntityByClassname( NULL, "capturepoint" );
+	while (pPoint)
+	{
+		pPoint->Think();
+		pPoint = (CBasePoint *)gEntList.FindEntityByClassname( pPoint, "capturepoint" );
+	}
 	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
 	CTeam *pBritish = g_Teams[TEAM_BRITISH];
 	void ClientPrintAll( char *str, bool printfordeadplayers, bool forcenextclientprintall );

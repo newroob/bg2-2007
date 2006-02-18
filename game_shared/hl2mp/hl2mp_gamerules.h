@@ -86,6 +86,9 @@ public:
 #endif
 	
 	CHL2MPRules();
+
+	void ResetMap();
+
 	virtual ~CHL2MPRules();
 
 	virtual void Precache( void );

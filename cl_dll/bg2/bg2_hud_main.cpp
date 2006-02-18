@@ -60,15 +60,8 @@ public:
 
 private:
 
-	CPanelAnimationVarAliasType( float, m_flLineHeight, "LineHeight", "15", "proportional_float" );
-
-	CPanelAnimationVar( float, m_flMaxDeathNotices, "MaxDeathNotices", "4" );
-
-	CPanelAnimationVar( bool, m_bRightJustify, "RightJustify", "1" );
-
-	CPanelAnimationVar( vgui::HFont, m_hTextFont, "TextFont", "HudNumbersTimer" ); 
-
 	CHudTexture		* m_Base; 
+	CHudTexture		* m_Straps; 
 	CHudTexture		* m_Stamina;
 	CHudTexture		* m_Health;
 
@@ -166,6 +159,7 @@ void CHudBG2::VidInit( void )
 	m_Base = gHUD.GetIcon( "hud_base" );
 	m_Stamina = gHUD.GetIcon( "hud_stamina" );
 	m_Health = gHUD.GetIcon( "hud_health" );
+	m_Straps = gHUD.GetIcon( "hud_straps" );
 }
 
 //==============================================
@@ -206,12 +200,13 @@ void CHudBG2::Paint()
 	int ystart = GetTall() - m_Base->Height();
 
 	m_Base->DrawSelf(0,ystart,ColourWhite);
-	int healthheight = player->GetHealth()* 0.94;
-	int healthy = 94 - healthheight;
-	int stamheight = pHL2Player->m_iStamina * 0.94;
-	int stamy = 94 - stamheight;
-	m_Stamina->DrawSelfCropped(35,ystart + 24 + stamy,0,0,23,stamheight,ColourWhite);
-	m_Health->DrawSelfCropped(5,ystart + 24 + healthy,0,0,23,healthheight,ColourWhite);
+	int healthheight = player->GetHealth()* 1.05;
+	int healthy = 105 - healthheight;
+	int stamheight = pHL2Player->m_iStamina * 1.05;
+	int stamy = 105 - stamheight;
+	m_Stamina->DrawSelfCropped(50,ystart + 2 + stamy,0,/*m_Stamina->Height()*/ 20 ,25,/*stamheight*/20,ColourWhite);
+	m_Health->DrawSelfCropped(15,ystart + 2 + healthy,0,/*m_Health->Height()*/ 40 ,25,/*healthheight*/ 10,ColourWhite);
+	m_Straps->DrawSelf(10,ystart + 6,ColourWhite);
 	
 	C_Team *pAmer = GetGlobalTeam(TEAM_AMERICANS);
 	C_Team *pBrit = GetGlobalTeam(TEAM_BRITISH);
@@ -219,14 +214,16 @@ void CHudBG2::Paint()
 	m_pLabelBScore->SetText(msg2);
 	m_pLabelBScore->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelBScore->SetPos(95,ystart + 76 - h/2);
+	m_pLabelBScore->SetPos(90,ystart + 40 - h/2);
+	m_pLabelBScore->SetFgColor( ColourWhite );
 	m_pLabelBScore->SetVisible(ShouldDraw());
 	
 	Q_snprintf( msg2, 512, "%i ", pAmer->Get_Score());
 	m_pLabelAScore->SetText(msg2);
 	m_pLabelAScore->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelAScore->SetPos(128,ystart + 76 - h/2);
+	m_pLabelAScore->SetPos(135,ystart + 40 - h/2);
+	m_pLabelAScore->SetFgColor( ColourWhite );
 	m_pLabelAScore->SetVisible(ShouldDraw());
 
 	int iAmmoCount = player->GetAmmoCount(wpn->GetPrimaryAmmoType()) + wpn->Clip1();
@@ -244,7 +241,7 @@ void CHudBG2::Paint()
 		}
 		m_pLabelAmmo->SizeToContents();
 		m_pLabelAmmo->GetSize( w, h );
-		m_pLabelAmmo->SetPos(210,ystart + 111 - h/2);
+		m_pLabelAmmo->SetPos(135,ystart + 100 - h/2);
 		m_pLabelAmmo->SetVisible(ShouldDraw());
 	}
 	else
@@ -254,7 +251,8 @@ void CHudBG2::Paint()
 	m_pLabelWaveTime->SetText(msg2);
 	m_pLabelWaveTime->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelWaveTime->SetPos(115,ystart + 93 - h/2);
+	m_pLabelWaveTime->SetPos(120,ystart + 67 - h/2);
+	m_pLabelWaveTime->SetFgColor( ColourWhite );
 	m_pLabelWaveTime->SetVisible(ShouldDraw());
 
 	// BP - BG version display at lower right bottom of screen
