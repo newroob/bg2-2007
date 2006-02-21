@@ -358,9 +358,24 @@ void CHudFlags::Paint()
 									b += 7 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
 									break;
 								case TEAM_UNASSIGNED:
-									r = 255;
-									g = 255;
-									b = 255;
+									switch( g_Flags[i]->m_iForTeam )
+									{
+									case 0:
+										r = 255;
+										g = 255;
+										b = 255;
+										break;
+									case 1:
+										r = 255;
+										g = 16;
+										b = 16;
+										break;
+									case 2:
+										r = 66;
+										g = 115;
+										b = 247;
+										break;
+									}
 									break;
 							}
 							break;
@@ -420,7 +435,18 @@ void CHudFlags::Paint()
 			switch( g_Flags[i]->GetTeamNumber() )
 			{
 			case TEAM_UNASSIGNED:
-				m_pIconBlank->DrawSelf( x_offset, 0, ColourWhite );
+				switch( g_Flags[i]->m_iForTeam )
+				{
+				case 0:
+					m_pIconBlank->DrawSelf( x_offset, 0, ColourWhite );
+					break;
+				case 1:
+					m_pIconRed->DrawSelf( x_offset, 0, ColourWhite );
+					break;
+				case 2:
+					m_pIconBlue->DrawSelf( x_offset, 0, ColourWhite );
+					break;
+				}
 				break;
 			case TEAM_AMERICANS:
 				m_pIconBlue->DrawSelf( x_offset, 0, ColourWhite );
@@ -510,9 +536,24 @@ void CHudFlags::Paint()
 									b += 7 * (int)((sin(fTimeToCap*8) + 2.7f)/2);
 									break;
 								case TEAM_UNASSIGNED:
-									r = 255;
-									g = 255;
-									b = 255;
+									switch( g_Flags[i]->m_iForTeam )
+									{
+									case 0:
+										r = 255;
+										g = 255;
+										b = 255;
+										break;
+									case 1:
+										r = 255;
+										g = 16;
+										b = 16;
+										break;
+									case 2:
+										r = 66;
+										g = 115;
+										b = 247;
+										break;
+									}
 									break;
 							}
 							break;
