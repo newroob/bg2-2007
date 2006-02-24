@@ -204,8 +204,8 @@ void CHudBG2::Paint()
 	int healthy = 105 - healthheight;
 	int stamheight = pHL2Player->m_iStamina * 1.05;
 	int stamy = 105 - stamheight;
-	m_Stamina->DrawSelfCropped(50,ystart + 2 + stamy,0,/*m_Stamina->Height()*/ 20 ,25,/*stamheight*/20,ColourWhite);
-	m_Health->DrawSelfCropped(15,ystart + 2 + healthy,0,/*m_Health->Height()*/ 40 ,25,/*healthheight*/ 10,ColourWhite);
+	m_Stamina->DrawSelfCropped(50,ystart + 2 + stamy,0,/*m_Stamina->Height()*//*20*/ stamy, 25, stamheight/*20*/,ColourWhite);
+	m_Health->DrawSelfCropped(15,ystart + 2 + healthy,0,/*m_Health->Height()*//*40*/ healthy, 25, healthheight /*10*/,ColourWhite);
 	m_Straps->DrawSelf(10,ystart + 6,ColourWhite);
 	
 	C_Team *pAmer = GetGlobalTeam(TEAM_AMERICANS);
