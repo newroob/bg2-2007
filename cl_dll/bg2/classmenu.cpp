@@ -452,6 +452,15 @@ void CClassMenu::OnThink()
 	}
 }
 
+void CClassMenu::SetData(KeyValues *data)
+{
+	//HACKHACK
+	if( (int)data == 1 )
+		ToggleButtons(2);
+	else if( (int)data == 0 )
+		ToggleButtons(1);
+}
+
 void CClassMenu::ToggleButtons(int iShowScreen)
 {
 	switch (iShowScreen)

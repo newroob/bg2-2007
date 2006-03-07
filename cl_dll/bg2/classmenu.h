@@ -49,7 +49,7 @@ public:
 	~CClassMenu() {}
 
 	virtual const char *GetName( void ) { return PANEL_CLASSES; }
-	virtual void SetData(KeyValues *data) {};
+	virtual void SetData(KeyValues *data);
 	virtual void Reset( void ) { }//m_pPlayerList->DeleteAllItems(); }
 	virtual void Update( void );
 	virtual bool NeedsUpdate( void ) { return false; }

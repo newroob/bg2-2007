@@ -20,6 +20,7 @@
 #include <ctype.h> // isalnum()
 #include <voice_status.h>
 
+
 extern ConVar in_joystick;
 
 // For showing/hiding the scoreboard
@@ -534,7 +535,7 @@ void SpecMenu( void )
 //
 
 //BG2 - Tjoppen - make vgui stuff into proper commands that can be issued via console
-void ClassMenu( void )
+void TeamMenu( void )
 {
 	if( gViewPortInterface )
 	{
@@ -543,6 +544,27 @@ void ClassMenu( void )
 		{
 			//toggle
 			panel->ShowPanel( !panel->IsVisible() );
+			panel->SetData( (KeyValues*)1 );	//HACKHACK
+		}
+
+		gViewPortInterface->ShowPanel( PANEL_COMM, false );
+		gViewPortInterface->ShowPanel( PANEL_COMM2, false );
+	}
+}
+
+void ClassMenu( void )
+{
+	if( gViewPortInterface )
+	{
+		if( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR )
+			return;		//spectators/unassigned don't select class
+
+		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_CLASSES );
+		if( panel )
+		{
+			//toggle
+			panel->ShowPanel( !panel->IsVisible() );
+			panel->SetData( (KeyValues*)0 );	//HACKHACK
 		}
 
 		gViewPortInterface->ShowPanel( PANEL_COMM, false );
@@ -1368,7 +1390,8 @@ static ConCommand togglescores("togglescores", ToggleScores);
 static ConCommand spec_menu("spec_menu", SpecMenu);
 //
 //BG2 - Tjoppen - make vgui stuff into proper commands that can be issued via console
-static ConCommand classmenu(PANEL_CLASSES, ClassMenu);
+static ConCommand teammenu(PANEL_CLASSES, TeamMenu);
+static ConCommand classmenu("teammenu", ClassMenu);
 static ConCommand commmenu(PANEL_COMM, CommMenu);
 static ConCommand commmenu2(PANEL_COMM2, CommMenu2);
 //
