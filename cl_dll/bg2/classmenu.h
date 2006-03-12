@@ -95,6 +95,7 @@ private:
 	CClassButton	*m_pCancelButton;
 	int				m_iCancelKey,
 
+					teammenu,
 					classmenu,
 					commmenu,
 					commmenu2;

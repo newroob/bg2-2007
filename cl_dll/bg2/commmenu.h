@@ -145,6 +145,7 @@ private:
 		//slot9,
 		slot10,
 
+		teammenu,
 		classmenu,
 		commmenu,
 		commmenu2;

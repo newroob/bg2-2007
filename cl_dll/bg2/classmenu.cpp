@@ -23,6 +23,7 @@
 //#include "spectatorgui.h"
 #include "classmenu.h"
 #include "c_team.h"
+#include "vguicenterprint.h"
 
 #include <cl_dll/iviewport.h>
 #include "commandmenu.h"
@@ -188,7 +189,7 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_iInfantryKey = m_iOfficerKey = m_iSniperKey = -1;
 	m_iCancelKey = -1;
 	m_iSpectateKey = -1;
-	classmenu = commmenu = commmenu2 = -1;
+	teammenu = classmenu = commmenu = commmenu2 = -1;
 		
 	m_pViewPort = pViewPort;
 
@@ -342,11 +343,30 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 		ToggleButtons(1);
 		m_pViewPort->ShowPanel( this, false );
 	}
+	else if( iLastTrappedKey == teammenu )
+	{
+		if( m_pBritishButton->IsVisible() )
+		{
+			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+			m_pViewPort->ShowPanel( PANEL_COMM, false );
+			m_pViewPort->ShowPanel( PANEL_COMM2, false );
+		}
+		else
+			ToggleButtons( 1 );
+		
+		return;
+	}
 	else if( iLastTrappedKey == classmenu )
 	{
-		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
-		m_pViewPort->ShowPanel( PANEL_COMM, false );
-		m_pViewPort->ShowPanel( PANEL_COMM2, false );
+		if( !m_pBritishButton->IsVisible() || C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR )
+		{
+			internalCenterPrint->Print( "You can\'t select class before selecting team" );
+			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+			m_pViewPort->ShowPanel( PANEL_COMM, false );
+			m_pViewPort->ShowPanel( PANEL_COMM2, false );
+		}
+		else
+			ToggleButtons( 2 );
 		
 		return;
 	}
@@ -411,6 +431,7 @@ void CClassMenu::Update( void )
 
 	if( m_iCancelKey < 0 ) m_iCancelKey = gameuifuncs->GetEngineKeyCodeForBind( "slot10" );
 
+	if( teammenu < 0 ) teammenu = gameuifuncs->GetEngineKeyCodeForBind( "teammenu" );
 	if( classmenu < 0 ) classmenu = gameuifuncs->GetEngineKeyCodeForBind( "classmenu" );
 	if( commmenu < 0 ) commmenu = gameuifuncs->GetEngineKeyCodeForBind( "commmenu" );
 	if( commmenu2 < 0 ) commmenu2 = gameuifuncs->GetEngineKeyCodeForBind( "commmenu2" );

@@ -498,7 +498,8 @@ bool CMultiplayRules::IsMultiplayer( void )
 			// Players lose a frag for killing themselves
 			//BG2 - Draco
 			//pVictim->IncrementFragCount( -1 );
-			pVictim->IncrementDeathCount( -100 ); //Take away 100 damage points for 'kill'ing yourself
+			if( pVictim->GetTeamNumber() > TEAM_SPECTATOR )	//no penalty to selecting team. only for switching while alive
+				pVictim->IncrementDeathCount( -100 ); //Take away 100 damage points for 'kill'ing yourself
 		}
 		else if ( pScorer )
 		{

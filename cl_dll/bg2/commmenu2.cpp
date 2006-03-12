@@ -24,6 +24,7 @@
 //#include "spectatorgui.h"
 #include "commmenu2.h"
 #include "../dlls/bg2/vcomm.h"
+#include "vguicenterprint.h"
 
 #include <cl_dll/iviewport.h>
 #include "commandmenu.h"
@@ -69,7 +70,7 @@ private:
 CCommMenu2::CCommMenu2( IViewPort *pViewPort ) : Frame( NULL, PANEL_COMM2 )
 {
 	slot1 = slot2 = slot3 = slot4 = slot5 = slot6 = slot7 = slot8 = slot9 = slot10 = -1;
-	classmenu = commmenu = commmenu2 = -1;
+	teammenu = classmenu = commmenu = commmenu2 = -1;
 		
 	m_pViewPort = pViewPort;
 
@@ -248,12 +249,37 @@ void CCommMenu2::OnKeyCodePressed(KeyCode code)
 	else	ifkey( 9, 17 )
 	else if( iLastTrappedKey == slot10 )
 		m_pViewPort->ShowPanel( this, false );
-	else if( iLastTrappedKey == classmenu )
+	else if( iLastTrappedKey == teammenu )
 	{
 		m_pViewPort->ShowPanel( PANEL_CLASSES, true );
 		m_pViewPort->ShowPanel( PANEL_COMM, false );
 		m_pViewPort->ShowPanel( PANEL_COMM2, false );
 		
+		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_CLASSES );
+		if( panel )
+			panel->SetData( (KeyValues*)0 );	//HACKHACK
+
+		return;
+	}
+	else if( iLastTrappedKey == classmenu )
+	{
+		if( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() > TEAM_SPECTATOR )
+		{
+			m_pViewPort->ShowPanel( PANEL_CLASSES, true );
+
+			IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_CLASSES );
+			if( panel )
+				panel->SetData( (KeyValues*)1 );	//HACKHACK
+		}
+		else
+		{
+			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+			internalCenterPrint->Print( "You can\'t select class before selecting team" );
+		}
+
+		m_pViewPort->ShowPanel( PANEL_COMM, false );
+		m_pViewPort->ShowPanel( PANEL_COMM2, false );
+
 		return;
 	}
 	else if( iLastTrappedKey == commmenu )
@@ -695,6 +721,7 @@ void CCommMenu2::Update( void )
 	getkey( 9 );
 	getkey( 10 );
 
+	if( teammenu < 0 ) teammenu = gameuifuncs->GetEngineKeyCodeForBind( "teammenu" );
 	if( classmenu < 0 ) classmenu = gameuifuncs->GetEngineKeyCodeForBind( "classmenu" );
 	if( commmenu < 0 ) commmenu = gameuifuncs->GetEngineKeyCodeForBind( "commmenu" );
 	if( commmenu2 < 0 ) commmenu2 = gameuifuncs->GetEngineKeyCodeForBind( "commmenu2" );

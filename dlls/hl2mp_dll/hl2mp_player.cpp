@@ -2287,6 +2287,11 @@ void CHL2MP_Player::DeathSound( void )
 	if ( m_hRagdoll && m_hRagdoll->GetBaseAnimating()->IsDissolving() )
 		 return;
 
+	//BG2 - Tjoppen - unassigned/spectator don't make deathsound
+	if( GetTeamNumber() <= TEAM_SPECTATOR )
+		return;
+	//
+
 	char szStepSound[128];
 
 	Q_snprintf( szStepSound, sizeof( szStepSound ), "%s.Die", GetPlayerModelSoundPrefix() );
