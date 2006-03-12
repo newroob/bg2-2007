@@ -195,6 +195,9 @@ private:
 	// RPG
 	void					MuzzleFlash_RPG_NPC( int entityIndex, int attachmentIndex );
 
+	//BG2 - Tjoppen - flashpan
+	void					MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool isFirstPerson );
+	//
 };
 
 

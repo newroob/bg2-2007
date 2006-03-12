@@ -400,7 +400,7 @@ CBaseEntity *FindClosestFlag( CSDKBot *pBot, bool insight, float *pdist )
 	CBaseEntity *pClosest = NULL;
 	float		mindist = 1000000000.0f;
 
-	CTeam *pTeam = g_Teams[team];
+	//CTeam *pTeam = g_Teams[team];
 	CBaseEntity *pEntity = NULL;
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{

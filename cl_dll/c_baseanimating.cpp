@@ -2666,6 +2666,12 @@ bool C_BaseAnimating::DispatchMuzzleEffect( const char *options, bool isFirstPer
 		{
 			weaponType = MUZZLEFLASH_RPG;
 		}
+		//BG2 - Tjoppen - flashpan
+		else if ( Q_stricmp( token, "FLASHPAN" ) == 0 )
+		{
+			weaponType = MUZZLEFLASH_FLASHPAN;
+		}
+		//
 		else
 		{
 			//NOTENOTE: This means you specified an invalid muzzleflash type, check your spelling?

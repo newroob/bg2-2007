@@ -1457,7 +1457,11 @@ void CTempEnts::MuzzleFlash( int type, int entityIndex, int attachmentIndex, boo
 			MuzzleFlash_RPG_NPC( entityIndex, attachmentIndex );
 		}
 		break;
+	//BG2 - Tjoppen - flashpan
+	case MUZZLEFLASH_FLASHPAN:
+		MuzzleFlash_Flashpan( entityIndex, attachmentIndex, firstPerson );
 		break;
+	//
 	default:
 		{
 			//NOTENOTE: This means you specified an invalid muzzleflash type, check your spelling?
@@ -2605,7 +2609,7 @@ void CTempEnts::MuzzleFlash_Shotgun_Player( int entityIndex, int attachmentIndex
 {
 	//BG2 - Tjoppen - HACKHACK: just redirect shotgun muzzleflash to pistol for now
 	//also, muskets have shotgun flashes, pistols have pistol flashes
-	MuzzleFlash_Pistol_Shared( entityIndex, attachmentIndex, false );
+	MuzzleFlash_Pistol_Shared( entityIndex, attachmentIndex, true );
 	return;
 
 	/*VPROF_BUDGET( "MuzzleFlash_Shotgun_Player", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
@@ -3130,7 +3134,85 @@ void CTempEnts::MuzzleFlash_RPG_NPC( int entityIndex, int attachmentIndex )
 
 }
 
+//BG2 - Tjoppen - shared flashpan function
+void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool isFirstPerson )
+{
+	VPROF_BUDGET( "MuzzleFlash_Flashpan", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
+	CSmartPtr<CSimpleEmitter> pSimple;
+	CSmartPtr<CLocalSpaceEmitter> pSimple2;
 
+	pSimple = CSimpleEmitter::Create( "MuzzleFlash_Flashpan" );
+	if( isFirstPerson )
+	{
+		pSimple->SetDrawBeforeViewModel( true );
+	}
+	else
+		pSimple2 = CLocalSpaceEmitter::Create( "MuzzleFlash", entityIndex, attachmentIndex );
+	
+
+	Vector origin(0,0,0);
+	QAngle angles;
+
+	//BG2 - Tjoppen - forward is _always_ up
+	Vector forward(0,0,1);//1,0,0);
+
+	// Get our attachment's transformation matrix
+	FX_GetAttachmentTransform( entityIndex, attachmentIndex, &origin, &angles );
+    
+	SimpleParticle *pParticle;
+	Vector			offset;
+
+	// Smoke
+	offset = origin + forward * 5.0f;
+
+	//BG2 - Tjoppen - more smoke
+	for( int j = 0; j < 16; j++ )
+	//if ( random->RandomInt( 0, 3 ) != 0 )
+	{
+		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
+		offset = origin + forward * 1.5f * (float)j;
+
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( "particle/particle_musketsmoke" ), offset );
+			
+		if ( pParticle == NULL )
+			return;
+
+		pParticle->m_flLifetime		= 0.0f;
+		//BG2 - Tjoppen - smoke lives longer
+		//pParticle->m_flDieTime		= random->RandomFloat( 0.25f, 0.5f );
+		pParticle->m_flDieTime		= random->RandomFloat( 6.0f, 10.0f );
+
+		//BG2 - Tjoppen - a little bit more speed to the smoke
+		//pParticle->m_vecVelocity = forward * random->RandomFloat( 48.0f, 64.0f );
+		pParticle->m_vecVelocity = forward * (float)j * 0.03f * random->RandomFloat( 32.0f, 64.0f );
+		pParticle->m_vecVelocity[2] += 0.25f * random->RandomFloat( 7.0f, 28.0f );
+
+		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
+		C_BaseEntity *pEnt = ClientEntityList().GetEnt( entityIndex );
+		pParticle->m_vecVelocity += pEnt->GetLocalVelocity();
+
+
+		int color = random->RandomInt( 200, 255 );
+		pParticle->m_uchColor[0]	= color;
+		pParticle->m_uchColor[1]	= color;
+		pParticle->m_uchColor[2]	= color;
+
+		//BG2 - Tjoppen - denser smoke
+		//pParticle->m_uchStartAlpha	= random->RandomInt( 64, 128 );
+		pParticle->m_uchStartAlpha	= random->RandomInt( 200, 255 );
+		pParticle->m_uchEndAlpha	= 0;
+
+		//BG2 - Tjoppen - larger smoke
+		//pParticle->m_uchStartSize	= random->RandomInt( 2, 4 );
+		//pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 4.0f;
+		pParticle->m_uchStartSize	= (float)(j+16) * 0.02f * random->RandomInt( 4, 6 );
+		//pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 10.0f;
+		//pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 35.0f;
+		pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 20.0f;
+		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
+		pParticle->m_flRollDelta	= random->RandomFloat( -0.5f, 0.5f );
+	}
+}
 
 void CTempEnts::RocketFlare( const Vector& pos )
 {
