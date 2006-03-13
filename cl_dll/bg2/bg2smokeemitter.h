@@ -2,17 +2,25 @@
 class CBG2SmokeEmitter : public CSimpleEmitter
 {
 public:
-							CBG2SmokeEmitter( const char *pDebugName );
+	CBG2SmokeEmitter( const char *pDebugName );
 	static CSmartPtr<CBG2SmokeEmitter>	Create( const char *pDebugName );
-	virtual void			UpdateVelocity( SimpleParticle *pParticle, float timeDelta );
+	virtual void UpdateVelocity( SimpleParticle *pParticle, float timeDelta );
 
 private:
-							CBG2SmokeEmitter( const CBG2SmokeEmitter & );
+	CBG2SmokeEmitter( const CBG2SmokeEmitter & );
+	Vector	m_vDrift;
 };
 
 
 CBG2SmokeEmitter::CBG2SmokeEmitter( const char *pDebugName ) : CSimpleEmitter( pDebugName )
 {
+	//velocity will converge to around (|m_vDrift| / -DROPOFF) for small timeDeltas
+
+#define DROPOFF	-1.5f	//exponential dropoff rate of velocity
+
+	m_vDrift = Vector(	random->RandomFloat( -10, 10 ),
+						random->RandomFloat( -10, 10 ),
+						random->RandomFloat( 15, 30 ) );
 }
 
 
@@ -25,23 +33,9 @@ CSmartPtr<CBG2SmokeEmitter> CBG2SmokeEmitter::Create( const char *pDebugName )
 void CBG2SmokeEmitter::UpdateVelocity( SimpleParticle *pParticle, float timeDelta )
 {
 	//slow down...
-	pParticle->m_vecVelocity *= expf( -2.5f * timeDelta );
+	pParticle->m_vecVelocity *= expf( DROPOFF * timeDelta );
 
-	//..and drift upwards
-	pParticle->m_vecVelocity.z += 25.f * timeDelta;	//TWEAKME
-
-
-	/*float	speed = VectorNormalize( pParticle->m_vecVelocity );
-	Vector	offset;
-
-	speed -= ( 1.0f * timeDelta );
-
-	offset.Random( -0.025f, 0.025f );
-	offset[2] = 0.0f;
-
-	pParticle->m_vecVelocity += offset;
-	VectorNormalize( pParticle->m_vecVelocity );
-
-	pParticle->m_vecVelocity *= speed;*/
+	//..and drift upwards and sideways as dictated by m_vDrift
+	pParticle->m_vecVelocity += m_vDrift * timeDelta;
 }
 //
