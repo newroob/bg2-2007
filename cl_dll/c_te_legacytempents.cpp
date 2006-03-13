@@ -61,6 +61,9 @@
 #include "tier0/vprof.h"
 #include "particles_localspace.h"
 #include "physpropclientside.h"
+//BG2 - Tjoppen - #includes
+#include "bg2/bg2smokeemitter.h"
+//
 
 // NOTE: Always include this last!
 #include "tier0/memdbgon.h"
@@ -2872,6 +2875,7 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 	VPROF_BUDGET( "MuzzleFlash_Pistol_Player", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	CSmartPtr<CSimpleEmitter> pSimple;
 	CSmartPtr<CLocalSpaceEmitter> pSimple2;
+	CSmartPtr<CBG2SmokeEmitter> pSimple3;
 
 	pSimple = CSimpleEmitter::Create( "MuzzleFlash_Pistol_Shared" );
 	if( isFirstPerson )
@@ -2881,6 +2885,12 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 	}
 	else
 		pSimple2 = CLocalSpaceEmitter::Create( "MuzzleFlash", entityIndex, attachmentIndex );
+
+	pSimple3 = CBG2SmokeEmitter::Create( "MuzzleFlash_Smoke_Shared" );
+	if( isFirstPerson )
+	{
+		pSimple3->SetDrawBeforeViewModel( true );
+	}
 	
 
 	Vector origin(0,0,0);
@@ -2950,6 +2960,16 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
         AngleVectors( angles, &forward, NULL, NULL );
 	}
 
+	//assume this is a weapon. it's owned by a player. the player has a velocity
+	Vector	ownervelocity(0,0,0);
+	C_BaseViewModel *pEnt = dynamic_cast<C_BaseViewModel*>( ClientEntityList().GetEnt( entityIndex ) );
+	if( pEnt )
+	{
+		C_BaseEntity *pEnt2 = pEnt->GetOwner();
+		if( pEnt2 )
+			ownervelocity = pEnt2->GetLocalVelocity();	//success!
+	}
+
 	// Smoke
 	offset = origin + forward * 8.0f;
 
@@ -2960,7 +2980,8 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
 		offset = origin + forward * 2.0f * (float)j;
 
-		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( "particle/particle_musketsmoke" ), offset );
+		//pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( "particle/particle_musketsmoke" ), offset );
+		pParticle = (SimpleParticle *) pSimple3->AddParticle( sizeof( SimpleParticle ), pSimple3->GetPMaterial( "particle/particle_musketsmoke" ), offset );
 			
 		if ( pParticle == NULL )
 			return;
@@ -2972,8 +2993,9 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 
 		//BG2 - Tjoppen - a little bit more speed to the smoke
 		//pParticle->m_vecVelocity = forward * random->RandomFloat( 48.0f, 64.0f );
-		pParticle->m_vecVelocity = forward * (float)j * 0.17f * random->RandomFloat( 32.0f, 64.0f );
-		pParticle->m_vecVelocity[2] += random->RandomFloat( 7.0f, 28.0f );
+		pParticle->m_vecVelocity = forward * (float)j * 0.5f * random->RandomFloat( 32.0f, 64.0f );
+		//pParticle->m_vecVelocity[2] += random->RandomFloat( 7.0f, 28.0f );
+		pParticle->m_vecVelocity += ownervelocity;
 
 		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
 		C_BaseEntity *pEnt = ClientEntityList().GetEnt( entityIndex );
@@ -3138,16 +3160,16 @@ void CTempEnts::MuzzleFlash_RPG_NPC( int entityIndex, int attachmentIndex )
 void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool isFirstPerson )
 {
 	VPROF_BUDGET( "MuzzleFlash_Flashpan", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
-	CSmartPtr<CSimpleEmitter> pSimple;
-	CSmartPtr<CLocalSpaceEmitter> pSimple2;
+	CSmartPtr<CBG2SmokeEmitter> pSimple;
+	//CSmartPtr<CLocalSpaceEmitter> pSimple2;
 
-	pSimple = CSimpleEmitter::Create( "MuzzleFlash_Flashpan" );
+	pSimple = CBG2SmokeEmitter::Create( "MuzzleFlash_Flashpan" );
 	if( isFirstPerson )
 	{
 		pSimple->SetDrawBeforeViewModel( true );
 	}
-	else
-		pSimple2 = CLocalSpaceEmitter::Create( "MuzzleFlash", entityIndex, attachmentIndex );
+	/*else
+		pSimple2 = CLocalSpaceEmitter::Create( "MuzzleFlash", entityIndex, attachmentIndex );*/
 	
 
 	Vector origin(0,0,0);
@@ -3165,8 +3187,19 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 	// Smoke
 	offset = origin + forward * 5.0f;
 
+	//assume this is a weapon. it's owned by a player. the player has a velocity
+	Vector	ownervelocity(0,0,0);
+	C_BaseViewModel *pEnt = dynamic_cast<C_BaseViewModel*>( ClientEntityList().GetEnt( entityIndex ) );
+	if( pEnt )
+	{
+		C_BaseEntity *pEnt2 = pEnt->GetOwner();
+		if( pEnt2 )
+			ownervelocity = pEnt2->GetLocalVelocity();	//success!
+	}
+
+
 	//BG2 - Tjoppen - more smoke
-	for( int j = 0; j < 16; j++ )
+	for( int j = 0; j < 8; j++ )
 	//if ( random->RandomInt( 0, 3 ) != 0 )
 	{
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
@@ -3185,7 +3218,8 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 		//BG2 - Tjoppen - a little bit more speed to the smoke
 		//pParticle->m_vecVelocity = forward * random->RandomFloat( 48.0f, 64.0f );
 		pParticle->m_vecVelocity = forward * (float)j * 0.03f * random->RandomFloat( 32.0f, 64.0f );
-		pParticle->m_vecVelocity[2] += 0.25f * random->RandomFloat( 7.0f, 28.0f );
+		//pParticle->m_vecVelocity[2] += 0.25f * random->RandomFloat( 7.0f, 28.0f );
+		pParticle->m_vecVelocity += ownervelocity;
 
 		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
 		C_BaseEntity *pEnt = ClientEntityList().GetEnt( entityIndex );

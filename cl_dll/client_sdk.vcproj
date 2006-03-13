@@ -2500,6 +2500,9 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					RelativePath=".\bg2\bg2_hud_stamina.cpp">
 				</File>
 				<File
+					RelativePath=".\bg2\bg2smokeemitter.h">
+				</File>
+				<File
 					RelativePath="..\dlls\bg2\bullet.cpp">
 					<FileConfiguration
 						Name="Release HL2MP|Win32">
@@ -3411,10 +3414,10 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				RelativePath="..\public\tier1\mempool.h">
 			</File>
 			<File
-				RelativePath="..\public\vgui_controls\Menu.h">
+				RelativePath="menu.h">
 			</File>
 			<File
-				RelativePath="menu.h">
+				RelativePath="..\public\vgui_controls\Menu.h">
 			</File>
 			<File
 				RelativePath="..\public\vgui_controls\MenuItem.h">
