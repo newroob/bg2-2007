@@ -303,7 +303,8 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_pennsylvania" );
 	GiveNamedItem( "weapon_pistol_a" );
 	GiveNamedItem( "weapon_pistol_b" );
-	GiveNamedItem( "weapon_sabre" );
+	GiveNamedItem( "weapon_sabre_a" );
+	GiveNamedItem( "weapon_sabre_b" );
 	GiveNamedItem( "weapon_knife" );
 }
 
@@ -331,7 +332,7 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			break;
 		case CLASS_OFFICER:
 			GiveNamedItem( "weapon_pistol_a" );
-			GiveNamedItem( "weapon_sabre" );
+			GiveNamedItem( "weapon_sabre_a" );
 			break;
 		case CLASS_SNIPER:
 			GiveNamedItem( "weapon_revolutionnaire" );
@@ -362,7 +363,7 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			break;
 		case CLASS_OFFICER:
 			GiveNamedItem( "weapon_pistol_b" );
-			GiveNamedItem( "weapon_sabre" );
+			GiveNamedItem( "weapon_sabre_b" );
 			break;
 		case CLASS_SNIPER:
 			GiveNamedItem( "weapon_pennsylvania" );

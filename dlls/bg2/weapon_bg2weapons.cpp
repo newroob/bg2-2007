@@ -399,9 +399,9 @@ IMPLEMENT_ACTTABLE( CWeaponpistol_b );
 #endif
 
 #ifdef CLIENT_DLL
-#define CWeaponsabre C_Weaponsabre
+#define CWeaponsabre_a C_Weaponsabre_a
 #endif
-DECLARE_BG2_WEAPON( sabre )
+DECLARE_BG2_WEAPON( sabre_a )
 {
 	m_bReloadsSingly	= false;
 	m_bFiresUnderwater	= true;
@@ -423,7 +423,7 @@ DECLARE_BG2_WEAPON( sabre )
 }
 
 #ifndef CLIENT_DLL
-acttable_t CWeaponsabre::m_acttable[] = 
+acttable_t CWeaponsabre_a::m_acttable[] = 
 {
 	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SLAM,					true },
 	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_MELEE,					false },
@@ -437,7 +437,49 @@ acttable_t CWeaponsabre::m_acttable[] =
 	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
 };
 
-IMPLEMENT_ACTTABLE( CWeaponsabre );
+IMPLEMENT_ACTTABLE( CWeaponsabre_a );
+#endif
+
+#ifdef CLIENT_DLL
+#define CWeaponsabre_b C_Weaponsabre_b
+#endif
+DECLARE_BG2_WEAPON( sabre_b )
+{
+	m_bReloadsSingly	= false;
+	m_bFiresUnderwater	= true;
+	m_bDontAutoreload	= true;
+
+	//primary
+	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
+	m_Attackinfos[0].m_flDamage				= SABRE_DAMAGE;//60;
+	m_Attackinfos[0].m_flAttackrate			= 1.4;//-0.7f;
+	m_Attackinfos[0].m_flRange				= SABRE_RANGE;
+	m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
+	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+
+	m_fMinRange1 = m_fMinRange2	= 0;
+	m_fMaxRange1 = m_fMaxRange2 = SABRE_RANGE;
+
+	//secondary
+	m_Attackinfos[1] = m_Attackinfos[0];
+}
+
+#ifndef CLIENT_DLL
+acttable_t CWeaponsabre_b::m_acttable[] = 
+{
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SLAM,					true },
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_MELEE,					false },
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_MELEE,					false },
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_MELEE,			false },
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_MELEE,			false },
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_MELEE,			false },
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_MELEE,					false },
+
+	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
+};
+
+IMPLEMENT_ACTTABLE( CWeaponsabre_b );
 #endif
 
 #ifdef CLIENT_DLL
