@@ -41,8 +41,6 @@
 
 #include <stdio.h> // _snprintf define
 
-#include "hintbox.h"
-
 #include <cl_dll/iviewport.h>
 #include "commandmenu.h"
 #include "hltvcamera.h"
@@ -74,6 +72,7 @@ char *pVHints[NUM_HINTS] =
 	"This is the third hint, hope it really helps"
 };
 
+static ConVar cl_hintbox( "cl_hintbox", "1", 0, "0 - Off, 1 - game relevant hints, 2 -  with newbie notices" );
 
 class CHintbox : public CHudElement , public vgui::Panel
 {
@@ -106,7 +105,7 @@ extern char *pVHints[];
 using namespace vgui;
 
 DECLARE_HUDELEMENT( CHintbox );
-CHintbox::CHintbox( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "HudFlags" )
+CHintbox::CHintbox( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "Hintbox" )
 {
 	DevMsg (2, "CHintbox::CHintbox - constructor sent %s\n", pElementName);
 	scheme = vgui::scheme()->LoadSchemeFromFile("resource/ClientScheme.res", "ClientScheme");
@@ -117,13 +116,28 @@ CHintbox::CHintbox( const char *pElementName ) : CHudElement( pElementName ), Ba
 	SetBgColor(Color( 0,0,0,100 ));
 	SetPaintBackgroundEnabled( true );
 	SetPaintBackgroundType (2); // Rounded corner box
+	SetPos( ScreenWidth() - 300, 300);
+	SetSize( 300, 120 );
+	SetPaintBackgroundType (2); // Rounded corner box
+	
 	//hidden = true;
+	hidden = false;
+	
 	m_Text = new vgui::Label( this, "Hintbox", "");
 	//m_Text->SetWrap(true);
+	m_Text->SetParent(this);
 	m_Text->SetPaintBackgroundEnabled( false );
 	m_Text->SetPaintBorderEnabled( false );
 	m_Text->SetSize(280, 100);
 	m_Text->SetContentAlignment( vgui::Label::a_west );
+	m_Text->SetVisible(hidden);
+	
+	Color ColourWhite( 255, 255, 255, 255 );
+	m_Text->SetFgColor( ColourWhite );
+	
+	int parent_x, parent_y;
+	m_Text->GetParent()->GetPos(parent_x, parent_y);
+	m_Text->SetPos(parent_x + 10, parent_y + 10);
 } 
 
 
@@ -162,6 +176,7 @@ void CHintbox::SetHint( char *text, int displaytime, int displaymode )
 	m_Text->SetText(text);
 	hint_showtime = gpGlobals->curtime + displaytime;
 	hidden = false;
+
 	// TODO displaymode usage
 }
 
@@ -172,8 +187,10 @@ void CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
 		return;
 	if(pVHints[m_hint] != NULL)
 		m_Text->SetText(pVHints[m_hint]);
+
 	hint_showtime = gpGlobals->curtime + displaytime;
 	hidden = false;
+
 	// TODO displaymode usage
 }
 
@@ -201,27 +218,5 @@ void CHintbox::Paint( void )
 	if ( !pPlayer )
 		return;
 
-	wchar_t unicode[256]; // scratch space for text to print
-
-	// --- Set up default font and get character height for line spacing
-
-	SetPos( ScreenWidth() - 300, 400);
-	SetSize( 300, 120 );
-	SetPaintBackgroundType (2); // Rounded corner box
-	SetPaintBackgroundEnabled( true );
-
-  	vgui::surface()->DrawSetTextColor( 255, 255, 255, 220 ); 
-	swprintf(unicode, L"test");
-
-	Color ColourWhite( 255, 255, 255, 255 );
-	m_Text->SetFgColor( ColourWhite );
-	
-	int temp_x, temp_y;
-	m_Text->GetParent()->GetPos(temp_x, temp_y);
-	m_Text->SetPos(temp_x + 10, temp_y + 10);
-	
-
-	//vgui::surface()->DrawPrintText( unicode, wcslen(unicode) ); // print text
-	
-	//BaseClass::Paint();
+	BaseClass::Paint();
 }
