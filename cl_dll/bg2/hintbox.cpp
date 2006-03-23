@@ -95,6 +95,7 @@ private:
 	float m_hintshowtime;
 	bool m_hidden;
 	vgui::HScheme scheme;
+	vgui::Label * m_label; 
 
 protected:
 	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
@@ -132,6 +133,16 @@ CHintbox::CHintbox( const char *pElementName ) : CHudElement( pElementName ), Ba
 	m_textpos.y = 5;
 	m_Text = new char[512];
 	
+	m_label = new vgui::Label( this, "HintLabel", "hint label" /*vgui::localize()->Find( "#Clan_warmup_mode" )*/ );
+	m_label->SetPaintBackgroundEnabled( false );
+	m_label->SetPaintBorderEnabled( false );
+	m_label->SizeToContents();
+	m_label->SetContentAlignment( vgui::Label::a_west );
+	Color ColourWhite( 255, 255, 255, 230 );
+	m_label->SetFgColor( ColourWhite );
+	m_label->SetVisible(false);
+	m_label->SetPos(m_textpos.x, m_textpos.y);
+
 	int parent_x, parent_y;
 	this->GetPos(parent_x, parent_y);
 	m_textpos.x += parent_x;
@@ -151,6 +162,8 @@ void CHintbox::Reset( void )
 	sprintf(m_Text, "empty hint");
 	m_hintshowtime = 0;
 	m_hidden = true;
+
+	m_label->SetVisible(false);
 }
 
 void CHintbox::VidInit( void )
@@ -164,6 +177,8 @@ void CHintbox::ApplySchemeSettings( vgui::IScheme *pScheme )
 
 	m_hHintFont = pScheme->GetFont("HudHintTextSmall", true);
 
+	m_label->SetFont(m_hHintFont);
+
 	BaseClass::ApplySchemeSettings( pScheme );
 }
 
@@ -175,6 +190,8 @@ void CHintbox::SetHint( char *text, int displaytime, int displaymode )
 	m_hidden = false;
 	SetAlpha(255);
 
+	m_label->SetVisible(true);
+
 	// TODO displaymode usage
 }
 
@@ -184,12 +201,19 @@ void CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
 	m_hint = textpreset;
 	if (m_hint > NUM_HINTS)
 		return;
-	if(pVHints[m_hint] != NULL)
-		sprintf(m_Text, "%s", pVHints[m_hint]);
+
+	if(pVHints[m_hint] == NULL)
+		return;
+		
+	sprintf(m_Text, "%s", pVHints[m_hint]);
 
 	m_hintshowtime = gpGlobals->curtime + displaytime;
 	m_hidden = false;
 	SetAlpha(255);
+
+	wchar_t	printtext[512];
+	vgui::localize()->ConvertANSIToUnicode(m_Text, printtext, sizeof(printtext));
+	m_label->SetText(printtext);
 
 	// TODO displaymode usage
 }
@@ -200,8 +224,10 @@ void CHintbox::MsgFunc_Hintbox( bf_read &msg )
 	int hint;
 	hint = msg.ReadByte();
 	DevMsg (2, "CHintbox::MsgFunc_Hintbox - got message hint: %d\n", hint );
+	
 	if(pVHints[m_hint] != NULL)
 		sprintf(m_Text, "%s", pVHints[hint]);
+	
 	m_hintshowtime = gpGlobals->curtime + 5;
 	m_hidden = false;
 }
@@ -223,6 +249,8 @@ void CHintbox::OnThink(void)
 			alpha = 0;
 		SetAlpha((int)alpha);
 	}
+
+	m_label->SizeToContents();
 }
 
 void CHintbox::Paint( void )
@@ -234,9 +262,9 @@ void CHintbox::Paint( void )
 	if (m_hidden)
 		return;
 	
-	wchar_t		printtext[512];
+	wchar_t	printtext[512];
 	vgui::localize()->ConvertANSIToUnicode(m_Text, printtext, sizeof(printtext));
-
+	
 	vgui::surface()->DrawSetTextColor( 240, 240, 240, 220 );
 	vgui::surface()->DrawSetTextFont( m_hHintFont );
 	vgui::surface()->DrawSetTextPos(m_textpos.x, m_textpos.y);
