@@ -56,22 +56,21 @@
 #include <igameresources.h>
 #include "clientmode_hl2mpnormal.h"
 
-
-// memdbgon must be the last include file in a .cpp file!!!
+//memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 extern IGameUIFuncs *gameuifuncs; // for key binding details
-
 
 #define NUM_HINTS	3
 
 char *pVHints[NUM_HINTS] =
 {
-	"This is the first hint, hope it helps\n",
+	"This is the first hint, hope it helps\n This is pretty long text so it better \nfits the screen well. Nice isn't it?",
 	"This is the second hint, hope it really helps\n",
 	"This is the third hint, hope it really helps\n"
 };
 
+// not implemented yet
 static ConVar cl_hintbox( "cl_hintbox", "1", 0, "0 - Off, 1 - game relevant hints, 2 -  with newbie notices" );
 
 class CHintbox : public CHudElement , public vgui::Panel
@@ -91,7 +90,7 @@ public:
 private:
 	int	m_hint;
 	vgui::HFont m_hHintFont;
-	wchar_t m_Text[512];
+	char *m_Text;
 	Vector m_textpos;
 	float m_hintshowtime;
 	bool m_hidden;
@@ -106,6 +105,8 @@ extern char *pVHints[];
 using namespace vgui;
 
 DECLARE_HUDELEMENT( CHintbox );
+DECLARE_HUD_MESSAGE( CHintbox, Hintbox );
+
 CHintbox::CHintbox( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "Hintbox" )
 {
 	DevMsg (2, "CHintbox::CHintbox - constructor sent %s\n", pElementName);
@@ -121,15 +122,15 @@ CHintbox::CHintbox( const char *pElementName ) : CHudElement( pElementName ), Ba
 	SetHiddenBits( HIDEHUD_ALL );	
 	SetBgColor(Color( 0,0,0,100 ));
 	SetPaintBackgroundEnabled( true );
-	SetPaintBackgroundType (2); // Rounded corner box
 	SetPos( ScreenWidth() - 300, 300);
 	SetSize( 300, 120 );
 	SetPaintBackgroundType (2); // Rounded corner box
+	SetAlpha(255);
 	
-	//hidden = true;
-	m_hidden = false;
-	m_textpos.x = 10;
-	m_textpos.y = 10;
+	m_hidden = true;
+	m_textpos.x = 5;
+	m_textpos.y = 5;
+	m_Text = new char[512];
 	
 	int parent_x, parent_y;
 	this->GetPos(parent_x, parent_y);
@@ -140,17 +141,16 @@ CHintbox::CHintbox( const char *pElementName ) : CHudElement( pElementName ), Ba
 
 void CHintbox::Init( void )
 {
-	//HOOK_HUD_MESSAGE( CHintbox, Hintbox );
+	//HOOK_HUD_MESSAGE( CHintbox, Hintbox ); 
 	DevMsg (2, "CHintbox::Init\n" );
 	Reset();
 }
 
 void CHintbox::Reset( void )
 {
-	DevMsg (2, "CHintbox::Reset (clearing out list)\n" );
-	swprintf(m_Text, L"");
+	sprintf(m_Text, "empty hint");
 	m_hintshowtime = 0;
-	UseHint(1, 1 ,1);
+	m_hidden = true;
 }
 
 void CHintbox::VidInit( void )
@@ -162,19 +162,22 @@ void CHintbox::ApplySchemeSettings( vgui::IScheme *pScheme )
 {
 	DevMsg (2, "CHintbox::ApplySchemeSettings\n" );
 
-	m_hHintFont = pScheme->GetFont("HudHintTextSmall");
+	m_hHintFont = pScheme->GetFont("HudHintTextSmall", true);
 
 	BaseClass::ApplySchemeSettings( pScheme );
 }
 
+
 void CHintbox::SetHint( char *text, int displaytime, int displaymode )
 {
-	swprintf(m_Text, L"%s", text);
+	sprintf(m_Text, "%s", text);
 	m_hintshowtime = gpGlobals->curtime + displaytime;
 	m_hidden = false;
+	SetAlpha(255);
 
 	// TODO displaymode usage
 }
+
 
 void CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
 {
@@ -182,30 +185,44 @@ void CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
 	if (m_hint > NUM_HINTS)
 		return;
 	if(pVHints[m_hint] != NULL)
-		swprintf(m_Text, L"%s", pVHints[m_hint]);
+		sprintf(m_Text, "%s", pVHints[m_hint]);
 
 	m_hintshowtime = gpGlobals->curtime + displaytime;
 	m_hidden = false;
+	SetAlpha(255);
 
 	// TODO displaymode usage
 }
 
+
 void CHintbox::MsgFunc_Hintbox( bf_read &msg )
 {
 	int hint;
-
 	hint = msg.ReadByte();
 	DevMsg (2, "CHintbox::MsgFunc_Hintbox - got message hint: %d\n", hint );
-	//strcpy(m_Text, pVHints[hint]); FIXME
+	if(pVHints[m_hint] != NULL)
+		sprintf(m_Text, "%s", pVHints[hint]);
 	m_hintshowtime = gpGlobals->curtime + 5;
 	m_hidden = false;
 }
-
 void CHintbox::OnThink(void)
 {
-	//if (hint_showtime < gpGlobals->curtime)
-		//hidden = true;
-	//SetNextClientThink(gpGlobals->curtime + 0.05);
+	if (m_hintshowtime < gpGlobals->curtime)
+	{
+		SetVisible(false);
+		m_hidden = true;
+	}
+	else
+		SetVisible(true);
+
+	//fade out
+	if (m_hintshowtime - 1 < gpGlobals->curtime && !m_hidden)
+	{
+		float alpha = (m_hintshowtime - gpGlobals->curtime) * 255;
+		if (alpha < 1)
+			alpha = 0;
+		SetAlpha((int)alpha);
+	}
 }
 
 void CHintbox::Paint( void )
@@ -213,11 +230,28 @@ void CHintbox::Paint( void )
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 	if ( !pPlayer )
 		return;
+	
+	if (m_hidden)
+		return;
+	
+	wchar_t		printtext[512];
+	vgui::localize()->ConvertANSIToUnicode(m_Text, printtext, sizeof(printtext));
 
-	m_textpos.x = 5;
-	m_textpos.y = 5;
 	vgui::surface()->DrawSetTextColor( 240, 240, 240, 220 );
 	vgui::surface()->DrawSetTextFont( m_hHintFont );
 	vgui::surface()->DrawSetTextPos(m_textpos.x, m_textpos.y);
-	vgui::surface()->DrawPrintText( m_Text, wcslen(m_Text) );
+	vgui::surface()->DrawPrintText( printtext, wcslen(printtext) );
 }
+
+static void hintbox_f( void )
+{
+	if( engine->Cmd_Argc() == 2 )
+	{
+		int hint = atoi( engine->Cmd_Argv( 1 ) );
+		CHintbox *hintbox = (CHintbox *)GET_HUDELEMENT( CHintbox );
+		int displaytime = 5;
+		int displaymode = 1;
+		hintbox->UseHint(hint, displaytime, displaymode);
+	}
+}
+static ConCommand hintbox( "hintbox", hintbox_f );
