@@ -199,7 +199,7 @@ void CHintbox::SetHint( char *text, int displaytime, int displaymode )
 void CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
 {
 	m_hint = textpreset;
-	if (m_hint > NUM_HINTS)
+	if (m_hint >= NUM_HINTS)
 		return;
 
 	if(pVHints[m_hint] == NULL)
@@ -214,6 +214,7 @@ void CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
 	wchar_t	printtext[512];
 	vgui::localize()->ConvertANSIToUnicode(m_Text, printtext, sizeof(printtext));
 	m_label->SetText(printtext);
+	m_label->SetVisible(true);	//BG2 - Tjoppen
 
 	// TODO displaymode usage
 }
@@ -225,11 +226,7 @@ void CHintbox::MsgFunc_Hintbox( bf_read &msg )
 	hint = msg.ReadByte();
 	DevMsg (2, "CHintbox::MsgFunc_Hintbox - got message hint: %d\n", hint );
 	
-	if(pVHints[m_hint] != NULL)
-		sprintf(m_Text, "%s", pVHints[hint]);
-	
-	m_hintshowtime = gpGlobals->curtime + 5;
-	m_hidden = false;
+	UseHint( hint, 5, 1 );	//BG2 - Tjoppen
 }
 void CHintbox::OnThink(void)
 {
