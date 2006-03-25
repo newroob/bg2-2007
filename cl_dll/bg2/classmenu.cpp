@@ -21,7 +21,6 @@
 #include <stdio.h> // _snprintf define
 
 //#include "spectatorgui.h"
-#include "classmenu.h"
 #include "c_team.h"
 #include "vguicenterprint.h"
 
@@ -37,6 +36,8 @@
 #include <imapoverview.h>
 #include <shareddefs.h>
 #include <igameresources.h>
+
+#include "classmenu.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -54,132 +55,116 @@ enum
 
 using namespace vgui;
 
-class CClassButton : public vgui::Button
+//
+//	CClassButton
+//
+void CClassButton::SetCommand( int command )
 {
-public:
-	DECLARE_CLASS_SIMPLE( CClassButton, vgui::Button );
+	m_iCommand = command;
+}
 
-	CClassButton(Panel *parent, const char *panelName, const char *text) : Button( parent, panelName, text ) { m_iCommand = 0; }
+void CClassButton::OnMousePressed(MouseCode code)
+{
+	CClassMenu * pThisMenu = (CClassMenu *)GetParent();
+	pThisMenu->ToggleButtons(1);
+	GetParent()->SetVisible( false );
+	SetSelected( false );
+	PerformCommand();
+}
 
-	void SetCommand( int command )
+void CClassButton::PerformCommand( void )
+{
+	CClassMenu * pThisMenu = (CClassMenu *)GetParent();
+	switch (m_iCommand)
 	{
-		m_iCommand = command;
+		case 1:
+			//officer
+			switch ( pThisMenu->m_iTeamSelection )
+			{
+				case TEAM_AMERICANS:
+					engine->ServerCmd( "light_a" );
+					break;
+				case TEAM_BRITISH:
+					engine->ServerCmd( "light_b" );
+					break;
+			}
+			break;
+		case 2:
+			//infantry
+			switch ( pThisMenu->m_iTeamSelection )
+			{
+				case TEAM_AMERICANS:
+					engine->ServerCmd( "heavy_a" );
+					break;
+				case TEAM_BRITISH:
+					engine->ServerCmd( "medium_b" );
+					break;
+			}
+			break;
+		case 3:
+			//sniper
+			switch ( pThisMenu->m_iTeamSelection )
+			{
+				case TEAM_AMERICANS:
+					engine->ServerCmd( "medium_a" );
+					break;
+				case TEAM_BRITISH:
+					engine->ServerCmd( "heavy_b" );
+					break;
+			}
+			break;
 	}
+}
 
-	void OnMousePressed(MouseCode code)
+//
+//	CTeamButton
+//
+void CTeamButton::SetCommand( int command )
+{
+	m_iCommand = command;
+}
+
+void CTeamButton::OnMousePressed(MouseCode code)
+{
+	CClassMenu *pThisMenu = (CClassMenu *)GetParent();
+	SetSelected( false );
+
+	if( m_iCommand == TEAM_UNASSIGNED )
 	{
-		CClassMenu * pThisMenu = (CClassMenu *)GetParent();
+		//join spectators
+		engine->ServerCmd( "spectate", true );
 		pThisMenu->ToggleButtons(1);
-		GetParent()->SetVisible( false );
-		SetSelected( false );
-		PerformCommand();
+		pThisMenu->ShowPanel( false );
+		return;
 	}
 
-	void PerformCommand( void )
+	pThisMenu->ToggleButtons(2);
+	
+	if( m_iCommand == -1 )
 	{
-		CClassMenu * pThisMenu = (CClassMenu *)GetParent();
-		switch (m_iCommand)
-		{
-			case 1:
-				//officer
-				switch ( pThisMenu->m_iTeamSelection )
-				{
-					case TEAM_AMERICANS:
-						engine->ServerCmd( "light_a" );
-						break;
-					case TEAM_BRITISH:
-						engine->ServerCmd( "light_b" );
-						break;
-				}
-				break;
-			case 2:
-				//infantry
-				switch ( pThisMenu->m_iTeamSelection )
-				{
-					case TEAM_AMERICANS:
-						engine->ServerCmd( "heavy_a" );
-						break;
-					case TEAM_BRITISH:
-						engine->ServerCmd( "medium_b" );
-						break;
-				}
-				break;
-			case 3:
-				//sniper
-				switch ( pThisMenu->m_iTeamSelection )
-				{
-					case TEAM_AMERICANS:
-						engine->ServerCmd( "medium_a" );
-						break;
-					case TEAM_BRITISH:
-						engine->ServerCmd( "heavy_b" );
-						break;
-				}
-				break;
-		}
+		//autoassign
+		int americans = g_Teams[TEAM_AMERICANS]->Get_Number_Players(),
+			british = g_Teams[TEAM_BRITISH]->Get_Number_Players();
+
+		//pick team with least players. or if equal, pick random
+		if( americans > british )
+			pThisMenu->m_iTeamSelection = TEAM_BRITISH;
+		else if( americans < british )
+			pThisMenu->m_iTeamSelection = TEAM_AMERICANS;
+		else
+			pThisMenu->m_iTeamSelection = random->RandomInt( TEAM_AMERICANS, TEAM_BRITISH );
+	
+		return;
 	}
 
-private:
-	int m_iCommand;
-};
+	PerformCommand();
+}
 
-class CTeamButton : public vgui::Button
+void CTeamButton::PerformCommand( void )
 {
-public:
-	DECLARE_CLASS_SIMPLE( CTeamButton, vgui::Button );
-
-	CTeamButton(Panel *parent, const char *panelName, const char *text) : Button( parent, panelName, text ) { m_iCommand = 0; }
-
-	void SetCommand( int command )
-	{
-		m_iCommand = command;
-	}
-
-	void OnMousePressed(MouseCode code)
-	{
-		CClassMenu *pThisMenu = (CClassMenu *)GetParent();
-		SetSelected( false );
-
-		if( m_iCommand == TEAM_UNASSIGNED )
-		{
-			//join spectators
-			engine->ServerCmd( "spectate", true );
-			pThisMenu->ToggleButtons(1);
-			pThisMenu->ShowPanel( false );
-			return;
-		}
-
-		pThisMenu->ToggleButtons(2);
-		
-		if( m_iCommand == -1 )
-		{
-			//autoassign
-			int americans = g_Teams[TEAM_AMERICANS]->Get_Number_Players(),
-				british = g_Teams[TEAM_BRITISH]->Get_Number_Players();
-
-			//pick team with least players. or if equal, pick random
-			if( americans > british )
-				pThisMenu->m_iTeamSelection = TEAM_BRITISH;
-			else if( americans < british )
-				pThisMenu->m_iTeamSelection = TEAM_AMERICANS;
-			else
-				pThisMenu->m_iTeamSelection = random->RandomInt( TEAM_AMERICANS, TEAM_BRITISH );
-		
-			return;
-		}
-
-		PerformCommand();
-	}
-
-	void PerformCommand( void )
-	{
-		CClassMenu * pThisMenu = (CClassMenu *)GetParent();
-		pThisMenu->m_iTeamSelection = m_iCommand;
-	}
-
-private:
-	int m_iCommand;
-};
+	CClassMenu * pThisMenu = (CClassMenu *)GetParent();
+	pThisMenu->m_iTeamSelection = m_iCommand;
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
@@ -358,7 +343,13 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	}
 	else if( iLastTrappedKey == classmenu )
 	{
-		if( !m_pBritishButton->IsVisible() || C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR )
+		if( IsInClassMenu() )
+		{
+			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+			m_pViewPort->ShowPanel( PANEL_COMM, false );
+			m_pViewPort->ShowPanel( PANEL_COMM2, false );
+		}
+		else if( !IsInClassMenu() && C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR )
 		{
 			internalCenterPrint->Print( "You can\'t select class before selecting team" );
 			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
@@ -441,7 +432,7 @@ void CClassMenu::OnThink()
 {
 	BaseClass::OnThink();
 	//BG2 - Tjoppen - show autoassign button if we're not in the class part and we're unassigned or spectator
-	m_pAutoassignButton->SetVisible( m_pInfantryButton->IsVisible() ? false : C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR );
+	m_pAutoassignButton->SetVisible( IsInClassMenu() ? false : C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR );
 
 	//show number of players in teams..
 	char tmp[256];
@@ -490,7 +481,7 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pBritishButton->SetVisible(true);
 			m_pAmericanButton->SetVisible(true);
 			//BG2 - Tjoppen - show autoassign button if we're not in the class part and we're unassigned or spectator
-			m_pAutoassignButton->SetVisible( m_pInfantryButton->IsVisible() ? false : C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR );
+			m_pAutoassignButton->SetVisible( IsInClassMenu() ? false : C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR );
 			//
 			m_pSpectateButton->SetVisible(true);
 			m_pOfficerButton->SetVisible(false);

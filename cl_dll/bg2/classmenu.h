@@ -13,6 +13,7 @@
 
 #include <vgui/IScheme.h>
 #include <vgui/keycode.h>
+#include <vgui/MouseCode.h>
 #include <vgui_controls/Frame.h>
 #include <vgui_controls/Button.h>
 #include <vgui_controls/ComboBox.h>
@@ -38,8 +39,40 @@ class IBaseFileSystem;
 // Purpose: the bottom bar panel, this is a seperate panel because it
 // wants mouse input and the main window doesn't
 //----------------------------------------------------------------------------
-class CClassButton;
-class CTeamButton;
+class CClassButton : public vgui::Button
+{
+public:
+	DECLARE_CLASS_SIMPLE( CClassButton, vgui::Button );
+
+	CClassButton(Panel *parent, const char *panelName, const char *text) : Button( parent, panelName, text ) { m_iCommand = 0; }
+
+	void SetCommand( int command );
+
+	void OnMousePressed(vgui::MouseCode code);
+
+	void PerformCommand( void );
+
+private:
+	int m_iCommand;
+};
+
+class CTeamButton : public vgui::Button
+{
+public:
+	DECLARE_CLASS_SIMPLE( CTeamButton, vgui::Button );
+
+	CTeamButton(Panel *parent, const char *panelName, const char *text) : Button( parent, panelName, text ) { m_iCommand = 0; }
+
+	void SetCommand( int command );
+
+	void OnMousePressed(vgui::MouseCode code);
+
+	void PerformCommand( void );
+
+private:
+	int m_iCommand;
+};
+
 class CClassMenu : public vgui::Frame, public IViewPortPanel
 {
 	DECLARE_CLASS_SIMPLE( CClassMenu, vgui::Frame );
@@ -74,6 +107,9 @@ public:
 
 	void OnThink();
 	void ToggleButtons(int iShowScreen);
+
+	//being in classmenu mode means we must be visible aswell
+	bool IsInClassMenu( void ) { return m_pInfantryButton->IsVisible() && IsVisible(); }
 
 private:
 	// VGUI2 overrides

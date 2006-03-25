@@ -21,6 +21,7 @@
 #include <voice_status.h>
 //BG2 - Tjoppen - #includes
 #include "vguicenterprint.h"
+#include "bg2/classmenu.h"
 //
 
 
@@ -542,12 +543,13 @@ void TeamMenu( void )
 {
 	if( gViewPortInterface )
 	{
-		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_CLASSES );
+		CClassMenu *panel = dynamic_cast<CClassMenu*>( gViewPortInterface->FindPanelByName( PANEL_CLASSES ) );
+
 		if( panel )
 		{
 			//toggle
 			panel->ShowPanel( !panel->IsVisible() );
-			panel->SetData( (KeyValues*)0 );	//HACKHACK
+			panel->ToggleButtons( 1 );
 		}
 
 		gViewPortInterface->ShowPanel( PANEL_COMM, false );
@@ -559,18 +561,28 @@ void ClassMenu( void )
 {
 	if( gViewPortInterface )
 	{
-		if( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR )
+		CClassMenu *panel = dynamic_cast<CClassMenu*>( gViewPortInterface->FindPanelByName( PANEL_CLASSES ) );
+
+		if( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR && !panel->IsInClassMenu() )
 		{
 			internalCenterPrint->Print( "You can\'t select class before selecting team" );
 			return;		//spectators/unassigned don't select class
 		}
 
-		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_CLASSES );
 		if( panel )
 		{
 			//toggle
-			panel->ShowPanel( !panel->IsVisible() );
-			panel->SetData( (KeyValues*)1 );	//HACKHACK
+			if( panel->IsInClassMenu() )
+			{
+				//hide!
+				panel->ShowPanel( false );
+			}
+			else
+			{
+				//make sure we're visible and change buttons
+				panel->ShowPanel( true );
+				panel->ToggleButtons( 2 );
+			}
 		}
 
 		gViewPortInterface->ShowPanel( PANEL_COMM, false );
