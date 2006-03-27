@@ -5,6 +5,7 @@ public:
 	CBG2SmokeEmitter( const char *pDebugName );
 	static CSmartPtr<CBG2SmokeEmitter>	Create( const char *pDebugName );
 	virtual void UpdateVelocity( SimpleParticle *pParticle, float timeDelta );
+	virtual	float UpdateRoll( SimpleParticle *pParticle, float timeDelta );
 
 private:
 	CBG2SmokeEmitter( const CBG2SmokeEmitter & );
@@ -37,5 +38,12 @@ void CBG2SmokeEmitter::UpdateVelocity( SimpleParticle *pParticle, float timeDelt
 
 	//..and drift upwards and sideways as dictated by m_vDrift
 	pParticle->m_vecVelocity += m_vDrift * timeDelta;
+}
+
+float CBG2SmokeEmitter::UpdateRoll( SimpleParticle *pParticle, float timeDelta )
+{
+	pParticle->m_flRollDelta += RandomFloat( -1, 1 ) * timeDelta;
+
+	return pParticle->m_flRoll;
 }
 //

@@ -3019,7 +3019,7 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 		//pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 35.0f;
 		pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 50.0f;
 		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
-		pParticle->m_flRollDelta	= random->RandomFloat( -0.5f, 0.5f );
+		pParticle->m_flRollDelta	= random->RandomFloat( -2.5f, 2.5f );
 	}
 }
 
@@ -3179,6 +3179,10 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 
 	// Get our attachment's transformation matrix
 	FX_GetAttachmentTransform( entityIndex, attachmentIndex, &origin, &angles );
+
+	Vector right(0,0,0);
+	//AngleVectors( angles, NULL, NULL, &right );	//HACKHACK - I can't be bothered rotating attachments and recompiling models
+												//they might become corrupt again :\
     
 	SimpleParticle *pParticle;
 
@@ -3189,7 +3193,11 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 	{
 		C_BaseEntity *pEnt2 = pEnt->GetOwner();
 		if( pEnt2 )
+		{
 			ownervelocity = pEnt2->GetLocalVelocity();	//success!
+
+			AngleVectors( pEnt2->GetLocalAngles(), NULL, &right, NULL );
+		}
 	}
 
 
@@ -3208,11 +3216,11 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 		pParticle->m_flLifetime		= 0.0f;
 		//BG2 - Tjoppen - smoke lives longer
 		//pParticle->m_flDieTime		= random->RandomFloat( 0.25f, 0.5f );
-		pParticle->m_flDieTime		= random->RandomFloat( 6.0f, 10.0f );
+		pParticle->m_flDieTime		= random->RandomFloat( 6.0f, 7.0f );
 
 		//BG2 - Tjoppen - a little bit more speed to the smoke
 		//pParticle->m_vecVelocity = forward * random->RandomFloat( 48.0f, 64.0f );
-		pParticle->m_vecVelocity = forward * (float)(j+4) * 0.2f * random->RandomFloat( 24.0f, 32.0f );
+		pParticle->m_vecVelocity = forward * (float)(j+4) * 0.2f * random->RandomFloat( 32.0f, 32.0f );
 		//pParticle->m_vecVelocity[2] += 0.25f * random->RandomFloat( 7.0f, 28.0f );
 		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 
@@ -3239,7 +3247,56 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 		//pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 35.0f;
 		pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 12.0f;
 		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
-		pParticle->m_flRollDelta	= random->RandomFloat( -0.5f, 0.5f );
+		pParticle->m_flRollDelta	= random->RandomFloat( -2.5f, 2.5f );
+	}
+
+	//BG2 - Tjoppen - more smoke
+	for( int j = 0; j < 6; j++ )
+	//if ( random->RandomInt( 0, 3 ) != 0 )
+	{
+		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
+		Vector offset = origin + right * (float)j;
+
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( "particle/particle_musketsmoke" ), offset );
+			
+		if ( pParticle == NULL )
+			return;
+
+		pParticle->m_flLifetime		= 0.0f;
+		//BG2 - Tjoppen - smoke lives longer
+		//pParticle->m_flDieTime		= random->RandomFloat( 0.25f, 0.5f );
+		pParticle->m_flDieTime		= random->RandomFloat( 3.0f, 4.0f );
+
+		//BG2 - Tjoppen - a little bit more speed to the smoke
+		//pParticle->m_vecVelocity = forward * random->RandomFloat( 48.0f, 64.0f );
+		pParticle->m_vecVelocity = right * (float)(j+4) * 0.1f * random->RandomFloat( 32.0f, 32.0f );
+		//pParticle->m_vecVelocity[2] += 0.25f * random->RandomFloat( 7.0f, 28.0f );
+		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
+
+		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
+		C_BaseEntity *pEnt = ClientEntityList().GetEnt( entityIndex );
+		pParticle->m_vecVelocity += pEnt->GetLocalVelocity();
+
+
+		int color = random->RandomInt( 220, 255 );
+		pParticle->m_uchColor[0]	= color;
+		pParticle->m_uchColor[1]	= color;
+		pParticle->m_uchColor[2]	= color;
+
+		//BG2 - Tjoppen - denser smoke
+		//pParticle->m_uchStartAlpha	= random->RandomInt( 64, 128 );
+		pParticle->m_uchStartAlpha	= random->RandomInt( 220, 255 );
+		pParticle->m_uchEndAlpha	= 0;
+
+		//BG2 - Tjoppen - larger smoke
+		//pParticle->m_uchStartSize	= random->RandomInt( 2, 4 );
+		//pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 4.0f;
+		pParticle->m_uchStartSize	= (float)(j+16) * 0.02f * random->RandomInt( 4, 6 );
+		//pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 10.0f;
+		//pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 35.0f;
+		pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 6.0f;
+		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
+		pParticle->m_flRollDelta	= random->RandomFloat( -2.5f, 2.5f );
 	}
 }
 
