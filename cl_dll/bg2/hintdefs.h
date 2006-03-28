@@ -24,7 +24,7 @@
 		www.bgmod.com
 */
 
-#define NUM_HINTS	3
+#define NUM_HINTS	12
 
 enum 
 {
