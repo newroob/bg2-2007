@@ -28,14 +28,32 @@
 
 enum 
 {
-	HINT_1,
-	HINT_2,
-	HINT_3,
+	HINT_CAMPING,
+	HINT_CROUCH,
+	HINT_CROUCH2,
+	HINT_CROUCHSTAB,
+	HINT_HINT,
+	HINT_SCORE,
+	HINT_MUSKET,
+	HINT_JUMP,
+	HINT_STAMINA,
+	HINT_MELEE,
+	HINT_RELOAD,
+	HINT_RELOAD2,
 };
 
 char *pVHints[NUM_HINTS] =
 {
-	"This is the first hint, \nhope it helps\n This is pretty long text so it better \nfits the screen well. Nice isn't it?",
-	"This is the second hint, hope it really helps\n",
-	"This is the third hint, hope it really helps\n"
+	"Trying to sit still and hide will make you vulerable to determined bayonet charges!",
+	"Crouching takes some stamina (heavy gear) but will affect your ability to aim (watch your crosshairs size).",
+	"Crouching does not increase stamina regeneration.",
+	"Cannot use melee weapon while being crouched!",
+	"If these hints start to annoy you you can turn them off in the options dialog.",
+	"Capturing all flags will end the round and give your team bonus points.",
+	"Muskets are inaccurate! Try getting closer to your enemy to get a better chance of scoring a hit.",
+	"Jumping takes lots of stamina - Jump only when absolutely necessary",
+	"Low Stamina Warning! Relax for a second and let your stamina fill up again.",
+	"Melee attack is the most powerful method to kill a large amount of enemies in a short amount of time.",
+	"While you are reloading you are an easy target. Be sure when to hit the reload button and when not."
+	"You are in the reload process and defenseless until you are done!"
 };
