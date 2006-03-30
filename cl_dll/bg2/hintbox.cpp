@@ -43,7 +43,6 @@
 
 #include <cl_dll/iviewport.h>
 #include "commandmenu.h"
-#include "hltvcamera.h"
 
 #include <vgui_controls/TextEntry.h>
 #include <vgui_controls/Panel.h>
@@ -56,14 +55,10 @@
 #include <igameresources.h>
 #include "clientmode_hl2mpnormal.h"
 
-// our hint files
-
 #include "hintbox.h"
 
 //memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
-extern IGameUIFuncs *gameuifuncs; // for key binding details
 
 /*
 ##############################

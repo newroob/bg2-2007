@@ -48,7 +48,7 @@ enum
 	HINT_RELOAD2,
 };
 
-char pVHints[NUM_HINTS][512] =
+char *pVHints[NUM_HINTS] =
 {//                                       |                                   |
 	"Trying to sit still and hide will \nmake you vulerable to determined \nbayonet charges!",
 	"Crouching takes some stamina (heavy \ngear) but will affect your \nability to aim (watch your crosshairs size).",
@@ -115,7 +115,7 @@ static void hintbox_f( void )
 	if( engine->Cmd_Argc() == 2 )
 	{
 		int hint = atoi( engine->Cmd_Argv( 1 ) );
-		CHintbox *hintbox = (CHintbox *)GET_HUDELEMENT( CHintbox );
+		CHintbox *hintbox = GET_HUDELEMENT( CHintbox );
 		int displaytime = 8;
 		int displaymode = DISPLAY_ALWAYS;
 		hintbox->UseHint(hint, displaytime, displaymode);
