@@ -57,7 +57,6 @@ class CHint
 {
 public:
 	CHint(char *input);
-	~CHint();
 	char* GetText() { return m_text; };
 	bool Shown() { return m_shown; };
 	void SetShown(bool shown) { m_shown = shown; };
