@@ -56,74 +56,59 @@
 #include <igameresources.h>
 #include "clientmode_hl2mpnormal.h"
 
-// our hint def file
-#include "hintdefs.h"
+// our hint files
+
+#include "hintbox.h"
 
 //memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 extern IGameUIFuncs *gameuifuncs; // for key binding details
 
-class CHint
-{
-public:
-	CHint(char *input);
-	~CHint();
-	char* GetText() { return m_text; };
-	bool Shown() { return m_shown; };
-	void SetShown(bool shown) { m_shown = shown; };
-private:
-	bool m_shown;
-	char m_text[512];
-};
+/*
+##############################
+==============================
+GUIDE for HINTS:
+
+To display a pre set Hint Message first add the message to hintdefs.h 
+(adding an entry to the enum as well makes the usage of the message easier readable)
+then to implement the hint message use:
+
+CHintbox *hintbox = (CHintbox *)GET_HUDELEMENT( CHintbox );
+hintbox->UseHint(hint, displaytime, displaymode);
+
+	hint = int or enum of the entry in hintdefs.h
+	displaytime = time in seconds the message will be displayed, fades out in last second
+	displaymode = 
+		DISPLAY_ONCE = only show this hint once per game
+		DISPLAY_ALWAYS = show this hint every time it is called but not if we already 
+						 show a different hint at the time it is called
+		OVERRIDE_ALL = allways show this hint, if we currently display a different 
+					   hint remove the old hint and display the new one
+
+hintbox->SetHint(hint, displaytime, displaymode);
+	Not fully finished yet
+==============================
+##############################
+*/
 
 CHint::CHint(char *input)
 {
+	if (!input)
+		return;
+
 	strcpy(m_text, input);
 	m_shown = false;
 }
 
 CHint::~CHint()
 {
-	delete m_text;
+	delete[] m_text;
 	m_shown = NULL;
 }
 
-// not implemented yet
-static ConVar cl_hintbox( "cl_hintbox", "1", 0, "0 - Off, 1 - game relevant hints, 2 -  with newbie notices" );
-
-class CHintbox : public CHudElement , public vgui::Panel
-{
-	DECLARE_CLASS_SIMPLE( CHintbox, vgui::Panel );
-public:
-	CHintbox( const char *pElementName );
-	virtual void Init( void );	
-	virtual void VidInit( void );	
-	void Reset();
-	virtual void OnThink(void);
-	void MsgFunc_Hintbox( bf_read &msg );
-	void SetHint( char* text, int displaytime, int displaymode ); // for custom messages
-	void UseHint( int textpreset, int displaytime, int displaymode ); // for predefined messages
-
-private:
-	vgui::HFont m_hHintFont;
-	CHint *m_hint[NUM_HINTS];
-	Vector m_textpos;
-	float m_hintshowtime;
-	bool m_hidden;
-	vgui::HScheme scheme;
-	vgui::Label * m_label; 
-
-protected:
-	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
-};
-
-extern char *pVHints[];
-
 using namespace vgui;
 
-DECLARE_HUDELEMENT( CHintbox );
-DECLARE_HUD_MESSAGE( CHintbox, Hintbox );
 
 CHintbox::CHintbox( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "Hintbox" )
 {
@@ -151,17 +136,17 @@ CHintbox::CHintbox( const char *pElementName ) : CHudElement( pElementName ), Ba
 	SetAlpha(255);
 	
 	m_hidden = true;
-	m_textpos.x = 5;
-	m_textpos.y = 5;
+	m_textpos.x = 15;
+	m_textpos.y = 15;
 	
 	m_label = new vgui::Label( this, "HintLabel", "hint label" );
 	m_label->SetPaintBackgroundEnabled( false );
 	m_label->SetPaintBorderEnabled( false );
 	m_label->SetContentAlignment( vgui::Label::a_west );
 	m_label->SetVisible(false);
+	m_label->SetSize(280, 95);
 	m_label->SetPos(m_textpos.x, m_textpos.y);
 } 
-
 
 void CHintbox::Init( void )
 {
@@ -193,7 +178,6 @@ void CHintbox::ApplySchemeSettings( vgui::IScheme *pScheme )
 	m_label->SetFont(m_hHintFont);
 }
 
-
 void CHintbox::SetHint( char *text, int displaytime, int displaymode )
 {
 	m_label->SetText(text);
@@ -208,7 +192,6 @@ void CHintbox::SetHint( char *text, int displaytime, int displaymode )
 	// TODO displaymode usage
 }
 
-
 void CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
 {
 	if (textpreset >= NUM_HINTS)
@@ -216,14 +199,17 @@ void CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
 		
 	//check wether we are already displaying a different hint
 	if (!m_hidden)
-		return;
+		if (displaymode != OVERRIDE_ALL)
+			return;
 
 	if (m_hint == NULL)
 		return;
 
 	//we already showed this hint once
-	if (m_hint[textpreset]->Shown())
-		return;
+	if (displaymode != OVERRIDE_ALL)
+		if (m_hint[textpreset]->Shown())
+			if ((displaymode != DISPLAY_ALWAYS))
+				return;
 
 	Color ColourWhite( 255, 255, 255, 230 );
 	m_label->SetFgColor( ColourWhite );
@@ -239,19 +225,19 @@ void CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
 	m_label->SetText(printtext);
 	m_label->SetVisible(true);
 	m_label->SizeToContents();
-
-	// TODO displaymode usage
 }
-
 
 void CHintbox::MsgFunc_Hintbox( bf_read &msg )
 {
-	int hint;
+	int hint, time, mode;
 	hint = msg.ReadByte();
-	DevMsg (2, "CHintbox::MsgFunc_Hintbox - got message hint: %d\n", hint );
+	time = msg.ReadByte();
+	mode = msg.ReadByte();
+	DevMsg (2, "CHintbox::MsgFunc_Hintbox - got message hint: %d time: %d mode: %d\n", hint, time, mode);
 	
-	UseHint( hint, 5, 1 );
+	UseHint(hint, time, mode);
 }
+
 void CHintbox::OnThink(void)
 {
 	if (m_hintshowtime < gpGlobals->curtime)
@@ -271,16 +257,3 @@ void CHintbox::OnThink(void)
 		SetAlpha((int)alpha);
 	}
 }
-
-static void hintbox_f( void )
-{
-	if( engine->Cmd_Argc() == 2 )
-	{
-		int hint = atoi( engine->Cmd_Argv( 1 ) );
-		CHintbox *hintbox = (CHintbox *)GET_HUDELEMENT( CHintbox );
-		int displaytime = 5;
-		int displaymode = 1;
-		hintbox->UseHint(hint, displaytime, displaymode);
-	}
-}
-static ConCommand hintbox( "hintbox", hintbox_f );
