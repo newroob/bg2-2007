@@ -39,7 +39,7 @@
 #include "hl2mp_gamerules.h"
 
 // hintbox header
-//#include "hintbox.h"
+#include "hintbox.h"
 
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -276,11 +276,10 @@ void CHudBG2::Paint()
 void CHudBG2::OnThink()
 {
 	// display hintbox if stamina drops below 20%
-/*
-	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
+	/*C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
 	if (pHL2Player->m_iStamina < 20)
-		(GET_HUDELEMENT( CHintbox ))->UseHint(HINT_STAMINA, 5, DISPLAY_ONCE);
-*/
+		(GET_HUDELEMENT( CHintbox ))->UseHint(HINT_STAMINA, 5, DISPLAY_ONCE);*/
+
 	C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
 	if (player)
 	{

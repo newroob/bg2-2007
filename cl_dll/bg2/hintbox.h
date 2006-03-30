@@ -48,21 +48,7 @@ enum
 	HINT_RELOAD2,
 };
 
-char *pVHints[NUM_HINTS] =
-{//                                       |                                   |
-	"Trying to sit still and hide will \nmake you vulerable to determined \nbayonet charges!",
-	"Crouching takes some stamina (heavy \ngear) but will affect your \nability to aim (watch your crosshairs size).",
-	"Crouching does not increase stamina \nregeneration.",
-	"Cannot use melee weapon while being \ncrouched!",
-	"If these hints start to annoy you \nyou can turn them off in the \noptions dialog.",
-	"Capturing all flags will end the \nround and give your team extra \nbonus points.",
-	"Muskets are inaccurate! Try getting \ncloser to your enemy to get a \nbetter chance of scoring a hit.",
-	"Jumping takes lots of stamina \nJump only when absolutely necessary",
-	"Low Stamina Warning! Relax for a \nsecond and let your stamina fill \nup again.",
-	"Melee attack is the most powerful \nmethod to kill a large amount of \nenemies in a short amount of time.",
-	"While you are reloading you are an \neasy target. Be sure when to hit \nthe reload button and when not."
-	"You are in the reload process and \ndefenseless until you are done!"
-};
+extern char *pHints[NUM_HINTS];
 
 // not implemented yet
 static ConVar cl_hintbox( "cl_hintbox", "1", 0, "0 - Off, 1 - game relevant hints, 2 -  with newbie notices" );
@@ -106,20 +92,3 @@ private:
 protected:
 	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
 };
-
-DECLARE_HUDELEMENT( CHintbox );
-DECLARE_HUD_MESSAGE( CHintbox, Hintbox );
-
-static void hintbox_f( void )
-{
-	if( engine->Cmd_Argc() == 2 )
-	{
-		int hint = atoi( engine->Cmd_Argv( 1 ) );
-		CHintbox *hintbox = GET_HUDELEMENT( CHintbox );
-		int displaytime = 8;
-		int displaymode = DISPLAY_ALWAYS;
-		hintbox->UseHint(hint, displaytime, displaymode);
-	}
-}
-
-static ConCommand hintbox( "hintbox", hintbox_f );
