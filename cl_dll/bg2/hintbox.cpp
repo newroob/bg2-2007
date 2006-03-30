@@ -61,16 +61,20 @@
 #include "tier0/memdbgon.h"
 
 /*
-##############################
-==============================
-GUIDE for HINTS:
+##########################################################################################
+==========================================================================================
+GUIDE using HINTS:
 
 To display a pre set Hint Message first add the message to hintdefs.h 
 (adding an entry to the enum as well makes the usage of the message easier readable)
 then to implement the hint message use:
 
-CHintbox *hintbox = (CHintbox *)GET_HUDELEMENT( CHintbox );
+CHintbox *hintbox = GET_HUDELEMENT( CHintbox );
 hintbox->UseHint(hint, displaytime, displaymode);
+
+or as one-liner:
+(GET_HUDELEMENT( CHintbox ))->UseHint(hint, displaytime, displaymode);
+e.g.:(GET_HUDELEMENT( CHintbox ))->UseHint(HINT_STAMINA, 3, DISPLAY_ALWAYS);
 
 	hint = int or enum of the entry in hintdefs.h
 	displaytime = time in seconds the message will be displayed, fades out in last second
@@ -83,8 +87,8 @@ hintbox->UseHint(hint, displaytime, displaymode);
 
 hintbox->SetHint(hint, displaytime, displaymode);
 	Not fully finished yet
-==============================
-##############################
+==========================================================================================
+##########################################################################################
 */
 
 DECLARE_HUDELEMENT( CHintbox );
@@ -106,7 +110,6 @@ char *pHints[NUM_HINTS] =
 	"You are in the reload process and \ndefenseless until you are done!"
 };
 
-
 CHint::CHint(char *input)
 {
 	if (!input)
@@ -116,14 +119,7 @@ CHint::CHint(char *input)
 	m_shown = false;
 }
 
-CHint::~CHint()
-{
-	//delete[] m_text;
-	m_shown = NULL;
-}
-
 using namespace vgui;
-
 
 CHintbox::CHintbox( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "Hintbox" )
 {
