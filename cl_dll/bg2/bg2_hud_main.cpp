@@ -261,7 +261,8 @@ void CHudBG2::Paint()
 	m_pLabelBGVersion->SetText(msg2);
 	m_pLabelBGVersion->SizeToContents();
 	m_pLabelBGVersion->GetSize( w, h );
-	m_pLabelBGVersion->SetPos(ScreenWidth()- w - 3, ScreenHeight() - h - 3);	
+	m_pLabelBGVersion->SetPos(5, 60);	
+	m_pLabelBGVersion->SetFgColor( ColourWhite );
 	m_pLabelBGVersion->SetVisible(ShouldDraw());
 }
 
