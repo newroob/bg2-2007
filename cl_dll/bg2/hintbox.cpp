@@ -106,7 +106,7 @@ char *pHints[NUM_HINTS] =
 	"Jumping takes lots of stamina \nJump only when absolutely necessary",
 	"Low Stamina Warning! Relax for a \nsecond and let your stamina fill \nup again.",
 	"Melee attack is the most powerful \nmethod to kill a large amount of \nenemies in a short amount of time.",
-	"While you are reloading you are an \neasy target. Be sure when to hit \nthe reload button and when not."
+	"While you are reloading you are an \neasy target. Be sure when to hit \nthe reload button and when not.",
 	"You are in the reload process and \ndefenseless until you are done!"
 };
 
@@ -150,10 +150,17 @@ CHintbox::CHintbox( const char *pElementName ) : CHudElement( pElementName ), Ba
 	m_textpos.x = 15;
 	m_textpos.y = 15;
 	
+	m_showcountdown = gpGlobals->curtime + 50.0f;
+	m_initialhintdelay = gpGlobals->curtime + 30.0f;
+	
+	m_preset = -1;
+	
 	m_label = new vgui::Label( this, "HintLabel", "hint label" );
 	m_label->SetPaintBackgroundEnabled( false );
 	m_label->SetPaintBorderEnabled( false );
 	m_label->SetContentAlignment( vgui::Label::a_west );
+	Color ColourWhite( 255, 255, 255, 230 );
+	m_label->SetFgColor( ColourWhite );
 	m_label->SetVisible(false);
 	m_label->SetSize(280, 95);
 	m_label->SetPos(m_textpos.x, m_textpos.y);
@@ -189,8 +196,21 @@ void CHintbox::ApplySchemeSettings( vgui::IScheme *pScheme )
 	m_label->SetFont(m_hHintFont);
 }
 
-void CHintbox::SetHint( char *text, int displaytime, int displaymode )
+bool CHintbox::SetHint( char *text, int displaytime, int displaymode )
 {
+	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
+	if (!pHL2Player)
+		return false;
+
+	//check wether we are already displaying a different hint
+	if (!m_hidden)
+		if (displaymode != OVERRIDE_ALL)
+			return false;
+
+	//we already showed this hint once
+	if ((displaymode != OVERRIDE_ALL) || (displaymode != DISPLAY_ALWAYS))
+		return true;
+
 	m_label->SetText(text);
 
 	m_hintshowtime = gpGlobals->curtime + displaytime;
@@ -201,26 +221,43 @@ void CHintbox::SetHint( char *text, int displaytime, int displaymode )
 	m_label->SizeToContents();
 
 	// TODO displaymode usage
+	return true;
 }
 
-void CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
+bool CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
 {
+	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
+	if (!pHL2Player)
+		return false;
+	
+	// no hints when the player is dead
+	if (!pHL2Player->IsAlive())
+		return false;
+		
+	if (pHL2Player->IsObserver())
+		return false;
+
+	//hack hack hack!! but considering pHL2Player->IsAlive() does not work as it is supposed to this is kinda the only way to get this to work
+ 	if (m_initialhintdelay > gpGlobals->curtime)
+		return false;
+
+	m_preset = textpreset;
 	if (textpreset >= NUM_HINTS)
-		return;
+		return false;
 		
 	//check wether we are already displaying a different hint
 	if (!m_hidden)
 		if (displaymode != OVERRIDE_ALL)
-			return;
+			return false;
 
 	if (m_hint == NULL)
-		return;
+		return false;
 
 	//we already showed this hint once
-	if (displaymode != OVERRIDE_ALL)
-		if (m_hint[textpreset]->Shown())
-			if ((displaymode != DISPLAY_ALWAYS))
-				return;
+	if (displaymode != OVERRIDE_ALL) 
+		if (displaymode != DISPLAY_ALWAYS)
+			if (m_hint[textpreset]->Shown())
+				return true;
 
 	Color ColourWhite( 255, 255, 255, 230 );
 	m_label->SetFgColor( ColourWhite );
@@ -235,7 +272,9 @@ void CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
 	vgui::localize()->ConvertANSIToUnicode(m_hint[textpreset]->GetText(), printtext, sizeof(printtext));
 	m_label->SetText(printtext);
 	m_label->SetVisible(true);
-	m_label->SizeToContents();
+ 	m_label->SizeToContents();
+	
+	return true;
 }
 
 void CHintbox::MsgFunc_Hintbox( bf_read &msg )
@@ -266,6 +305,43 @@ void CHintbox::OnThink(void)
 		if (alpha < 1)
 			alpha = 0;
 		SetAlpha((int)alpha);
+	}
+
+	//show various general gameplay hints from time to time
+	if (m_showcountdown < gpGlobals->curtime)
+	{
+		int usedhint = 0;
+		switch(m_showgeneralhint)
+		{
+		case 0: 
+			usedhint = HINT_CAMPING;
+			break;
+		case 1: 
+			usedhint = HINT_SCORE;
+			break;
+		case 2: 
+			usedhint = HINT_MUSKET;
+			break;
+		case 3: 
+			usedhint = HINT_MELEE;
+			break;
+		case 4: 
+			usedhint = HINT_RELOAD;
+			break;
+		case 5: 
+			// not implemented yet
+			//usedhint = HINT_HINT;
+			break;
+		default:
+			usedhint = HINT_CAMPING;
+			m_showgeneralhint = 0;
+			break;
+		}			
+
+		if (UseHint(usedhint, 6, DISPLAY_ONCE))
+			m_showgeneralhint++;
+		
+		m_showcountdown = gpGlobals->curtime + 45.0f;
 	}
 }
 

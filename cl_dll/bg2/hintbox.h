@@ -34,18 +34,18 @@ enum //hint displaymodes
 
 enum 
 {
-	HINT_CAMPING,
+	HINT_CAMPING, //implemented
 	HINT_CROUCH,
 	HINT_CROUCH2,
 	HINT_CROUCHSTAB,
 	HINT_HINT,
-	HINT_SCORE,
-	HINT_MUSKET,
+	HINT_SCORE, //implemented
+	HINT_MUSKET, //implemented
 	HINT_JUMP,
-	HINT_STAMINA,
-	HINT_MELEE,
-	HINT_RELOAD,
-	HINT_RELOAD2,
+	HINT_STAMINA, //implemented
+	HINT_MELEE, //implemented
+	HINT_RELOAD, //implemented
+	HINT_RELOAD2, 
 };
 
 extern char *pHints[NUM_HINTS];
@@ -76,8 +76,8 @@ public:
 	void Reset();
 	virtual void OnThink(void);
 	void MsgFunc_Hintbox( bf_read &msg );
-	void SetHint( char* text, int displaytime, int displaymode ); // for custom messages
-	void UseHint( int textpreset, int displaytime, int displaymode ); // for predefined messages
+	bool SetHint( char* text, int displaytime, int displaymode ); // for custom messages
+	bool UseHint( int textpreset, int displaytime, int displaymode ); // for predefined messages
 
 private:
 	vgui::HFont m_hHintFont;
@@ -87,6 +87,10 @@ private:
 	bool m_hidden;
 	vgui::HScheme scheme;
 	vgui::Label * m_label; 
+	int m_preset;
+	float m_showcountdown;
+	int m_showgeneralhint;
+	float m_initialhintdelay;
 
 protected:
 	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
