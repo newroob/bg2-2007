@@ -108,7 +108,9 @@ CBullet *CBullet::BoltCreate( const Vector &vecOrigin, const QAngle &angAngles, 
 	pBolt->SetOwnerEntity( pentOwner );
 
 	pBolt->m_iDamage = iDamage;
-	pBolt->m_flDyingTime = gpGlobals->curtime + 10.f;
+
+#define LIFETIME	10.f
+	pBolt->m_flDyingTime = gpGlobals->curtime + LIFETIME;
 
 	return pBolt;
 }
@@ -442,7 +444,11 @@ void CBullet::BubbleThink( void )
 	{
 		//apply drag
 		Vector	vecDir = GetAbsVelocity();
-		extern	ConVar sv_simulatedbullets_drag;
+		extern	ConVar	sv_simulatedbullets_drag,
+						sv_simulatedbullets_overshoot_range,
+						sv_simulatedbullets_overshoot_force,
+						sv_gravity;
+
 		float	speed = VectorNormalize( vecDir ),
 				//drag = 0.0001f;
 				drag = sv_simulatedbullets_drag.GetFloat();
@@ -452,6 +458,17 @@ void CBullet::BubbleThink( void )
 			speed = 1000;	//clamp
 
 		SetAbsVelocity( vecDir * speed );
+
+		//add lift due to bullet rotation which causes overshoot at medium range
+		float	t = gpGlobals->curtime - m_flDyingTime + LIFETIME,	//how long we've existed..
+				tmax = sv_simulatedbullets_overshoot_range.GetFloat() * 36.f / BOLT_AIR_VELOCITY,	//how long until max?
+				F0 = sv_gravity.GetFloat() * sv_simulatedbullets_overshoot_force.GetFloat(),
+				F = F0 * expf( -logf(sv_simulatedbullets_overshoot_force.GetFloat()) * t / tmax );
+
+		//approx.
+		vecDir = GetAbsVelocity();
+		vecDir.z += F * gpGlobals->frametime;
+		SetAbsVelocity( vecDir );
 
 		return;
 	}

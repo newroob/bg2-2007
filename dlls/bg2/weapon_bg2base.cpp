@@ -67,6 +67,12 @@ ConVar sv_simulatedbullets( "sv_simulatedbullets", "0", FCVAR_NOTIFY | FCVAR_REP
 ConVar sv_simulatedbullets_drag( "sv_simulatedbullets_drag", "0.00003", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
 	   "Tweak this value to affect how fast the speed and thus damage of bullets drop off with distance.\n\tLower values => more damage over distance" );
 
+ConVar sv_simulatedbullets_overshoot_range( "sv_simulatedbullets_overshoot_range", "50", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
+	   "At what range in yards overshoot reaches maximum" );
+
+ConVar sv_simulatedbullets_overshoot_force( "sv_simulatedbullets_overshoot_force", "3", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
+	   "How much stronger than gravity is the overshoot force at t=0?" );
+
 ConVar sv_infiniteammo( "sv_infiniteammo", "0", FCVAR_CHEAT | FCVAR_NOTIFY | FCVAR_REPLICATED, "Bullet weapons don\'t use up ammo\n" );
 ConVar sv_turboshots( "sv_turboshots", "0", FCVAR_CHEAT | FCVAR_NOTIFY | FCVAR_REPLICATED, "Turns all guns into machineguns\n" );
 ConVar sv_perfectaim( "sv_perfectaim", "0", FCVAR_CHEAT | FCVAR_NOTIFY | FCVAR_REPLICATED, "No spread for bullet weapons\n" );
@@ -416,7 +422,7 @@ int CBaseBG2Weapon::FireBullet( int iAttack )
 	
 
     CShotManipulator Manipulator( vecAiming );
-	Vector vecDir		= Manipulator.ApplySpread( GetSpread( iAttack ) );
+	Vector vecDir		= Manipulator.ApplySpread( sv_perfectaim.GetInt() == 0 ? GetSpread( iAttack ) : vec3_origin );
 
 	QAngle angDir;
 	VectorAngles( vecDir, angDir );
