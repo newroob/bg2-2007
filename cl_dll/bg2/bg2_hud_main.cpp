@@ -259,14 +259,14 @@ void CHudBG2::Paint()
 	m_pLabelWaveTime->SetVisible(ShouldDraw());
 
 	// BP - BG version display at lower right bottom of screen
-	// FIXME, something is bugged here. text disappears after player spawns
 	Q_snprintf( msg2, 512, "%s ", HL2MPRules()->GetGameDescription());
 	m_pLabelBGVersion->SetText(msg2);
 	m_pLabelBGVersion->SizeToContents();
 	m_pLabelBGVersion->GetSize( w, h );
 	m_pLabelBGVersion->SetPos(5, 60);	
 	m_pLabelBGVersion->SetFgColor( ColourWhite );
-	m_pLabelBGVersion->SetVisible(ShouldDraw());
+	m_pLabelBGVersion->SetVisible(false); // BP: not used yet as its not subtle enough, m_pLabelBGVersion->SetVisible(ShouldDraw());
+
 }
 
 //==============================================

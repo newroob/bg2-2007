@@ -198,6 +198,9 @@ void CHintbox::ApplySchemeSettings( vgui::IScheme *pScheme )
 
 bool CHintbox::SetHint( char *text, int displaytime, int displaymode )
 {
+	if (cl_hintbox.GetInt() == 0)
+		return false;
+
 	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
 	if (!pHL2Player)
 		return false;
@@ -226,6 +229,9 @@ bool CHintbox::SetHint( char *text, int displaytime, int displaymode )
 
 bool CHintbox::UseHint( int textpreset, int displaytime, int displaymode )
 {
+	if (cl_hintbox.GetInt() == 0)
+		return false;
+		
 	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
 	if (!pHL2Player)
 		return false;
