@@ -250,15 +250,31 @@ void CHL2MP_Player::Precache( void )
 	PrecacheScriptSound( "BG2Player.die" );
 	PrecacheScriptSound( "BG2Player.pain" );
 
+	char msg[512];
+	
 	for( i = 0; i < VCOMM1_NUM; i++ )
-		if( i != 6 )
-			PrecacheScriptSound( pVComms[i] );
+	{	
+		Q_snprintf( msg, 512, "VoicecommsA%s", pVComms[i]);
+		PrecacheScriptSound( msg );
+	}
+
+	for( i = 0; i < VCOMM1_NUM; i++ )
+	{	
+		Q_snprintf( msg, 512, "VoicecommsB%s", pVComms[i]);
+		PrecacheScriptSound( msg );
+	}
+	
+	for( i = VCOMM2_START; i < VCOMM2_START+VCOMM2_NUM; i++ )
+	{	
+		Q_snprintf( msg, 512, "VoicecommsA%s", pVComms[i]);
+		PrecacheScriptSound( msg );
+	}
 
 	for( i = VCOMM2_START; i < VCOMM2_START+VCOMM2_NUM; i++ )
-		PrecacheScriptSound( pVComms[i] );
-
-	PrecacheScriptSound( "Voicecomms.ABattleCry" );
-	PrecacheScriptSound( "Voicecomms.BBattleCry" );
+	{
+		Q_snprintf( msg, 512, "VoicecommsB%s", pVComms[i]);
+		PrecacheScriptSound( msg );
+	}
 }
 
 void CHL2MP_Player::GiveAllItems( void )
@@ -1855,42 +1871,19 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 				//char *chat = NULL;
 				bool teamonly = true;
 
-				if( comm == 6 )
+				char msg[512];
+				if( GetTeamNumber() == TEAM_AMERICANS )
 				{
-					//battle cry
-					teamonly = false;
-
-					if( GetTeamNumber() == TEAM_AMERICANS )
-					{
-						EmitSound( "Voicecomms.ABattleCry" );
-						//chat = "Freedom!";
-					}
-					else if( GetTeamNumber() == TEAM_BRITISH )
-					{
-						EmitSound( "Voicecomms.BBattleCry" );
-						//chat = "For king and country!";
-					}
+					Q_snprintf( msg, 512, "VoicecommsA%s", pVComms[comm]);
 				}
-				else
+				else if( GetTeamNumber() == TEAM_BRITISH )
 				{
-					//BG2 - Tjoppen - no attenuation on vcomms
-					CPASAttenuationFilter filter( this, ATTN_NONE );
-					filter.UsePredictionRules();
-					EmitSound( filter, entindex(), pVComms[comm] );
-					//EmitSound( pVComms[comm] );
-					//chat = pVChats[comm];
+					Q_snprintf( msg, 512, "VoicecommsB%s", pVComms[comm]);
 				}
-
-				//UTIL_SayTextAll( "speech thing", this, true );
-				//UTIL_ClientPrintAll( HUD_PRINTTALK, "testing" );
-				//Host_Say( );
-				/*if( chat )
-				{
-					if( say_team )
-						engine->ClientCommand( edict(), "say_team %s", chat );
-					else
-						engine->ClientCommand( edict(), "say %s", chat );
-				}*/
+				//BG2 - Tjoppen - no attenuation on vcomms
+				CPASAttenuationFilter filter( this, ATTN_NONE );
+				filter.UsePredictionRules();
+				EmitSound( filter, entindex(), msg );
 
 				CBasePlayer *client = NULL;
 				for ( int i = 1; i <= gpGlobals->maxClients; i++ )
@@ -1898,9 +1891,6 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 					client = UTIL_PlayerByIndex( i );
 					if ( !client || !client->edict() )
 						continue;
-					
-					/*if ( client->edict() == pEdict )
-						continue;*/
 
 					if ( !(client->IsNetClient()) )	// Not a client ? (should never be true)
 						continue;
@@ -1914,39 +1904,11 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 					CSingleUserRecipientFilter user( client );
 					user.MakeReliable();
 
-					//Msg( "VoiceComm: %i %i\n", client->entindex(), comm );
 					UserMessageBegin( user, "VoiceComm" );
-						//WRITE_BYTE( client->entindex() );
 						WRITE_BYTE( entindex() );	//voicecomm originator
 						WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );
 					MessageEnd();
-
-					/*if ( pszFormat )
-					{
-						UTIL_SayText2Filter( user, pPlayer, true, pszFormat, pszPlayerName, p, pszLocation );
-					}
-					else
-					{
-						UTIL_SayTextFilter( user, text, pPlayer, true );
-					}*/
 				}
-
-				/*if ( pPlayer )
-				{
-					// print to the sending client
-					CSingleUserRecipientFilter user( pPlayer );
-					user.MakeReliable();
-
-					if ( pszFormat )
-					{
-						UTIL_SayText2Filter( user, pPlayer, true, pszFormat, pszPlayerName, p, pszLocation );
-					}
-					else
-					{
-						UTIL_SayTextFilter( user, text, pPlayer, true );
-					}
-				}
-				}*/
 
 				m_flNextVoicecomm = gpGlobals->curtime + 2.0f;
 			}
@@ -2432,7 +2394,7 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 	if ( pSpot )
 	{
 		CBaseEntity *ent = NULL;
-		for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 128 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
+		for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 64 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 		{
 			// if ent is a client, kill em (unless they are ourselves)
 			//BG2 - Tjoppen - fix so dead players don't block
@@ -2578,7 +2540,7 @@ bool CHL2MP_Player::CheckSpawnPoints( void )
 	if ( pSpot )
 	{
 		CBaseEntity *ent = NULL;
-		for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 128 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
+		for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 64 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 		{
 			// if ent is a client, kill em (unless they are ourselves)
 			//BG2 - Tjoppen - fix so dead players don't block

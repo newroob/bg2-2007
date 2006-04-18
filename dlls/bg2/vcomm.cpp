@@ -86,25 +86,25 @@ char *pVChats[NUM_VOICECOMMS] =
 #else
 char *pVComms[NUM_VOICECOMMS] =
 {
-	"Voicecomms.Yes",
-	"Voicecomms.No",
-	"Voicecomms.FollowMe",
-	"Voicecomms.LeaveItToMe",
-	"Voicecomms.UnderFire",
-	"Voicecomms.SpreadOut",
-	"",//"Voicecomms.BattleCry", //different for american and british( ABattleCry/BBattleCry )
-	"Voicecomms.Medic",
+	".Yes",
+	".No",
+	".FollowMe",
+	".LeaveItToMe",
+	".UnderFire",
+	".SpreadOut",
+	".BattleCry",//"Voicecomms.BattleCry", //different for american and british( ABattleCry/BBattleCry )
+	".Medic",
 	"",
 
-	"Voicecomms.Advance",
-	"Voicecomms.Retreat",
-	"Voicecomms.RallyTheMen",
-	"Voicecomms.Halt",
-	"Voicecomms.LineUp",
-	"Voicecomms.MakeReady",
-	"Voicecomms.PresentArms",
-	"Voicecomms.Fire",
-	"Voicecomms.CeaseFire",
+	".Advance",
+	".Retreat",
+	".RallyTheMen",
+	".Halt",
+	".LineUp",
+	".MakeReady",
+	".PresentArms",
+	".Fire",
+	".CeaseFire",
 	"",
 };
 #endif
