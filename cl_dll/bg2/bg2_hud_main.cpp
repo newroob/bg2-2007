@@ -276,8 +276,8 @@ void CHudBG2::Paint()
 void CHudBG2::OnThink()
 {
 	// display hintbox if stamina drops below 20%
-	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
-	if (pHL2Player->m_iStamina < 20)
+	C_HL2MP_Player *pHL2Player = dynamic_cast<C_HL2MP_Player*>(C_HL2MP_Player::GetLocalPlayer());
+	if (pHL2Player && pHL2Player->m_iStamina < 20)
  		(GET_HUDELEMENT( CHintbox ))->UseHint(HINT_STAMINA, 6, DISPLAY_ONCE);
 	
 	C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
