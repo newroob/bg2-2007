@@ -50,7 +50,7 @@
 	#include "c_hl2mp_player.h"
 #else
 
-	#include "bg2\mapfilter.h"
+	#include "bg2/mapfilter.h"
 	#include "eventqueue.h"
 	#include "player.h"
 	#include "gamerules.h"
