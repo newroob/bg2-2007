@@ -1238,7 +1238,7 @@ void CFlagHandler::ResetFlags( void )
 
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{
-		CFlag *pFlag = (CFlag*)pEntity;
+		CFlag *pFlag = dynamic_cast<CFlag*>(pEntity);
 		if( !pFlag )
 			continue;
 
@@ -1276,7 +1276,7 @@ void CFlagHandler::ResetFlags( void )
 	pEntity = NULL;
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "info_player_rebel" )) != NULL )
 	{
-		CSpawnPoint *pPoint = (CSpawnPoint*)pEntity;
+		CSpawnPoint *pPoint = dynamic_cast<CSpawnPoint*>(pEntity);
 		if( !pPoint )
 			continue;
 
@@ -1286,7 +1286,7 @@ void CFlagHandler::ResetFlags( void )
 	pEntity = NULL;
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "info_player_combine" )) != NULL )
 	{
-		CSpawnPoint *pPoint = (CSpawnPoint*)pEntity;
+		CSpawnPoint *pPoint = dynamic_cast<CSpawnPoint*>(pEntity);
 		if( !pPoint )
 			continue;
 
@@ -1296,7 +1296,7 @@ void CFlagHandler::ResetFlags( void )
 	pEntity = NULL;
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "info_player_american" )) != NULL )
 	{
-		CSpawnPoint *pPoint = (CSpawnPoint*)pEntity;
+		CSpawnPoint *pPoint = dynamic_cast<CSpawnPoint*>(pEntity);
 		if( !pPoint )
 			continue;
 
@@ -1306,7 +1306,7 @@ void CFlagHandler::ResetFlags( void )
 	pEntity = NULL;
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "info_player_british" )) != NULL )
 	{
-		CSpawnPoint *pPoint = (CSpawnPoint*)pEntity;
+		CSpawnPoint *pPoint = dynamic_cast<CSpawnPoint*>(pEntity);
 		if( !pPoint )
 			continue;
 
