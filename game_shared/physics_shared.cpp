@@ -519,7 +519,9 @@ void PhysParseSurfaceData( IPhysicsSurfaceProps *pProps, IFileSystem *pFileSyste
 			if ( !Q_stricmp( sub->GetName(), "file" ) )
 			{
 				// Add
-				AddSurfacepropFile( sub->GetString(), pProps, pFileSystem );
+				//BG2 - Tjoppen - to the lower case with you! 
+				AddSurfacepropFile( strlwr((char*)sub->GetString()), pProps, pFileSystem );
+				//
 				continue;
 			}
 

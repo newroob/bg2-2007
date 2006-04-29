@@ -288,7 +288,9 @@ bool C_SoundscapeSystem::Init()
 			if ( !Q_stricmp( sub->GetName(), "file" ) )
 			{
 				// Add
-				AddSoundScapeFile( sub->GetString() );
+				//BG2 - Tjoppen - to the lower case with you! 
+				AddSoundScapeFile( strlwr((char*)sub->GetString()) );
+				//
 				continue;
 			}
 

@@ -61,7 +61,9 @@ void LoadHudTextures( CUtlDict< CHudTexture *, int >& list, char *szFilenameWith
 				else
 				{
 					tex->bRenderUsingFont = false;
-					Q_strncpy( tex->szTextureFile, pTemp->GetString( "file" ), sizeof( tex->szTextureFile ) );
+					//BG2 - Tjoppen - to the lower case with you! 
+					Q_strncpy( tex->szTextureFile, strlwr((char*)pTemp->GetString( "file" )), sizeof( tex->szTextureFile ) );
+					//
 					tex->rc.left	= pTemp->GetInt( "x", 0 );
 					tex->rc.top		= pTemp->GetInt( "y", 0 );
 					tex->rc.right	= pTemp->GetInt( "width", 0 )	+ tex->rc.left;
