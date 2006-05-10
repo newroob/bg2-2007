@@ -69,7 +69,7 @@ void ClientPrintAll( char *str, bool printfordeadplayers = false, bool forcenext
 
 	CBasePlayer *pPlayer = NULL;
 
-	while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassname( pPlayer, "player" )) != NULL )
+	while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassname( pPlayer, "player" ))) != NULL )
 	{
 		if( !pPlayer->IsAlive() && !printfordeadplayers )	//this doesn't concern dead players
 			continue;
@@ -730,7 +730,7 @@ void CFlag::Think( void )
 			}
 	}
 
-	while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
+	while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
 	{
 		if( !pPlayer->IsAlive() )	//dead players don't cap
 			continue;
@@ -791,7 +791,7 @@ void CFlag::Think( void )
 					g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
 					m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
 
-					while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
+					while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
 					{
 						if( !pPlayer->IsAlive() )	//dead players don't cap
 							continue;
@@ -801,7 +801,8 @@ void CFlag::Think( void )
 							case TEAM_AMERICANS:
 								pPlayer->IncrementFragCount(m_iPlayerBonus);
 								CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
-								pPlayer2->IncreaseReward(1);
+								if( pPlayer2 )
+									pPlayer2->IncreaseReward(1);
 								break;
 						}
 					}
@@ -851,7 +852,7 @@ void CFlag::Think( void )
 					g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
 					m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
 
-					while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius )) != NULL )
+					while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
 					{
 						if( !pPlayer->IsAlive() )	//dead players don't cap
 							continue;
@@ -861,7 +862,8 @@ void CFlag::Think( void )
 							case TEAM_BRITISH:
 								pPlayer->IncrementFragCount(m_iPlayerBonus);
 								CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
-								pPlayer2->IncreaseReward(1);
+								if( pPlayer2 )
+									pPlayer2->IncreaseReward(1);
 								break;
 						}
 					}
@@ -1333,7 +1335,7 @@ void CFlagHandler::Update( void )
 
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{
-		CFlag *pFlag = (CFlag*)pEntity;
+		CFlag *pFlag = dynamic_cast<CFlag*>(pEntity);
 		if( !pFlag || !pFlag->IsActive() )
 			continue;
 
