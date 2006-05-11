@@ -680,7 +680,7 @@ void CSpectatorMenu::OnThink()
 //-----------------------------------------------------------------------------
 void CSpectatorGUI::UpdateTimer()
 {
-	wchar_t szText[ 63 ];
+	wchar_t szText[ 64 ];	//BG2 - Tjoppen - Valve! I curse thee! This used to be of size 63 => access violation
 
 	int timer = HL2MPRules()->m_iWaveTime;
 

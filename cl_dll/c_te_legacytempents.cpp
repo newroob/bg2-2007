@@ -3236,7 +3236,7 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 
 		//BG2 - Tjoppen - denser smoke
 		//pParticle->m_uchStartAlpha	= random->RandomInt( 64, 128 );
-		pParticle->m_uchStartAlpha	= random->RandomInt( 220, 255 );
+		pParticle->m_uchStartAlpha	= random->RandomInt( 110, 127 );
 		pParticle->m_uchEndAlpha	= 0;
 
 		//BG2 - Tjoppen - larger smoke
@@ -3285,7 +3285,7 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 
 		//BG2 - Tjoppen - denser smoke
 		//pParticle->m_uchStartAlpha	= random->RandomInt( 64, 128 );
-		pParticle->m_uchStartAlpha	= random->RandomInt( 220, 255 );
+		pParticle->m_uchStartAlpha	= random->RandomInt( 110, 127 );
 		pParticle->m_uchEndAlpha	= 0;
 
 		//BG2 - Tjoppen - larger smoke
