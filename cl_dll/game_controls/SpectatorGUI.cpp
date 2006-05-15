@@ -680,7 +680,7 @@ void CSpectatorMenu::OnThink()
 //-----------------------------------------------------------------------------
 void CSpectatorGUI::UpdateTimer()
 {
-	wchar_t szText[ 64 ];	//BG2 - Tjoppen - Valve! I curse thee! This used to be of size 63 => access violation
+	wchar_t szText[ 64 ];	//BG2 - Tjoppen - Valve! Wrong size this used to be.
 
 	int timer = HL2MPRules()->m_iWaveTime;
 
@@ -692,11 +692,11 @@ void CSpectatorGUI::UpdateTimer()
 	C_Team *pBrit = GetGlobalTeam(TEAM_BRITISH);
 
 	szText[63] = 0;
-	_snwprintf ( szText, sizeof( szText ), L"British : %d\n", pBrit->Get_Score() );
+	_snwprintf ( szText, sizeof( szText ), L"British : %d\n", pBrit ? pBrit->Get_Score() : 0 );	//BG2 - Tjoppen - avoid NULL
 	SetLabelText("TERScoreLabel",szText);
 
 	szText[63] = 0;
-	_snwprintf ( szText, sizeof( szText ), L"Americans : %d\n", pAmer->Get_Score() );
+	_snwprintf ( szText, sizeof( szText ), L"Americans : %d\n", pAmer ? pAmer->Get_Score() : 0 );//BG2 - Tjoppen - avoid NULL
 	SetLabelText("CTScoreLabel",szText);
 }
 
