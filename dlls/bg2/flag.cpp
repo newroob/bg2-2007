@@ -1040,10 +1040,14 @@ float nextwinsong = 0;	//to prevent win spamming sound issues..
 
 void CFlagHandler::RespawnAll( char *pSound )
 {
-	if( nextwinsong > gpGlobals->curtime )
-		pSound = NULL;	//what a nice hack
-	else
-		nextwinsong = gpGlobals->curtime + 20;
+	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
+		return;
+
+	if( HL2MPRules()->m_fNextWinSong < gpGlobals->curtime && pSound )
+	{
+		WinSong(pSound);
+		HL2MPRules()->m_fNextWinSong = gpGlobals->curtime + 20;
+	}
 
 	bool spawn = true;	//set to false if we ran out of spawn points
 
@@ -1053,15 +1057,11 @@ void CFlagHandler::RespawnAll( char *pSound )
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_AMERICANS]->GetPlayer( x ) );
 
 		if( !pPlayer )
-			continue;
+			break;
 
 		//check if we've run out of spawn points. if we alread have, we can skip this step
 		if( spawn && !pPlayer->CheckSpawnPoints() )
 			spawn = false;
-
-		//CBasePlayer *pPlayer = g_Teams[TEAM_AMERICANS]->GetPlayer( x );
-		/*if( pPlayer->IsAlive() )
-			pPlayer->Kill();*/
 
 		if( spawn )
 			pPlayer->Spawn();
@@ -1077,19 +1077,6 @@ void CFlagHandler::RespawnAll( char *pSound )
 		{
 			UTIL_RemoveImmediate( pPlayer->m_hRagdoll );
 			pPlayer->m_hRagdoll = NULL;
-		}
-
-		if( pSound )
-		{
-			//pPlayer->EmitSound( pSound );
-			/*CPASAttenuationFilter filter( this );
-			filter.UsePredictionRules();
-			EmitSound( filter, entindex(), "HL2Player.SprintNoPower" );*/
-			//C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "HUDQuickInfo.LowHealth" );
-			//CPASAttenuationFilter filter( pPlayer, ATTN_NONE );
-			CPASAttenuationFilter filter( pPlayer, 10.0f );	//high attenuation so only this player hears it
-			filter.UsePredictionRules();
-			pPlayer->EmitSound( filter, pPlayer->entindex(), pSound );
 		}
 	}
 
@@ -1100,15 +1087,11 @@ void CFlagHandler::RespawnAll( char *pSound )
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
 
 		if( !pPlayer )
-			continue;
+			break;
 
 		//check if we've run out of spawn points. if we alread have, we can skip this step
 		if( spawn && !pPlayer->CheckSpawnPoints() )
 			spawn = false;
-
-		//CBasePlayer *pPlayer = g_Teams[TEAM_BRITISH]->GetPlayer( x );
-		/*if( pPlayer->IsAlive() )
-			pPlayer->Kill();*/
 
 		if( spawn )
 			pPlayer->Spawn();
@@ -1125,15 +1108,6 @@ void CFlagHandler::RespawnAll( char *pSound )
 			UTIL_RemoveImmediate( pPlayer->m_hRagdoll );
 			pPlayer->m_hRagdoll = NULL;
 		}
-
-		if( pSound )
-		{
-			//pPlayer->EmitSound( pSound );
-			//CPASAttenuationFilter filter( pPlayer, ATTN_NONE );
-			CPASAttenuationFilter filter( pPlayer, 10.0f );	//high attenuation so only this player hears it
-			filter.UsePredictionRules();
-			pPlayer->EmitSound( filter, pPlayer->entindex(), pSound );
-		}
 	}
 
 	/*HL2MPRules()->m_bIsRestartingRound = false;
@@ -1142,14 +1116,17 @@ void CFlagHandler::RespawnAll( char *pSound )
 
 void CFlagHandler::WinSong( char *pSound )
 {
-	int x;
+	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
+		return;
 
+	int x;
+	
 	for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
 	{
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_AMERICANS]->GetPlayer( x ) );
 
 		if( !pPlayer )
-			continue;
+			break;
 
 		if( pSound )
 		{
@@ -1164,7 +1141,7 @@ void CFlagHandler::WinSong( char *pSound )
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
 
 		if( !pPlayer )
-			continue;
+			break;
 
 		if( pSound )
 		{
@@ -1177,29 +1154,38 @@ void CFlagHandler::WinSong( char *pSound )
 
 void CFlagHandler::RespawnWave()
 {
+	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
+		return;
+
 	int x;
+	bool hasspawns = true;
+
 	for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
 	{
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_AMERICANS]->GetPlayer( x ) );
-		if( pPlayer && !pPlayer->IsAlive() )
-		{
-			if( !pPlayer->CheckSpawnPoints() )
-				break;
 
+		if( !pPlayer )
+			break;
+
+		if( hasspawns && pPlayer->CheckSpawnPoints() )
 			pPlayer->Spawn();
-		}
+		else
+			hasspawns = false;
 	}
+
+	hasspawns = true;
 
 	for( x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
 	{
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
-		if( pPlayer && !pPlayer->IsAlive() )
-		{
-			if( !pPlayer->CheckSpawnPoints() )
-				break;
+		
+		if( !pPlayer )
+			break;
 
+		if( hasspawns && pPlayer->CheckSpawnPoints() )
 			pPlayer->Spawn();
-		}
+		else
+			hasspawns = false;
 	}
 
 	/*for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )

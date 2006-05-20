@@ -132,11 +132,12 @@ public:
 	float m_fEndRoundTime;
 	float m_fNextFlagUpdate;
 	//BG2 - Draco - End
-	//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed
+	//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed. and other stuff
 	float	m_flNextRoundRestart;
 	bool	m_bIsRestartingRound;
 	int		m_iTDMTeamThatWon;
 	bool	m_bHasDoneWinSong;
+	float	m_fNextWinSong;
 	//
 	CNetworkVar( int, m_iWaveTime );
 	

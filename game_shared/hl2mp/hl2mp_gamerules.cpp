@@ -183,9 +183,7 @@ CHL2MPRules::CHL2MPRules()
 
 	m_hRespawnableItemsAndWeapons.RemoveAll();
 
-	//BG2 - Tjoppen - m_fLastRespawnWave, ClientPrintAll()- and bot initialization
-	m_fLastRespawnWave = 0;
-
+	//BG2 - Tjoppen - ClientPrintAll()- and bot initialization
 	g_CurBotNumber = 1;
 	for( int x = 0; x < MAX_PLAYERS; x++ )
 	{
@@ -215,6 +213,7 @@ CHL2MPRules::CHL2MPRules()
 	m_fLastRespawnWave = gpGlobals->curtime;
 	m_iTDMTeamThatWon = 0;
 	m_bHasDoneWinSong = false;
+	m_fNextWinSong = gpGlobals->curtime;
 #endif
 }
 	

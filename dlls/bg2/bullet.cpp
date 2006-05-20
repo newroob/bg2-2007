@@ -239,8 +239,8 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 			return;
 		}
 
-		float	dmg = (float)m_iDamage * speed * speed / (float)(BOLT_AIR_VELOCITY*BOLT_AIR_VELOCITY),
-				dmgforcescale = 100.f / speed;
+		float	dmg = (float)m_iDamage * speed * speed / (float)(BOLT_AIR_VELOCITY*BOLT_AIR_VELOCITY);/*,
+				dmgforcescale = 100.f / speed;*/
 
 		Vector vForward;
 
@@ -273,7 +273,7 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 			//BG2 - Tjoppen - Set owner as inflictor so they get the damage points. also scale damage force
 			CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
 			dmgInfo.AdjustPlayerDamageInflictedForSkillLevel();
-			CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
+			//CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
 			dmgInfo.SetDamagePosition( tr.endpos );
 			pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
 		}
@@ -282,7 +282,7 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 			//CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), m_iDamage, DMG_BULLET | DMG_NEVERGIB );
 			//BG2 - Tjoppen - Set owner as inflictor so they get the damage points. also scale damage force
 			CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
-			CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
+			//CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
 			dmgInfo.SetDamagePosition( tr.endpos );
 			pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
 		}

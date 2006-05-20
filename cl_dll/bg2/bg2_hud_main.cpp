@@ -213,7 +213,7 @@ void CHudBG2::Paint()
 	
 	C_Team *pAmer = GetGlobalTeam(TEAM_AMERICANS);
 	C_Team *pBrit = GetGlobalTeam(TEAM_BRITISH);
-	Q_snprintf( msg2, 512, "%i ", pBrit->Get_Score());
+	Q_snprintf( msg2, 512, "%i ", pBrit ? pBrit->Get_Score() : 0);	//BG2 - Tjoppen - avoid NULL
 	m_pLabelBScore->SetText(msg2);
 	m_pLabelBScore->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
@@ -221,7 +221,7 @@ void CHudBG2::Paint()
 	m_pLabelBScore->SetFgColor( ColourWhite );
 	m_pLabelBScore->SetVisible(ShouldDraw());
 	
-	Q_snprintf( msg2, 512, "%i ", pAmer->Get_Score());
+	Q_snprintf( msg2, 512, "%i ", pAmer ? pAmer->Get_Score() : 0);	//BG2 - Tjoppen - avoid NULL
 	m_pLabelAScore->SetText(msg2);
 	m_pLabelAScore->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
