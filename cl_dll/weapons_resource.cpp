@@ -83,6 +83,8 @@ void WeaponsResource::LoadAllWeaponSprites( void )
 //-----------------------------------------------------------------------------
 void WeaponsResource::LoadWeaponSprites( WEAPON_FILE_INFO_HANDLE hWeaponFileInfo )
 {
+	//BG2 - Tjoppen - removing all HL2DM HUD stuff
+	/*
 	// WeaponsResource is a friend of C_BaseCombatWeapon
 	FileWeaponInfo_t *pWeaponInfo = GetFileWeaponInfoFromHandle( hWeaponFileInfo );
 
@@ -194,13 +196,14 @@ void WeaponsResource::LoadWeaponSprites( WEAPON_FILE_INFO_HANDLE hWeaponFileInfo
 		}
 	}
 
-	FreeHudTextureList( tempList );
+	FreeHudTextureList( tempList );*/
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Helper function to return a Ammo pointer from id
 //-----------------------------------------------------------------------------
-CHudTexture *WeaponsResource::GetAmmoIconFromWeapon( int iAmmoId )
+//BG2 - Tjoppen - removing all HL2DM HUD stuff
+/*CHudTexture *WeaponsResource::GetAmmoIconFromWeapon( int iAmmoId )
 {
 	C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
 	if ( !player )
@@ -223,7 +226,7 @@ CHudTexture *WeaponsResource::GetAmmoIconFromWeapon( int iAmmoId )
 	}
 
 	return NULL;
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Purpose: Get a pointer to a weapon using this ammo

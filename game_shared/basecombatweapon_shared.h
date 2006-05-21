@@ -325,14 +325,15 @@ public:
 	int GetSecondaryAmmoCount() { return m_iSecondaryAmmoCount; }
 	void SetSecondaryAmmoCount( int count ) { m_iSecondaryAmmoCount = count; }
 
-	virtual CHudTexture const	*GetSpriteActive( void ) const;
+	//BG2 - Tjoppen - removing all HL2DM HUD stuff
+	/*virtual CHudTexture const	*GetSpriteActive( void ) const;
 	virtual CHudTexture const	*GetSpriteInactive( void ) const;
 	virtual CHudTexture const	*GetSpriteAmmo( void ) const;
 	virtual CHudTexture const	*GetSpriteAmmo2( void ) const;
 	virtual CHudTexture const	*GetSpriteCrosshair( void ) const;
 	virtual CHudTexture const	*GetSpriteAutoaim( void ) const;
 	virtual CHudTexture const	*GetSpriteZoomedCrosshair( void ) const;
-	virtual CHudTexture const	*GetSpriteZoomedAutoaim( void ) const;
+	virtual CHudTexture const	*GetSpriteZoomedAutoaim( void ) const;*/
 
 	virtual Activity		ActivityOverride( Activity baseAct, bool *pRequired );
 	virtual	acttable_t*		ActivityList( void ) { return NULL; }

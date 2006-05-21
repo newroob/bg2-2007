@@ -178,7 +178,7 @@ private:
 class CFlagHandler
 {
 public:
-	static void RespawnAll( char *pSound );
+	static void RespawnAll();
 	static void RespawnWave();
 	//static void PlayCaptureSound( void );
 	static void WinSong( char *pSound );

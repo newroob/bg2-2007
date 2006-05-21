@@ -77,7 +77,7 @@ ConVar sv_hl2mp_item_respawn_time( "sv_hl2mp_item_respawn_time", "30", FCVAR_GAM
 
 extern ConVar mp_chattime;
 //BG2 - Draco - Start
-ConVar mp_respawnstyle( "mp_respawnstyle", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar mp_respawnstyle( "mp_respawnstyle", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY );	//0 = regular dm, 1 = waves, 2 = rounds
 ConVar mp_respawntime( "mp_respawntime", "5", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar sv_restartround( "sv_restartround", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_americanscore( "mp_americanscore", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
@@ -482,7 +482,7 @@ void CHL2MPRules::Think( void )
 		}
 		m_fAdditionTime += gpGlobals->curtime;
 		CFlagHandler::ResetFlags();
-        CFlagHandler::RespawnAll( NULL );//and respawn! done.
+        CFlagHandler::RespawnAll();//and respawn! done.
 	}
 	
 	//=========================
@@ -586,7 +586,7 @@ void CHL2MPRules::Think( void )
 				if( m_iTDMTeamThatWon == 0 )
 				{
 					//draw
-					CFlagHandler::RespawnAll( NULL );
+					CFlagHandler::RespawnAll();
 					if (mp_respawntime.GetInt() > 0)
 					{
 						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
@@ -596,7 +596,8 @@ void CHL2MPRules::Think( void )
 				else if( m_iTDMTeamThatWon == 2 )
 				{
 					//british
-					CFlagHandler::RespawnAll("British.win");
+					CFlagHandler::RespawnAll();
+					CFlagHandler::WinSong("British.win");
 					if (mp_respawntime.GetInt() > 0)
 					{
 						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
@@ -606,7 +607,8 @@ void CHL2MPRules::Think( void )
 				else if( m_iTDMTeamThatWon == 1 )
 				{
 					//americans
-					CFlagHandler::RespawnAll("Americans.win");
+					CFlagHandler::RespawnAll();
+					CFlagHandler::WinSong("Americans.win");
 					if (mp_respawntime.GetInt() > 0)
 					{
 						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();

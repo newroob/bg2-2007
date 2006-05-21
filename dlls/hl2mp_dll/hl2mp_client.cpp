@@ -203,7 +203,7 @@ void ClientGamePrecache( void )
 
 
 // called by ClientKill and DeadThink
-void respawn( CBaseEntity *pEdict, bool fCopyCorpse )
+bool respawn( CBaseEntity *pEdict, bool fCopyCorpse )
 {
 	CHL2MP_Player *pPlayer = ToHL2MPPlayer( pEdict );
 
@@ -211,29 +211,21 @@ void respawn( CBaseEntity *pEdict, bool fCopyCorpse )
 	{
 		//BG2 - Draco - Start(this is the part that supresses respawns when mp_respawnstyle != 0)
 		//if ( gpGlobals->curtime > pPlayer->GetDeathTime() + DEATH_ANIMATION_TIME )
-		//BG2 - Tjoppen - allow respawn if there's only one player that has joined a team
-		CTeam	*pCombine = g_Teams[TEAM_AMERICANS],
-				*pRebels = g_Teams[TEAM_BRITISH];
+		//BG2 - Tjoppen - assume this function only gets called if we're allowed to respawn/spawn
 
 		if( !pPlayer->CheckSpawnPoints() )
 		{
-			//calling CheckSpawnPoints() all the time is very CPU taxing.. to it less often
+			//calling CheckSpawnPoints() all the time is very CPU taxing.. do it less often
 			pPlayer->SetNextThink( gpGlobals->curtime + random->RandomFloat( 1.0f, 5.0f ) );
-			return;
+			return false;
 		}
 
-		if( (mp_respawnstyle.GetInt() == 1 && HL2MPRules()->m_fLastRespawnWave + mp_respawntime.GetFloat() <= gpGlobals->curtime) ||
-			pCombine->GetNumPlayers() + pRebels->GetNumPlayers() <= 1 || ((gpGlobals->curtime > pPlayer->GetDeathTime() + DEATH_ANIMATION_TIME ) && (mp_respawnstyle.GetInt() == 0)) )
-		//BG2 - Draco - End
-		{
-			// respawn player
-			pPlayer->Spawn();
-		}
-		else
-		{
-			pPlayer->SetNextThink( gpGlobals->curtime + 0.1f );
-		}
+		// respawn player
+		pPlayer->Spawn();
+		return true;
 	}
+	else
+		return false;
 }
 
 void GameStartFrame( void )

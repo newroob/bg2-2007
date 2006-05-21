@@ -395,7 +395,8 @@ const char *CBaseCombatWeapon::GetName( void ) const
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-CHudTexture const *CBaseCombatWeapon::GetSpriteActive( void ) const
+//BG2 - Tjoppen - removing all HL2DM HUD stuff
+/*CHudTexture const *CBaseCombatWeapon::GetSpriteActive( void ) const
 {
 	return GetWpnData().iconActive;
 }
@@ -454,7 +455,7 @@ CHudTexture const *CBaseCombatWeapon::GetSpriteZoomedCrosshair( void ) const
 CHudTexture const *CBaseCombatWeapon::GetSpriteZoomedAutoaim( void ) const
 {
 	return GetWpnData().iconZoomedAutoaim;
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Purpose: 

@@ -291,7 +291,8 @@ FileWeaponInfo_t::FileWeaponInfo_t()
 	iAmmoType = 0;
 	iAmmo2Type = 0;
 	m_bMeleeWeapon = false;
-	iSpriteCount = 0;
+	//BG2 - Tjoppen - removing all HL2DM HUD stuff
+	/*iSpriteCount = 0;
 	iconActive = 0;
 	iconInactive = 0;
 	iconAmmo = 0;
@@ -299,7 +300,7 @@ FileWeaponInfo_t::FileWeaponInfo_t()
 	iconCrosshair = 0;
 	iconAutoaim = 0;
 	iconZoomedCrosshair = 0;
-	iconZoomedAutoaim = 0;
+	iconZoomedAutoaim = 0;*/
 	bShowUsageHint = false;
 	m_bAllowFlipping = true;
 	m_bBuiltRightHanded = true;

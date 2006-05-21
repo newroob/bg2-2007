@@ -271,7 +271,9 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		{
 			//CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), m_iDamage, DMG_BULLET | DMG_NEVERGIB );
 			//BG2 - Tjoppen - Set owner as inflictor so they get the damage points. also scale damage force
-			CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
+			//CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
+			//generic damage so it doesn't whine about force
+			CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_GENERIC | DMG_NEVERGIB );
 			dmgInfo.AdjustPlayerDamageInflictedForSkillLevel();
 			//CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
 			dmgInfo.SetDamagePosition( tr.endpos );
@@ -281,7 +283,9 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		{
 			//CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), m_iDamage, DMG_BULLET | DMG_NEVERGIB );
 			//BG2 - Tjoppen - Set owner as inflictor so they get the damage points. also scale damage force
-			CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
+			//CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
+			//generic damage so it doesn't whine about force
+			CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_GENERIC | DMG_NEVERGIB );
 			//CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
 			dmgInfo.SetDamagePosition( tr.endpos );
 			pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );

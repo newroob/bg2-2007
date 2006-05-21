@@ -35,7 +35,7 @@ public:
 	void LoadAllWeaponSprites( void );
 
 	// Ammo Handling
-	CHudTexture					*GetAmmoIconFromWeapon( int iAmmoId );
+	//CHudTexture					*GetAmmoIconFromWeapon( int iAmmoId );	//BG2 - Tjoppen - removing all HL2DM HUD stuff
 	const FileWeaponInfo_t		*GetWeaponFromAmmo( int iAmmoId );
 };
 

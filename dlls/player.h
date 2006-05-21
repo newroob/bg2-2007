@@ -419,8 +419,9 @@ public:
 
 	virtual void			CreateCorpse( void ) { }
 	virtual CBaseEntity		*EntSelectSpawnPoint( void );
-	//BG2 - Tjoppen - CheckSpawnPoints
+	//BG2 - Tjoppen - virtuals in CBasePlayer
 	//virtual bool			CheckSpawnPoints( void );
+	virtual bool			MayRespawn( void );
 	//
 
 	// Vehicles

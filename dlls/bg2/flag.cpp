@@ -1038,16 +1038,10 @@ PRECACHE_REGISTER(flag);
 //BG2 - Tjoppen - just make this global so we can reset it
 float nextwinsong = 0;	//to prevent win spamming sound issues..
 
-void CFlagHandler::RespawnAll( char *pSound )
+void CFlagHandler::RespawnAll()
 {
 	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
 		return;
-
-	if( HL2MPRules()->m_fNextWinSong < gpGlobals->curtime && pSound )
-	{
-		WinSong(pSound);
-		HL2MPRules()->m_fNextWinSong = gpGlobals->curtime + 20;
-	}
 
 	bool spawn = true;	//set to false if we ran out of spawn points
 
@@ -1119,6 +1113,11 @@ void CFlagHandler::WinSong( char *pSound )
 	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
 		return;
 
+	if( HL2MPRules()->m_fNextWinSong > gpGlobals->curtime && pSound )
+		return;
+	
+	HL2MPRules()->m_fNextWinSong = gpGlobals->curtime + 20;
+	
 	int x;
 	
 	for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
@@ -1370,7 +1369,8 @@ void CFlagHandler::Update( void )
 			ClientPrintAll( "The americans won this round!", true );
 			g_Teams[TEAM_AMERICANS]->AddScore( 200 );
 			ResetFlags();
-			RespawnAll( "Americans.win" );
+			RespawnAll();
+			WinSong("Americans.win");
 			//do not cause two simultaneous round restarts..
 			HL2MPRules()->m_bIsRestartingRound = false;
 			HL2MPRules()->m_flNextRoundRestart = gpGlobals->curtime + 1;
@@ -1381,7 +1381,8 @@ void CFlagHandler::Update( void )
 			ClientPrintAll( "The british won this round!", true );
 			g_Teams[TEAM_BRITISH]->AddScore( 200 );
 			ResetFlags();
-			RespawnAll( "British.win" );
+			RespawnAll();
+			WinSong("British.win");
 			//do not cause two simultaneous round restarts..
 			HL2MPRules()->m_bIsRestartingRound = false;
 			HL2MPRules()->m_flNextRoundRestart = gpGlobals->curtime + 1;
@@ -1397,7 +1398,7 @@ void CFlagHandler::Update( void )
 			ClientPrintAll( "This round became a draw", true );
 			ResetFlags();
 			HL2MPRules()->ResetMap();
-			RespawnAll( NULL );
+			RespawnAll();
 			//do not cause two simultaneous round restarts..
 			HL2MPRules()->m_bIsRestartingRound = false;
 			HL2MPRules()->m_flNextRoundRestart = gpGlobals->curtime + 1;
@@ -1412,7 +1413,8 @@ void CFlagHandler::Update( void )
 			g_Teams[TEAM_BRITISH]->AddScore( 200 );
 			ResetFlags();
 			HL2MPRules()->ResetMap();
-			RespawnAll( "British.win" );
+			RespawnAll();
+			WinSong("British.win");
 			//do not cause two simultaneous round restarts..
 			HL2MPRules()->m_bIsRestartingRound = false;
 			HL2MPRules()->m_flNextRoundRestart = gpGlobals->curtime + 1;
@@ -1427,7 +1429,8 @@ void CFlagHandler::Update( void )
 			g_Teams[TEAM_AMERICANS]->AddScore( 200 );
 			ResetFlags();
 			HL2MPRules()->ResetMap();
-			RespawnAll( "Americans.win" );
+			RespawnAll();
+			WinSong("Americans.win");
 			//do not cause two simultaneous round restarts..
 			HL2MPRules()->m_bIsRestartingRound = false;
 			HL2MPRules()->m_flNextRoundRestart = gpGlobals->curtime + 1;

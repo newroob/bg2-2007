@@ -263,7 +263,8 @@ bool CHudHistoryResource::ShouldDraw( void )
 //-----------------------------------------------------------------------------
 void CHudHistoryResource::Paint( void )
 {
-	if (m_bDoNotDraw)
+	//BG2 - Tjoppen - removing all HL2DM HUD stuff
+	/*if (m_bDoNotDraw)
 	{
 		// this is to not draw things until the first rendered
 		m_bDoNotDraw = false;
@@ -388,7 +389,7 @@ void CHudHistoryResource::Paint( void )
 				}
 			}
 		}
-	}
+	}*/
 }
 
 

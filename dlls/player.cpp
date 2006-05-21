@@ -148,7 +148,7 @@ int				gEvilImpulse101;
 
 bool gInitHUD = true;
 
-extern void respawn(CBaseEntity *pEdict, bool fCopyCorpse);
+extern bool respawn(CBaseEntity *pEdict, bool fCopyCorpse);
 int MapTextureTypeStepType(char chTextureType);
 extern void	SpawnBlood(Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
 extern void AddMultiDamage( const CTakeDamageInfo &info, CBaseEntity *pEntity );
@@ -1984,6 +1984,15 @@ void CBasePlayer::ShowViewPortPanel( const char * name, bool bShow, KeyValues *d
 	MessageEnd();
 }
 
+//BG2 - Tjoppen - CBasePlayer::MayRespawn()
+bool CBasePlayer::MayRespawn( void )
+{
+	if( gpGlobals->curtime > GetDeathTime() + DEATH_ANIMATION_TIME )
+		return true;
+	else
+		return false;
+}
+//
 
 void CBasePlayer::PlayerDeathThink(void)
 {
@@ -2068,8 +2077,13 @@ void CBasePlayer::PlayerDeathThink(void)
 
 	//Msg( "Respawn\n");
 
-	respawn( this, !IsObserver() );// don't copy a corpse if we're in deathcam.
-	SetNextThink( TICK_NEVER_THINK );
+	if( MayRespawn() )
+	{
+		if( respawn( this, !IsObserver() ) )// don't copy a corpse if we're in deathcam.
+			SetNextThink( TICK_NEVER_THINK );
+	}
+	else
+		SetNextThink( gpGlobals->curtime + 0.1f );
 }
 
 /*
@@ -5441,7 +5455,7 @@ bool CBasePlayer::ClientCommand(const char *cmd)
 			// add 1 to frags to balance out the 1 subtracted for killing yourself
 			//BG2 - Tjoppen - no, but add 100 damage for the same
 			//IncrementFragCount( 1 );
-			IncrementDeathCount( 100 );
+			//IncrementDeathCount( 100 );
 			//
 		}
 

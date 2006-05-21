@@ -94,8 +94,9 @@ public:
 	virtual void UpdateOnRemove( void );
 	virtual void DeathSound ( void );
 	virtual CBaseEntity* EntSelectSpawnPoint( void );
-	//BG2 - Tjoppen - CheckSpawnPoints
+	//BG2 - Tjoppen - virtuals in CHL2MP_Player
 	virtual bool			CheckSpawnPoints( void );
+	virtual bool			MayRespawn( void );
 	//
 	void  HandleSpeedChanges( void );
 	

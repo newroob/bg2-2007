@@ -182,7 +182,8 @@ void C_BaseCombatWeapon::Redraw()
 //-----------------------------------------------------------------------------
 void C_BaseCombatWeapon::DrawCrosshair()
 {
-	C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
+	//BG2 - Tjoppen - removing all HL2DM HUD stuff
+	/*C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
 	if ( !player )
 		return;
 
@@ -213,7 +214,7 @@ void C_BaseCombatWeapon::DrawCrosshair()
 			}
 		}
 	}		 
-*/
+*//*
 
 	CHudCrosshair *crosshair = GET_HUDELEMENT( CHudCrosshair );
 	if ( !crosshair )
@@ -261,7 +262,7 @@ void C_BaseCombatWeapon::DrawCrosshair()
 			crosshair->SetCrosshair( GetWpnData().iconZoomedCrosshair, white );
 		else
 			crosshair->ResetCrosshair();
-	}
+	}*/
 }
 
 //-----------------------------------------------------------------------------

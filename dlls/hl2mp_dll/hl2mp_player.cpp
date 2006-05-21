@@ -1503,6 +1503,43 @@ const char* CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
 	return "models/player/british/heavy_b/heavy_b.mdl";
 }
 
+//BG2 - Tjoppen - CHL2MP_Player::MayRespawn()
+bool CHL2MP_Player::MayRespawn( void )
+{
+	//note: this function only checks if we MAY respawn. not if we can(due to crowded spawns perhaps)
+	if( GetTeamNumber() <= TEAM_SPECTATOR )
+		return false;
+
+	CTeam	*pAmer = g_Teams[TEAM_AMERICANS],
+			*pBrit = g_Teams[TEAM_BRITISH];
+
+	if( !pAmer || !pBrit )
+		return false;
+
+	if( pAmer->GetNumPlayers() <= 0 || pBrit->GetNumPlayers() <= 0 )
+		return true;
+
+	extern ConVar	mp_respawnstyle,
+					mp_respawntime;
+
+	switch( mp_respawnstyle.GetInt() )
+	{
+	default:
+		if( gpGlobals->curtime > GetDeathTime() + DEATH_ANIMATION_TIME )
+			return true;
+		else
+			return false;
+	case 1:
+		//waves - we're not allowed to respawn by ourselves. the gamerules decide for us
+		return false;
+	case 2:
+		//rounds - we're not allowed to respawn by ourselves. the gamerules decide for us
+		return false;
+		break;
+	}
+}
+//
+
 bool CHL2MP_Player::ClientCommand( const char *cmd )
 {
 	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
@@ -1558,7 +1595,8 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			if( GetTeamNumber() <= TEAM_SPECTATOR )
 			{
 				ChangeTeam( TEAM_AMERICANS );
-				Spawn();
+				if( MayRespawn() )
+					Spawn();
 			}
 			else
 				ChangeTeam( TEAM_AMERICANS );
@@ -1616,7 +1654,8 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			if( GetTeamNumber() <= TEAM_SPECTATOR )
 			{
 				ChangeTeam( TEAM_AMERICANS );
-				Spawn();
+				if( MayRespawn() )
+					Spawn();
 			}
 			else
 				ChangeTeam( TEAM_AMERICANS );
@@ -1674,7 +1713,8 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			if( GetTeamNumber() <= TEAM_SPECTATOR )
 			{
 				ChangeTeam( TEAM_AMERICANS );
-				Spawn();
+				if( MayRespawn() )
+					Spawn();
 			}
 			else
 				ChangeTeam( TEAM_AMERICANS );
@@ -1732,7 +1772,8 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			if( GetTeamNumber() <= TEAM_SPECTATOR )
 			{
 				ChangeTeam( TEAM_BRITISH );
-				Spawn();
+				if( MayRespawn() )
+					Spawn();
 			}
 			else
 				ChangeTeam( TEAM_BRITISH );
@@ -1790,7 +1831,8 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			if( GetTeamNumber() <= TEAM_SPECTATOR )
 			{
 				ChangeTeam( TEAM_BRITISH );
-				Spawn();
+				if( MayRespawn() )
+					Spawn();
 			}
 			else
 				ChangeTeam( TEAM_BRITISH );
@@ -1848,7 +1890,8 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			if( GetTeamNumber() <= TEAM_SPECTATOR )
 			{
 				ChangeTeam( TEAM_BRITISH );
-				Spawn();
+				if( MayRespawn() )
+					Spawn();
 			}
 			else
 				ChangeTeam( TEAM_BRITISH );

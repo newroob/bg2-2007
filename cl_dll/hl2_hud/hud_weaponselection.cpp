@@ -201,7 +201,8 @@ void CHudWeaponSelection::LevelInit()
 //-------------------------------------------------------------------------
 void CHudWeaponSelection::Paint()
 {
-	if (!ShouldDraw())
+	//BG2 - Tjoppen - removing all HL2DM HUD stuff
+	/*if (!ShouldDraw())
 		return;
 
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
@@ -389,7 +390,7 @@ void CHudWeaponSelection::Paint()
 		// reset position
 		ypos = 0;
 		xpos += m_flBoxGap;
-	}
+	}*/
 }
 
 //-----------------------------------------------------------------------------
