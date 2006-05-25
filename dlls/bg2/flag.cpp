@@ -1156,35 +1156,36 @@ void CFlagHandler::RespawnWave()
 	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
 		return;
 
-	int x;
-	bool hasspawns = true;
-
-	for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
+	for( int x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
 	{
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_AMERICANS]->GetPlayer( x ) );
 
 		if( !pPlayer )
 			break;
 
-		if( hasspawns && pPlayer->CheckSpawnPoints() )
+		if( pPlayer->IsAlive() )
+			continue;
+
+		if( pPlayer->CheckSpawnPoints() )
 			pPlayer->Spawn();
 		else
-			hasspawns = false;
+			break;
 	}
 
-	hasspawns = true;
-
-	for( x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
+	for( int x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
 	{
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
 		
 		if( !pPlayer )
 			break;
 
-		if( hasspawns && pPlayer->CheckSpawnPoints() )
+		if( pPlayer->IsAlive() )
+			continue;
+
+		if( pPlayer->CheckSpawnPoints() )
 			pPlayer->Spawn();
 		else
-			hasspawns = false;
+			break;
 	}
 
 	/*for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
