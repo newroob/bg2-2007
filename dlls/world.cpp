@@ -32,7 +32,9 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-extern CBaseEntity				*g_pLastSpawn;
+//BG2 - Tjoppen - away with these
+//extern CBaseEntity				*g_pLastSpawn;
+//
 void InitBodyQue(void);
 extern void W_Precache(void);
 extern void ActivityList_Free( void );
@@ -565,7 +567,9 @@ void CWorld::Precache( void )
 {
 	g_WorldEntity = this;
 	g_fGameOver = false;
-	g_pLastSpawn = NULL;
+	//BG2 - Tjoppen - away with these
+	//g_pLastSpawn = NULL;
+	//
 
 	ConVar *stepsize = ( ConVar * )cvar->FindVar( "sv_stepsize" );
 	if ( stepsize )

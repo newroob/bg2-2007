@@ -88,8 +88,10 @@ ConVar mp_timeleft( "mp_timeleft", "1200", FCVAR_GAMEDLL);
 //BG2 - Draco - End
 
 
-extern CBaseEntity	 *g_pLastCombineSpawn;
-extern CBaseEntity	 *g_pLastRebelSpawn;
+//BG2 - Tjoppen - away with these
+/*extern CBaseEntity	 *g_pLastCombineSpawn;
+extern CBaseEntity	 *g_pLastRebelSpawn;*/
+//
 
 #define WEAPON_MAX_DISTANCE_FROM_SPAWN 64
 
@@ -234,8 +236,10 @@ void CHL2MPRules::CreateStandardEntities( void )
 
 	BaseClass::CreateStandardEntities();
 
-	g_pLastCombineSpawn = NULL;
-	g_pLastRebelSpawn = NULL;
+	//BG2 - Tjoppen - away with these
+	/*g_pLastCombineSpawn = NULL;
+	g_pLastRebelSpawn = NULL;*/
+	//
 
 #ifdef _DEBUG
 	CBaseEntity *pEnt = 

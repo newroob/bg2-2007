@@ -423,6 +423,31 @@ int CGlobalEntityList::NumberOfEdicts( void )
 	return m_iNumEdicts;
 }
 
+//BG2 - Tjoppen - FindAllEntitiesByClassname
+std::vector<CBaseEntity*> CGlobalEntityList::FindAllEntitiesByClassname( const char *szName )
+{
+	//returns all entities with specified classname
+	//CUtlVector refuses to copy itself. fuck it. I'm using std::vector
+
+	std::vector<CBaseEntity*> ret;
+
+	for( const CEntInfo *pInfo = FirstEntInfo(); pInfo; pInfo = pInfo->m_pNext )
+	{
+		CBaseEntity *pEntity = dynamic_cast<CBaseEntity*>(pInfo->m_pEntity);	//play it safe
+		if ( !pEntity )
+		{
+			DevWarning( "NULL entity in global entity list!\n" );
+			continue;
+		}
+
+		if ( pEntity->ClassMatches(szName) )
+			ret.push_back(pEntity);
+	}
+
+	return ret;
+}
+//
+
 CBaseEntity *CGlobalEntityList::NextEnt( CBaseEntity *pCurrentEnt ) 
 { 
 	if ( !pCurrentEnt )

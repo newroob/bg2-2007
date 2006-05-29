@@ -88,9 +88,11 @@ extern ConVar mp_autobalancetolerance;
 int g_iLastCitizenModel = 0;
 int g_iLastCombineModel = 0;
 
-CBaseEntity	 *g_pLastCombineSpawn = NULL;
+//BG2 - Tjoppen - away with these
+/*CBaseEntity	 *g_pLastCombineSpawn = NULL;
 CBaseEntity	 *g_pLastRebelSpawn = NULL;
-extern CBaseEntity				*g_pLastSpawn;
+extern CBaseEntity				*g_pLastSpawn;*/
+//
 
 void ClientKill( edict_t *pEdict );
 void DropPrimedFragGrenade( CHL2MP_Player *pPlayer, CBaseCombatWeapon *pGrenade );
@@ -2327,283 +2329,147 @@ void CHL2MP_Player::DeathSound( void )
 
 CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 {
-	CBaseEntity *pSpot = NULL;
-	CBaseEntity *pLastSpawnPoint = g_pLastSpawn;
-	edict_t		*player = edict();
-	const char *pSpawnpointName = "info_player_deathmatch";
-	//BG2 - Tjoppen - info_player_american/british
-	const char *pSpawnpointName2 = "info_player_deathmatch";
-	//
+	if( GetTeamNumber() <= TEAM_SPECTATOR )
+		return NULL;	//BG2 - Tjoppen - spectators/unassigned don't spawn..
 
-	if( GetTeamNumber() <= TEAM_SPECTATOR ) return NULL;	//BG2 - Tjoppen - spectators/unassigned don't spawn..
+	std::vector<CBaseEntity*> spawns;
 
-	if ( HL2MPRules()->IsTeamplay() == true )
+	//get a non-empty vector of spawns..
+	if ( HL2MPRules()->IsTeamplay() )
 	{
 		if ( GetTeamNumber() == TEAM_AMERICANS )
 		{
-			pSpawnpointName = "info_player_combine";
-			//BG2 - Tjoppen - info_player_american/british
-			pSpawnpointName2 = "info_player_american";
-			//
-			pLastSpawnPoint = g_pLastCombineSpawn;
+			//maintain backward compatibility with HL2DM
+			spawns = gEntList.FindAllEntitiesByClassname("info_player_american");
+			if( spawns.size() == 0 )
+			{
+				spawns = gEntList.FindAllEntitiesByClassname("info_player_combine");
+				if( spawns.size() == 0 )
+					return NULL;
+			}
 		}
 		else if ( GetTeamNumber() == TEAM_BRITISH )
 		{
-			pSpawnpointName = "info_player_rebel";
-			//BG2 - Tjoppen - info_player_american/british
-			pSpawnpointName2 = "info_player_british";
-			//
-			pLastSpawnPoint = g_pLastRebelSpawn;
-		}
-
-		if ( gEntList.FindEntityByClassname( NULL, pSpawnpointName ) == NULL )
-		{
-			//BG2 - Tjoppen - info_player_american/british
-			if( gEntList.FindEntityByClassname( NULL, pSpawnpointName2 ) == NULL )
+			//maintain backward compatibility with HL2DM
+			spawns = gEntList.FindAllEntitiesByClassname("info_player_british");
+			if( spawns.size() == 0 )
 			{
-			//
-			pSpawnpointName = "info_player_deathmatch";
-			pLastSpawnPoint = g_pLastSpawn;
-			//BG2 - Tjoppen - info_player_american/british
-			}
-			else
-				pSpawnpointName = pSpawnpointName2;
-			//
-		}
-	}
-
-	pSpot = pLastSpawnPoint;
-	// Randomize the start spot
-	for ( int i = random->RandomInt(1,5); i > 0; i-- )
-		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-	if ( !pSpot )  // skip over the null point
-		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-
-	//BG2 - Tjoppen - find next enabled spawnpoint
-	CBaseEntity *pBefore = pSpot;
-	for( int n = 0; n < 100; n++ )
-	{
-		//skip NULL
-		if( !pSpot )
-			pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-
-		Assert( pSpot != NULL );
-
-		if( ((CSpawnPoint*)pSpot)->IsEnabled() )
-			break;					//found one!
-
-		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-
-		Assert( pSpot != pBefore );	//if we've gone all the way around.. which we never should
-		if( pSpot == pBefore )
-		{
-			//release mode - whine and force spawn on the t we have..
-			Msg( "spawn system ran out of enabled %s - tell the mapper\n", pSpawnpointName );
-			Msg( "what this means is that somehow all spawnpoints for this team are disabled\n" );
-			break;
-		}
-	}
-
-	if( n >= 100 )
-	{
-		Msg( "spawn system got into long loop on %s - tell the mapper\n", pSpawnpointName );
-		Msg( "what this means is that somehow all spawnpoints for this team are disabled, and that the code to detect this failed\n" );
-	}
-
-	CBaseEntity *pFirstSpot = pSpot;
-
-	do 
-	{
-		if ( pSpot )
-		{
-			// check if pSpot is valid
-			if ( g_pGameRules->IsSpawnPointValid( pSpot, this ) )
-			{
-				if ( pSpot->GetLocalOrigin() == vec3_origin )
-				{
-					pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-					continue;
-				}
-
-				// if so, go to pSpot
-				goto ReturnSpot;
+				spawns = gEntList.FindAllEntitiesByClassname("info_player_rebel");
+				if( spawns.size() == 0 )
+					return NULL;
 			}
 		}
-		// increment pSpot
-		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-	} while ( pSpot != pFirstSpot ); // loop if we're not back to the start
-
-	// we haven't found a place to spawn yet,  so kill any guy at the first spawn point and spawn there
-	if ( pSpot )
+		else
+			return NULL;
+	}
+	else
 	{
-		CBaseEntity *ent = NULL;
-		for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 64 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
-		{
-			// if ent is a client, kill em (unless they are ourselves)
-			//BG2 - Tjoppen - fix so dead players don't block
-			//if ( ent->IsPlayer() && !(ent->edict() == player) )
-			if ( ent->IsPlayer() && ent->IsAlive() && ent->GetTeamNumber() >= TEAM_AMERICANS && !(ent->edict() == player) )
-			//
-				ent->TakeDamage( CTakeDamageInfo( GetContainingEntity(INDEXENT(0)), GetContainingEntity(INDEXENT(0)), 300, DMG_GENERIC ) );
-		}
-		goto ReturnSpot;
+		//maintain backward compatibility with HL2DM
+		spawns = gEntList.FindAllEntitiesByClassname("info_player_deathmatch");
+		if( spawns.size() == 0 )
+			return NULL;
 	}
 
-	if ( !pSpot  )
+	//pick a random spot to start attempting spawn at
+	std::vector<CBaseEntity*>::size_type start = random->RandomInt( 0, spawns.size() - 1 );
+	
+	for( std::vector<CBaseEntity*>::size_type i = start;;)
 	{
-		pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_start" );
+		CBaseEntity *pSpot = spawns[i];
+		CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
 
-		if ( pSpot )
-			goto ReturnSpot;
-	}
-
-ReturnSpot:
-
-	if ( HL2MPRules()->IsTeamplay() == true )
-	{
-		if ( GetTeamNumber() == TEAM_AMERICANS )
+		//check that:
+		// we don't have NULLs
+		// spawn must be enabled
+		// it must be valid(noone blocking)
+		// it mustn't be at origin(invalid according to original HL2 code)
+		if( pSpot && pSpawn &&
+			pSpawn->IsEnabled() &&
+			g_pGameRules->IsSpawnPointValid( pSpot, this ) &&
+			pSpot->GetLocalOrigin() != vec3_origin )
 		{
-			g_pLastCombineSpawn = pSpot;
+			return pSpot;	//all is fine. return
 		}
-		else if ( GetTeamNumber() == TEAM_BRITISH ) 
-		{
-			g_pLastRebelSpawn = pSpot;
-		}
-	}
 
-	g_pLastSpawn = pSpot;
-	return pSpot;
+		//loop around
+		i++;
+		if( i >= spawns.size() )
+			i = 0;
+		else if( i == start )
+			return NULL;	//back at start, didn't find anything
+	}
 }
 
 //BG2 - Tjoppen - CheckSpawnPoints - returns true if there is an unoccupied spawn point
 bool CHL2MP_Player::CheckSpawnPoints( void )
 {
-	CBaseEntity *pSpot = NULL;
-	CBaseEntity *pLastSpawnPoint = g_pLastSpawn;
-	edict_t		*player = edict();
-	const char *pSpawnpointName = "info_player_deathmatch";
-	//BG2 - Tjoppen - info_player_american/british
-	const char *pSpawnpointName2 = "info_player_deathmatch";
-	//
+	if( GetTeamNumber() <= TEAM_SPECTATOR )
+		return false;	//BG2 - Tjoppen - spectators/unassigned don't spawn..
 
-	if( GetTeamNumber() <= TEAM_SPECTATOR ) return false;	//BG2 - Tjoppen - spectators/unassigned don't spawn..
+	std::vector<CBaseEntity*> spawns;
 
-	if ( HL2MPRules()->IsTeamplay() == true )
+	//get a non-empty vector of spawns..
+	if ( HL2MPRules()->IsTeamplay() )
 	{
 		if ( GetTeamNumber() == TEAM_AMERICANS )
 		{
-			pSpawnpointName = "info_player_combine";
-			//BG2 - Tjoppen - info_player_american/british
-			pSpawnpointName2 = "info_player_american";
-			//
-			pLastSpawnPoint = g_pLastCombineSpawn;
+			//maintain backward compatibility with HL2DM
+			spawns = gEntList.FindAllEntitiesByClassname("info_player_american");
+			if( spawns.size() == 0 )
+			{
+				spawns = gEntList.FindAllEntitiesByClassname("info_player_combine");
+				if( spawns.size() == 0 )
+					return false;
+			}
 		}
 		else if ( GetTeamNumber() == TEAM_BRITISH )
 		{
-			pSpawnpointName = "info_player_rebel";
-			//BG2 - Tjoppen - info_player_american/british
-			pSpawnpointName2 = "info_player_british";
-			//
-			pLastSpawnPoint = g_pLastRebelSpawn;
-		}
-
-		if ( gEntList.FindEntityByClassname( NULL, pSpawnpointName ) == NULL )
-		{
-			//BG2 - Tjoppen - info_player_american/british
-			if( gEntList.FindEntityByClassname( NULL, pSpawnpointName2 ) == NULL )
+			//maintain backward compatibility with HL2DM
+			spawns = gEntList.FindAllEntitiesByClassname("info_player_british");
+			if( spawns.size() == 0 )
 			{
-			//
-			pSpawnpointName = "info_player_deathmatch";
-			pLastSpawnPoint = g_pLastSpawn;
-			//BG2 - Tjoppen - info_player_american/british
-			}
-			else
-				pSpawnpointName = pSpawnpointName2;
-			//
-		}
-	}
-
-	pSpot = pLastSpawnPoint;
-	// Randomize the start spot
-	for ( int i = random->RandomInt(1,5); i > 0; i-- )
-		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-	if ( !pSpot )  // skip over the null point
-		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-
-	//BG2 - Tjoppen - find next enabled spawnpoint
-	CBaseEntity *pBefore = pSpot;
-	for( int n = 0; n < 100; n++ )
-	{
-		//skip NULL
-		if( !pSpot )
-			pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-
-		Assert( pSpot != NULL );
-
-		if( ((CSpawnPoint*)pSpot)->IsEnabled() )
-			break;					//found one!
-
-		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-
-		if( pSpot == pBefore )
-			return false;			//we would Assert() here in EntSelectSpawnPoint(), but this return false should prevent it
-	}
-
-	if( n >= 100 )
-	{
-		Msg( "spawn system got into long loop on %s - tell the mapper\n", pSpawnpointName );
-		Msg( "what this means is that somehow all spawnpoints for this team are disabled, and that the code to detect this failed\n" );
-		return false;
-	}
-
-	CBaseEntity *pFirstSpot = pSpot;
-
-	do 
-	{
-		if ( pSpot )
-		{
-			// check if pSpot is valid
-			if ( g_pGameRules->IsSpawnPointValid( pSpot, this ) )
-			{
-				if ( pSpot->GetLocalOrigin() == vec3_origin )
-				{
-					pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-					continue;
-				}
-
-				// if so, go to pSpot
-				return true;
+				spawns = gEntList.FindAllEntitiesByClassname("info_player_rebel");
+				if( spawns.size() == 0 )
+					return false;
 			}
 		}
-		// increment pSpot
-		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-	} while ( pSpot != pFirstSpot ); // loop if we're not back to the start
-
-	// we haven't found a place to spawn yet,  so kill any guy at the first spawn point and spawn there
-	if ( pSpot )
-	{
-		CBaseEntity *ent = NULL;
-		for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 64 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
-		{
-			// if ent is a client, kill em (unless they are ourselves)
-			//BG2 - Tjoppen - fix so dead players don't block
-			//if ( ent->IsPlayer() && !(ent->edict() == player) )
-			if ( ent->IsPlayer() && ent->IsAlive() && ent->GetTeamNumber() >= TEAM_AMERICANS && !(ent->edict() == player) )
-			//
-				return false;	//don't kill ourselves
-				//ent->TakeDamage( CTakeDamageInfo( GetContainingEntity(INDEXENT(0)), GetContainingEntity(INDEXENT(0)), 300, DMG_GENERIC ) );
-		}
-
-		return true;
+		else
+			return false;
 	}
-
-	if ( !pSpot  )
+	else
 	{
-		pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_start" );
-
-		if( !pSpot )
+		//maintain backward compatibility with HL2DM
+		spawns = gEntList.FindAllEntitiesByClassname("info_player_deathmatch");
+		if( spawns.size() == 0 )
 			return false;
 	}
 
-	return true;
+	//pick a random spot to start attempting spawn at
+	std::vector<CBaseEntity*>::size_type start = random->RandomInt( 0, spawns.size() - 1 );
+	
+	for( std::vector<CBaseEntity*>::size_type i = start;;)
+	{
+		CBaseEntity *pSpot = spawns[i];
+		CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
+
+		//check that:
+		// we don't have NULLs
+		// spawn must be enabled
+		// it must be valid(noone blocking)
+		// it mustn't be at origin(invalid according to original HL2 code)
+		if( pSpot && pSpawn &&
+			pSpawn->IsEnabled() &&
+			g_pGameRules->IsSpawnPointValid( pSpot, this ) &&
+			pSpot->GetLocalOrigin() != vec3_origin )
+		{
+			return true;	//all is fine. return
+		}
+
+		//loop around
+		i++;
+		if( i >= spawns.size() )
+			i = 0;
+		else if( i == start )
+			return false;	//back at start, didn't find anything
+	}
 } 

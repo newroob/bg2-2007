@@ -14,6 +14,9 @@
 #endif
 
 #include "baseentity.h"
+//BG2 - Tjoppen - vector
+#include <vector>
+//
 
 class IEntityListener;
 
@@ -81,7 +84,7 @@ public:
 	
 	int NumberOfEntities( void );
 	int NumberOfEdicts( void );
-
+	
 	// mark an entity as deleted
 	void AddToDeleteList( IServerNetworkable *ent );
 	// call this before and after each frame to delete all of the marked entities.
@@ -149,6 +152,10 @@ public:
 	CBaseEntity *FindEntityNearestFacing( const Vector &origin, const Vector &facing, float threshold);
 	CBaseEntity *FindEntityClassNearestFacing( const Vector &origin, const Vector &facing, float threshold, char *classname);
 	CBaseEntity *FindEntityByNetname( CBaseEntity *pStartEntity, const char *szModelName );
+
+	//BG2 - Tjoppen - FindAllEntitiesByClassname
+	std::vector<CBaseEntity*> FindAllEntitiesByClassname( const char *szName );
+	//
 
 	CGlobalEntityList();
 
