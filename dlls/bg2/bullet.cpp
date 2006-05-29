@@ -440,7 +440,7 @@ void CBullet::BubbleThink( void )
 
 	if( gpGlobals->curtime > m_flDyingTime )
 	{
-		SetThink( &CBullet::SUB_Remove );
+		UTIL_Remove( this );
 		return;
 	}
 

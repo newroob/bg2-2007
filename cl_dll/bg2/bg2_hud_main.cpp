@@ -61,6 +61,8 @@ public:
 	virtual void ApplySchemeSettings( vgui::IScheme *scheme );
 	virtual void OnThink();
 
+	void HideShowAll( bool visible );
+
 private:
 
 	CHudTexture		* m_Base; 
@@ -131,7 +133,6 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_pLabelBGVersion->SizeToContents();
 	m_pLabelBGVersion->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelBGVersion->SetFgColor( ColourWhite );
-	m_pLabelBGVersion->SetVisible(false);
 }
 
 //==============================================
@@ -171,7 +172,9 @@ void CHudBG2::VidInit( void )
 //==============================================
 bool CHudBG2::ShouldDraw( void )
 {
-	return CHudElement::ShouldDraw();
+	bool temp = CHudElement::ShouldDraw();
+	HideShowAll(temp);	//BG2 - Tjoppen - HACKHACK
+	return temp;
 }
 
 //==============================================
@@ -180,30 +183,45 @@ bool CHudBG2::ShouldDraw( void )
 //==============================================
 void CHudBG2::Paint()
 {
-	Color ColourRed( 255, 0, 0, 255 );
-	Color ColourWhite( 255, 255, 255, 255 );
-	C_BaseCombatWeapon *wpn = GetActiveWeapon();
+	C_HL2MP_Player *pHL2Player = dynamic_cast<C_HL2MP_Player*>(C_HL2MP_Player::GetLocalPlayer());
+	if (!pHL2Player || !pHL2Player->IsAlive())
+	{
+		//spectating
+		int n = GetSpectatorTargetPlayer();
+		if( n <= 0 )
+		{
+			HideShowAll(false);
+			return;	//don't look at worldspawn..
+		}
+
+		pHL2Player = dynamic_cast<C_HL2MP_Player*>(UTIL_PlayerByIndex(n));
+
+		if( !pHL2Player )
+		{
+			HideShowAll(false);
+			return;
+		}
+	}
+
+	C_BaseCombatWeapon *wpn = pHL2Player->GetActiveWeapon();
 	if (!wpn)
 	{
+		HideShowAll(false);
 		return;
 	}
-	C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
-	if (!player)
-	{
-		return;
-	}
-	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
-	if (!pHL2Player)
-	{
-		return;
-	}
+
+	HideShowAll(true);
+
+	Color ColourRed( 255, 0, 0, 255 );
+	Color ColourWhite( 255, 255, 255, 255 );
+
 	char msg2[512];
 
 	int w,h;
 	int ystart = GetTall() - m_Base->Height();
 
 	m_Base->DrawSelf(0,ystart,ColourWhite);
-	int healthheight = player->GetHealth()* 1.05;
+	int healthheight = pHL2Player->GetHealth()* 1.05;
 	int healthy = 105 - healthheight;
 	int stamheight = pHL2Player->m_iStamina * 1.05;
 	int stamy = 105 - stamheight;
@@ -219,7 +237,6 @@ void CHudBG2::Paint()
 	m_pLabelWaveTime->GetSize( w, h );
 	m_pLabelBScore->SetPos(90,ystart + 40 - h/2);
 	m_pLabelBScore->SetFgColor( ColourWhite );
-	m_pLabelBScore->SetVisible(ShouldDraw());
 	
 	Q_snprintf( msg2, 512, "%i ", pAmer ? pAmer->Get_Score() : 0);	//BG2 - Tjoppen - avoid NULL
 	m_pLabelAScore->SetText(msg2);
@@ -227,10 +244,9 @@ void CHudBG2::Paint()
 	m_pLabelWaveTime->GetSize( w, h );
 	m_pLabelAScore->SetPos(135,ystart + 40 - h/2);
 	m_pLabelAScore->SetFgColor( ColourWhite );
-	m_pLabelAScore->SetVisible(ShouldDraw());
-
-	int iAmmoCount = player->GetAmmoCount(wpn->GetPrimaryAmmoType()) + wpn->Clip1();
-	if( iAmmoCount >= 0 )
+	
+	int iAmmoCount = pHL2Player->GetAmmoCount(wpn->GetPrimaryAmmoType()) + wpn->Clip1();
+	//if( iAmmoCount >= 0 )
 	{
 		Q_snprintf( msg2, 512, "%i ", iAmmoCount);
 		m_pLabelAmmo->SetText(msg2);
@@ -245,10 +261,9 @@ void CHudBG2::Paint()
 		m_pLabelAmmo->SizeToContents();
 		m_pLabelAmmo->GetSize( w, h );
 		m_pLabelAmmo->SetPos(135,ystart + 100 - h/2);
-		m_pLabelAmmo->SetVisible(ShouldDraw());
 	}
-	else
-		m_pLabelAmmo->SetVisible( false );
+	/*else
+		m_pLabelAmmo->SetVisible( false );*/
 
 	Q_snprintf( msg2, 512, "%i:%i ", (HL2MPRules()->m_iWaveTime / 60), (HL2MPRules()->m_iWaveTime % 60));
 	m_pLabelWaveTime->SetText(msg2);
@@ -256,7 +271,6 @@ void CHudBG2::Paint()
 	m_pLabelWaveTime->GetSize( w, h );
 	m_pLabelWaveTime->SetPos(120,ystart + 67 - h/2);
 	m_pLabelWaveTime->SetFgColor( ColourWhite );
-	m_pLabelWaveTime->SetVisible(ShouldDraw());
 
 	// BP - BG version display at lower right bottom of screen
 	Q_snprintf( msg2, 512, "%s ", HL2MPRules()->GetGameDescription());
@@ -265,8 +279,6 @@ void CHudBG2::Paint()
 	m_pLabelBGVersion->GetSize( w, h );
 	m_pLabelBGVersion->SetPos(5, 60);	
 	m_pLabelBGVersion->SetFgColor( ColourWhite );
-	m_pLabelBGVersion->SetVisible(false); // BP: not used yet as its not subtle enough, m_pLabelBGVersion->SetVisible(ShouldDraw());
-
 }
 
 //==============================================
@@ -280,16 +292,22 @@ void CHudBG2::OnThink()
 	if (pHL2Player && pHL2Player->m_iStamina < 20)
  		(GET_HUDELEMENT( CHintbox ))->UseHint(HINT_STAMINA, 6, DISPLAY_ONCE);
 	
-	C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
+	//let paint sort it out
+	/*C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
 	if (player)
 	{
 		if (player->GetHealth() <= 0)
 		{
-			m_pLabelAScore->SetVisible(false);
-			m_pLabelBScore->SetVisible(false);
-			m_pLabelWaveTime->SetVisible(false);
-			m_pLabelAmmo->SetVisible(false);
-			m_pLabelBGVersion->SetVisible(false);
+			HideShowAll(false);
 		}
-	}
+	}*/
+}
+
+void CHudBG2::HideShowAll( bool visible )
+{
+	m_pLabelAScore->SetVisible(visible);
+	m_pLabelBScore->SetVisible(visible);
+	m_pLabelWaveTime->SetVisible(visible);
+	m_pLabelAmmo->SetVisible(visible);
+	m_pLabelBGVersion->SetVisible(false);	// BP: not used yet as its not subtle enough, m_pLabelBGVersion->SetVisible(ShouldDraw());
 }

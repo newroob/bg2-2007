@@ -432,7 +432,7 @@ void CClassMenu::OnThink()
 {
 	BaseClass::OnThink();
 	//BG2 - Tjoppen - show autoassign button if we're not in the class part and we're unassigned or spectator
-	m_pAutoassignButton->SetVisible( IsInClassMenu() ? false : C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR );
+	m_pAutoassignButton->SetVisible( IsInClassMenu() ? false : C_BasePlayer::GetLocalPlayer() ? C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR : false );
 
 	//show number of players in teams..
 	char tmp[256];
@@ -481,7 +481,7 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pBritishButton->SetVisible(true);
 			m_pAmericanButton->SetVisible(true);
 			//BG2 - Tjoppen - show autoassign button if we're not in the class part and we're unassigned or spectator
-			m_pAutoassignButton->SetVisible( IsInClassMenu() ? false : C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR );
+			m_pAutoassignButton->SetVisible( IsInClassMenu() ? false : C_BasePlayer::GetLocalPlayer() ? C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR : false );
 			//
 			m_pSpectateButton->SetVisible(true);
 			m_pOfficerButton->SetVisible(false);

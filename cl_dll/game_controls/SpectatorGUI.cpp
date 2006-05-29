@@ -423,6 +423,9 @@ void CSpectatorGUI::SetLabelText(const char *textEntryName, const char *text)
 	if (entry)
 	{
 		entry->SetText(text);
+		//BG2 - Tjoppen - SizeToContents aswell
+		entry->SizeToContents();
+		//
 	}
 }
 
@@ -435,6 +438,9 @@ void CSpectatorGUI::SetLabelText(const char *textEntryName, wchar_t *text)
 	if (entry)
 	{
 		entry->SetText(text);
+		//BG2 - Tjoppen - SizeToContents aswell
+		entry->SizeToContents();
+		//
 	}
 }
 
