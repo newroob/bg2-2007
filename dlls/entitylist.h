@@ -14,9 +14,6 @@
 #endif
 
 #include "baseentity.h"
-//BG2 - Tjoppen - vector
-#include <vector>
-//
 
 class IEntityListener;
 
@@ -154,7 +151,7 @@ public:
 	CBaseEntity *FindEntityByNetname( CBaseEntity *pStartEntity, const char *szModelName );
 
 	//BG2 - Tjoppen - FindAllEntitiesByClassname
-	std::vector<CBaseEntity*> FindAllEntitiesByClassname( const char *szName );
+	void FindAllEntitiesByClassname( const char *szName, CUtlVector<CBaseEntity*> &ret );
 	//
 
 	CGlobalEntityList();

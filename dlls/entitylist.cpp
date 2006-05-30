@@ -424,12 +424,11 @@ int CGlobalEntityList::NumberOfEdicts( void )
 }
 
 //BG2 - Tjoppen - FindAllEntitiesByClassname
-std::vector<CBaseEntity*> CGlobalEntityList::FindAllEntitiesByClassname( const char *szName )
+void CGlobalEntityList::FindAllEntitiesByClassname( const char *szName, CUtlVector<CBaseEntity*> &ret )
 {
 	//returns all entities with specified classname
-	//CUtlVector refuses to copy itself. fuck it. I'm using std::vector
-
-	std::vector<CBaseEntity*> ret;
+	//CUtlVector refused to copy itself(thanks Valve!), but I fixed that.
+	//It wouldn't fucking work with the SDK, std::vector and g++. Header hell.
 
 	for( const CEntInfo *pInfo = FirstEntInfo(); pInfo; pInfo = pInfo->m_pNext )
 	{
@@ -441,10 +440,8 @@ std::vector<CBaseEntity*> CGlobalEntityList::FindAllEntitiesByClassname( const c
 		}
 
 		if ( pEntity->ClassMatches(szName) )
-			ret.push_back(pEntity);
+			ret.AddToTail(pEntity);
 	}
-
-	return ret;
 }
 //
 
