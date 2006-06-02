@@ -182,6 +182,6 @@ public:
 	static void RespawnWave();
 	//static void PlayCaptureSound( void );
 	static void WinSong( char *pSound );
-	static void ResetFlags( void );
+	//static void ResetFlags( void );	//deprecated. use HL2MPRules()->ResetMap() instead
 	static void Update( void );
 };

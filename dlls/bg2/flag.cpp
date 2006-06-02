@@ -1220,7 +1220,7 @@ void CFlagHandler::RespawnWave()
 		pPlayer->EmitSound( "Flag.capture" );*//*
 }*/
 
-void CFlagHandler::ResetFlags( void )
+/*void CFlagHandler::ResetFlags( void )
 {
 	CBaseEntity *pEntity = NULL;
 
@@ -1301,7 +1301,7 @@ void CFlagHandler::ResetFlags( void )
 		pPoint->Reset();
 	}
 	//end of spawnpoint resettings
-}
+}*/
 
 void CFlagHandler::Update( void )
 {
@@ -1369,7 +1369,8 @@ void CFlagHandler::Update( void )
 		{
 			ClientPrintAll( "The americans won this round!", true );
 			g_Teams[TEAM_AMERICANS]->AddScore( 200 );
-			ResetFlags();
+			//ResetFlags();
+			HL2MPRules()->ResetMap();
 			RespawnAll();
 			WinSong("Americans.win");
 			//do not cause two simultaneous round restarts..
@@ -1381,7 +1382,8 @@ void CFlagHandler::Update( void )
 		{
 			ClientPrintAll( "The british won this round!", true );
 			g_Teams[TEAM_BRITISH]->AddScore( 200 );
-			ResetFlags();
+			//ResetFlags();
+			HL2MPRules()->ResetMap();
 			RespawnAll();
 			WinSong("British.win");
 			//do not cause two simultaneous round restarts..
@@ -1397,7 +1399,7 @@ void CFlagHandler::Update( void )
 			//draw
 			//Msg( "draw\n" );
 			ClientPrintAll( "This round became a draw", true );
-			ResetFlags();
+			//ResetFlags();
 			HL2MPRules()->ResetMap();
 			RespawnAll();
 			//do not cause two simultaneous round restarts..
@@ -1412,7 +1414,7 @@ void CFlagHandler::Update( void )
 			//Msg( "british win\n" );
 			ClientPrintAll( "The british won this round!", true );
 			g_Teams[TEAM_BRITISH]->AddScore( 200 );
-			ResetFlags();
+			//ResetFlags();
 			HL2MPRules()->ResetMap();
 			RespawnAll();
 			WinSong("British.win");
@@ -1428,7 +1430,7 @@ void CFlagHandler::Update( void )
 			//Msg( "americans win\n" );
 			ClientPrintAll( "The americans won this round!", true );
 			g_Teams[TEAM_AMERICANS]->AddScore( 200 );
-			ResetFlags();
+			//ResetFlags();
 			HL2MPRules()->ResetMap();
 			RespawnAll();
 			WinSong("Americans.win");
