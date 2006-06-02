@@ -1167,9 +1167,7 @@ void C_BasePlayer::CalcInEyeCamView(Vector& eyeOrigin, QAngle& eyeAngles, float&
 
 	m_flObserverChaseDistance = 0.0;
 
-	//BG2 - Tjoppen - fixed CalcInEyeCamView
-	eyeAngles = target->GetAbsAngles();//target->EyeAngles();
-	//
+	eyeAngles = target->EyeAngles();
 	eyeOrigin = target->GetAbsOrigin();
 
 	if( engine->IsHLTV() )

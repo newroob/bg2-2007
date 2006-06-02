@@ -2966,7 +2966,12 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 	{
 		C_BaseEntity *pEnt2 = pEnt->GetOwner();
 		if( pEnt2 )
+		{
 			ownervelocity = pEnt2->GetLocalVelocity();	//success!
+			//BG2 - Tjoppen - HACKHACK: make smoke use owner's eyeangles instead of attachment's angles. This is because
+			//					the muzzle attachment is either angled the wrong way or the entire model is(pistols)
+			AngleVectors( pEnt2->EyeAngles(), &forward, NULL, NULL );
+		}
 	}
 
 	// Smoke

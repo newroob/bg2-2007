@@ -40,6 +40,9 @@ public:
 	QAngle GetAnimEyeAngles( void ) { return m_angEyeAngles; }
 	Vector GetAttackSpread( CBaseCombatWeapon *pWeapon, CBaseEntity *pTarget = NULL );
 
+	//BG2 - Tjoppen - EyeAngles() for C_HL2MP_Player
+	const QAngle &EyeAngles( void );
+	//
 
 	// Should this object cast shadows?
 	virtual ShadowType_t		ShadowCastType( void );

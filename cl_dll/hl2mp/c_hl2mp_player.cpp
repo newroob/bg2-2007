@@ -107,6 +107,17 @@ int C_HL2MP_Player::GetIDTarget() const
 	return m_iIDEntIndex;
 }
 
+//BG2 - Tjoppen - EyeAngles() for C_HL2MP_Player
+const QAngle &C_HL2MP_Player::EyeAngles( void )
+{
+	//if we're viewing through our own eyes we'll use the default behaviour
+	if( this == C_BasePlayer::GetLocalPlayer() )
+		return BaseClass::EyeAngles();
+	else
+		return m_angEyeAngles;	//spectating or otherwise using someone else. use predicted angle
+}
+//
+
 //-----------------------------------------------------------------------------
 // Purpose: Update this client's target entity
 //-----------------------------------------------------------------------------
