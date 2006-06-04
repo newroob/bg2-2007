@@ -802,74 +802,22 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 						*pAttacker = ToBasePlayer( info.GetAttacker() );
 			Assert( pAttacker != NULL );
 
-			char attackerstr[512], victimstr[512];
+			//use usermessage instead and let the client figure out what to print. saves precious bandwidth
+			//send one to attacker and one to victim
+			//the "Damage" usermessage is more detailed, but adds up all damage in the current frame. it is therefore
+			//hard to determine who is the attacker since the victim can be hit multiple times
+			
+			CRecipientFilter recpfilter;
+			recpfilter.AddRecipient( pAttacker );
+			recpfilter.AddRecipient( pVictim );
+			recpfilter.MakeReliable();
 
-            Q_strncpy( attackerstr, "You hit ", 512 );
-			strncat( attackerstr, STRING(pVictim->pl.netname), 512 );
-			strncat( attackerstr, " in the ", 512 );
-
-			Q_strncpy( victimstr, "You were hit in the ", 512 );
-
-			switch ( ptr->hitgroup )
-			{
-			case HITGROUP_GENERIC:
-				//special case
-				Q_strncpy( attackerstr, "You hit ", 512 );
-				strncat( attackerstr, STRING(pVictim->pl.netname), 512 );
-
-				Q_strncpy( victimstr, "You were hit", 512 );
-				break;
-			case HITGROUP_HEAD:
-				strncat( attackerstr, "head", 512 );
-				strncat( victimstr, "head", 512 );
-				break;
-			case HITGROUP_CHEST:
-				strncat( attackerstr, "chest", 512 );
-				strncat( victimstr, "chest", 512 );
-				break;
-			case HITGROUP_STOMACH:
-				strncat( attackerstr, "stomach", 512 );
-				strncat( victimstr, "stomach", 512 );
-				break;
-			case HITGROUP_LEFTARM:
-				strncat( attackerstr, "left arm", 512 );
-				strncat( victimstr, "left arm", 512 );
-				break;
-			case HITGROUP_RIGHTARM:
-				strncat( attackerstr, "right arm", 512 );
-				strncat( victimstr, "right arm", 512 );
-				break;
-			case HITGROUP_LEFTLEG:
-				strncat( attackerstr, "left leg", 512 );
-				strncat( victimstr, "left leg", 512 );
-				break;
-			case HITGROUP_RIGHTLEG:
-				strncat( attackerstr, "right leg", 512 );
-				strncat( victimstr, "right leg", 512 );
-				break;
-			default:
-				strncat( attackerstr, "unknown default case", 512 );
-				strncat( victimstr, "unknown default case", 512 );
-				break;
-			}
-
-			/*if( info.GetDamage() >= pVictim->GetHealth() )
-				strcat( attackerstr, ", who died" );*/
-
-			char tmp[256];
-			Q_snprintf( tmp, 256, " for %i points of damage", (int)info.GetDamage() );
-
-			strncat( attackerstr, tmp, 512 );
-			ClientPrint( pAttacker, HUD_PRINTCENTER, attackerstr );
-
-			strncat( victimstr, " by ", 512 );
-			strncat( victimstr, STRING(pAttacker->pl.netname), 512 );
-			strncat( victimstr, tmp, 512 ),
-
-			/*if( info.GetDamage() >= pVictim->GetHealth() )
-				strcat( victimstr, ", and died" );*/
-
-			ClientPrint( pVictim, HUD_PRINTCENTER, victimstr );
+			UserMessageBegin( recpfilter, "HitVerif" );
+				WRITE_BYTE( pAttacker->entindex() );	//attacker id
+				WRITE_BYTE( pVictim->entindex() );		//victim id
+				WRITE_BYTE( ptr->hitgroup );			//where?
+				WRITE_SHORT( (int)info.GetDamage() );	//damage
+			MessageEnd();
 		}
 		//
 

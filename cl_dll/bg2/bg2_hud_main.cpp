@@ -61,6 +61,8 @@ public:
 	virtual void ApplySchemeSettings( vgui::IScheme *scheme );
 	virtual void OnThink();
 
+	void MsgFunc_HitVerif( bf_read &msg );
+	
 	void HideShowAll( bool visible );
 
 private:
@@ -75,11 +77,17 @@ private:
 	vgui::Label * m_pLabelAmmo; 
 	vgui::Label * m_pLabelWaveTime; 
 	vgui::Label * m_pLabelBGVersion; 
+	vgui::Label *m_pLabelDamageVerificator;
+
+	const char* HitgroupName( int hitgroup );
+
+	float m_flExpireTime;
 };
 
 using namespace vgui;
 
 DECLARE_HUDELEMENT( CHudBG2 );
+DECLARE_HUD_MESSAGE( CHudBG2, HitVerif );
 
 //==============================================
 // CHudBG2's CHudFlags
@@ -96,6 +104,8 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_Base = NULL; 
 	m_Stamina = NULL;
 	m_Health = NULL;
+
+	m_flExpireTime = 0;
 
 	Color ColourWhite( 255, 255, 255, 255 );
 
@@ -133,6 +143,13 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_pLabelBGVersion->SizeToContents();
 	m_pLabelBGVersion->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelBGVersion->SetFgColor( ColourWhite );
+
+	m_pLabelDamageVerificator = new vgui::Label( pParent, "RoundState_warmup", "test label");
+	m_pLabelDamageVerificator->SetPaintBackgroundEnabled( false );
+	m_pLabelDamageVerificator->SetPaintBorderEnabled( false );
+	m_pLabelDamageVerificator->SizeToContents();
+	m_pLabelDamageVerificator->SetContentAlignment( vgui::Label::a_west );
+	m_pLabelDamageVerificator->SetFgColor( ColourWhite );
 }
 
 //==============================================
@@ -151,7 +168,8 @@ void CHudBG2::ApplySchemeSettings( IScheme *scheme )
 // Inits any vars needed
 //==============================================
 void CHudBG2::Init( void )
-{	
+{
+	HOOK_HUD_MESSAGE( CHudBG2, HitVerif );
 }
 
 //==============================================
@@ -265,7 +283,7 @@ void CHudBG2::Paint()
 	/*else
 		m_pLabelAmmo->SetVisible( false );*/
 
-	Q_snprintf( msg2, 512, "%i:%i ", (HL2MPRules()->m_iWaveTime / 60), (HL2MPRules()->m_iWaveTime % 60));
+	Q_snprintf( msg2, 512, "%i:%2i ", (HL2MPRules()->m_iWaveTime / 60), (HL2MPRules()->m_iWaveTime % 60));
 	m_pLabelWaveTime->SetText(msg2);
 	m_pLabelWaveTime->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
@@ -279,6 +297,20 @@ void CHudBG2::Paint()
 	m_pLabelBGVersion->GetSize( w, h );
 	m_pLabelBGVersion->SetPos(5, 60);	
 	m_pLabelBGVersion->SetFgColor( ColourWhite );
+
+	m_pLabelDamageVerificator->SizeToContents();
+	//center and put somewhat below crosshair
+	m_pLabelDamageVerificator->SetPos((ScreenWidth()-m_pLabelDamageVerificator->GetWide())/2, (ScreenHeight()*9)/16);
+
+	//fade out the last second
+	float alpha = (m_flExpireTime - gpGlobals->curtime) * 255.0f;
+	if( alpha < 0.0f )
+		alpha = 0.0f;
+	else if( alpha > 255.0f )
+		alpha = 255.0f;
+
+	m_pLabelDamageVerificator->SetFgColor( Color( 255, 255, 255, (int)alpha ) );
+
 }
 
 //==============================================
@@ -310,4 +342,74 @@ void CHudBG2::HideShowAll( bool visible )
 	m_pLabelWaveTime->SetVisible(visible);
 	m_pLabelAmmo->SetVisible(visible);
 	m_pLabelBGVersion->SetVisible(false);	// BP: not used yet as its not subtle enough, m_pLabelBGVersion->SetVisible(ShouldDraw());
+	m_pLabelDamageVerificator->SetVisible(visible && m_flExpireTime > gpGlobals->curtime);
+}
+
+const char* CHudBG2::HitgroupName( int hitgroup )
+{
+	//BG2 - Tjoppen - TODO: localize
+	switch ( hitgroup )
+	{
+	case HITGROUP_GENERIC:
+		return NULL;
+	case HITGROUP_HEAD:
+		return "head";
+	case HITGROUP_CHEST:
+		return "chest";
+	case HITGROUP_STOMACH:
+		return "stomach";
+	case HITGROUP_LEFTARM:
+		return "left arm";
+	case HITGROUP_RIGHTARM:
+		return "right arm";
+	case HITGROUP_LEFTLEG:
+		return "left leg";
+	case HITGROUP_RIGHTLEG:
+		return "right leg";
+	default:
+		return "unknown default case";
+	}
+}
+
+void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
+{
+	int attacker, victim, hitgroup, damage;
+
+	attacker	= msg.ReadByte();
+	victim		= msg.ReadByte();
+	hitgroup	= msg.ReadByte();
+	damage		= msg.ReadShort();
+
+	//Msg( "MsgFunc_HitVerif: %i %i %i %i\n", attacker, victim, hitgroup, damage );
+
+	player_info_t sAttackerInfo, sVictimInfo;
+	engine->GetPlayerInfo( attacker, &sAttackerInfo );
+	engine->GetPlayerInfo( victim, &sVictimInfo );
+
+	if( !C_BasePlayer::GetLocalPlayer() )
+		return;
+
+	char txt[512];
+	const char *hitgroupname = HitgroupName( hitgroup );
+
+	//BG2 - Tjoppen - TODO: localize
+	if( C_BasePlayer::GetLocalPlayer()->entindex() == victim )
+	{
+		//I'm the victim here!
+		if( hitgroupname )
+			sprintf( txt, "You were hit in the %s by %s for %i points of damage", hitgroupname, sAttackerInfo.name, damage );
+		else
+			sprintf( txt, "You were hit by %s for %i points of damage", sAttackerInfo.name, damage );
+	}
+	else
+	{
+		//got one!
+		if( hitgroupname )
+			sprintf( txt, "You hit %s in the %s for %i points of damage", sVictimInfo.name, hitgroupname, damage );
+		else
+			sprintf( txt, "You hit %s for %i points of damage", sVictimInfo.name, damage );
+	}
+
+	m_pLabelDamageVerificator->SetText( txt );
+	m_flExpireTime = gpGlobals->curtime + 3.0f;
 }

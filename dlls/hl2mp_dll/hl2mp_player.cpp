@@ -1914,7 +1914,7 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			if( comm >= 0 && comm < NUM_VOICECOMMS && comm != VCOMM1_NUM && comm != VCOMM2_START+VCOMM2_NUM )
 			{
 				//char *chat = NULL;
-				bool teamonly = true;
+				bool teamonly = comm != 6;	//battlecries are not team only
 
 				char msg[512];
 				if( GetTeamNumber() == TEAM_AMERICANS )
@@ -1931,6 +1931,10 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 				EmitSound( filter, entindex(), msg );
 
 				CBasePlayer *client = NULL;
+
+				//figure out which players should get this message
+				CRecipientFilter recpfilter;
+
 				for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 				{
 					client = UTIL_PlayerByIndex( i );
@@ -1946,15 +1950,18 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 					if ( !client->CanHearChatFrom( this ) )
 						continue;
 
-					CSingleUserRecipientFilter user( client );
-					user.MakeReliable();
-
-					UserMessageBegin( user, "VoiceComm" );
-						WRITE_BYTE( entindex() );	//voicecomm originator
-						WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );
-					MessageEnd();
+					recpfilter.AddRecipient( client );
 				}
 
+				//make reliable and send
+				recpfilter.MakeReliable();
+
+				UserMessageBegin( recpfilter, "VoiceComm" );
+					WRITE_BYTE( entindex() );	//voicecomm originator
+					WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );	//pack comm number and team
+				MessageEnd();
+
+				//done
 				m_flNextVoicecomm = gpGlobals->curtime + 2.0f;
 			}
 		}

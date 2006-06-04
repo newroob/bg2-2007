@@ -96,6 +96,11 @@ void CCenterStringLabel::ApplySchemeSettings(vgui::IScheme *pScheme)
 	m_hFont = pScheme->GetFont( "Trebuchet24" );
 	assert( m_hFont );
 	SetFont( m_hFont );
+
+	//BG2 - Tjoppen - fix centerstring orientation after resolution change
+	int iHeight = (int)(ScreenHeight() * 0.3);
+	SetSize( ScreenWidth(), iHeight );
+	SetPos( 0, ( ScreenHeight() * 0.35 ) - ( iHeight / 2 ) );
 }
 
 //-----------------------------------------------------------------------------

@@ -129,6 +129,12 @@ CCommMenu2::CCommMenu2( IViewPort *pViewPort ) : Frame( NULL, PANEL_COMM2 )
 void CCommMenu2::ApplySchemeSettings(IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
+
+	int w,h;
+	surface()->GetScreenSize(w, h);
+
+	SetPos( 50, h - GetTall() );
+
 	// need to MakeReadyForUse() on the menus so we can set their bg color before they are displayed
 	/*m_pConfigSettings->GetMenu()->MakeReadyForUse();
 	m_pViewOptions->GetMenu()->MakeReadyForUse();

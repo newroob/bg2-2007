@@ -41,6 +41,8 @@ void RegisterUserMessages( void )
 	usermessages->Register( "classreward", -1 );
 	usermessages->Register( "teamreward", -1 );
 	//usermessages->Register( "flagstatus", -1 );
-	//BG2 - Tjoppen - VoiceComm usermessage
+	//BG2 - Tjoppen - usermessages
 	usermessages->Register( "VoiceComm", 2 );
+	usermessages->Register( "HitVerif", 5 );	//XXX hit YYY in ZZZ for WWW damage
+	//
 }

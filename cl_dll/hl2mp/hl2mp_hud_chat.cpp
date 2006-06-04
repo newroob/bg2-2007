@@ -288,12 +288,12 @@ void CHudChat::MsgFunc_VoiceComm( bf_read &msg )
 		if( comm == 6 )
 		{
 			if( isamerican )
-				ChatPrintf( client, "(COMMAND) %s: Freedom!", sPlayerInfo.name );
+				ChatPrintf( client, "(Command) %s: Freedom!", sPlayerInfo.name );
 			else
-				ChatPrintf( client, "(COMMAND) %s: For king and country!", sPlayerInfo.name );
+				ChatPrintf( client, "(Command) %s: For king and country!", sPlayerInfo.name );
 		}
 		else
-			ChatPrintf( client, "(COMMAND) %s: %s", sPlayerInfo.name, pVChats[comm] );
+			ChatPrintf( client, "(Command) %s: %s", sPlayerInfo.name, pVChats[comm] );
 	}
 }
 
