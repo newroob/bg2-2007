@@ -300,7 +300,7 @@ void CHudBG2::Paint()
 
 	m_pLabelDamageVerificator->SizeToContents();
 	//center and put somewhat below crosshair
-	m_pLabelDamageVerificator->SetPos((ScreenWidth()-m_pLabelDamageVerificator->GetWide())/2, (ScreenHeight()*9)/16);
+	m_pLabelDamageVerificator->SetPos((ScreenWidth()-m_pLabelDamageVerificator->GetWide())/2, (ScreenHeight()*5)/8);
 
 	//fade out the last second
 	float alpha = (m_flExpireTime - gpGlobals->curtime) * 255.0f;

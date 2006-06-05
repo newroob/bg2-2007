@@ -294,9 +294,7 @@ void CHL2MPRules::ResetMap()
 	filter.AddKeep("event_queue_saveload_proxy");
 	filter.AddKeep("player_manager");
 	filter.AddKeep("player");
-	//  filter.AddKeep("flag");
-	//reason:
-	//static void ResetFlags( void );	//deprecated. use HL2MPRules()->ResetMap() instead
+	filter.AddKeep("flag");
 	CBaseEntity *pEnt;
 	CBaseEntity *tmpEnt;
 	// find the first entity in the entity list
@@ -488,7 +486,7 @@ void CHL2MPRules::Think( void )
 		}
 		m_fAdditionTime += gpGlobals->curtime;
 		ResetMap();						//BG2 - Tjoppen - ResetMap in some other places
-		//CFlagHandler::ResetFlags();
+		CFlagHandler::ResetFlags();
         CFlagHandler::RespawnAll();//and respawn! done.
 	}
 	
@@ -587,9 +585,9 @@ void CHL2MPRules::Think( void )
 																//one second to debounce with respect
 																//to any non-spawned players
 
-				//CFlagHandler::ResetFlags();		//reset spawns and flags before respawning anyone..
 				ResetMap();						//BG2 - Tjoppen - ResetMap in some other places
-
+				CFlagHandler::ResetFlags();		//reset spawns and flags before respawning anyone..
+				
 				if( m_iTDMTeamThatWon == 0 )
 				{
 					//draw

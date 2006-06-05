@@ -539,7 +539,7 @@ void CFlag::InputDisable( inputdata_t &inputData )
 	m_iLastTeam = TEAM_UNASSIGNED;
 	SetModel( "models/other/flag_w.mdl" );
 	m_OnDisable.FireOutput( inputData.pActivator, this );
-	CFlagHandler::Update();
+	//CFlagHandler::Update();
 }
 void CFlag::InputToggle( inputdata_t &inputData )
 {
@@ -817,7 +817,7 @@ void CFlag::Think( void )
 					}
 
 					ChangeTeam( TEAM_AMERICANS );
-					CFlagHandler::Update();
+					//CFlagHandler::Update();
 
 					m_OnAmericanCapture.FireOutput( this, this );
 					m_OnCapture.FireOutput( this, this );
@@ -876,7 +876,7 @@ void CFlag::Think( void )
 					}
 
 					ChangeTeam( TEAM_BRITISH );
-					CFlagHandler::Update();
+					//CFlagHandler::Update();
 					m_iRequestingCappers = TEAM_UNASSIGNED;
 					m_iLastTeam = TEAM_UNASSIGNED;
 
@@ -1220,7 +1220,7 @@ void CFlagHandler::RespawnWave()
 		pPlayer->EmitSound( "Flag.capture" );*//*
 }*/
 
-/*void CFlagHandler::ResetFlags( void )
+void CFlagHandler::ResetFlags( void )
 {
 	CBaseEntity *pEntity = NULL;
 
@@ -1230,7 +1230,8 @@ void CFlagHandler::RespawnWave()
 		if( !pFlag )
 			continue;
 
-		if( pFlag->GetTeamNumber() == TEAM_AMERICANS )
+		//why? resetflags is only used after resetmap.. all triggerable entities should be reset
+		/*if( pFlag->GetTeamNumber() == TEAM_AMERICANS )
 		{
 			pFlag->m_OnAmericanLosePoint.FireOutput( pFlag, pFlag );
 			pFlag->m_OnLosePoint.FireOutput( pFlag, pFlag );
@@ -1239,7 +1240,7 @@ void CFlagHandler::RespawnWave()
 		{
 			pFlag->m_OnBritishLosePoint.FireOutput( pFlag, pFlag );
 			pFlag->m_OnLosePoint.FireOutput( pFlag, pFlag );
-		}
+		}*/
 
 		pFlag->ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
 		pFlag->m_iLastTeam = TEAM_UNASSIGNED;
@@ -1259,6 +1260,7 @@ void CFlagHandler::RespawnWave()
 #endif // CLIENT_DLL
 	}
 
+	/*
 	//BG2 - Tjoppen - reset spawnpoints aswell.. this is a hack. we should really have a proper RoundRestart() function somewhere
 	//also, I'm considering removing support for info_player_rebel and info_player_combine..
 	pEntity = NULL;
@@ -1300,8 +1302,8 @@ void CFlagHandler::RespawnWave()
 
 		pPoint->Reset();
 	}
-	//end of spawnpoint resettings
-}*/
+	//end of spawnpoint resettings*/
+}
 
 void CFlagHandler::Update( void )
 {
@@ -1369,8 +1371,8 @@ void CFlagHandler::Update( void )
 		{
 			ClientPrintAll( "The americans won this round!", true );
 			g_Teams[TEAM_AMERICANS]->AddScore( 200 );
-			//ResetFlags();
 			HL2MPRules()->ResetMap();
+			ResetFlags();
 			RespawnAll();
 			WinSong("Americans.win");
 			//do not cause two simultaneous round restarts..
@@ -1382,8 +1384,8 @@ void CFlagHandler::Update( void )
 		{
 			ClientPrintAll( "The british won this round!", true );
 			g_Teams[TEAM_BRITISH]->AddScore( 200 );
-			//ResetFlags();
 			HL2MPRules()->ResetMap();
+			ResetFlags();
 			RespawnAll();
 			WinSong("British.win");
 			//do not cause two simultaneous round restarts..
@@ -1399,8 +1401,8 @@ void CFlagHandler::Update( void )
 			//draw
 			//Msg( "draw\n" );
 			ClientPrintAll( "This round became a draw", true );
-			//ResetFlags();
 			HL2MPRules()->ResetMap();
+			ResetFlags();
 			RespawnAll();
 			//do not cause two simultaneous round restarts..
 			HL2MPRules()->m_bIsRestartingRound = false;
@@ -1414,8 +1416,8 @@ void CFlagHandler::Update( void )
 			//Msg( "british win\n" );
 			ClientPrintAll( "The british won this round!", true );
 			g_Teams[TEAM_BRITISH]->AddScore( 200 );
-			//ResetFlags();
 			HL2MPRules()->ResetMap();
+			ResetFlags();
 			RespawnAll();
 			WinSong("British.win");
 			//do not cause two simultaneous round restarts..
@@ -1430,8 +1432,8 @@ void CFlagHandler::Update( void )
 			//Msg( "americans win\n" );
 			ClientPrintAll( "The americans won this round!", true );
 			g_Teams[TEAM_AMERICANS]->AddScore( 200 );
-			//ResetFlags();
 			HL2MPRules()->ResetMap();
+			ResetFlags();
 			RespawnAll();
 			WinSong("Americans.win");
 			//do not cause two simultaneous round restarts..
