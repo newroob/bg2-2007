@@ -60,6 +60,7 @@ public:
 	virtual void Paint( void );
 	virtual void ApplySchemeSettings( vgui::IScheme *scheme );
 	virtual void OnThink();
+	void Reset( void );
 
 	void MsgFunc_HitVerif( bf_read &msg );
 	
@@ -264,7 +265,7 @@ void CHudBG2::Paint()
 	m_pLabelAScore->SetFgColor( ColourWhite );
 	
 	int iAmmoCount = pHL2Player->GetAmmoCount(wpn->GetPrimaryAmmoType()) + wpn->Clip1();
-	//if( iAmmoCount >= 0 )
+	if( iAmmoCount >= 0 )
 	{
 		Q_snprintf( msg2, 512, "%i ", iAmmoCount);
 		m_pLabelAmmo->SetText(msg2);
@@ -280,8 +281,8 @@ void CHudBG2::Paint()
 		m_pLabelAmmo->GetSize( w, h );
 		m_pLabelAmmo->SetPos(135,ystart + 100 - h/2);
 	}
-	/*else
-		m_pLabelAmmo->SetVisible( false );*/
+	else
+		m_pLabelAmmo->SetVisible( false );
 
 	Q_snprintf( msg2, 512, "%i:%2i ", (HL2MPRules()->m_iWaveTime / 60), (HL2MPRules()->m_iWaveTime % 60));
 	m_pLabelWaveTime->SetText(msg2);
@@ -333,6 +334,13 @@ void CHudBG2::OnThink()
 			HideShowAll(false);
 		}
 	}*/
+}
+
+void CHudBG2::Reset( void )
+{
+	//mapchange, clear indicators. and stuff.
+	m_flExpireTime = 0;
+	HideShowAll( false );
 }
 
 void CHudBG2::HideShowAll( bool visible )
@@ -411,5 +419,5 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 	}
 
 	m_pLabelDamageVerificator->SetText( txt );
-	m_flExpireTime = gpGlobals->curtime + 3.0f;
+	m_flExpireTime = gpGlobals->curtime + 5.0f;
 }
