@@ -146,7 +146,15 @@ private:
 	CNetworkVar( bool, m_bTeamPlayEnabled );
 	CUtlVector<EHANDLE> m_hRespawnableItemsAndWeapons;
 
-
+	//BG2 - Tjoppen - stuff in CHL2MPRules
+public:
+	void RestartRound();
+	void RespawnAll();
+	void WinSong( char *pSound );
+	void RespawnWave();
+	void ResetFlags();
+	void UpdateFlags();
+	//
 };
 
 inline CHL2MPRules* HL2MPRules()

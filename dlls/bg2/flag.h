@@ -35,6 +35,11 @@
 #define CFlag C_Flag
 #endif*/
 
+const int CFlag_START_DISABLED = 1;		// spawnflag definition
+
+//BG2 - Tjoppen - TODO: replace the use of ClientPrintAll with custom usermessages
+void ClientPrintAll( char *str, bool printfordeadplayers = false, bool forcenextclientprintall = false );
+
 class CFlag : public CBaseAnimating
 {
 	DECLARE_CLASS( CFlag, CBaseAnimating );
@@ -173,15 +178,4 @@ private:
 	COutputEvent m_OnDisable;
 
 	DECLARE_DATADESC();
-};
-
-class CFlagHandler
-{
-public:
-	static void RespawnAll();
-	static void RespawnWave();
-	//static void PlayCaptureSound( void );
-	static void WinSong( char *pSound );
-	static void ResetFlags( void );	//deprecated. use HL2MPRules()->ResetMap() instead
-	static void Update( void );
 };

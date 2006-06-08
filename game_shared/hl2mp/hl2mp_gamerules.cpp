@@ -199,9 +199,6 @@ CHL2MPRules::CHL2MPRules()
 	flNextClientPrintAll = 0;
 	bNextClientPrintAllForce = false;
 
-	extern float nextwinsong;
-	nextwinsong = 0;
-
 	extern CBaseEntity *g_pLastIntermission;
 	g_pLastIntermission = NULL;
 	//
@@ -345,13 +342,13 @@ void CHL2MPRules::Think( void )
 			if (pAmericans->GetScore() < pBritish->GetScore())
 			{
 				ClientPrintAll( "British win!", true, true );
-				CFlagHandler::WinSong("British.win");
+				WinSong("British.win");
 			}
 
 			if (pAmericans->GetScore() > pBritish->GetScore())
 			{
 				ClientPrintAll( "Americans win!", true, true );
-				CFlagHandler::WinSong("Americans.win");
+				WinSong("Americans.win");
 			}
 
 			if (pAmericans->GetScore() == pBritish->GetScore())
@@ -386,7 +383,7 @@ void CHL2MPRules::Think( void )
 //	CFlagHandler::FlagThink();//make the flags think.
 	if (m_fNextFlagUpdate <= gpGlobals->curtime)
 	{
-		CFlagHandler::Update();
+		UpdateFlags();
 		m_fNextFlagUpdate = gpGlobals->curtime + 1;
 	}
 	else if (m_fNextFlagUpdate == 0)
@@ -485,9 +482,7 @@ void CHL2MPRules::Think( void )
 			pPlayer->ResetDeathCount();//...and damage
 		}
 		m_fAdditionTime += gpGlobals->curtime;
-		ResetMap();						//BG2 - Tjoppen - ResetMap in some other places
-		CFlagHandler::ResetFlags();
-        CFlagHandler::RespawnAll();//and respawn! done.
+		RestartRound();	//BG2 - Tjoppen - restart round
 	}
 	
 	//=========================
@@ -585,41 +580,25 @@ void CHL2MPRules::Think( void )
 																//one second to debounce with respect
 																//to any non-spawned players
 
-				ResetMap();						//BG2 - Tjoppen - ResetMap in some other places
-				CFlagHandler::ResetFlags();		//reset spawns and flags before respawning anyone..
+				RestartRound();	//reset spawns, flags and players
 				
-				if( m_iTDMTeamThatWon == 0 )
+				if (mp_respawntime.GetInt() > 0)
 				{
-					//draw
-					CFlagHandler::RespawnAll();
-					if (mp_respawntime.GetInt() > 0)
-					{
-						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
-						m_fLastRespawnWave = gpGlobals->curtime;
-					}
+					m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+					m_fLastRespawnWave = gpGlobals->curtime;
 				}
-				else if( m_iTDMTeamThatWon == 2 )
+
+				if( m_iTDMTeamThatWon == 2 )
 				{
 					//british
-					CFlagHandler::RespawnAll();
-					CFlagHandler::WinSong("British.win");
-					if (mp_respawntime.GetInt() > 0)
-					{
-						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
-						m_fLastRespawnWave = gpGlobals->curtime;
-					}
+					WinSong("British.win");
 				}
 				else if( m_iTDMTeamThatWon == 1 )
 				{
 					//americans
-					CFlagHandler::RespawnAll();
-					CFlagHandler::WinSong("Americans.win");
-					if (mp_respawntime.GetInt() > 0)
-					{
-						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
-						m_fLastRespawnWave = gpGlobals->curtime;
-					}
+					WinSong("Americans.win");
 				}
+				//else it was a draw, so play no music
 			}
 		}
 	}
@@ -627,7 +606,7 @@ void CHL2MPRules::Think( void )
 	{
 		if ((m_fLastRespawnWave + mp_respawntime.GetFloat()) <= gpGlobals->curtime)
 		{
-			CFlagHandler::RespawnWave();
+			RespawnWave();
 			m_fLastRespawnWave = gpGlobals->curtime;
 		}
 	}
@@ -1218,3 +1197,410 @@ CAmmoDef *GetAmmoDef()
 
 	return &def;
 }
+
+#ifndef CLIENT_DLL
+
+void CHL2MPRules::RestartRound()
+{
+	//restart current round. immediately.
+	ResetMap();
+	ResetFlags();
+	RespawnAll();
+}
+
+void CHL2MPRules::RespawnAll()
+{
+	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
+		return;
+
+	bool spawn = true;	//set to false if we ran out of spawn points
+
+	int x;
+	for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
+	{
+		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_AMERICANS]->GetPlayer( x ) );
+
+		if( !pPlayer )
+			break;
+
+		//check if we've run out of spawn points. if we alread have, we can skip this step
+		if( spawn && !pPlayer->CheckSpawnPoints() )
+			spawn = false;
+
+		if( spawn )
+			pPlayer->Spawn();
+		else if( pPlayer->IsAlive() )
+		{
+			//if there's no spawn points and the player isn't dead - just kill 'em!
+			pPlayer->TakeDamage( CTakeDamageInfo( GetContainingEntity(INDEXENT(0)), GetContainingEntity(INDEXENT(0)), 300, DMG_GENERIC ) );
+			pPlayer->SetNextThink( gpGlobals->curtime + 3.0f );	//don't respawn in a while
+		}
+
+		//BG2 - Tjoppen - remove ragdoll - remember to change this to remove multiple ones if we decide to enable more corpses
+		if( pPlayer->m_hRagdoll )
+		{
+			UTIL_RemoveImmediate( pPlayer->m_hRagdoll );
+			pPlayer->m_hRagdoll = NULL;
+		}
+	}
+
+	spawn = true;	//reset for other team
+
+	for( x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
+	{
+		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
+
+		if( !pPlayer )
+			break;
+
+		//check if we've run out of spawn points. if we alread have, we can skip this step
+		if( spawn && !pPlayer->CheckSpawnPoints() )
+			spawn = false;
+
+		if( spawn )
+			pPlayer->Spawn();
+		else if( pPlayer->IsAlive() )
+		{
+			//if there's no spawn points and the player isn't dead - just kill 'em!
+			pPlayer->TakeDamage( CTakeDamageInfo( GetContainingEntity(INDEXENT(0)), GetContainingEntity(INDEXENT(0)), 300, DMG_GENERIC ) );
+			pPlayer->SetNextThink( gpGlobals->curtime + 3.0f );	//don't respawn in a while
+		}
+
+		//BG2 - Tjoppen - remove ragdoll - remember to change this to remove multiple ones if we decide to enable more corpses
+		if( pPlayer->m_hRagdoll )
+		{
+			UTIL_RemoveImmediate( pPlayer->m_hRagdoll );
+			pPlayer->m_hRagdoll = NULL;
+		}
+	}
+
+	/*HL2MPRules()->m_bIsRestartingRound = false;
+	HL2MPRules()->m_flNextRoundRestart = gpGlobals->curtime + 1;*/
+}
+
+void CHL2MPRules::WinSong( char *pSound )
+{
+	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
+		return;
+
+	if( m_fNextWinSong > gpGlobals->curtime && pSound )
+		return;
+	
+	m_fNextWinSong = gpGlobals->curtime + 20;
+	
+	int x;
+	
+	for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
+	{
+		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_AMERICANS]->GetPlayer( x ) );
+
+		if( !pPlayer )
+			break;
+
+		if( pSound )
+		{
+			CPASAttenuationFilter filter( pPlayer, 10.0f );	//high attenuation so only this player hears it
+			filter.UsePredictionRules();
+			pPlayer->EmitSound( filter, pPlayer->entindex(), pSound );
+		}
+	}
+
+	for( x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
+	{
+		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
+
+		if( !pPlayer )
+			break;
+
+		if( pSound )
+		{
+			CPASAttenuationFilter filter( pPlayer, 10.0f );	//high attenuation so only this player hears it
+			filter.UsePredictionRules();
+			pPlayer->EmitSound( filter, pPlayer->entindex(), pSound );
+		}
+	}
+}
+
+void CHL2MPRules::RespawnWave()
+{
+	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
+		return;
+
+	for( int x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
+	{
+		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_AMERICANS]->GetPlayer( x ) );
+
+		if( !pPlayer )
+			break;
+
+		if( pPlayer->IsAlive() )
+			continue;
+
+		if( pPlayer->CheckSpawnPoints() )
+			pPlayer->Spawn();
+		else
+			break;
+	}
+
+	for( int x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
+	{
+		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
+		
+		if( !pPlayer )
+			break;
+
+		if( pPlayer->IsAlive() )
+			continue;
+
+		if( pPlayer->CheckSpawnPoints() )
+			pPlayer->Spawn();
+		else
+			break;
+	}
+
+	/*for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
+	{
+		CBasePlayer *pPlayer = g_Teams[TEAM_AMERICANS]->GetPlayer( x );
+		if( !pPlayer->IsAlive() )
+		{
+			if( !pPlayer->CheckSpawnPoints() )
+				break;
+
+			pPlayer->Spawn();
+		}
+	}
+
+	for( x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
+	{
+		CBasePlayer *pPlayer = g_Teams[TEAM_BRITISH]->GetPlayer( x );
+		if( !pPlayer->IsAlive() )
+		{
+			if( !pPlayer->CheckSpawnPoints() )
+				break;
+
+			pPlayer->Spawn();
+		}
+	}*/
+}
+
+/*void CFlagHandler::PlayCaptureSound( void )
+{
+	/*CBasePlayer *pPlayer = NULL;
+	while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassname( pPlayer, "player" )) != NULL )
+		pPlayer->EmitSound( "Flag.capture" );*//*
+}*/
+
+void CHL2MPRules::ResetFlags( void )
+{
+	CBaseEntity *pEntity = NULL;
+
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
+	{
+		CFlag *pFlag = dynamic_cast<CFlag*>(pEntity);
+		if( !pFlag )
+			continue;
+
+		//why? resetflags is only used after resetmap.. all triggerable entities should be reset
+		/*if( pFlag->GetTeamNumber() == TEAM_AMERICANS )
+		{
+			pFlag->m_OnAmericanLosePoint.FireOutput( pFlag, pFlag );
+			pFlag->m_OnLosePoint.FireOutput( pFlag, pFlag );
+		}
+		else if( pFlag->GetTeamNumber() == TEAM_BRITISH )
+		{
+			pFlag->m_OnBritishLosePoint.FireOutput( pFlag, pFlag );
+			pFlag->m_OnLosePoint.FireOutput( pFlag, pFlag );
+		}*/
+
+		pFlag->ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
+		pFlag->m_iLastTeam = TEAM_UNASSIGNED;
+		pFlag->m_iRequestingCappers = TEAM_UNASSIGNED;
+
+#ifndef CLIENT_DLL
+		if (pFlag->HasSpawnFlags( CFlag_START_DISABLED ))
+		{
+			pFlag->m_bActive = false;
+			pFlag->SetModel( "models/other/flag_w.mdl" );
+		}
+		else
+		{
+			pFlag->m_bActive = true;
+			//SetModel( "models/other/flag_n.mdl" );
+		}
+#endif // CLIENT_DLL
+	}
+
+	/*
+	//BG2 - Tjoppen - reset spawnpoints aswell.. this is a hack. we should really have a proper RoundRestart() function somewhere
+	//also, I'm considering removing support for info_player_rebel and info_player_combine..
+	pEntity = NULL;
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "info_player_rebel" )) != NULL )
+	{
+		CSpawnPoint *pPoint = dynamic_cast<CSpawnPoint*>(pEntity);
+		if( !pPoint )
+			continue;
+
+		pPoint->Reset();
+	}
+
+	pEntity = NULL;
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "info_player_combine" )) != NULL )
+	{
+		CSpawnPoint *pPoint = dynamic_cast<CSpawnPoint*>(pEntity);
+		if( !pPoint )
+			continue;
+
+		pPoint->Reset();
+	}
+
+	pEntity = NULL;
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "info_player_american" )) != NULL )
+	{
+		CSpawnPoint *pPoint = dynamic_cast<CSpawnPoint*>(pEntity);
+		if( !pPoint )
+			continue;
+
+		pPoint->Reset();
+	}
+
+	pEntity = NULL;
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "info_player_british" )) != NULL )
+	{
+		CSpawnPoint *pPoint = dynamic_cast<CSpawnPoint*>(pEntity);
+		if( !pPoint )
+			continue;
+
+		pPoint->Reset();
+	}
+	//end of spawnpoint resettings*/
+}
+
+void CHL2MPRules::UpdateFlags( void )
+{
+	CBaseEntity *pEntity = NULL;
+	
+	int	american_flags = 0,
+		british_flags = 0,
+		neutral_flags = 0;
+	int	foramericans = 0;
+	int	forbritish = 0;
+	//BG2 - Tjoppen - not needed
+	/*int iNumFlags = 0;
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
+	{
+		iNumFlags++;
+	}*/
+
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
+	{
+		CFlag *pFlag = dynamic_cast<CFlag*>(pEntity);
+		if( !pFlag || !pFlag->IsActive() )
+			continue;
+
+		switch( pFlag->GetTeamNumber() )
+		{
+		case TEAM_AMERICANS:
+			american_flags++;
+			break;
+		case TEAM_BRITISH:
+			british_flags++;
+			break;
+		default:
+			neutral_flags++;
+			break;
+		}
+		switch(pFlag->m_iForTeam)
+		{
+			case 0:
+				foramericans++;
+				forbritish++;
+				break;
+			case 1:
+				foramericans++;
+				break;
+			case 2:
+				forbritish++;
+				break;
+			default://assume both
+				foramericans++;
+				forbritish++;
+				break;
+		}
+	}
+
+	/*Msg( "american_flags = %i\n", american_flags );
+	Msg( "british_flags = %i\n", british_flags );
+	Msg( "neutral_flags = %i\n", neutral_flags );*/
+
+	if( !american_flags && !british_flags && !neutral_flags )
+		return;
+
+	if( neutral_flags > 0 )
+	{
+		if( (foramericans - american_flags) == 0 && foramericans != 0 )
+		{
+			ClientPrintAll( "The americans won this round!", true );
+			g_Teams[TEAM_AMERICANS]->AddScore( 200 );
+			RestartRound();
+			WinSong("Americans.win");
+			//do not cause two simultaneous round restarts..
+			m_bIsRestartingRound = false;
+			m_flNextRoundRestart = gpGlobals->curtime + 1;
+			return;
+		}
+		if( (forbritish - british_flags) == 0 && forbritish != 0 )
+		{
+			ClientPrintAll( "The british won this round!", true );
+			g_Teams[TEAM_BRITISH]->AddScore( 200 );
+			RestartRound();
+			WinSong("British.win");
+			//do not cause two simultaneous round restarts..
+			m_bIsRestartingRound = false;
+			m_flNextRoundRestart = gpGlobals->curtime + 1;
+			return;
+		}
+	}
+	else
+	{
+		if( american_flags <= 0 && british_flags <= 0 )
+		{
+			//draw
+			//Msg( "draw\n" );
+			ClientPrintAll( "This round became a draw", true );
+			RestartRound();
+			//do not cause two simultaneous round restarts..
+			m_bIsRestartingRound = false;
+			m_flNextRoundRestart = gpGlobals->curtime + 1;
+			return;
+		}
+
+		if ( american_flags <= 0 )
+		{
+			//british win
+			//Msg( "british win\n" );
+			ClientPrintAll( "The british won this round!", true );
+			g_Teams[TEAM_BRITISH]->AddScore( 200 );
+			RestartRound();
+			WinSong("British.win");
+			//do not cause two simultaneous round restarts..
+			m_bIsRestartingRound = false;
+			m_flNextRoundRestart = gpGlobals->curtime + 1;
+			return;
+		}
+
+		if ( british_flags <= 0 )
+		{
+			//americans win
+			//Msg( "americans win\n" );
+			ClientPrintAll( "The americans won this round!", true );
+			g_Teams[TEAM_AMERICANS]->AddScore( 200 );
+			RestartRound();
+			WinSong("Americans.win");
+			//do not cause two simultaneous round restarts..
+			m_bIsRestartingRound = false;
+			m_flNextRoundRestart = gpGlobals->curtime + 1;
+			return;
+		}
+	}
+}
+#endif
