@@ -7,37 +7,36 @@
 # Developer configurable items
 #############################################################################
 
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/tjoppen/srcds_l/bin:/home/tjoppen/xerces-2.6/lib:.
+
 # the name of the mod binary (_i486.so is appended to the end)
 NAME=server
 # the location of the vcproj that builds the mod
 MOD_PROJ=../dlls/hl_sdk.vcproj
 # the name of the mod configuration (typically <proj name>_<build type><build target>)
-MOD_CONFIG=hl_ReleaseSDKWin32
+MOD_CONFIG=hl_ReleaseHL2MPWin32
 
 # the directory the base binaries (tier0_i486.so, etc) are located
-#GAME_DIR=../../
-GAME_DIR=~/valve/hl2bin/
+GAME_DIR=/home/tjoppen/srcds_l
 
 # compiler options (gcc 3.4.1 or above is required)
-CC=/usr/local/bin/gcc
-CPLUS=/usr/local/bin/g++
-CLINK=/usr/local/bin/gcc
-CPP_LIB="/usr/local/lib/libstdc++.a /usr/local/lib/libgcc_eh.a"
-
+#CC=/opt/gcc-3.4.1/bin/gcc
+#CPLUS=/opt/gcc-3.4.1/bin/g++
+#CLINK=/opt/gcc-3.4.1/bin/gcc
+CC=gcc
+CPLUS=g++
+CLINK=gcc
+#CPP_LIB="/opt/gcc-3.4.1/lib/libstdc++.a /opt/gcc-3.4.1/lib/gcc/i686-pc-linux-gnu/3.4.1/libgcc_eh.a"
+CPP_LIB="/usr/lib/gcc/i386-redhat-linux/3.4.3/libstdc++.a /usr/lib/gcc/i386-redhat-linux/3.4.3/libgcc_eh.a"
 # put any compiler flags you want passed here
 USER_CFLAGS=
 
 # link flags for your mod, make sure to include any special libraries here
-LDFLAGS="-lm -ldl $(GAME_DIR)/bin/tier0_i486.so $(GAME_DIR)/bin/vstdlib_i486.so"
+LDFLAGS="-lm -ldl tier0_i486.so vstdlib_i486.so"
 
-# XERCES 2.6.0 or above ( http://xml.apache.org/xerces-c/ ) is used by the vcproj to makefile converter
-# it must be installed before being able to run this makefile
-XERCES_INC_DIR=/home/alfred/tmp/xerces-c-src_2_6_0/include
-XERCES_LIB_DIR=/home/alfred/tmp/xerces-c-src_2_6_0/lib
-# if you have xerces installed already you should be able to use the two lines below
-#XERCES_INC_DIR=/usr/include
-#XERCES_LIB_DIR=/usr/lib
-
+# XERCES 2.6.0 or above is used by the vcproj to makefile converter
+XERCES_INC_DIR=/home/tjoppen/xerces-2.6/include
+XERCES_LIB_DIR=/home/tjoppen/xerces-2.6/lib
 
 #############################################################################
 # Things below here shouldn't need to be altered
