@@ -47,7 +47,9 @@ void CPlayerMove::StartCommand( CBasePlayer *player, CUserCmd *cmd )
 	CBaseEntity::SetPredictionPlayer( player );
 	
 	// Move other players back to history positions based on local player's lag
-	lagcompensation->StartLagCompensation( player, cmd );
+	//BG2 - Tjoppen - melee lag fix
+	//lagcompensation->StartLagCompensation( player, cmd );
+	//
 
 #if defined (HL2_DLL)
 	// pull out backchannel data and move this out
@@ -79,7 +81,9 @@ void CPlayerMove::FinishCommand( CBasePlayer *player )
 	VPROF( "CPlayerMove::FinishCommand" );
 
 	// Restore other players to current positions
-	lagcompensation->FinishLagCompensation( player );
+	//BG2 - Tjoppen - melee lag fix
+	//lagcompensation->FinishLagCompensation( player );
+	//
 
 	player->m_pCurrentCommand = NULL;
 	CBaseEntity::SetPredictionRandomSeed( NULL );
@@ -395,7 +399,13 @@ void CPlayerMove::RunCommand ( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper 
 	// Let server invoke any needed impact functions
 	moveHelper->ProcessImpacts();
 
+	//BG2 - Tjoppen - melee lag fix
+	//thanks go to Teddy on the Dystopia team for making this, and Jorg of the Unknown Lifeforms team for pointing it out to me
+	// Only do unlag for post think/post frame, which is mainly weapons stuff! - Teddy
+	lagcompensation->StartLagCompensation( player, ucmd );
 	RunPostThink( player );
+	lagcompensation->FinishLagCompensation( player );
+	//
 
 	FinishCommand( player );
 
