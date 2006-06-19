@@ -865,6 +865,9 @@ void C_HL2MPRagdoll::ImpactTrace( trace_t *pTrace, int iDamageType, char *pCusto
 	}
 }
 
+//BG2 - Skillet - Ragdoll control CVARs
+ConVar cl_ragdoll_maxcount( "cl_ragdoll_maxcount", "-1", FCVAR_ARCHIVE, "Positive number sets the maximum number of player ragdolls. \n Negative numbers: No limit, ragdolls will still be only one per player." );
+ConVar cl_ragdoll_staytime( "cl_ragdoll_staytime", "-1", FCVAR_ARCHIVE, "Positive non-zero number sets the maximum time in seconds before a ragdoll is removed. \n Negative numbers: No time limit." );
 
 void C_HL2MPRagdoll::CreateHL2MPRagdoll( void )
 {
@@ -935,6 +938,29 @@ void C_HL2MPRagdoll::CreateHL2MPRagdoll( void )
 	m_nRenderFX = kRenderFxRagdoll;
 
 	BecomeRagdollOnClient( false );
+
+	//BG2 - Skillet - Add this ragdoll to the bottom of our list
+	HL2MPRules()->m_hRagdollList.AddToHead( this );
+
+	if ( cl_ragdoll_staytime.GetInt() > 0 )
+	{
+		SetNextClientThink( gpGlobals->curtime + cl_ragdoll_staytime.GetInt() );
+	}
+
+	//BG2 - Skillet - If we've got more ragdolls than allowed, remove the oldest one until we get down to an acceptable number
+	if ( cl_ragdoll_maxcount.GetInt() >= 0 )
+	{
+		while ( HL2MPRules()->m_hRagdollList.Count() > cl_ragdoll_maxcount.GetInt() )
+		{
+			//Remove the ragdoll on the top of the list (oldest one)
+			int iLastIndex = HL2MPRules()->m_hRagdollList.Count() - 1;
+			if ( HL2MPRules()->m_hRagdollList.IsValidIndex( iLastIndex ) )
+			{
+				C_HL2MPRagdoll* Ragdoll = HL2MPRules()->m_hRagdollList.Element( iLastIndex );
+				Ragdoll->Remove();
+			}
+		}
+	}
 }
 
 
@@ -966,9 +992,16 @@ IRagdoll* C_HL2MPRagdoll::GetIRagdoll() const
 
 void C_HL2MPRagdoll::UpdateOnRemove( void )
 {
+	HL2MPRules()->m_hRagdollList.FindAndRemove( this ); //BG2 - Skillet
 	VPhysicsSetObject( NULL );
 
 	BaseClass::UpdateOnRemove();
+}
+
+//BG2 - Skillet
+void C_HL2MPRagdoll::ClientThink( void )
+{
+	Remove();
 }
 
 //-----------------------------------------------------------------------------

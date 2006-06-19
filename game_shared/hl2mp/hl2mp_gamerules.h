@@ -51,6 +51,10 @@
 #include "gamerules.h"
 #include "teamplay_gamerules.h"
 
+//BG2 - Skillet - For ragdoll removal stuff
+#ifdef CLIENT_DLL
+	#include "c_hl2mp_player.h"
+#endif
 enum
 {
 	TEAM_AMERICANS = 2,
@@ -116,6 +120,9 @@ public:
 	void	AddLevelDesignerPlacedObject( CBaseEntity *pEntity );
 	void	RemoveLevelDesignerPlacedObject( CBaseEntity *pEntity );
 	void	ManageObjectRelocation( void );
+#else
+	//BG2 - Skillet - List of player ragdolls
+	CUtlVector<C_HL2MPRagdoll*> m_hRagdollList;
 
 #endif
 	virtual void ClientDisconnected( edict_t *pClient );

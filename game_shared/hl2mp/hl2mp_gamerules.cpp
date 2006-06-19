@@ -213,7 +213,11 @@ CHL2MPRules::CHL2MPRules()
 	m_iTDMTeamThatWon = 0;
 	m_bHasDoneWinSong = false;
 	m_fNextWinSong = gpGlobals->curtime;
+//BG2 - Skillet
+#else
+	m_hRagdollList.RemoveAll();
 #endif
+
 }
 	
 CHL2MPRules::~CHL2MPRules( void )

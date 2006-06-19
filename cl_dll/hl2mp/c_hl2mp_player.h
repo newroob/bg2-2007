@@ -161,6 +161,8 @@ public:
 	void UpdateOnRemove( void );
 	virtual void SetupWeights( void );
 	
+	void ClientThink( void ); //BG2 - Skillet
+
 private:
 	
 	C_HL2MPRagdoll( const C_HL2MPRagdoll & ) {}
