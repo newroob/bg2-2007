@@ -258,13 +258,13 @@ void CHudFlags::Paint()
 							if( iTimeToCap > 0.1f )
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i P - T %i", g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap);
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i P - T %i", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap);
 								strcat(	text, text_add);
 							}
 							else
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i P", g_Flags[i]->m_iCapturePlayers);
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i P", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers);
 								strcat(	text, text_add);
 							}
 							break;
@@ -272,13 +272,13 @@ void CHudFlags::Paint()
 							if( iTimeToCap > 0.1f )
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i Players - Time %i", g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players - Time %i", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
 								strcat(	text, text_add);
 							}
 							else
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i Players", g_Flags[i]->m_iCapturePlayers);
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers);
 								strcat(	text, text_add);
 							}
 							break;
@@ -287,21 +287,21 @@ void CHudFlags::Paint()
 				case 1:
 					if( iTimeToCap > 0.1f )
 					{
-						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i Players - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
 					}
 					else
 					{
-						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i Players", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers);
+						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers);
 					}
 					break;
 				case 2:
 					if( iTimeToCap > 0.1f )
 					{
-						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i Players - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
 					}
 					else
 					{
-						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i Players", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iCapturePlayers);
+						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers);
 					}
 					break;
 			}
@@ -561,7 +561,7 @@ void CHudFlags::Paint()
 					break;
 			}
 
-			Q_snprintf( text, 512, "%i", g_Flags[i]->m_iCapturePlayers );
+			Q_snprintf( text, 512, "%i/%i", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers );
 			m_pLabelFlag[i]->SetText( text );
 			m_pLabelFlag[i]->SizeToContents();
 			m_pLabelFlag[i]->SetVisible( true );

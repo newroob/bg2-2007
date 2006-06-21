@@ -162,6 +162,7 @@ private:
 	//BG2 - Tjoppen - vars in hl2mp_player
 public:
 	const char*	PlayermodelTeamClass( int team, int classid );
+	void RemoveSelfFromFlags( void );	//BG2 - Tjoppen - do this whenever we die, change team or disconnect or anything similar
 
 private:
 	//int		m_iClass;			//BG2 - Tjoppen - class system

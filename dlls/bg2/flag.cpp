@@ -667,19 +667,27 @@ void CFlag::Precache( void )
 
 void CFlag::Think( void )
 {
-	//SetSequence( SelectWeightedSequence( ACT_VM_IDLE ) );
-	//StudioFrameAdvance();
+	/*
+	1.0F style flags
 
-#ifndef CLIENT_DLL
+	when not capped, they behave just like the old flags
+	- wait for m_iCapturePlayers(of only one team?) to stand near it for m_flCaptureTime seconds
+	- after said time, flag is captured by that team
+	- a held flag will periodically award the team with some amount of points
+
+	the difference now is:
+	- when all the people who captured the flag die, it's uncapped(tweak this to something other than zero players?)
+	- more than m_iCapturePlayers players can hold the flag by touching it after it has been captured(overloading)
+	- any enemy walking into a capture zone without a friendly player inside guarding the flag, will uncap the flag
+
+	*/
+
+	SetNextThink( gpGlobals->curtime + 0.5f );
+
 	if (!m_bActive)	// if inactive, stop the thinking cycle
 		return;
-#endif
 
-	CBasePlayer *pPlayer = NULL;
-
-	int americans = 0,
-		british = 0;
-
+	//award any time bonii
 	switch( GetTeamNumber() )
 	{
 		case TEAM_AMERICANS:
@@ -728,6 +736,27 @@ void CFlag::Think( void )
 			}
 	}
 
+	//safeguard against the possibility that m_flNextTeamBonus is somehow out of bounds after above check
+	//could happen if the flag stays uncapped for a long time. if so, the team that caps it would get a lot of "stored up"
+	//points.
+	if (m_flNextTeamBonus <= gpGlobals->curtime)
+		m_flNextTeamBonus = gpGlobals->curtime + m_iTeamBonusInterval;
+
+	//split think function in twain
+	if( GetTeamNumber() <= TEAM_SPECTATOR )
+		ThinkUncapped();
+	else
+		ThinkCapped();
+}
+
+//this is actually the old think funtion, slightly modified
+void CFlag::ThinkUncapped( void )
+{
+	CBasePlayer *pPlayer = NULL;
+
+	int americans = 0,
+		british = 0;
+
 	while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
 	{
 		if( !pPlayer->IsAlive() )	//dead players don't cap
@@ -764,6 +793,8 @@ void CFlag::Think( void )
 		if(americans > 0)
 		{
 			m_iRequestingCappers = TEAM_AMERICANS;
+			m_iNearbyPlayers = americans;
+
 			if (americans >= min( m_iCapturePlayers, g_Teams[TEAM_AMERICANS]->GetNumPlayers() ) && GetTeamNumber() != TEAM_AMERICANS )
 			{
 				//Msg( "americans\n" );
@@ -785,46 +816,16 @@ void CFlag::Think( void )
 					//CFlagHandler::PlayCaptureSound();
 					Q_snprintf( msg2, 512, "The americans captured a flag(%s)", STRING( m_sFlagName.Get() ) );
 					msg = msg2;
-					EmitSound( "Flag.capture" );
-					g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
-					m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
 
-					while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
-					{
-						if( !pPlayer->IsAlive() )	//dead players don't cap
-							continue;
-
-						switch( pPlayer->GetTeamNumber() )
-						{
-							case TEAM_AMERICANS:
-								pPlayer->IncrementFragCount(m_iPlayerBonus);
-								CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
-								if( pPlayer2 )
-									pPlayer2->IncreaseReward(1);
-								break;
-						}
-					}
-					m_iLastTeam = TEAM_UNASSIGNED;
-					m_iRequestingCappers = TEAM_UNASSIGNED;
-
-					// before we change team, if they stole the point, fire the output
-					if (GetTeamNumber() == TEAM_BRITISH)
-					{
-						m_OnBritishLosePoint.FireOutput( this, this );
-						m_OnLosePoint.FireOutput( this, this );
-					}
-
-					ChangeTeam( TEAM_AMERICANS );
-					//CFlagHandler::Update();
-
-					m_OnAmericanCapture.FireOutput( this, this );
-					m_OnCapture.FireOutput( this, this );
+					Capture( TEAM_AMERICANS );
 				}
 			}
 		}
 		else if(british > 0)
 		{
 			m_iRequestingCappers = TEAM_BRITISH;
+			m_iNearbyPlayers = british;
+
 			if (british >= min( m_iCapturePlayers, g_Teams[TEAM_BRITISH]->GetNumPlayers() ) && GetTeamNumber() != TEAM_BRITISH )
 			{
 				//Msg( "british\n" );
@@ -846,40 +847,8 @@ void CFlag::Think( void )
 					//CFlagHandler::PlayCaptureSound();
 					Q_snprintf( msg2, 512, "The british captured a flag(%s)", STRING( m_sFlagName.Get() ) );
 					msg = msg2;
-					EmitSound( "Flag.capture" );
-					g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
-					m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
 
-					while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
-					{
-						if( !pPlayer->IsAlive() )	//dead players don't cap
-							continue;
-
-						switch( pPlayer->GetTeamNumber() )
-						{
-							case TEAM_BRITISH:
-								pPlayer->IncrementFragCount(m_iPlayerBonus);
-								CHL2MP_Player *pPlayer2 = ToHL2MPPlayer(pPlayer);
-								if( pPlayer2 )
-									pPlayer2->IncreaseReward(1);
-								break;
-						}
-					}
-
-					// before we change team, if they stole the point, fire the output
-					if (GetTeamNumber() == TEAM_AMERICANS)
-					{
-						m_OnAmericanLosePoint.FireOutput( this, this );
-						m_OnLosePoint.FireOutput( this, this );
-					}
-
-					ChangeTeam( TEAM_BRITISH );
-					//CFlagHandler::Update();
-					m_iRequestingCappers = TEAM_UNASSIGNED;
-					m_iLastTeam = TEAM_UNASSIGNED;
-
-					m_OnBritishCapture.FireOutput( this, this );
-					m_OnCapture.FireOutput( this, this );
+					Capture( TEAM_BRITISH );
 				}
 			}
 		}
@@ -911,22 +880,109 @@ void CFlag::Think( void )
 		//noone here
 		m_iLastTeam = TEAM_UNASSIGNED;
 		m_iRequestingCappers = TEAM_UNASSIGNED;
+		m_iNearbyPlayers = 0;
 		
 		m_flNextCapture = 0;
 	}
 
 	ClientPrintAll( msg );
-//#endif
-	SetNextThink( gpGlobals->curtime + 0.5f );
+}
 
-	if ( GetCycle() >= 0.999f && !SequenceLoops() )
+void CFlag::Capture( int iTeam )
+{
+	//iTeam is either americans or british
+	//this function handles a lot of the capture related stuff
+
+	EmitSound( "Flag.capture" );
+	g_Teams[iTeam]->AddScore( m_iTeamBonus );
+	m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
+
+	//award capping players some points and put them on the overload list
+	m_vOverloadingPlayers.RemoveAll();
+
+	CHL2MP_Player *pPlayer = NULL;
+	while( (pPlayer = dynamic_cast<CHL2MP_Player*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
 	{
-		SetSequence( SelectWeightedSequence( ACT_VM_IDLE ) );
-		ResetClientsideFrame();
+		if( !pPlayer->IsAlive() )	//dead players don't cap
+			continue;
+
+		if( pPlayer->GetTeamNumber() == iTeam )
+		{
+			pPlayer->IncrementFragCount(m_iPlayerBonus);
+			pPlayer->IncreaseReward(1);
+			m_vOverloadingPlayers.AddToHead( pPlayer );
+		}
+	}
+	m_iLastTeam = TEAM_UNASSIGNED;
+	m_iRequestingCappers = TEAM_UNASSIGNED;
+	m_iNearbyPlayers = m_vOverloadingPlayers.Count();
+
+	// before we change team, if they stole the point, fire the output
+	if (GetTeamNumber() != iTeam)
+	{
+		//fire appropriate output
+		if( GetTeamNumber() == TEAM_AMERICANS )
+			m_OnAmericanLosePoint.FireOutput( this, this );
+		else if( GetTeamNumber() == TEAM_BRITISH )
+			m_OnBritishLosePoint.FireOutput( this, this );
+
+		m_OnLosePoint.FireOutput( this, this );
 	}
 
-	StudioFrameAdvance();
-	DispatchAnimEvents(this);
+	ChangeTeam( iTeam );
+	//CFlagHandler::Update();
+
+	if( iTeam == TEAM_AMERICANS )
+		m_OnAmericanCapture.FireOutput( this, this );
+	else if( iTeam == TEAM_BRITISH )
+		m_OnBritishCapture.FireOutput( this, this );
+
+	m_OnCapture.FireOutput( this, this );
+}
+
+void CFlag::ThinkCapped( void )
+{
+	//check if anyone's overloading or uncapping this flag
+	//start by counting people near the flag
+
+	int friendlies = 0,
+		enemies = 0;
+
+	CBasePlayer *pPlayer = NULL;
+
+	while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
+	{
+		if( !pPlayer->IsAlive() )	//dead players don't cap
+			continue;
+
+		//BG2 - Tjoppen - TODO: m_iForTeam troubles?
+		if( pPlayer->GetTeamNumber() == GetTeamNumber() )
+		{
+			friendlies++;
+			if( m_vOverloadingPlayers.Find( pPlayer ) == -1 )
+			{
+				//friendly player that's not on the list. add
+				//BG2 - Tjoppen - TODO: add some sort of bonus for overloading?
+				m_vOverloadingPlayers.AddToHead( pPlayer );
+			}
+		}
+		else
+			enemies++;
+	}
+
+	//if someone steals the flag, or we run out of holders - uncap
+	if( enemies > 0 && friendlies <= 0 || m_vOverloadingPlayers.Count() <= 0 )
+	{
+		//uncap
+		ChangeTeam( TEAM_UNASSIGNED );
+		m_iNearbyPlayers = 0;
+		m_vOverloadingPlayers.RemoveAll();
+	}
+	else
+	{
+		//we're safe
+		m_iNearbyPlayers = m_vOverloadingPlayers.Count();
+	}
 }
 
 void CFlag::ChangeTeam( int iTeamNum )
@@ -986,6 +1042,7 @@ BEGIN_NETWORK_TABLE( CFlag, DT_Flag )
 	SendPropInt( SENDINFO( m_iRequestingCappers ), Q_log2(NUM_TEAMS), SPROP_UNSIGNED ),
 	SendPropFloat( SENDINFO( m_flNextCapture ) ),
 	SendPropInt( SENDINFO( m_iCapturePlayers ), Q_log2(MAX_PLAYERS), SPROP_UNSIGNED ),
+	SendPropInt( SENDINFO( m_iNearbyPlayers ), Q_log2(MAX_PLAYERS), SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO( m_iForTeam ), 2, SPROP_UNSIGNED ),
 	SendPropFloat( SENDINFO( m_flCaptureTime ) ),
 	SendPropStringT( SENDINFO( m_sFlagName ) ),

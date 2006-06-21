@@ -50,6 +50,7 @@ public:
 	float	m_flNextCapture;
 
 	int		m_iCapturePlayers;
+	int		m_iNearbyPlayers;
 	int		m_iForTeam;
 	float	m_flCaptureTime;
 	

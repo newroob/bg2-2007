@@ -35,6 +35,10 @@
 #define CFlag C_Flag
 #endif*/
 
+#ifdef CLIENT_DLL
+#error DO NOT USE ON CLIENT! c_flag.cpp/.h is for that
+#endif
+
 const int CFlag_START_DISABLED = 1;		// spawnflag definition
 
 //BG2 - Tjoppen - TODO: replace the use of ClientPrintAll with custom usermessages
@@ -52,6 +56,8 @@ class CFlag : public CBaseAnimating
 	CNetworkVar( float, m_flNextCapture );
 
 	CNetworkVar( int, m_iCapturePlayers );	//how many player must be nearby to capture this flag?
+	CNetworkVar( int, m_iNearbyPlayers );	//how many players ARE nearby to capture this flag?
+											// alternatively: how overloaded is this flag
 	CNetworkVar( int, m_iForTeam );
 
 	CNetworkVar( int, m_iHUDSlot );		//in which slot is the icon for this flag?
@@ -95,10 +101,21 @@ class CFlag : public CBaseAnimating
 	CNetworkVar( string_t, m_sFlagName );
 
 public:
+	CUtlVector<CBasePlayer*>	m_vOverloadingPlayers;	//nearby or overloading players
+	/*
+	some notes on the list:
+	- when a player dies, remove from list
+	- when a player changes team, remove from list
+	- when a player disconnects, remove from list
+	- I couldn't be arsed to make it private with accessors and shit. Java has made me quite sick of that
+	*/
 
 	void Spawn( void );
 	void Precache( void );
 	void Think( void );
+	void ThinkUncapped( void );
+	void ThinkCapped( void );
+	void Capture( int iTeam );	//let iTeam have this flag now..
 	void ChangeTeam( int iTeamNum );
 	virtual int UpdateTransmitState();
 };

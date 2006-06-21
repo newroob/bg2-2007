@@ -917,6 +917,12 @@ void CHL2MPRules::ClientDisconnected( edict_t *pClient )
 		}
 	}
 
+	//BG2 - Tjoppen - disconnecting. remove from flags
+	CHL2MP_Player *pPlayer2 = dynamic_cast<CHL2MP_Player*>( pPlayer );
+	if( pPlayer2 )
+		pPlayer2->RemoveSelfFromFlags();
+	//
+
 	BaseClass::ClientDisconnected( pClient );
 
 #endif

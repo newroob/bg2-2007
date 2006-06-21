@@ -52,7 +52,9 @@
 #include "grenade_satchel.h"
 #include "eventqueue.h"
 
-//BG2 - Tjoppen - #include
+//BG2 - Tjoppen - #includes
+#include "triggers.h"
+#include "bg2/flag.h"
 #include "bg2/vcomm.h"
 #include "bg2/spawnpoint.h"
 //
@@ -1439,6 +1441,11 @@ void CHL2MP_Player::ChangeTeam( int iTeam )
 		}
 	}
 
+	//BG2 - Tjoppen - changing team. remove self from flags
+	if( iTeam != GetTeamNumber() )
+		RemoveSelfFromFlags();
+	//
+
 	BaseClass::ChangeTeam( iTeam );
 
 	m_flNextTeamChangeTime = gpGlobals->curtime + TEAM_CHANGE_INTERVAL;
@@ -2212,6 +2219,8 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 		engine->ClientCommand( edict(), cmd );
 		//SetModel( PlayermodelTeamClass( GetTeamNumber(), GetClass() ) );
 	}*/
+
+	RemoveSelfFromFlags();
 	//
 
 	DetonateTripmines();
@@ -2510,3 +2519,12 @@ bool CHL2MP_Player::CheckSpawnPoints( void )
 			return false;	//back at start, didn't find anything
 	}
 } 
+
+void CHL2MP_Player::RemoveSelfFromFlags( void )
+{
+	//remove ourself from any overload list on all flags
+
+	CFlag *pFlag = NULL;
+	while( (pFlag = dynamic_cast<CFlag*>( gEntList.FindEntityByClassname( pFlag, "flag" ) )) != NULL )
+		pFlag->m_vOverloadingPlayers.FindAndRemove( this );
+}
