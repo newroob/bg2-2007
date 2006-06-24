@@ -517,7 +517,11 @@ bool CHL2MPClientScoreBoardDialog::GetPlayerScoreInfo(int playerIndex, KeyValues
 	kv->SetString("name", g_PR->GetPlayerName(playerIndex) );
 	kv->SetInt("deaths", g_PR->GetDeaths( playerIndex ));
 	kv->SetInt("frags", g_PR->GetPlayerScore( playerIndex ));
-	kv->SetString("class", "");
+	//BG2 - Tjoppen - dead column
+	//kv->SetString("class", "");
+	//display for dead participating players
+	kv->SetWString("class", !g_PR->IsAlive(playerIndex) && g_PR->GetTeam(playerIndex) >= TEAM_AMERICANS ? localize()->Find("#DEAD") : localize()->Find("#ALIVE"));
+	//
 	
 	if (g_PR->GetPing( playerIndex ) < 1)
 	{
