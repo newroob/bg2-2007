@@ -3225,7 +3225,7 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 
 		//BG2 - Tjoppen - a little bit more speed to the smoke
 		//pParticle->m_vecVelocity = forward * random->RandomFloat( 48.0f, 64.0f );
-		pParticle->m_vecVelocity = forward * (float)(j+4) * 0.2f * random->RandomFloat( 32.0f, 32.0f );
+		pParticle->m_vecVelocity = forward * (float)(j+7) * 0.2f * random->RandomFloat( 32.0f, 32.0f );
 		//pParticle->m_vecVelocity[2] += 0.25f * random->RandomFloat( 7.0f, 28.0f );
 		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 
@@ -3274,7 +3274,7 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 
 		//BG2 - Tjoppen - a little bit more speed to the smoke
 		//pParticle->m_vecVelocity = forward * random->RandomFloat( 48.0f, 64.0f );
-		pParticle->m_vecVelocity = right * (float)(j+4) * 0.1f * random->RandomFloat( 32.0f, 32.0f );
+		pParticle->m_vecVelocity = right * (float)(j+7) * 0.1f * random->RandomFloat( 32.0f, 32.0f );
 		//pParticle->m_vecVelocity[2] += 0.25f * random->RandomFloat( 7.0f, 28.0f );
 		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 

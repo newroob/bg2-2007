@@ -781,7 +781,7 @@ void CFlag::ThinkUncapped( void )
 		}
 	}
 
-	char *msg = NULL;
+	//char *msg = NULL;
 
 	if( americans + british > 0 && (americans <= 0 || british <= 0) )
 	{
@@ -800,10 +800,10 @@ void CFlag::ThinkUncapped( void )
 				//Msg( "americans\n" );
 				if( m_iLastTeam != TEAM_AMERICANS )
 				{
-					char msg2[512];
+					//char msg2[512];
 					//Msg( "americans are capturing a flag(\"%s\")\n", STRING( m_sFlagName.Get() ) );
-					Q_snprintf( msg2, 512, "The americans are capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
-					msg = msg2;
+					//Q_snprintf( msg2, 512, "The americans are capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
+					//msg = msg2;
 					m_iLastTeam = TEAM_AMERICANS;
 					m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
 
@@ -812,10 +812,10 @@ void CFlag::ThinkUncapped( void )
 				}
 				else if( gpGlobals->curtime >= m_flNextCapture )
 				{
-					char msg2[512];
+					//char msg2[512];
 					//CFlagHandler::PlayCaptureSound();
-					Q_snprintf( msg2, 512, "The americans captured a flag(%s)", STRING( m_sFlagName.Get() ) );
-					msg = msg2;
+					//Q_snprintf( msg2, 512, "The americans captured a flag(%s)", STRING( m_sFlagName.Get() ) );
+					//msg = msg2;
 
 					Capture( TEAM_AMERICANS );
 				}
@@ -831,10 +831,10 @@ void CFlag::ThinkUncapped( void )
 				//Msg( "british\n" );
 				if( m_iLastTeam != TEAM_BRITISH )
 				{
-					char msg2[512];
+					//char msg2[512];
 					//Msg( "british are capturing a flag(\"%s\")\n", STRING( m_sFlagName.Get() ) );
-					Q_snprintf( msg2, 512, "The british are capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
-					msg = msg2;
+					//Q_snprintf( msg2, 512, "The british are capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
+					//msg = msg2;
 					m_iLastTeam = TEAM_BRITISH;
 					m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
 
@@ -843,10 +843,10 @@ void CFlag::ThinkUncapped( void )
 				}
 				else if( gpGlobals->curtime >= m_flNextCapture )
 				{
-					char msg2[512];
+					//char msg2[512];
 					//CFlagHandler::PlayCaptureSound();
-					Q_snprintf( msg2, 512, "The british captured a flag(%s)", STRING( m_sFlagName.Get() ) );
-					msg = msg2;
+					//Q_snprintf( msg2, 512, "The british captured a flag(%s)", STRING( m_sFlagName.Get() ) );
+					//msg = msg2;
 
 					Capture( TEAM_BRITISH );
 				}
@@ -860,18 +860,18 @@ void CFlag::ThinkUncapped( void )
 			//Msg( "stopped capturing a flag\n" );
 			if( m_iLastTeam == TEAM_AMERICANS && GetTeamNumber() != TEAM_AMERICANS )
 			{
-				char msg2[512];
-				Q_snprintf( msg2, 512, "The americans stopped capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
-				msg = msg2;
+				//char msg2[512];
+				//Q_snprintf( msg2, 512, "The americans stopped capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
+				//msg = msg2;
 
 				m_OnAmericanStopCapture.FireOutput( this, this );
 				m_OnStopCapture.FireOutput( this, this );
 			}
 			else if( m_iLastTeam == TEAM_BRITISH && GetTeamNumber() != TEAM_BRITISH )
 			{
-				char msg2[512];
-				Q_snprintf( msg2, 512, "The british stopped capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
-				msg = msg2;
+				//char msg2[512];
+				//Q_snprintf( msg2, 512, "The british stopped capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
+				//msg = msg2;
 
 				m_OnBritishStopCapture.FireOutput( this, this );
 				m_OnStopCapture.FireOutput( this, this );
@@ -885,7 +885,7 @@ void CFlag::ThinkUncapped( void )
 		m_flNextCapture = 0;
 	}
 
-	ClientPrintAll( msg );
+	//ClientPrintAll( msg );
 }
 
 void CFlag::Capture( int iTeam )
@@ -971,7 +971,8 @@ void CFlag::ThinkCapped( void )
 	}
 
 	//if someone steals the flag, or we run out of holders - uncap
-	if( enemies > 0 && friendlies <= 0 || m_vOverloadingPlayers.Count() <= 0 )
+	//don't uncap flags that aren't non-uncappable
+	if( !m_iNotUncappable && (enemies > 0 && friendlies <= 0 || m_vOverloadingPlayers.Count() <= 0) )
 	{
 		//uncap
 		ChangeTeam( TEAM_UNASSIGNED );
@@ -1065,6 +1066,7 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_KEYFIELD( m_iForTeam, FIELD_INTEGER, "ForTeam" ),
 	DEFINE_KEYFIELD( m_sFlagName, FIELD_STRING, "FlagName" ),
 	DEFINE_KEYFIELD( m_iHUDSlot, FIELD_INTEGER, "HUDSlot" ),
+	DEFINE_KEYFIELD( m_iNotUncappable, FIELD_BOOLEAN, "NotUncappable" ),
 
 #ifndef CLIENT_DLL
 	DEFINE_THINKFUNC( Think ),
