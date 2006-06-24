@@ -78,7 +78,8 @@ private:
 	vgui::Label * m_pLabelAmmo; 
 	vgui::Label * m_pLabelWaveTime; 
 	vgui::Label * m_pLabelBGVersion; 
-	vgui::Label *m_pLabelDamageVerificator;
+	vgui::Label *m_pLabelDamageVerificator,
+				*m_pLabelLMS;
 
 	const char* HitgroupName( int hitgroup );
 
@@ -151,6 +152,13 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_pLabelDamageVerificator->SizeToContents();
 	m_pLabelDamageVerificator->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelDamageVerificator->SetFgColor( ColourWhite );
+
+	m_pLabelLMS = new vgui::Label( pParent, "RoundState_warmup", "test label");
+	m_pLabelLMS->SetPaintBackgroundEnabled( false );
+	m_pLabelLMS->SetPaintBorderEnabled( false );
+	m_pLabelLMS->SizeToContents();
+	m_pLabelLMS->SetContentAlignment( vgui::Label::a_west );
+	m_pLabelLMS->SetFgColor( ColourWhite );
 }
 
 //==============================================
@@ -200,6 +208,9 @@ bool CHudBG2::ShouldDraw( void )
 // CHudBG2's Paint
 // errr... paints the panel
 //==============================================
+//BG2 - Tjoppen - have to copy this from hl2mp_gamerules.cpp
+ConVar mp_respawnstyle( "mp_respawnstyle", "1", FCVAR_REPLICATED | FCVAR_NOTIFY );	//0 = regular dm, 1 = waves, 2 = rounds
+//
 void CHudBG2::Paint()
 {
 	C_HL2MP_Player *pHL2Player = dynamic_cast<C_HL2MP_Player*>(C_HL2MP_Player::GetLocalPlayer());
@@ -284,7 +295,10 @@ void CHudBG2::Paint()
 	else
 		m_pLabelAmmo->SetVisible( false );
 
-	Q_snprintf( msg2, 512, "%i:%2i ", (HL2MPRules()->m_iWaveTime / 60), (HL2MPRules()->m_iWaveTime % 60));
+	//split seconds into two numbers so we don't get stupid 1:7 but rather 1:07
+	int tens = (HL2MPRules()->m_iWaveTime % 60) / 10,
+		ones = (HL2MPRules()->m_iWaveTime % 60) % 10;
+	Q_snprintf( msg2, 512, "%i:%i%i ", (HL2MPRules()->m_iWaveTime / 60), tens, ones );
 	m_pLabelWaveTime->SetText(msg2);
 	m_pLabelWaveTime->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
@@ -312,6 +326,11 @@ void CHudBG2::Paint()
 
 	m_pLabelDamageVerificator->SetFgColor( Color( 255, 255, 255, (int)alpha ) );
 
+	m_pLabelLMS->SetText( localize()->Find("#LMS") );//mp_respawnstyle.GetInt() == 2 ? localize()->Find("#LMS")/*"Last man standing mode"*/ :  );
+	m_pLabelLMS->SizeToContents();
+	m_pLabelLMS->GetSize( w, h );
+	m_pLabelLMS->SetPos((ScreenWidth()-w)/2, ScreenHeight()-2*h);	
+	m_pLabelLMS->SetFgColor( ColourWhite );
 }
 
 //==============================================
