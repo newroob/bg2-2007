@@ -688,7 +688,11 @@ void CSpectatorGUI::UpdateTimer()
 {
 	wchar_t szText[ 64 ];	//BG2 - Tjoppen - Valve! Wrong size this used to be.
 
-	int timer = HL2MPRules()->m_iWaveTime;
+	//BG2 - Tjoppen - m_iWaveTime is deprecated
+	//int timer = HL2MPRules()->m_iWaveTime;
+	extern ConVar mp_respawntime;
+	int timer = ceilf(HL2MPRules()->m_fLastRespawnWave + mp_respawntime.GetFloat() - gpGlobals->curtime);
+	//
 
 	_snwprintf ( szText, sizeof( szText ), L"%d:%d\n", (timer / 60), (timer % 60) );
 

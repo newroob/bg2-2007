@@ -78,7 +78,7 @@ ConVar sv_hl2mp_item_respawn_time( "sv_hl2mp_item_respawn_time", "30", FCVAR_GAM
 extern ConVar mp_chattime;
 //BG2 - Draco - Start
 ConVar mp_respawnstyle( "mp_respawnstyle", "1", FCVAR_REPLICATED | FCVAR_NOTIFY );	//0 = regular dm, 1 = waves, 2 = rounds
-ConVar mp_respawntime( "mp_respawntime", "5", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar mp_respawntime( "mp_respawntime", "5", FCVAR_REPLICATED | FCVAR_NOTIFY );
 ConVar sv_restartround( "sv_restartround", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_americanscore( "mp_americanscore", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_britishscore( "mp_britishscore", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
@@ -104,10 +104,10 @@ BEGIN_NETWORK_TABLE_NOBASE( CHL2MPRules, DT_HL2MPRules )
 
 	#ifdef CLIENT_DLL
 		RecvPropBool( RECVINFO( m_bTeamPlayEnabled ) ),
-		RecvPropInt( RECVINFO( m_iWaveTime ) ),
+		RecvPropFloat( RECVINFO( m_fLastRespawnWave ) ),
 	#else
 		SendPropBool( SENDINFO( m_bTeamPlayEnabled ) ),
-		SendPropInt( SENDINFO( m_iWaveTime ) ),
+		SendPropFloat( SENDINFO( m_fLastRespawnWave ) ),
 	#endif
 
 END_NETWORK_TABLE()
@@ -205,10 +205,10 @@ CHL2MPRules::CHL2MPRules()
 	mp_britishscore.SetValue(0);
 	mp_americanscore.SetValue(0);
 	m_fAdditionTime = 0;
-	m_fEndRoundTime = -1;
+	//m_fEndRoundTime = -1;
 	m_fNextFlagUpdate = 0;
-	m_iWaveTime = 0;
-	m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+	//m_iWaveTime = 0;
+	//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 	m_fLastRespawnWave = gpGlobals->curtime;
 	m_iTDMTeamThatWon = 0;
 	m_bHasDoneWinSong = false;
@@ -383,7 +383,7 @@ void CHL2MPRules::Think( void )
 	//BG2 - Draco - Start
 	//CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
 	//CTeam *pBritish = g_Teams[TEAM_BRITISH];
-	m_iWaveTime = ((m_fLastRespawnWave + mp_respawntime.GetFloat()) - gpGlobals->curtime);
+	//m_iWaveTime = ((m_fLastRespawnWave + mp_respawntime.GetFloat()) - gpGlobals->curtime);
 //	CFlagHandler::FlagThink();//make the flags think.
 	if (m_fNextFlagUpdate <= gpGlobals->curtime)
 	{
@@ -494,25 +494,22 @@ void CHL2MPRules::Think( void )
 	//=========================
 	if( mp_respawnstyle.GetInt() == 2 )//if line battle all at once spawn style - Draco
 	{
-		if (mp_respawntime.GetInt() == 0)
+		/*if (mp_respawntime.GetInt() == 0)
 		{
 			m_fEndRoundTime = 0;
-		}
+		}*/
 		//Tjoppen - start
 		//count alive players in each team
 		CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
 		CTeam *pBritish = g_Teams[TEAM_BRITISH];
 
-		if( pAmericans->GetNumPlayers() == 0 )
+		if( pAmericans->GetNumPlayers() == 0 || pBritish->GetNumPlayers() == 0 )
 			return;
 
 		int aliveamericans = 0, x = 0;
 		for( ; x < pAmericans->GetNumPlayers(); x++ )
 			if( pAmericans->GetPlayer(x)->IsAlive() )
 				aliveamericans++;
-
-		if (pBritish->GetNumPlayers() == 0)
-			return;
 
 		int alivebritish = 0;
 		for( x = 0; x < pBritish->GetNumPlayers(); x++ )
@@ -522,7 +519,7 @@ void CHL2MPRules::Think( void )
 		//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed
 		//wins
 		
-		if ((aliveamericans == 0) || (alivebritish == 0) || (m_fEndRoundTime <= gpGlobals->curtime) || (m_bIsRestartingRound))
+		if ((aliveamericans == 0) || (alivebritish == 0) || (m_fLastRespawnWave + mp_respawntime.GetFloat() <= gpGlobals->curtime) || (m_bIsRestartingRound))
 		{
 			if( !m_bIsRestartingRound )
 			{
@@ -536,20 +533,20 @@ void CHL2MPRules::Think( void )
 						ClientPrintAll( "Out of time! Americans win!", true, true );
 						m_iTDMTeamThatWon = 1;
 						pAmericans->AddScore( 1 );
-						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+						//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 					}
 					else if (aliveamericans < alivebritish)
 					{
 						ClientPrintAll( "Out of time! British win!", true, true );
 						m_iTDMTeamThatWon = 2;
 						pBritish->AddScore( 1 );
-						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+						//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 					}
 					else
 					{
 						ClientPrintAll( "Out of time! Draw!", true, true );
 						m_iTDMTeamThatWon = 0;
-						m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+						//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 					}
 				}
 
@@ -558,7 +555,7 @@ void CHL2MPRules::Think( void )
 					//draw
 					ClientPrintAll( "This round became a draw", true, true );
 					m_iTDMTeamThatWon = 0;
-					m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+					//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 				}
 				else if( aliveamericans == 0 )
 				{
@@ -566,7 +563,7 @@ void CHL2MPRules::Think( void )
 					pBritish->AddScore( 1 );
 					m_iTDMTeamThatWon = 2;
 					ClientPrintAll( "The british won this round!", true, true );
-					m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+					//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 				}
 				else if( alivebritish == 0 )
 				{
@@ -574,7 +571,7 @@ void CHL2MPRules::Think( void )
 					pAmericans->AddScore( 1 );
 					m_iTDMTeamThatWon = 1;
 					ClientPrintAll( "The americans won this round!", true, true );
-					m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+					//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 				}
 			}
 			else if( m_flNextRoundRestart < gpGlobals->curtime )
@@ -588,7 +585,7 @@ void CHL2MPRules::Think( void )
 				
 				if (mp_respawntime.GetInt() > 0)
 				{
-					m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+					//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 					m_fLastRespawnWave = gpGlobals->curtime;
 				}
 

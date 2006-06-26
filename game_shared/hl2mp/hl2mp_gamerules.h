@@ -133,10 +133,10 @@ public:
 	bool	IsTeamplay( void ) { return m_bTeamPlayEnabled;	}
 
 	//BG2 - Draco - Start
-	float m_fLastRespawnWave;
+	CNetworkVar( float, m_fLastRespawnWave );
 	float m_fNextGameReset;
 	float m_fAdditionTime;
-	float m_fEndRoundTime;
+	//float m_fEndRoundTime;	//use m_fLastRespawnWave + mp_respawntime.GetFloat() instead
 	float m_fNextFlagUpdate;
 	//BG2 - Draco - End
 	//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed. and other stuff
@@ -146,7 +146,7 @@ public:
 	bool	m_bHasDoneWinSong;
 	float	m_fNextWinSong;
 	//
-	CNetworkVar( int, m_iWaveTime );
+	//CNetworkVar( int, m_iWaveTime );
 	
 private:
 	

@@ -77,9 +77,9 @@ private:
 	vgui::Label * m_pLabelAScore; 
 	vgui::Label * m_pLabelAmmo; 
 	vgui::Label * m_pLabelWaveTime; 
-	vgui::Label * m_pLabelBGVersion; 
+	//vgui::Label * m_pLabelBGVersion; 
 	vgui::Label *m_pLabelDamageVerificator,
-				*m_pLabelLMS;
+				*m_pLabelLMS;		//BG2 - Tjoppen - TODO: remove this when hintbox works correctly
 
 	const char* HitgroupName( int hitgroup );
 
@@ -139,12 +139,12 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_pLabelWaveTime->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelWaveTime->SetFgColor( ColourWhite );
 
-	m_pLabelBGVersion = new vgui::Label( this, "RoundState_warmup", "test label");
+	/*m_pLabelBGVersion = new vgui::Label( this, "RoundState_warmup", "test label");
 	m_pLabelBGVersion->SetPaintBackgroundEnabled( false );
 	m_pLabelBGVersion->SetPaintBorderEnabled( false );
 	m_pLabelBGVersion->SizeToContents();
 	m_pLabelBGVersion->SetContentAlignment( vgui::Label::a_west );
-	m_pLabelBGVersion->SetFgColor( ColourWhite );
+	m_pLabelBGVersion->SetFgColor( ColourWhite );*/
 
 	m_pLabelDamageVerificator = new vgui::Label( pParent, "RoundState_warmup", "test label");
 	m_pLabelDamageVerificator->SetPaintBackgroundEnabled( false );
@@ -153,7 +153,7 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_pLabelDamageVerificator->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelDamageVerificator->SetFgColor( ColourWhite );
 
-	m_pLabelLMS = new vgui::Label( pParent, "RoundState_warmup", "test label");
+	m_pLabelLMS = new vgui::Label( this, "RoundState_warmup", "test label");
 	m_pLabelLMS->SetPaintBackgroundEnabled( false );
 	m_pLabelLMS->SetPaintBorderEnabled( false );
 	m_pLabelLMS->SizeToContents();
@@ -210,6 +210,8 @@ bool CHudBG2::ShouldDraw( void )
 //==============================================
 //BG2 - Tjoppen - have to copy this from hl2mp_gamerules.cpp
 ConVar mp_respawnstyle( "mp_respawnstyle", "1", FCVAR_REPLICATED | FCVAR_NOTIFY );	//0 = regular dm, 1 = waves, 2 = rounds
+ConVar mp_respawntime( "mp_respawntime", "5", FCVAR_REPLICATED | FCVAR_NOTIFY );
+static ConVar cl_draw_lms_indicator( "cl_draw_lms_indicator", "1", FCVAR_CLIENTDLL, "Draw last man standing indicator string?" );
 //
 void CHudBG2::Paint()
 {
@@ -296,9 +298,13 @@ void CHudBG2::Paint()
 		m_pLabelAmmo->SetVisible( false );
 
 	//split seconds into two numbers so we don't get stupid 1:7 but rather 1:07
-	int tens = (HL2MPRules()->m_iWaveTime % 60) / 10,
-		ones = (HL2MPRules()->m_iWaveTime % 60) % 10;
-	Q_snprintf( msg2, 512, "%i:%i%i ", (HL2MPRules()->m_iWaveTime / 60), tens, ones );
+	int wavetime = ceilf(HL2MPRules()->m_fLastRespawnWave + mp_respawntime.GetFloat() - gpGlobals->curtime);
+	if(	wavetime < 0 )
+		wavetime = 0;
+
+	int tens = (wavetime % 60) / 10,
+		ones = (wavetime % 60) % 10;
+	Q_snprintf( msg2, 512, "%i:%i%i ", (wavetime / 60), tens, ones );
 	m_pLabelWaveTime->SetText(msg2);
 	m_pLabelWaveTime->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
@@ -306,12 +312,12 @@ void CHudBG2::Paint()
 	m_pLabelWaveTime->SetFgColor( ColourWhite );
 
 	// BP - BG version display at lower right bottom of screen
-	Q_snprintf( msg2, 512, "%s ", HL2MPRules()->GetGameDescription());
+	/*Q_snprintf( msg2, 512, "%s ", HL2MPRules()->GetGameDescription());
 	m_pLabelBGVersion->SetText(msg2);
 	m_pLabelBGVersion->SizeToContents();
 	m_pLabelBGVersion->GetSize( w, h );
 	m_pLabelBGVersion->SetPos(5, 60);	
-	m_pLabelBGVersion->SetFgColor( ColourWhite );
+	m_pLabelBGVersion->SetFgColor( ColourWhite );*/
 
 	m_pLabelDamageVerificator->SizeToContents();
 	//center and put somewhat below crosshair
@@ -326,10 +332,10 @@ void CHudBG2::Paint()
 
 	m_pLabelDamageVerificator->SetFgColor( Color( 255, 255, 255, (int)alpha ) );
 
-	m_pLabelLMS->SetText( localize()->Find("#LMS") );//mp_respawnstyle.GetInt() == 2 ? localize()->Find("#LMS")/*"Last man standing mode"*/ :  );
+	m_pLabelLMS->SetText( localize()->Find("#LMS") );
 	m_pLabelLMS->SizeToContents();
 	m_pLabelLMS->GetSize( w, h );
-	m_pLabelLMS->SetPos((ScreenWidth()-w)/2, ScreenHeight()-2*h);	
+	m_pLabelLMS->SetPos(5, ystart - 1.3*h);
 	m_pLabelLMS->SetFgColor( ColourWhite );
 }
 
@@ -368,8 +374,9 @@ void CHudBG2::HideShowAll( bool visible )
 	m_pLabelBScore->SetVisible(visible);
 	m_pLabelWaveTime->SetVisible(visible);
 	m_pLabelAmmo->SetVisible(visible);
-	m_pLabelBGVersion->SetVisible(false);	// BP: not used yet as its not subtle enough, m_pLabelBGVersion->SetVisible(ShouldDraw());
+	//m_pLabelBGVersion->SetVisible(false);	// BP: not used yet as its not subtle enough, m_pLabelBGVersion->SetVisible(ShouldDraw());
 	m_pLabelDamageVerificator->SetVisible(visible && m_flExpireTime > gpGlobals->curtime);
+	m_pLabelLMS->SetVisible( visible && mp_respawnstyle.GetInt() == 2 && cl_draw_lms_indicator.GetBool() );
 }
 
 const char* CHudBG2::HitgroupName( int hitgroup )

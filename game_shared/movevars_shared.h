@@ -30,6 +30,9 @@ extern ConVar sv_maxvelocity;
 extern ConVar sv_stepsize;
 extern ConVar sv_skyname;
 extern ConVar sv_backspeed;
+//BG2 - Tjoppen - sv_sidespeed
+extern ConVar sv_sidespeed;
+//
 extern ConVar sv_waterdist;
 extern ConVar sv_specaccelerate;
 extern ConVar sv_specspeed;
