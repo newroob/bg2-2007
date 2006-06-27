@@ -921,12 +921,10 @@ int CBaseBG2Weapon::Swing( int iAttack )
 	SendWeaponAnim( GetActivity( iAttack ) );
 	pOwner->SetAnimation( PLAYER_ATTACK2 );
 
-#ifndef CLIENT_DLL
 	if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
         pOwner->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(iAttack) );
 	else if( GetAttackType(iAttack) == ATTACKTYPE_SLASH )
 		pOwner->ViewPunch( QAngle( random->RandomFloat( -2, 2 ), random->RandomFloat( -8, 8 ), 0 ) * GetRecoil(iAttack) );
-#endif
 
 	//Setup our next attack times
 	//m_flNextPrimaryAttack = gpGlobals->curtime + GetFireRate();
