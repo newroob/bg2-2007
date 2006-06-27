@@ -720,6 +720,12 @@ void CBaseBG2Weapon::ImpactEffect( trace_t &traceHit )
 
 void CBaseBG2Weapon::PrimaryAttack( void )
 {
+	//disallow holding reload button
+	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+
+	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
+		return;
+
 	int drain = 0;
 	if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_STAB || GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_SLASH )
 	{
@@ -759,6 +765,12 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 
 void CBaseBG2Weapon::SecondaryAttack( void )
 {
+	//disallow holding reload button
+	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+
+	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
+		return;
+
 	int drain = 0;
 	if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_STAB || GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_SLASH )
 	{
@@ -957,6 +969,11 @@ void CBaseBG2Weapon::WeaponIdle( void )
 			SendWeaponAnim( ACT_VM_IDLE );
 	}
 }
+
+/*void CBaseBG2Weapon::ItemPostFrame( void )
+{
+	BaseClass::ItemPostFrame();
+}*/
 
 Activity CBaseBG2Weapon::GetDrawActivity( void )
 {
