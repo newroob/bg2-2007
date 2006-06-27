@@ -111,54 +111,57 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 
 	Color ColourWhite( 255, 255, 255, 255 );
 
-	m_pLabelBScore = new vgui::Label( this, "RoundState_warmup", "test label");
+	m_pLabelBScore = new vgui::Label( this, "RoundState_warmup", "");
 	m_pLabelBScore->SetPaintBackgroundEnabled( false );
 	m_pLabelBScore->SetPaintBorderEnabled( false );
 	m_pLabelBScore->SizeToContents();
 	m_pLabelBScore->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelBScore->SetFgColor( ColourWhite );
 
-	m_pLabelAScore = new vgui::Label( this, "RoundState_warmup", "test label");
+	m_pLabelAScore = new vgui::Label( this, "RoundState_warmup", "");
 	m_pLabelAScore->SetPaintBackgroundEnabled( false );
 	m_pLabelAScore->SetPaintBorderEnabled( false );
 	m_pLabelAScore->SizeToContents();
 	m_pLabelAScore->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelAScore->SetFgColor( ColourWhite );
 
-	m_pLabelAmmo = new vgui::Label( this, "RoundState_warmup", "test label");
+	m_pLabelAmmo = new vgui::Label( this, "RoundState_warmup", "");
 	m_pLabelAmmo->SetPaintBackgroundEnabled( false );
 	m_pLabelAmmo->SetPaintBorderEnabled( false );
 	m_pLabelAmmo->SizeToContents();
 	m_pLabelAmmo->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelAmmo->SetFgColor( ColourWhite );
 
-	m_pLabelWaveTime = new vgui::Label( this, "RoundState_warmup", "test label");
+	m_pLabelWaveTime = new vgui::Label( this, "RoundState_warmup", "");
 	m_pLabelWaveTime->SetPaintBackgroundEnabled( false );
 	m_pLabelWaveTime->SetPaintBorderEnabled( false );
 	m_pLabelWaveTime->SizeToContents();
 	m_pLabelWaveTime->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelWaveTime->SetFgColor( ColourWhite );
 
-	/*m_pLabelBGVersion = new vgui::Label( this, "RoundState_warmup", "test label");
+	/*m_pLabelBGVersion = new vgui::Label( this, "RoundState_warmup", "");
 	m_pLabelBGVersion->SetPaintBackgroundEnabled( false );
 	m_pLabelBGVersion->SetPaintBorderEnabled( false );
 	m_pLabelBGVersion->SizeToContents();
 	m_pLabelBGVersion->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelBGVersion->SetFgColor( ColourWhite );*/
 
-	m_pLabelDamageVerificator = new vgui::Label( pParent, "RoundState_warmup", "test label");
+	m_pLabelDamageVerificator = new vgui::Label( pParent, "RoundState_warmup", "");
 	m_pLabelDamageVerificator->SetPaintBackgroundEnabled( false );
 	m_pLabelDamageVerificator->SetPaintBorderEnabled( false );
 	m_pLabelDamageVerificator->SizeToContents();
 	m_pLabelDamageVerificator->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelDamageVerificator->SetFgColor( ColourWhite );
 
-	m_pLabelLMS = new vgui::Label( this, "RoundState_warmup", "test label");
+	m_pLabelLMS = new vgui::Label( this, "RoundState_warmup", "");
 	m_pLabelLMS->SetPaintBackgroundEnabled( false );
 	m_pLabelLMS->SetPaintBorderEnabled( false );
 	m_pLabelLMS->SizeToContents();
 	m_pLabelLMS->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelLMS->SetFgColor( ColourWhite );
+
+	//hide all
+	HideShowAll(false);
 }
 
 //==============================================
