@@ -351,6 +351,9 @@ private:
 	//BG2 - Tjoppen - health fix
 	//int				m_iHealth;
 	//
+	//BG2 - Tjoppen - footstep fix
+	float			m_flTimeStepSound;
+	//
 
 	CInterpolatedVar< Vector >	m_iv_vecViewOffset;
 

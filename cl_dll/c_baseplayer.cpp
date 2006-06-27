@@ -282,7 +282,9 @@ BEGIN_PREDICTION_DATA( C_BasePlayer )
 	DEFINE_FIELD( m_nButtons, FIELD_INTEGER ),
 	DEFINE_FIELD( m_flWaterJumpTime, FIELD_FLOAT ),
 	DEFINE_FIELD( m_nImpulse, FIELD_INTEGER ),
-	DEFINE_FIELD( m_flStepSoundTime, FIELD_FLOAT ),
+	//BG2 - Tjoppen - footstep fix
+	//DEFINE_FIELD( m_flStepSoundTime, FIELD_FLOAT ),
+	//
 	DEFINE_FIELD( m_flSwimSoundTime, FIELD_FLOAT ),
 	DEFINE_FIELD( m_vecLadderNormal, FIELD_VECTOR ),
 	DEFINE_FIELD( m_flPhysics, FIELD_INTEGER ),

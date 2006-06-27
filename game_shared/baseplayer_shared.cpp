@@ -364,7 +364,8 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 	float flduck;
 	int	fLadder;
 
-	if ( m_flStepSoundTime > 0 )
+	//BG2 - Tjoppen - footstep sound fix
+	/*if ( m_flStepSoundTime > 0 )
 	{
 		m_flStepSoundTime -= 1000.0f * gpGlobals->frametime;
 		if ( m_flStepSoundTime < 0 )
@@ -374,7 +375,10 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 	}
 
 	if ( m_flStepSoundTime > 0 )
+		return;*/
+	if( m_flStepSoundTime > gpGlobals->curtime )
 		return;
+	//
 
 	if ( GetFlags() & (FL_FROZEN|FL_ATCONTROLS))
 		return;
@@ -396,7 +400,9 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 	{
 		velwalk = 60;		// These constants should be based on cl_movespeedkey * cl_forwardspeed somehow
 		velrun = 80;		
-		flduck = 100;
+		//BG2 - Tjoppen - footstep sound fix
+		flduck = 0.100f;
+		//
 	}
 	else
 	{
@@ -411,9 +417,8 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 
 	// To hear step sounds you must be either on a ladder or moving along the ground AND
 	// You must be moving fast enough
-
 	if ( !moving_fast_enough || !(fLadder || ( onground && movingalongground )) )
-			return;
+		return;
 
 //	MoveHelper()->PlayerSetAnimation( PLAYER_WALK );
 
@@ -431,7 +436,9 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 	{
 		psurface = physprops->GetSurfaceData( physprops->GetSurfaceIndex( "ladder" ) );
 		fvol = 0.5;
-		m_flStepSoundTime = 350;
+		//BG2 - Tjoppen - footstep sound fix
+		m_flStepSoundTime = gpGlobals->curtime + 0.350f;
+		//
 	}
 	else if ( enginetrace->GetPointContents( knee ) & MASK_WATER )
 	{
@@ -449,20 +456,26 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 		}
 		psurface = physprops->GetSurfaceData( physprops->GetSurfaceIndex( "wade" ) );
 		fvol = 0.65;
-		m_flStepSoundTime = 600;
+		//BG2 - Tjoppen - footstep sound fix
+		m_flStepSoundTime = gpGlobals->curtime + 0.600f;
+		//
 	}
 	else if ( enginetrace->GetPointContents( feet ) & MASK_WATER )
 	{
 		psurface = physprops->GetSurfaceData( physprops->GetSurfaceIndex( "water" ) );
 		fvol = fWalking ? 0.2 : 0.5;
-		m_flStepSoundTime = fWalking ? 400 : 300;		
+		//BG2 - Tjoppen - footstep sound fix
+		m_flStepSoundTime = gpGlobals->curtime + (fWalking ? 0.400f : 0.300f);
+		//
 	}
 	else
 	{
 		if ( !psurface )
 			return;
 
-		m_flStepSoundTime = fWalking ? 400 : 300;
+		//BG2 - Tjoppen - footstep sound fix
+		m_flStepSoundTime = gpGlobals->curtime + (fWalking ? 0.400f : 0.300f);
+		//
 		switch ( psurface->game.material )
 		{
 		default:
@@ -533,6 +546,13 @@ void CBasePlayer::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, flo
 	CSoundParameters params;
 	if ( !CBaseEntity::GetParametersForSound( pSoundName, params, NULL ) )
 		return;
+
+	//BG2 - Tjoppen - footstep fix
+	if( m_flTimeStepSound + 0.1f > gpGlobals->curtime )
+		return;
+
+	m_flTimeStepSound = gpGlobals->curtime;
+	//
 
 	CRecipientFilter filter;
 	filter.AddRecipientsByPAS( vecOrigin );

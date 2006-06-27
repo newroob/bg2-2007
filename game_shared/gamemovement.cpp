@@ -1982,10 +1982,9 @@ bool CGameMovement::CheckJumpButton( void )
 	if ( player->m_Local.m_flDuckJumpTime > 0.0f )
 		return false;
 
-
 	// In the air now.
     SetGroundEntity( (CBaseEntity *)NULL );
-	
+
 	player->PlayStepSound( mv->m_vecAbsOrigin, player->m_pSurfaceData, 1.0, true );
 	
 	MoveHelper()->PlayerSetAnimation( PLAYER_JUMP );
@@ -3346,7 +3345,9 @@ void CGameMovement::CheckFalling( void )
 		{
 			//
 			// Play landing sound right away.
-			player->m_flStepSoundTime = 400;
+			//BG2 - Tjoppen - footstep fix
+			player->m_flStepSoundTime = gpGlobals->curtime + 0.400f;
+			//
 
 			// Play step sound for current texture.
 			player->PlayStepSound( mv->m_vecAbsOrigin, player->m_pSurfaceData, fvol, true );
