@@ -11,7 +11,9 @@
 #pragma once
 #endif
 
-#define TEAMNUM_NUM_BITS	6
+//BG2 - Tjoppen - TEAMNUM_NUM_BITS
+#define TEAMNUM_NUM_BITS	2	//6
+//
 
 #include "entitylist.h"
 #include "entityoutput.h"

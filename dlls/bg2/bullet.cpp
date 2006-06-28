@@ -66,7 +66,7 @@
 //#define BOLT_MODEL	"models/weapons/w_missile_closed.mdl"
 
 //#define BOLT_AIR_VELOCITY	3500
-#define BOLT_AIR_VELOCITY	10000
+#define BOLT_AIR_VELOCITY	14400
 #define BOLT_WATER_VELOCITY	1500
 #define	BOLT_SKIN_NORMAL	0
 #define BOLT_SKIN_GLOW		1
