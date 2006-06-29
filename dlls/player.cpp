@@ -818,7 +818,7 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 				WRITE_BYTE( pAttacker->entindex() );	//attacker id
 				WRITE_BYTE( pVictim->entindex() );		//victim id
 				WRITE_BYTE( ptr->hitgroup );			//where?
-				WRITE_SHORT( (int)info.GetDamage() );	//damage
+				WRITE_SHORT( (int)ceilf(info.GetDamage()) );	//damage
 			MessageEnd();
 		}
 		//

@@ -378,6 +378,10 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 		return;*/
 	if( m_flStepSoundTime > gpGlobals->curtime )
 		return;
+
+	//no sound when ducking
+	if ( GetFlags() & FL_DUCKING )
+		return;
 	//
 
 	if ( GetFlags() & (FL_FROZEN|FL_ATCONTROLS))
@@ -513,10 +517,17 @@ void CBasePlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOri
 
 	// play the sound
 	// 65% volume if ducking
-	if ( GetFlags() & FL_DUCKING )
+	//BG2 - Tjoppen - 30% when walking, 150% when running
+	/*if ( GetFlags() & FL_DUCKING )
 	{
 		fvol *= 0.65;
-	}
+	}*/
+	if( this->m_nButtons & IN_WALK )
+		fvol *= 0.3f;
+	else
+		fvol *= 1.5f;
+	//
+
 
 	PlayStepSound( feet, psurface, fvol, false );
 }

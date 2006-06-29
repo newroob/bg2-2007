@@ -39,9 +39,9 @@ ConVar	sv_maxvelocity	( "sv_maxvelocity","14400", FCVAR_REPLICATED, "Maximum spe
 //
 ConVar	sv_stepsize		( "sv_stepsize","18", FCVAR_NOTIFY | FCVAR_REPLICATED );
 ConVar	sv_skyname		( "sv_skyname", "sky_urb01", FCVAR_ARCHIVE | FCVAR_REPLICATED, "Current name of the skybox texture" );
-ConVar	sv_backspeed	( "sv_backspeed", "0.6", FCVAR_ARCHIVE | FCVAR_REPLICATED, "How much to slow down backwards motion" );
-//BG2 - Tjoppen - sv_sidespeed
-ConVar	sv_sidespeed	( "sv_sidespeed", "0.8", FCVAR_ARCHIVE | FCVAR_REPLICATED, "How much to slow down sidestepping. Should be > sv_backspeed" );
+//BG2 - Tjoppen - sv_backspeed and sv_sidespeed
+ConVar	sv_backspeed	( "sv_backspeed", "0.4", FCVAR_ARCHIVE | FCVAR_REPLICATED, "How much to slow down backwards motion" );
+ConVar	sv_sidespeed	( "sv_sidespeed", "0.6", FCVAR_ARCHIVE | FCVAR_REPLICATED, "How much to slow down sidestepping. Should be > sv_backspeed" );
 //
 ConVar  sv_waterdist	( "sv_waterdist","12", FCVAR_REPLICATED, "Vertical view fixup when eyes are near water plane." );
 
