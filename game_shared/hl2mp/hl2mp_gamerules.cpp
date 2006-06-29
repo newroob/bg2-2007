@@ -1422,6 +1422,8 @@ void CHL2MPRules::ResetFlags( void )
 		pFlag->ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
 		pFlag->m_iLastTeam = TEAM_UNASSIGNED;
 		pFlag->m_iRequestingCappers = TEAM_UNASSIGNED;
+		pFlag->m_vOverloadingPlayers.RemoveAll();
+		pFlag->m_iNearbyPlayers = 0;
 
 #ifndef CLIENT_DLL
 		if (pFlag->HasSpawnFlags( CFlag_START_DISABLED ))

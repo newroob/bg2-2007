@@ -742,11 +742,8 @@ void CFlag::Think( void )
 	if (m_flNextTeamBonus <= gpGlobals->curtime)
 		m_flNextTeamBonus = gpGlobals->curtime + m_iTeamBonusInterval;
 
-	//split think function in twain
-	if( GetTeamNumber() <= TEAM_SPECTATOR )
-		ThinkUncapped();
-	else
-		ThinkCapped();
+	ThinkCapped();
+	ThinkUncapped();
 }
 
 //this is actually the old think funtion, slightly modified
@@ -855,10 +852,10 @@ void CFlag::ThinkUncapped( void )
 	}
 	else
 	{
-		if( m_iLastTeam != TEAM_UNASSIGNED )
+		if( m_iLastTeam != TEAM_UNASSIGNED && GetTeamNumber() != m_iLastTeam )
 		{
 			//Msg( "stopped capturing a flag\n" );
-			if( m_iLastTeam == TEAM_AMERICANS && GetTeamNumber() != TEAM_AMERICANS )
+			if( m_iLastTeam == TEAM_AMERICANS )
 			{
 				//char msg2[512];
 				//Q_snprintf( msg2, 512, "The americans stopped capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
@@ -867,7 +864,7 @@ void CFlag::ThinkUncapped( void )
 				m_OnAmericanStopCapture.FireOutput( this, this );
 				m_OnStopCapture.FireOutput( this, this );
 			}
-			else if( m_iLastTeam == TEAM_BRITISH && GetTeamNumber() != TEAM_BRITISH )
+			else if( m_iLastTeam == TEAM_BRITISH )
 			{
 				//char msg2[512];
 				//Q_snprintf( msg2, 512, "The british stopped capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
@@ -880,7 +877,7 @@ void CFlag::ThinkUncapped( void )
 		//noone here
 		m_iLastTeam = TEAM_UNASSIGNED;
 		m_iRequestingCappers = TEAM_UNASSIGNED;
-		m_iNearbyPlayers = 0;
+		//m_iNearbyPlayers = 0;
 		
 		m_flNextCapture = 0;
 	}
