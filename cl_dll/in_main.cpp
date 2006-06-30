@@ -562,8 +562,12 @@ void ClassMenu( void )
 	if( gViewPortInterface )
 	{
 		CClassMenu *panel = dynamic_cast<CClassMenu*>( gViewPortInterface->FindPanelByName( PANEL_CLASSES ) );
+		C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 
-		if( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR && !panel->IsInClassMenu() )
+		if( !pPlayer )
+			return;
+
+		if( pPlayer->GetTeamNumber() <= TEAM_SPECTATOR && !panel->IsInClassMenu() )
 		{
 			internalCenterPrint->Print( "You can\'t select class before selecting team" );
 			return;		//spectators/unassigned don't select class
@@ -581,6 +585,7 @@ void ClassMenu( void )
 			{
 				//make sure we're visible and change buttons
 				panel->ShowPanel( true );
+				panel->m_iTeamSelection = pPlayer->GetTeamNumber();
 				panel->ToggleButtons( 2 );
 			}
 		}
