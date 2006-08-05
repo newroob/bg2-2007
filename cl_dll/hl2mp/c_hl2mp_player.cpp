@@ -861,6 +861,9 @@ void C_HL2MPRagdoll::ImpactTrace( trace_t *pTrace, int iDamageType, char *pCusto
 		pPhysicsObject->ApplyForceOffset( dir, hitpos );	
 
 		// Blood spray!
+		//BG2 - Tjoppen - do simple blood decals on ragdolls
+		UTIL_DecalTrace( pTrace, "Impact.Flesh" );
+		//
 //		FX_CS_BloodSpray( hitpos, dir, 10 );
 	}
 }

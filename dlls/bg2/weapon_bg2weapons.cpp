@@ -51,6 +51,8 @@ const float CHARLE_BAYONET_DAMAGE = 41.0;
 
 const float PENNY_FIRE_DAMAGE = 35.0;
 
+const float JAEGER_FIRE_DAMAGE = 35.0;
+
 const float PISTOLA_FIRE_DAMAGE = 40.0;
 const float PISTOLB_FIRE_DAMAGE = 40.0;
 
@@ -253,6 +255,56 @@ acttable_t CWeaponcharleville::m_acttable[] =
 
 IMPLEMENT_ACTTABLE( CWeaponcharleville );
 #endif
+
+//jäger rifle, but spelled jaeger to avoid any charset problems
+#ifdef CLIENT_DLL
+#define CWeaponjaeger C_Weaponjaeger
+#endif
+DECLARE_BG2_WEAPON( jaeger )
+{
+	m_bReloadsSingly	= false;
+	m_bFiresUnderwater	= true;
+	m_bDontAutoreload	= true;
+
+	//primary
+	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
+	m_Attackinfos[0].m_flDamage				= JAEGER_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_flAttackrate			= 1.0;
+	m_Attackinfos[0].m_flRecoil				= 0.3;
+	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
+	m_Attackinfos[0].m_flCrouchMoving		= 10.0f;
+	m_Attackinfos[0].m_flCrouchStill		= 1.5f;
+	m_Attackinfos[0].m_flStandMoving		= 8.0f;
+	m_Attackinfos[0].m_flStandStill			= 5.0f;
+	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 1.50 );
+	m_Attackinfos[0].m_vStandSpread			= Cone( 5.00 );*/
+	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+
+	m_fMinRange1	= 0;
+	m_fMaxRange1	= RIFLE_RANGE;
+
+	//secondary
+	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
+}
+
+#ifndef CLIENT_DLL
+acttable_t CWeaponjaeger::m_acttable[] = 
+{
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_SHOTGUN,					false },
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_SHOTGUN,					false },
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_SHOTGUN,			false },
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_SHOTGUN,			false },
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN,	false },
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,		false },
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_SHOTGUN,					false },
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SHOTGUN,				false },
+
+	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,					false },
+};
+
+IMPLEMENT_ACTTABLE( CWeaponjaeger );
+#endif
+
 
 #ifdef CLIENT_DLL
 #define CWeaponpennsylvania C_Weaponpennsylvania

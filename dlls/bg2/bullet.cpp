@@ -68,8 +68,8 @@
 //#define BOLT_AIR_VELOCITY	3500
 #define BOLT_AIR_VELOCITY	14400
 #define BOLT_WATER_VELOCITY	1500
-#define	BOLT_SKIN_NORMAL	0
-#define BOLT_SKIN_GLOW		1
+/*#define	BOLT_SKIN_NORMAL	0
+#define BOLT_SKIN_GLOW		1*/
 
 
 #ifndef CLIENT_DLL
@@ -151,7 +151,7 @@ unsigned int CBullet::PhysicsSolidMaskForEntity() const
 // Purpose: 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CBullet::CreateSprites( void )
+/*bool CBullet::CreateSprites( void )
 {
 	// Start up the eye glow
 	m_pGlowSprite = CSprite::SpriteCreate( "sprites/light_glow02_noz.vmt", GetLocalOrigin(), false );
@@ -165,7 +165,7 @@ bool CBullet::CreateSprites( void )
 	}
 
 	return true;
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -196,10 +196,10 @@ void CBullet::Spawn( void )
 	SetThink( &CBullet::BubbleThink );
 	SetNextThink( gpGlobals->curtime );//+ 0.01f );
 	
-	CreateSprites();
+	//CreateSprites();
 
 	// Make us glow until we've hit the wall
-	m_nSkin = BOLT_SKIN_GLOW;
+	//m_nSkin = BOLT_SKIN_GLOW;
 }
 
 
@@ -210,7 +210,7 @@ void CBullet::Precache( void )
 	// This is used by C_TEStickyBolt, despte being different from above!!!
 	//PrecacheModel( "models/crossbow_bolt.mdl" );
 
-	PrecacheModel( "sprites/light_glow02_noz.vmt" );
+	//PrecacheModel( "sprites/light_glow02_noz.vmt" );
 }
 
 //-----------------------------------------------------------------------------
@@ -224,8 +224,8 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 
 	if ( pOther->m_takedamage != DAMAGE_NO )
 	{
-		trace_t	tr, tr2;
-		tr = BaseClass::GetTouchTrace();
+		trace_t	tr;//, tr2;
+		//tr = BaseClass::GetTouchTrace();
 		Vector	vecNormalizedVel = GetAbsVelocity();
 
 		ClearMultiDamage();
@@ -248,48 +248,29 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		VectorNormalize ( vForward );
 
 		//BG2 - Tjoppen - We want musket balls to hit body parts, not just HITGROUP_GENERIC
-		UTIL_TraceLine( GetAbsOrigin() - vForward * 32, GetAbsOrigin() + vForward * 32, MASK_SHOT, GetOwnerEntity(), COLLISION_GROUP_NONE, &tr2 );
-		if( tr2.fraction == 1.0 )
+		UTIL_TraceLine( GetAbsOrigin() - vForward * speed * gpGlobals->frametime, GetAbsOrigin() + vForward * speed * gpGlobals->frametime, MASK_SHOT, GetOwnerEntity(), COLLISION_GROUP_NONE, &tr );
+		if( tr.fraction == 1.0 || (tr.hitgroup == HITGROUP_GENERIC && pOther->IsPlayer()) )
 		{
-			//BG2 - Tjoppen - that didn't work well
             //only hit hull - keep going
 			//move forward a bit so we don't get stuck
-			/*SetAbsOrigin( GetAbsOrigin() + GetAbsVelocity() * 32.f );
-			return;*/
+			SetAbsOrigin( GetAbsOrigin() + vForward * 4.f );
+			return;
 		}
-		else
+		/*else
 		{
 			//revert
 			tr = tr2;
-		}
+		}*/
 
 		//Msg( "%f / %f => %f / %f\n", speed, (float)BOLT_AIR_VELOCITY, dmg, (float)m_iDamage );
 
 		UTIL_ImpactTrace( &tr, DMG_BULLET );	//BG2 - Tjoppen - surface blood
 
-		if( GetOwnerEntity() && GetOwnerEntity()->IsPlayer() && pOther->IsNPC() )
-		{
-			//CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), m_iDamage, DMG_BULLET | DMG_NEVERGIB );
-			//BG2 - Tjoppen - Set owner as inflictor so they get the damage points. also scale damage force
-			//CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
-			//no force!
-			CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_PREVENT_PHYSICS_FORCE | DMG_NEVERGIB );
-			dmgInfo.AdjustPlayerDamageInflictedForSkillLevel();
-			//CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
-			dmgInfo.SetDamagePosition( tr.endpos );
-			pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
-		}
-		else
-		{
-			//CTakeDamageInfo	dmgInfo( this, GetOwnerEntity(), m_iDamage, DMG_BULLET | DMG_NEVERGIB );
-			//BG2 - Tjoppen - Set owner as inflictor so they get the damage points. also scale damage force
-			//CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_NEVERGIB );
-			//no force!
-			CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_PREVENT_PHYSICS_FORCE | DMG_NEVERGIB );
-			//CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
-			dmgInfo.SetDamagePosition( tr.endpos );
-			pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
-		}
+		//no force!
+		CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_PREVENT_PHYSICS_FORCE | DMG_NEVERGIB );
+		//CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
+		dmgInfo.SetDamagePosition( tr.endpos );
+		pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
 
 		ApplyMultiDamage();
 
@@ -302,20 +283,20 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		// play body "thwack" sound
 		EmitSound( "Weapon_Pistol.HitBody" );
 
-		UTIL_TraceLine( GetAbsOrigin(),	GetAbsOrigin() + vForward * 128, MASK_OPAQUE, pOther, COLLISION_GROUP_NONE, &tr2 );
+		UTIL_TraceLine( GetAbsOrigin(),	GetAbsOrigin() + vForward * 128, MASK_OPAQUE, pOther, COLLISION_GROUP_NONE, &tr );
 
-		if ( tr2.fraction != 1.0f )
+		if ( tr.fraction != 1.0f )
 		{
 //			NDebugOverlay::Box( tr2.endpos, Vector( -16, -16, -16 ), Vector( 16, 16, 16 ), 0, 255, 0, 0, 10 );
 //			NDebugOverlay::Box( GetAbsOrigin(), Vector( -16, -16, -16 ), Vector( 16, 16, 16 ), 0, 0, 255, 0, 10 );
 
-			if ( tr2.m_pEnt == NULL || ( tr2.m_pEnt && tr2.m_pEnt->GetMoveType() == MOVETYPE_NONE ) )
+			if ( tr.m_pEnt == NULL || ( tr.m_pEnt && tr.m_pEnt->GetMoveType() == MOVETYPE_NONE ) )
 			{
 				CEffectData	data;
 
-				data.m_vOrigin = tr2.endpos;
+				data.m_vOrigin = tr.endpos;
 				data.m_vNormal = vForward;
-				data.m_nEntIndex = tr2.fraction != 1.0f;
+				data.m_nEntIndex = tr.fraction != 1.0f;
 			
 				DispatchEffect( "Impact", data );
 			}
@@ -496,7 +477,7 @@ END_RECV_TABLE()
 CLIENTEFFECT_MATERIAL( "effects/muzzleflash1" )
 CLIENTEFFECT_REGISTER_END()*/
 
-extern void DrawHalo( IMaterial* pMaterial, const Vector &source, float scale, float const *color );
+//extern void DrawHalo( IMaterial* pMaterial, const Vector &source, float scale, float const *color );
 
 //
 // Crossbow bolt
@@ -535,7 +516,7 @@ void C_Bullet::OnDataChanged( DataUpdateType_t updateType )
 int C_Bullet::DrawModel( int flags )
 {
 	// See if we're drawing the motion blur
-	if ( flags & STUDIO_TRANSPARENCY )
+	/*if ( flags & STUDIO_TRANSPARENCY )
 	{
 		float		color[3];
 		IMaterial	*pBlurMaterial = materials->FindMaterial( "effects/muzzleflash1", NULL, false );
@@ -576,7 +557,7 @@ int C_Bullet::DrawModel( int flags )
 		}
 
 		return 1;
-	}
+	}*/
 
 	// Draw the normal portion
 	return BaseClass::DrawModel( flags );

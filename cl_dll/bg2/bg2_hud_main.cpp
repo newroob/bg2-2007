@@ -218,6 +218,9 @@ static ConVar cl_draw_lms_indicator( "cl_draw_lms_indicator", "1", FCVAR_CLIENTD
 //
 void CHudBG2::Paint()
 {
+	if( !m_Base || !m_Straps || !m_Stamina || !m_Health )
+		return;
+
 	C_HL2MP_Player *pHL2Player = dynamic_cast<C_HL2MP_Player*>(C_HL2MP_Player::GetLocalPlayer());
 	if (!pHL2Player || !pHL2Player->IsAlive())
 	{

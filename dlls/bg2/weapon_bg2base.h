@@ -215,11 +215,6 @@ public:
 		return m_Attackinfos[iAttack].m_iAttackActivity;
 	}
 
-	float	GetCosTolerance( int iAttack )
-	{
-		return iAttack != ATTACK_NONE ? m_Attackinfos[iAttack].m_flCosAngleTolerance : 0;
-	}
-
 	//minor hack to get bayonet deathnotice
 	bool m_bLastAttackStab;
 	char *GetDeathNoticeName( void )

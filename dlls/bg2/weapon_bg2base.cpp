@@ -98,25 +98,6 @@ END_PREDICTION_DATA()
 PRECACHE_WEAPON_REGISTER( weapon_revolutionnaire );*/
 
 #ifndef CLIENT_DLL
-/*acttable_t CBaseBG2Weapon::m_acttable[] = 
-{
-
-	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_PISTOL,					false },
-	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_PISTOL,					false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_PISTOL,			false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_PISTOL,			false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,	false },
-	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_PISTOL,		false },
-	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_PISTOL,					false },
-	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_PISTOL,				false },
-
-	{ ACT_RANGE_ATTACK2,				ACT_VM_SECONDARYATTACK,					false },
-
-	//this is to catch the default fire animation...
-	//{ ACT_WALK,							ACT_HL2MP_JUMP_PISTOL,					false },
-};*/
-
-//IMPLEMENT_ACTTABLE( CBaseBG2Weapon );
 
 #endif
 
@@ -129,26 +110,10 @@ CBaseBG2Weapon::CBaseBG2Weapon( void )
 	m_bFiresUnderwater	= true;
 	m_bDontAutoreload	= true;
 
-	//m_Swingstate		= ATTACK_NONE;
-
 	m_Attackinfos[0].m_iAttacktype = ATTACKTYPE_NONE;
 	m_Attackinfos[1].m_iAttacktype = ATTACKTYPE_NONE;
 
 	//m_nViewModelIndex	= random->RandomInt( 0, 1 );	//test..
-	//GetViewModel
-
-	/*m_bInSwing			= false;
-	m_bUsesDelay		= false;
-
-	m_flRange			= 90.f;
-	m_flFireRate		= 0.8f;
-	m_flImpactDelay		= 0.3f;
-
-	m_flShotDamage		= 75.f;
-	m_flStabDamage		= 60.f;
-
-	m_vDuckSpread		= VECTOR_CONE_2DEGREES;
-	m_vStandSpread		= VECTOR_CONE_5DEGREES;*/
 }
 
 //-----------------------------------------------------------------------------
@@ -190,17 +155,6 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		return 0;
 	}
 
-	/*WeaponSound( SINGLE );
-
-	if( sv_turboshots.GetInt() == 0 )
-	{
-		//don't spam sprites with sv_turboshots
-		pPlayer->DoMuzzleFlash();
-		pPlayer->SetAnimation( PLAYER_ATTACK1 );
-	}
-
-	SendWeaponAnim( GetActivity( iAttack ) );*/
-
 	WeaponSound(SINGLE);
 
 	if( sv_turboshots.GetInt() == 0 )
@@ -226,210 +180,31 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	Vector vecSrc		= pPlayer->Weapon_ShootPosition();
 	Vector vecAiming	= pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );	
 
-	FireBulletsInfo_t info( 1, vecSrc, vecAiming,
-							sv_perfectaim.GetInt() == 0 ? GetSpread( iAttack ) : vec3_origin,
-							GetRange( iAttack ), m_iPrimaryAmmoType );
-	info.m_pAttacker = pPlayer;
-	info.m_iPlayerDamage = GetDamage( iAttack );
-	info.m_iDamage = -1;		//ancient chinese secret..
-	info.m_iTracerFreq = 1;		//always do tracers
-
-	// Fire the bullets, and force the first shot to be perfectly accuracy
-	pPlayer->FireBullets( info );
-
-	//Disorient the player
-	QAngle angles = pPlayer->GetLocalAngles();
-
-	if( sv_steadyhand.GetInt() == 0 )
+	if( sv_simulatedbullets.GetBool() )
 	{
-		angles.x += random->RandomInt( -1, 1 ) * GetRecoil(iAttack);
-		angles.y += random->RandomInt( -1, 1 ) * GetRecoil(iAttack);
-		angles.z = 0;
-
-/*#ifndef CLIENT_DLL
-	pPlayer->SnapEyeAngles( angles );
-#endif*/
-
-		pPlayer->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(iAttack) );
-	}
-
-	if ( !m_iClip1 && pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 )
-	{
-		// HEV suit - indicate out of ammo condition
-		pPlayer->SetSuitUpdate( "!HEV_AMO0", FALSE, 0 ); 
-	}
-
-	return 15;
-}
-
-/*int CBaseBG2Weapon::FireBullet( int iAttack )
-{
-	m_bLastAttackStab = false;
-
-	if ( m_iClip1 <= 0 )
-	{
-		if ( !m_bFireOnEmpty )
-		{
-			Reload();
-		}
-		else
-		{
-			WeaponSound( EMPTY );
-			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.15;
-		}
-
-		return 0;
-	}
-
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-	
-	if ( pOwner == NULL )
-		return 0;
-
-	if( pOwner->GetWaterLevel() == 3 )
-	{
-		// This weapon doesn't fire underwater
-		WeaponSound(EMPTY);
-		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.2;
-		return 0;
-	}
-
 #ifndef CLIENT_DLL
-	Vector vecAiming	= pOwner->GetAutoaimVector( 0 );	
-	Vector vecSrc		= pOwner->Weapon_ShootPosition();
-	
+		CShotManipulator Manipulator( vecAiming );
+		Vector vecDir = Manipulator.ApplySpread( sv_perfectaim.GetInt() == 0 ? GetSpread( iAttack ) : vec3_origin );
 
-    CShotManipulator Manipulator( vecAiming );
-	Vector vecDir		= Manipulator.ApplySpread( GetSpread( iAttack ) );
+		QAngle angDir;
+		VectorAngles( vecDir, angDir );
 
-	QAngle angDir;
-	VectorAngles( vecDir, angDir );
-
-	CBullet::BoltCreate( vecSrc, angDir, GetDamage(iAttack), pOwner );
-
+		CBullet::BoltCreate( vecSrc, angDir, GetDamage(iAttack), pPlayer );
 #endif
-
-	WeaponSound( SINGLE );
-	//WeaponSound( SPECIAL2 );
-
-	if( sv_turboshots.GetInt() == 0 )
-	{
-		//pOwner->DoMuzzleFlash();
-
-		//BG2 - Tjoppen -	the weapon animation !!MUST!! play before the player animation or there's
-		//					 no muzzle flash. don't forget this! ever! it's annoying as hell!
-		//SendWeaponAnim( GetPrimaryAttackActivity() );
-
-		// player "shoot" animation
-		//pOwner->SetAnimation( PLAYER_ATTACK1 );
 	}
-	
-	if( sv_turboshots.GetInt() == 0 )
-		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate( iAttack );
 	else
-		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.1f;
-
-	if( sv_infiniteammo.GetInt() == 0 )
-		m_iClip1--;
-
-#ifndef CLIENT_DLL
-	if( sv_steadyhand.GetInt() == 0 )
-		pOwner->ViewPunch( QAngle( -2, 0, 0 ) );
-#endif
-
-	SendWeaponAnim( GetActivity( iAttack ) );
-
-	if ( !m_iClip1 && pOwner->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 )
 	{
-		// HEV suit - indicate out of ammo condition
-		pOwner->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
+		FireBulletsInfo_t info( 1, vecSrc, vecAiming,
+								sv_perfectaim.GetInt() == 0 ? GetSpread( iAttack ) : vec3_origin,
+								GetRange( iAttack ), m_iPrimaryAmmoType );
+		info.m_pAttacker = pPlayer;
+		info.m_iPlayerDamage = GetDamage( iAttack );
+		info.m_iDamage = -1;		//ancient chinese secret..
+		info.m_iTracerFreq = 1;		//always do tracers
+
+		// Fire the bullets, and force the first shot to be perfectly accuracy
+		pPlayer->FireBullets( info );
 	}
-
-	return 15;
-}*/
-
-int CBaseBG2Weapon::FireBullet( int iAttack )
-{
-	m_bLastAttackStab = false;
-
-	// Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
-
-	if ( !pPlayer )
-	{
-		return 0;
-	}
-
-	if ( m_iClip1 <= 0 )
-	{
-		if ( !m_bFireOnEmpty )
-		{
-			Reload();
-		}
-		else
-		{
-			WeaponSound( EMPTY );
-			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.15;
-		}
-
-		return 0;
-	}
-
-	if( pPlayer->GetWaterLevel() == 3 )
-	{
-		// This weapon doesn't fire underwater
-		WeaponSound(EMPTY);
-		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.2;
-		return 0;
-	}
-
-	/*WeaponSound( SINGLE );
-
-	if( sv_turboshots.GetInt() == 0 )
-	{
-		//don't spam sprites with sv_turboshots
-		pPlayer->DoMuzzleFlash();
-		pPlayer->SetAnimation( PLAYER_ATTACK1 );
-	}
-
-	SendWeaponAnim( GetActivity( iAttack ) );*/
-
-	WeaponSound(SINGLE);
-
-	if( sv_turboshots.GetInt() == 0 )
-	{
-		pPlayer->DoMuzzleFlash();
-
-		//BG2 - Tjoppen -	the weapon animation !!MUST!! play before the player animation or there's
-		//					 no muzzle flash. don't forget this! ever! it's annoying as hell!
-		SendWeaponAnim( GetPrimaryAttackActivity() );
-
-		// player "shoot" animation
-		pPlayer->SetAnimation( PLAYER_ATTACK1 );
-	}
-	
-	if( sv_turboshots.GetInt() == 0 )
-		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate( iAttack );
-	else
-		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.1f;
-
-	if( sv_infiniteammo.GetInt() == 0 )
-		m_iClip1--;
-
-#ifndef CLIENT_DLL
-	Vector vecAiming	= pPlayer->GetAutoaimVector( 0 );	
-	Vector vecSrc		= pPlayer->Weapon_ShootPosition();
-	
-
-    CShotManipulator Manipulator( vecAiming );
-	Vector vecDir		= Manipulator.ApplySpread( sv_perfectaim.GetInt() == 0 ? GetSpread( iAttack ) : vec3_origin );
-
-	QAngle angDir;
-	VectorAngles( vecDir, angDir );
-
-	CBullet::BoltCreate( vecSrc, angDir, GetDamage(iAttack), pPlayer );
-
-#endif
 
 	//Disorient the player
 	QAngle angles = pPlayer->GetLocalAngles();
@@ -469,7 +244,7 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )//Activity nHitActivit
 	CBaseEntity	*pHitEntity = traceHit.m_pEnt;
 
 	//Apply damage to a hit target
-	if ( pHitEntity != NULL )
+	if( pHitEntity != NULL )
 	{
 		Vector hitDirection;
 		pPlayer->EyeVectors( &hitDirection, NULL, NULL );
@@ -494,33 +269,29 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )//Activity nHitActivit
 			bonus = 0;
 
 		//BG2 - Tjoppen - apply force to both attacker and victim
+		CTakeDamageInfo info( GetOwner(), GetOwner(), damage + bonus, DMG_BULLET | DMG_PREVENT_PHYSICS_FORCE | DMG_NEVERGIB );
+		info.SetDamagePosition( traceHit.endpos );
+
+		/*if( pPlayer && pHitEntity->IsNPC() )
 		{
-			CTakeDamageInfo info( GetOwner(), GetOwner(), damage + bonus, DMG_CLUB );
-
-			if( pPlayer && pHitEntity->IsNPC() )
-			{
-				// If bonking an NPC, adjust damage.
-				info.AdjustPlayerDamageInflictedForSkillLevel();
-			}
-
-			if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
-				CalculateMeleeDamageForce( &info, hitDirection, traceHit.endpos );
-			else
-				CalculateMeleeDamageForce( &info, hitDirection, traceHit.endpos, 0.1f );
-				//info.SetDamageForce( vec3_origin );	//no force in slashing weapons..
-
-			//BG2 - Tjoppen - don't send airborne players flying
-			if( !(pHitEntity->GetFlags() & FL_ONGROUND) )
-				info.ScaleDamageForce( 0.001 );
-
-			pHitEntity->DispatchTraceAttack( info, hitDirection, &traceHit ); 
-			ApplyMultiDamage();
-
-			// Now hit all triggers along the ray that... 
-			TraceAttackToTriggers( info, traceHit.startpos, traceHit.endpos, hitDirection );
+			// If bonking an NPC, adjust damage.
+			info.AdjustPlayerDamageInflictedForSkillLevel();
 		}
 
-		if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
+		/*if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
+			CalculateMeleeDamageForce( &info, hitDirection, traceHit.endpos );
+		else
+			CalculateMeleeDamageForce( &info, hitDirection, traceHit.endpos, 0.1f );
+			//info.SetDamageForce( vec3_origin );	//no force in slashing weapons..
+
+		//BG2 - Tjoppen - don't send airborne players flying
+		if( !(pHitEntity->GetFlags() & FL_ONGROUND) )
+			info.ScaleDamageForce( 0.001 );*/
+
+		pHitEntity->DispatchTraceAttack( info, hitDirection, &traceHit ); 
+		ApplyMultiDamage();
+
+		/*if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
 		{
 			//only for stabbing weapons
 			float amount = damage + bonus;
@@ -529,9 +300,9 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )//Activity nHitActivit
 			//pPlayer->VelocityPunch( -hitDirection * (damage + bonus) * ImpulseScale( 75, 1 ) * phys_pushscale.GetFloat() );
 			//pPlayer->VPhysicsGetObject()->ApplyForceCenter( -hitDirection * (damage + bonus) * ImpulseScale( 75, 1 ) * phys_pushscale.GetFloat() );
 			pPlayer->VelocityPunch( -hitDirection * amount * (pPlayer->GetFlags() & FL_ONGROUND ? 4.0f : 1.0f) * phys_pushscale.GetFloat() );
-		}
-
+		}*/
 #endif
+
 		//WeaponSound( MELEE_HIT );
 		if( pHitEntity->IsPlayer() )
 		{
@@ -541,69 +312,16 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )//Activity nHitActivit
 		else
 		{
 			//WeaponSound( MELEE_HIT_WORLD );
+
 			if( GetAttackType(iAttack) != ATTACKTYPE_SLASH )
-			{
-				//don't make bullet holes in walls for slashing weapons
 				ImpactEffect( traceHit );
-			}
 		}
 	}
-	else
+	else if( GetAttackType(iAttack) != ATTACKTYPE_SLASH )
 	{
-        // Apply an impact effect
+		// Apply an impact effect
 		ImpactEffect( traceHit );
 	}
-}
-
-Activity CBaseBG2Weapon::ChooseIntersectionPointAndActivity( int iAttack, trace_t &hitTrace, const Vector &mins, const Vector &maxs, CBasePlayer *pOwner )
-{
-	int			i, j, k;
-	float		distance;
-	const float	*minmaxs[2] = {mins.Base(), maxs.Base()};
-	trace_t		tmpTrace;
-	Vector		vecHullEnd = hitTrace.endpos;
-	Vector		vecEnd;
-
-	distance = 1e6f;
-	Vector vecSrc = hitTrace.startpos;
-
-	vecHullEnd = vecSrc + ((vecHullEnd - vecSrc)*2);
-	//UTIL_TraceLine( vecSrc, vecHullEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &tmpTrace );
-	UTIL_TraceLine( vecSrc, vecHullEnd, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tmpTrace );
-	if ( tmpTrace.fraction == 1.0 )
-	{
-		for ( i = 0; i < 2; i++ )
-		{
-			for ( j = 0; j < 2; j++ )
-			{
-				for ( k = 0; k < 2; k++ )
-				{
-					vecEnd.x = vecHullEnd.x + minmaxs[i][0];
-					vecEnd.y = vecHullEnd.y + minmaxs[j][1];
-					vecEnd.z = vecHullEnd.z + minmaxs[k][2];
-
-					//UTIL_TraceLine( vecSrc, vecEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &tmpTrace );
-					UTIL_TraceLine( vecSrc, vecEnd, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tmpTrace );
-					if ( tmpTrace.fraction < 1.0 )
-					{
-						float thisDistance = (tmpTrace.endpos - vecSrc).Length();
-						if ( thisDistance < distance )
-						{
-							hitTrace = tmpTrace;
-							distance = thisDistance;
-						}
-					}
-				}
-			}
-		}
-	}
-	else
-	{
-		hitTrace = tmpTrace;
-	}
-
-
-	return GetActivity(iAttack);//ACT_VM_HITCENTER;
 }
 
 //-----------------------------------------------------------------------------
@@ -660,63 +378,8 @@ void CBaseBG2Weapon::ImpactEffect( trace_t &traceHit )
 		return;
 
 	//FIXME: need new decals
-	UTIL_ImpactTrace( &traceHit, DMG_CLUB );
+	UTIL_ImpactTrace( &traceHit, DMG_BULLET );	//BG2 - Tjoppen - surface blood
 }
-
-//------------------------------------------------------------------------------
-// Purpose : Starts the swing of the weapon and determines the animation
-// Input   : bIsSecondary - is this a secondary attack?
-//------------------------------------------------------------------------------
-/*void CBaseBG2Weapon::Swing( int iAttack )
-{
-	//Msg( "CBaseBG2Weapon::Swing() - dmg=%f rng=%f recl=%f rate=%f\n", GetDamage(iAttack), GetRange(iAttack), GetRecoil(iAttack), GetAttackRate(iAttack) );
-    
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-	if ( !pOwner )
-		return;
-
-	WeaponSound( SPECIAL1 );
-
-	Vector vecSrc		= pOwner->Weapon_ShootPosition();
-	Vector vecAiming	= pOwner->GetAutoaimVector( AUTOAIM_5DEGREES );	
-
-	float	speed = vecAiming.Dot( pOwner->GetLocalVelocity() ),
-			damage = (speed > 0 ? speed : 0)*0.15f + GetDamage(iAttack);
-
-	//Msg( "Swing(): %.2f damage, %.2f speed, %.2f projected speed => %.2f mod damage\n", GetDamage( iAttack ), pOwner->GetLocalVelocity().Length(), speed, damage );
-
-	FireBulletsInfo_t info( 1, vecSrc, vecAiming, VECTOR_CONE_5DEGREES, GetRange( iAttack ), GetAmmoDef()->Index("357") );
-	info.m_pAttacker = pOwner;
-	info.m_iPlayerDamage = info.m_iDamage = damage;//GetDamage( iAttack );
-	info.m_iTracerFreq = 0;		//no tracers
-
-	// Fire the bullets, and force the first shot to be perfectly accuracy
-	pOwner->FireBullets( info );
-
-	// Send the anim
-	SendWeaponAnim( GetActivity( iAttack ) );
-
-	pOwner->SetAnimation( PLAYER_ATTACK2 );
-
-	//Disorient the player - more than firing
-	QAngle angles = pOwner->GetLocalAngles();
-
-	angles.x += random->RandomInt( -3, 3 ) * GetRecoil(iAttack);
-	angles.y += random->RandomInt( -3, 3 ) * GetRecoil(iAttack);
-	angles.z = 0;
-
-#ifndef CLIENT_DLL
-	pOwner->SnapEyeAngles( angles );
-#endif
-
-	if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
-        pOwner->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(iAttack) );
-	else if( GetAttackType(iAttack) == ATTACKTYPE_SLASH )
-		pOwner->ViewPunch( QAngle( random->RandomFloat( -2, 2 ), random->RandomFloat( -8, 8 ), 0 ) * GetRecoil(iAttack) );
-
-	//Setup our next attack times
-	m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate( iAttack );
-}*/
 
 void CBaseBG2Weapon::PrimaryAttack( void )
 {
@@ -742,10 +405,7 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 		if( mp_disable_firearms.GetInt() )
 			return;
 
-		if( sv_simulatedbullets.GetInt() )
-			drain = FireBullet( ATTACK_PRIMARY );
-		else
-			drain = Fire( ATTACK_PRIMARY );
+		drain = Fire( ATTACK_PRIMARY );
 	}
 	else
 		return;	//don't drain stamina
@@ -753,9 +413,6 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 	//BG2 - Draco - decrease stam when attacking
 #ifndef CLIENT_DLL
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
-/*#else
-	C_HL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
-#endif*/
 
 	pHL2Player->m_iStamina -= drain;
 	if( pHL2Player->m_iStamina < 0 )
@@ -787,10 +444,7 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 		if( mp_disable_firearms.GetInt() )
 			return;
 
-		if( sv_simulatedbullets.GetInt() )
-			drain = FireBullet( ATTACK_SECONDARY );
-		else
-			drain = Fire( ATTACK_SECONDARY );
+		drain = Fire( ATTACK_SECONDARY );
 	}
 	else
 		return;	//don't drain stamina
@@ -798,9 +452,6 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 	//BG2 - Draco - decrease stam when attacking
 #ifndef CLIENT_DLL
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
-/*#else
-	C_HL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
-#endif*/
 
 	pHL2Player->m_iStamina -= drain;
 	if( pHL2Player->m_iStamina < 0 )
@@ -828,9 +479,7 @@ int CBaseBG2Weapon::Swing( int iAttack )
 	pOwner->EyeVectors( &forward, NULL, NULL );
 
 	Vector swingEnd = swingStart + forward * GetRange(iAttack);
-	UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
-	//UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &traceHit );
-	Activity nHitActivity = GetActivity(iAttack);
+	UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &traceHit );
 
 #ifndef CLIENT_DLL
 	// Like bullets, bludgeon traces have to trace against triggers.
@@ -839,85 +488,20 @@ int CBaseBG2Weapon::Swing( int iAttack )
 	TraceAttackToTriggers( triggerInfo, traceHit.startpos, traceHit.endpos, vec3_origin );
 #endif
 
-	//slashing weapons get a hit area tolerance thingy..
-	//stabbing too, for the moment
-	if ( traceHit.fraction == 1.0 )//&& GetAttackType(iAttack) == ATTACKTYPE_SLASH )
-	{
-		//Msg( "near hit..." );
-
-		float bludgeonHullRadius = 1.732f * BLUDGEON_HULL_DIM;  // hull is +/- 16, so use cuberoot of 2 to determine how big the hull is from center to the corner point
-
-		// Back off by hull "radius"
-		swingEnd -= forward * bludgeonHullRadius;
-
-		//we make "near hits" trace against the hull to avoid easy headshots
-		UTIL_TraceHull( swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
-		//UTIL_TraceHull( swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &traceHit );
-		if ( traceHit.fraction < 1.0 && traceHit.m_pEnt )
-		{
-			Vector vecToTarget = traceHit.m_pEnt->GetAbsOrigin() - swingStart;
-			VectorNormalize( vecToTarget );
-
-			float dot = vecToTarget.Dot( forward );
-
-			//Msg( "hit? %f ", dot );
-
-			// YWB:  Make sure they are sort of facing the guy at least...
-			if ( dot < 0.70721f )
-			//if ( dot < GetCosTolerance(iAttack) )//0.70721f )
-			{
-				// Force amiss
-				//Msg( "miss\n" );
-				traceHit.fraction = 1.0f;
-			}
-			else
-			{
-				//Msg( "hit due to closeness\n" );
-				nHitActivity = ChooseIntersectionPointAndActivity( iAttack, traceHit, g_bludgeonMins, g_bludgeonMaxs, pOwner );
-			}
-		}
-		/*else
-			Msg( "miss\n" );*/
-	}
-	else
-	{
-		//we hit the hull, but can we do better?
-		UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &traceHit );
-		if ( traceHit.fraction == 1.0 )
-		{
-			//nope, fall back
-			UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
-		}
-	}
-	/*else
-		Msg( "hit\n" );*/
-
-	//WeaponSound( SINGLE );
-	WeaponSound( SPECIAL1 );
-
-	// -------------------------
-	//	Miss
-	// -------------------------
 	if ( traceHit.fraction == 1.0f )
 	{
-		//nHitActivity = bIsSecondary ? ACT_VM_MISSCENTER2 : ACT_VM_MISSCENTER;
-
-		// We want to test the first swing again
+		//miss, do any waterimpact stuff
 		Vector testEnd = swingStart + forward * GetRange(iAttack);
-		
-		// See if we happened to hit water
 		ImpactWater( swingStart, testEnd );
 	}
 	else
 	{
-		//Hit( traceHit, nHitActivity );
 		Hit( traceHit, iAttack );
 	}
 
-	// Send the anim
-	/*SendWeaponAnim( nHitActivity );
+	WeaponSound( SPECIAL1 );
 
-	pOwner->SetAnimation( PLAYER_ATTACK1 );*/
+	// Send the anim
 	SendWeaponAnim( GetActivity( iAttack ) );
 	pOwner->SetAnimation( PLAYER_ATTACK2 );
 
@@ -925,11 +509,6 @@ int CBaseBG2Weapon::Swing( int iAttack )
         pOwner->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(iAttack) );
 	else if( GetAttackType(iAttack) == ATTACKTYPE_SLASH )
 		pOwner->ViewPunch( QAngle( random->RandomFloat( -2, 2 ), random->RandomFloat( -8, 8 ), 0 ) * GetRecoil(iAttack) );
-
-	//Setup our next attack times
-	//m_flNextPrimaryAttack = gpGlobals->curtime + GetFireRate();
-	//m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration();
-	//m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate(iAttack);
 
 	//BG2 - Draco - you cant stab very fast when your nackered, add quarter of a second
 #ifndef CLIENT_DLL

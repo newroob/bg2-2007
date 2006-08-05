@@ -54,7 +54,7 @@ public:
 
 protected:
 
-	bool	CreateSprites( void );
+	//bool	CreateSprites( void );
 
 	CHandle<CSprite>		m_pGlowSprite;
 	//CHandle<CSpriteTrail>	m_pGlowTrail;

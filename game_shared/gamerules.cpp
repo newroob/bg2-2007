@@ -35,7 +35,9 @@
 ConVar g_Language( "g_Language", "0", FCVAR_REPLICATED );
 
 static CViewVectors g_DefaultViewVectors(
-	Vector( 0, 0, 64 ),
+	//BG2 - Tjoppen - TWEAKME: eye position to match models because it's easier
+	Vector( 0, 0, 60 ),//Vector( 0, 0, 64 ),
+	//
 	
 	Vector(-16, -16, 0 ),
 	Vector( 16,  16,  72 ),
