@@ -742,8 +742,10 @@ void CFlag::Think( void )
 	if (m_flNextTeamBonus <= gpGlobals->curtime)
 		m_flNextTeamBonus = gpGlobals->curtime + m_iTeamBonusInterval;
 
-	ThinkCapped();
-	ThinkUncapped();
+	if( GetTeamNumber() != TEAM_UNASSIGNED )
+		ThinkCapped();	//don't need to check for overloading or uncapping on uncapped flags
+
+	ThinkUncapped();	//always run this, so non-uncappable flags can be taken
 }
 
 //this is actually the old think funtion, slightly modified
@@ -780,6 +782,9 @@ void CFlag::ThinkUncapped( void )
 
 	//char *msg = NULL;
 
+	//default number in flag indicator
+	m_iNearbyPlayers = m_vOverloadingPlayers.Count();
+
 	if( americans + british > 0 && (americans <= 0 || british <= 0) )
 	{
 		//Msg( "\namericans = %i  british = %i\n", americans, british );
@@ -787,12 +792,12 @@ void CFlag::ThinkUncapped( void )
 		//only americans or british at the flag
 		//if we don't already own it, and we've been here for at least three seconds - capture
 
-		if(americans > 0)
+		if( americans > 0 && GetTeamNumber() != TEAM_AMERICANS )
 		{
 			m_iRequestingCappers = TEAM_AMERICANS;
 			m_iNearbyPlayers = americans;
 
-			if (americans >= min( m_iCapturePlayers, g_Teams[TEAM_AMERICANS]->GetNumPlayers() ) && GetTeamNumber() != TEAM_AMERICANS )
+			if (americans >= min( m_iCapturePlayers, g_Teams[TEAM_AMERICANS]->GetNumPlayers() ) )
 			{
 				//Msg( "americans\n" );
 				if( m_iLastTeam != TEAM_AMERICANS )
@@ -818,12 +823,12 @@ void CFlag::ThinkUncapped( void )
 				}
 			}
 		}
-		else if(british > 0)
+		else if( british > 0 && GetTeamNumber() != TEAM_BRITISH )
 		{
 			m_iRequestingCappers = TEAM_BRITISH;
 			m_iNearbyPlayers = british;
 
-			if (british >= min( m_iCapturePlayers, g_Teams[TEAM_BRITISH]->GetNumPlayers() ) && GetTeamNumber() != TEAM_BRITISH )
+			if (british >= min( m_iCapturePlayers, g_Teams[TEAM_BRITISH]->GetNumPlayers() ) )
 			{
 				//Msg( "british\n" );
 				if( m_iLastTeam != TEAM_BRITISH )
