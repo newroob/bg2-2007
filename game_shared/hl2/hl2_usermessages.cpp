@@ -44,5 +44,6 @@ void RegisterUserMessages( void )
 	//BG2 - Tjoppen - usermessages
 	usermessages->Register( "VoiceComm", 2 );
 	usermessages->Register( "HitVerif", 5 );	//XXX hit YYY in ZZZ for WWW damage
+	usermessages->Register( "ServerBlood", -1 );	//pos(varies), normal(varies), amount(2)
 	//
 }

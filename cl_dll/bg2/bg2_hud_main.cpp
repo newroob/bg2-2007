@@ -182,6 +182,10 @@ void CHudBG2::ApplySchemeSettings( IScheme *scheme )
 void CHudBG2::Init( void )
 {
 	HOOK_HUD_MESSAGE( CHudBG2, HitVerif );
+	//BG2 - Tjoppen - serverside blood, a place to hook as good as any
+	extern void  __MsgFunc_ServerBlood( bf_read &msg );
+	HOOK_MESSAGE( ServerBlood );
+	//
 }
 
 //==============================================

@@ -818,12 +818,22 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 				WRITE_BYTE( pAttacker->entindex() );	//attacker id
 				WRITE_BYTE( pVictim->entindex() );		//victim id
 				WRITE_BYTE( ptr->hitgroup );			//where?
-				WRITE_SHORT( (int)ceilf(info.GetDamage()) );	//damage
+				WRITE_SHORT( (int)floorf(info.GetDamage()) );	//damage
 			MessageEnd();
+
+			//BG2 - Tjoppen - serverside blood
+			UserMessageBegin( recpfilter, "ServerBlood" );
+				WRITE_VEC3COORD( ptr->endpos );
+				WRITE_VEC3NORMAL( vecDir );
+				WRITE_SHORT( (int)floorf(info.GetDamage()) );	//damage
+			MessageEnd();
+			//
 		}
 		//
 
-		SpawnBlood(ptr->endpos, vecDir, BloodColor(), info.GetDamage());// a little surface blood.
+		//BG2 - Tjoppen - serverside blood
+		//SpawnBlood(ptr->endpos, vecDir, BloodColor(), info.GetDamage());// a little surface blood.
+		//
 		TraceBleed( info.GetDamage(), vecDir, ptr, info.GetDamageType() );
 		AddMultiDamage( info, this );
 	}

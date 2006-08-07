@@ -54,6 +54,7 @@
 	#include "shot_manipulator.h"
 #endif
 
+#include "takedamageinfo.h"
 #include "weapon_hl2mpbasehlmpcombatweapon.h"
 #include "effect_dispatch_data.h"
 #include "bullet.h"
@@ -237,9 +238,6 @@ int CBaseBG2Weapon::Fire( int iAttack )
 void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )//Activity nHitActivity )
 {
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
-	
-	//Do view kick
-//	AddViewKick();
 
 	CBaseEntity	*pHitEntity = traceHit.m_pEnt;
 
@@ -250,7 +248,6 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )//Activity nHitActivit
 		pPlayer->EyeVectors( &hitDirection, NULL, NULL );
 		VectorNormalize( hitDirection );
 
-#ifndef CLIENT_DLL
 		float	damage		= GetDamage( iAttack );	
 
 		//relative velocity, projected on aim vector..
@@ -272,36 +269,8 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )//Activity nHitActivit
 		CTakeDamageInfo info( GetOwner(), GetOwner(), damage + bonus, DMG_BULLET | DMG_PREVENT_PHYSICS_FORCE | DMG_NEVERGIB );
 		info.SetDamagePosition( traceHit.endpos );
 
-		/*if( pPlayer && pHitEntity->IsNPC() )
-		{
-			// If bonking an NPC, adjust damage.
-			info.AdjustPlayerDamageInflictedForSkillLevel();
-		}
-
-		/*if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
-			CalculateMeleeDamageForce( &info, hitDirection, traceHit.endpos );
-		else
-			CalculateMeleeDamageForce( &info, hitDirection, traceHit.endpos, 0.1f );
-			//info.SetDamageForce( vec3_origin );	//no force in slashing weapons..
-
-		//BG2 - Tjoppen - don't send airborne players flying
-		if( !(pHitEntity->GetFlags() & FL_ONGROUND) )
-			info.ScaleDamageForce( 0.001 );*/
-
-		pHitEntity->DispatchTraceAttack( info, hitDirection, &traceHit ); 
+		pHitEntity->DispatchTraceAttack( info, hitDirection, &traceHit );	//negative dir for weird reasons
 		ApplyMultiDamage();
-
-		/*if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
-		{
-			//only for stabbing weapons
-			float amount = damage + bonus;
-			if( amount > 100 ) amount = 100;
-
-			//pPlayer->VelocityPunch( -hitDirection * (damage + bonus) * ImpulseScale( 75, 1 ) * phys_pushscale.GetFloat() );
-			//pPlayer->VPhysicsGetObject()->ApplyForceCenter( -hitDirection * (damage + bonus) * ImpulseScale( 75, 1 ) * phys_pushscale.GetFloat() );
-			pPlayer->VelocityPunch( -hitDirection * amount * (pPlayer->GetFlags() & FL_ONGROUND ? 4.0f : 1.0f) * phys_pushscale.GetFloat() );
-		}*/
-#endif
 
 		//WeaponSound( MELEE_HIT );
 		if( pHitEntity->IsPlayer() )

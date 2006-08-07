@@ -322,7 +322,7 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_Attackinfos[0].m_flRecoil				= 0.3;
 	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 10.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 1.5f;
+	m_Attackinfos[0].m_flCrouchStill		= 0.75f;
 	m_Attackinfos[0].m_flStandMoving		= 8.0f;
 	m_Attackinfos[0].m_flStandStill			= 5.0f;
 	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 1.50 );

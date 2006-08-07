@@ -431,9 +431,9 @@ void FX_BloodBulletImpact( const Vector &origin, const Vector &normal, float sca
 
 		tParticle->m_flLifetime	= 0.0f;
 		
-		//BG2 - Tjoppen - blood sprays forward
+		//BG2 - Tjoppen - blood sprays towards attacker
 		//offDir = RandomVector( -1.0f, 1.0f );
-		offDir = 2.0f * dir + RandomVector( -0.2f, 0.2f );
+		offDir = RandomVector( -0.2f, 0.2f ) - 2.0f * dir;
 
 		tParticle->m_vecVelocity = offDir * random->RandomFloat( 64.0f, 128.0f );
 
@@ -481,3 +481,20 @@ void BloodImpactCallback( const CEffectData & data )
 }
 
 DECLARE_CLIENT_EFFECT( "BloodImpact", BloodImpactCallback );
+
+//BG2 - Tjoppen - serverside blood
+void  __MsgFunc_ServerBlood( bf_read &msg )
+{
+	Vector pos, normal;
+	int amount;
+
+	msg.ReadBitVec3Coord( pos );
+	msg.ReadBitVec3Normal( normal );
+	amount = msg.ReadShort();
+	
+	//assume red blood
+	colorentry_t color;
+	GetBloodColor( BLOOD_COLOR_RED, color );
+
+	FX_BloodBulletImpact( pos, normal, amount, color.r, color.g, color.b );
+}
