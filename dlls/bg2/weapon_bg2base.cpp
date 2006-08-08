@@ -491,6 +491,11 @@ int CBaseBG2Weapon::Swing( int iAttack )
 	else
 		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate(iAttack);
 
+#ifndef CLIENT_DLL
+	//BG2 - Tjoppen - melee lag fix - this makes sure we get lag compensation for the next five frames or so
+	pHL2Player->NoteWeaponFired();
+#endif
+
 	return 25;
 }
 

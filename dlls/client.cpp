@@ -300,7 +300,9 @@ void ClientPrecache( void )
 	CBaseEntity::PrecacheScriptSound( "Player.Swim" );
 
 	// General HUD sounds
-	CBaseEntity::PrecacheScriptSound( "Player.PickupWeapon" );
+	//BG2 - Tjoppen - don't bother with pickup sounds. they steal bandwidth and sound HL2-ish
+	//CBaseEntity::PrecacheScriptSound( "Player.PickupWeapon" );
+	//
 	CBaseEntity::PrecacheScriptSound( "Player.DenyWeaponSelection" );
 	CBaseEntity::PrecacheScriptSound( "Player.WeaponSelected" );
 	CBaseEntity::PrecacheScriptSound( "Player.WeaponSelectionClose" );

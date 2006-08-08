@@ -119,7 +119,9 @@ void C_BaseCombatWeapon::OnDataChanged( DataUpdateType_t updateType )
 				pHudSelection->OnWeaponPickup( this );
 			}
 
-			pPlayer->EmitSound( "Player.PickupWeapon" );
+			//BG2 - Tjoppen - don't bother with pickup sounds. they steal bandwidth and sound HL2-ish
+			//pPlayer->EmitSound( "Player.PickupWeapon" );
+			//
 		}
 	}
 

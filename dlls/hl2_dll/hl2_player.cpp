@@ -218,7 +218,9 @@ void CHL2_Player::Precache( void )
 	PrecacheScriptSound( "HL2Player.UseDeny" );
 	PrecacheScriptSound( "HL2Player.FlashLightOn" );
 	PrecacheScriptSound( "HL2Player.FlashLightOff" );
-	PrecacheScriptSound( "HL2Player.PickupWeapon" );
+	//BG2 - Tjoppen - don't bother with pickup sounds. they steal bandwidth and sound HL2-ish
+	//PrecacheScriptSound( "HL2Player.PickupWeapon" );
+	//
 	PrecacheScriptSound( "HL2Player.TrainUse" );
 	PrecacheScriptSound( "HL2Player.Use" );
 	PrecacheScriptSound( "HL2Player.BurnPain" );
@@ -2033,7 +2035,9 @@ bool CHL2_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 
 		Weapon_Equip( pWeapon );
 
-		EmitSound( "HL2Player.PickupWeapon" );
+		//BG2 - Tjoppen - don't bother with pickup sounds. they steal bandwidth and sound HL2-ish
+		//EmitSound( "HL2Player.PickupWeapon" );
+		//
 		
 		return true;
 	}

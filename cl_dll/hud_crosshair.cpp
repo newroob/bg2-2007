@@ -144,7 +144,11 @@ void CHudCrosshair::Paint( void )
 		surface()->DrawOutlinedRect( x - i - max/2, y - i - max/2, x + i + max/2, y + i + max/2 );
 	}*/
 
-	C_BaseBG2Weapon *weapon = (C_BaseBG2Weapon*)pPlayer->GetActiveWeapon();
+	C_BaseBG2Weapon *weapon = dynamic_cast<C_BaseBG2Weapon*>( pPlayer->GetActiveWeapon() );
+
+	if( !weapon )
+		return;
+
 	if( weapon )
 	{
 		/*Msg( "%f %f %f\n", weapon->GetSpread( C_BaseBG2Weapon::ATTACK_PRIMARY ).x,
@@ -216,7 +220,7 @@ void CHudCrosshair::Paint( void )
 		//Msg( "Radius: %f \n", r);
 		//r = lastr = r * 5.0f * gpGlobals->frametime + lastr * (1.f - 5.0f * gpGlobals->frametime);
 
-		r = lastr = r + (lastr - r) * expf( -5.0f * gpGlobals->frametime );
+		r = lastr = r + (lastr - r) * expf( -9.0f * gpGlobals->frametime );
 
 		//Msg( "%f %f %f\n", cx, cy, r );
 		if( cl_crosshair.GetInt() & 4 )

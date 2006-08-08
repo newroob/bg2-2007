@@ -1040,6 +1040,35 @@ int CFlag::UpdateTransmitState()
 
 IMPLEMENT_NETWORKCLASS_ALIASED( Flag, DT_Flag )
 
+int SendProxyArrayLength_IsOverloading( const void *pStruct, int objectID )
+{
+	//BG2 - Tjoppen - TODO: only send as many bits as there are players connected?
+	return gpGlobals->maxClients;
+}
+
+void SendProxy_IsOverloading_Bit( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID )
+{
+	//each bit corresponds to player #id overloading current flag or not
+	CFlag *pFlag = (CFlag*)pStruct;
+	
+	if( pFlag )
+	{
+		//see if iElement has corresponding client id overloading pFlag
+		for( int x = 0; x < pFlag->m_vOverloadingPlayers.Count(); x++ )
+			if( pFlag->m_vOverloadingPlayers[x]->GetClientIndex() == iElement )
+			{
+				pOut->m_Int = 1;
+				return;
+			}
+
+		pOut->m_Int = 0;
+	}
+	else
+	{
+		pOut->m_Int = 0;
+	}
+}
+
 BEGIN_NETWORK_TABLE( CFlag, DT_Flag )
 	SendPropInt( SENDINFO( m_iLastTeam ), Q_log2(NUM_TEAMS), SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO( m_iRequestingCappers ), Q_log2(NUM_TEAMS), SPROP_UNSIGNED ),
@@ -1051,6 +1080,26 @@ BEGIN_NETWORK_TABLE( CFlag, DT_Flag )
 	SendPropStringT( SENDINFO( m_sFlagName ) ),
 	SendPropInt( SENDINFO( m_iHUDSlot ), 5 ),	//15 slots.. 0 = sequential tile, -1 = hidden(don't draw)
 	SendPropBool( SENDINFO( m_bActive ) ),
+	
+	//each bit corresponds to player #id overloading current flag or not
+	//BG2 - Tjoppen - TODO: is there a way to set a specific bit depending on who the recipient is?
+	//						At the moment bandwidth usage for this is O(N²) instead of O(N) for N clients.
+	//						I'd like to send to each client only one bit indicating if that client is
+	//						overloading the current flag or not, instead of sending a bitmask of all client's
+	//						overload state to all clients.. The current method reveals too much information
+	//						for any would-be cheater on the opposing team. Or perhaps it's just good because
+	//						we can figure out the names of the people overloading the flag and print them.
+	//						This depends on gameplay stuff - do we want/need everyone knowing which flags
+	//						everyone else is overloading? Perhaps.
+	//BG2 - Tjoppen - TODO: implement this on client, with drawing in hud etc.
+	/*SendPropArray2( 
+		SendProxyArrayLength_IsOverloading,
+		SendPropInt("IsOverloading_Bit", 0, SIZEOF_IGNORE, 1, SPROP_UNSIGNED, SendProxy_IsOverloading_Bit),
+		MAX_PLAYERS, 
+		0,
+		"IsOverloading"
+		),*/
+
 END_NETWORK_TABLE()
 
 BEGIN_PREDICTION_DATA( CFlag )

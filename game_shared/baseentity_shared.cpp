@@ -1448,9 +1448,10 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 			if ( !bHitWater || ((info.m_nFlags & FIRE_BULLETS_DONT_HIT_UNDERWATER) == 0) )
 			{
 				//BG2 - Tjoppen - damage ramps based on range
+
 				float factor = (tr.startpos - tr.endpos).Length() / info.m_flDistance;
 
-				//start ramping down to 0% after 50% range covered
+				//start ramping down to 0% after 50% range covered, if we should
 				if( factor < 0.5f )
 					factor = 1.0f;								//full power
 				else
