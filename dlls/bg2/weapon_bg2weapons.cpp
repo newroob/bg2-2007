@@ -49,15 +49,16 @@ const float REVOL_BAYONET_DAMAGE = 40.0;
 const float CHARLE_FIRE_DAMAGE = 58.0;//57.5;
 const float CHARLE_BAYONET_DAMAGE = 41.0;
 
-const float PENNY_FIRE_DAMAGE = 35.0;
+const float PENNY_FIRE_DAMAGE = 58.0;
 
-const float JAEGER_FIRE_DAMAGE = 35.0;
+const float JAEGER_FIRE_DAMAGE = 50.0;
 
 const float PISTOLA_FIRE_DAMAGE = 40.0;
 const float PISTOLB_FIRE_DAMAGE = 40.0;
 
 const float KNIFE_DAMAGE = 30.0;
 const float SABRE_DAMAGE = 38.0;
+const float HIRSCHFAENGER_DAMAGE = 35.0;
 
 //BG2 - Tjoppen - own constants, interpreted from various places in the BG source
 const float BESS_BAYONET_RANGE = 80.0;
@@ -65,6 +66,7 @@ const float REVOL_BAYONET_RANGE = 75.0;
 const float CHARLE_BAYONET_RANGE = 77.0;
 const float SABRE_RANGE = 57.0;
 const float KNIFE_RANGE = 46.0;
+const float HIRSCHFAENGER_RANGE = 50.0;
 
 /*
 m_fMinRange1	= 0;
@@ -125,21 +127,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 }
 
 #ifndef CLIENT_DLL
-acttable_t CWeaponrevolutionnaire::m_acttable[] = 
-{
-	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_SHOTGUN,					false },
-	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_SHOTGUN,					false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_SHOTGUN,			false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_SHOTGUN,			false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN,	false },
-	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,		false },
-	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_SHOTGUN,					false },
-	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SHOTGUN,				false },
-
-	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,					false },
-};
-
-IMPLEMENT_ACTTABLE( CWeaponrevolutionnaire );
+MUSKET_ACTTABLE( revolutionnaire )
 #endif
 
 #ifdef CLIENT_DLL
@@ -182,21 +170,7 @@ DECLARE_BG2_WEAPON( brownbess )
 }
 
 #ifndef CLIENT_DLL
-acttable_t CWeaponbrownbess::m_acttable[] = 
-{
-	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_SHOTGUN,					false },
-	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_SHOTGUN,					false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_SHOTGUN,			false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_SHOTGUN,			false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN,	false },
-	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,		false },
-	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_SHOTGUN,					false },
-	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SHOTGUN,				false },
-
-	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,					false },
-};
-
-IMPLEMENT_ACTTABLE( CWeaponbrownbess );
+MUSKET_ACTTABLE( brownbess )
 #endif
 
 #ifdef CLIENT_DLL
@@ -239,21 +213,7 @@ DECLARE_BG2_WEAPON( charleville )
 }
 
 #ifndef CLIENT_DLL
-acttable_t CWeaponcharleville::m_acttable[] = 
-{
-	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_SHOTGUN,					false },
-	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_SHOTGUN,					false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_SHOTGUN,			false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_SHOTGUN,			false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN,	false },
-	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,		false },
-	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_SHOTGUN,					false },
-	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SHOTGUN,				false },
-
-	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,					false },
-};
-
-IMPLEMENT_ACTTABLE( CWeaponcharleville );
+MUSKET_ACTTABLE( charleville )
 #endif
 
 //jäger rifle, but spelled jaeger to avoid any charset problems
@@ -288,21 +248,7 @@ DECLARE_BG2_WEAPON( jaeger )
 }
 
 #ifndef CLIENT_DLL
-acttable_t CWeaponjaeger::m_acttable[] = 
-{
-	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_SHOTGUN,					false },
-	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_SHOTGUN,					false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_SHOTGUN,			false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_SHOTGUN,			false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN,	false },
-	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,		false },
-	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_SHOTGUN,					false },
-	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SHOTGUN,				false },
-
-	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,					false },
-};
-
-IMPLEMENT_ACTTABLE( CWeaponjaeger );
+RIFLE_ACTTABLE( jaeger )
 #endif
 
 
@@ -337,21 +283,7 @@ DECLARE_BG2_WEAPON( pennsylvania )
 }
 
 #ifndef CLIENT_DLL
-acttable_t CWeaponpennsylvania::m_acttable[] = 
-{
-	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_SHOTGUN,					false },
-	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_SHOTGUN,					false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_SHOTGUN,			false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_SHOTGUN,			false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN,	false },
-	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,		false },
-	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_SHOTGUN,					false },
-	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SHOTGUN,				false },
-
-	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,					false },
-};
-
-IMPLEMENT_ACTTABLE( CWeaponpennsylvania );
+RIFLE_ACTTABLE( pennsylvania )
 #endif
 
 #ifdef CLIENT_DLL
@@ -385,21 +317,7 @@ DECLARE_BG2_WEAPON( pistol_a )
 }
 
 #ifndef CLIENT_DLL
-acttable_t CWeaponpistol_a::m_acttable[] = 
-{
-	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_PISTOL,					false },
-	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_PISTOL,					false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_PISTOL,			false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_PISTOL,			false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,	false },
-	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_PISTOL,		false },
-	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_PISTOL,					false },
-	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_PISTOL,				false },
-
-	{ ACT_RANGE_ATTACK2,				ACT_VM_SECONDARYATTACK,					false },
-};
-
-IMPLEMENT_ACTTABLE( CWeaponpistol_a );
+PISTOL_ACTTABLE( pistol_a )
 #endif
 
 #ifdef CLIENT_DLL
@@ -433,21 +351,7 @@ DECLARE_BG2_WEAPON( pistol_b )
 }
 
 #ifndef CLIENT_DLL
-acttable_t CWeaponpistol_b::m_acttable[] = 
-{
-	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_PISTOL,					false },
-	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_PISTOL,					false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_PISTOL,			false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_PISTOL,			false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,	false },
-	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_PISTOL,		false },
-	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_PISTOL,					false },
-	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_PISTOL,				false },
-
-	{ ACT_RANGE_ATTACK2,				ACT_VM_SECONDARYATTACK,					false },
-};
-
-IMPLEMENT_ACTTABLE( CWeaponpistol_b );
+PISTOL_ACTTABLE( pistol_b )
 #endif
 
 #ifdef CLIENT_DLL
@@ -475,21 +379,7 @@ DECLARE_BG2_WEAPON( sabre_a )
 }
 
 #ifndef CLIENT_DLL
-acttable_t CWeaponsabre_a::m_acttable[] = 
-{
-	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SLAM,					true },
-	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_MELEE,					false },
-	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_MELEE,					false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_MELEE,			false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_MELEE,			false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
-	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_MELEE,			false },
-	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_MELEE,					false },
-
-	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
-};
-
-IMPLEMENT_ACTTABLE( CWeaponsabre_a );
+MELEE_ACTTABLE( sabre_a )
 #endif
 
 #ifdef CLIENT_DLL
@@ -517,21 +407,7 @@ DECLARE_BG2_WEAPON( sabre_b )
 }
 
 #ifndef CLIENT_DLL
-acttable_t CWeaponsabre_b::m_acttable[] = 
-{
-	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SLAM,					true },
-	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_MELEE,					false },
-	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_MELEE,					false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_MELEE,			false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_MELEE,			false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
-	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_MELEE,			false },
-	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_MELEE,					false },
-
-	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
-};
-
-IMPLEMENT_ACTTABLE( CWeaponsabre_b );
+MELEE_ACTTABLE( sabre_b )
 #endif
 
 #ifdef CLIENT_DLL
@@ -559,19 +435,33 @@ DECLARE_BG2_WEAPON( knife )
 }
 
 #ifndef CLIENT_DLL
-acttable_t CWeaponknife::m_acttable[] = 
+MELEE_ACTTABLE( knife )
+#endif
+
+#ifdef CLIENT_DLL
+#define CWeaponhirschfaenger C_Weaponhirschfaenger
+#endif
+DECLARE_BG2_WEAPON( hirschfaenger )
 {
-	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SLAM,					true },
-	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_MELEE,					false },
-	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_MELEE,					false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_MELEE,			false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_MELEE,			false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
-	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_MELEE,			false },
-	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_MELEE,					false },
+	m_bReloadsSingly	= false;
+	m_bFiresUnderwater	= true;
+	m_bDontAutoreload	= true;
 
-	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
-};
+	//primary
+	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
+	m_Attackinfos[0].m_flDamage				= HIRSCHFAENGER_DAMAGE;//60;
+	m_Attackinfos[0].m_flAttackrate			= 1.1;//-0.7f;
+	m_Attackinfos[0].m_flRange				= HIRSCHFAENGER_RANGE;
+	m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
+	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
-IMPLEMENT_ACTTABLE( CWeaponknife );
+	m_fMinRange1 = m_fMinRange2	= 0;
+	m_fMaxRange1 = m_fMaxRange2 = HIRSCHFAENGER_RANGE;
+
+	//secondary
+	m_Attackinfos[1] = m_Attackinfos[0];
+}
+
+#ifndef CLIENT_DLL
+MELEE_ACTTABLE( hirschfaenger )
 #endif

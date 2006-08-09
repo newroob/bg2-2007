@@ -282,3 +282,67 @@ END_PREDICTION_DATA()											\
 LINK_ENTITY_TO_CLASS( weapon_##name, CWeapon##name );			\
 PRECACHE_WEAPON_REGISTER( weapon_##name );						\
 CWeapon##name::CWeapon##name( void )							//constructor follows
+
+//acttable def for bayonet firearms, only muskets so far. could a rifle use a bayonet? it's just a name anyway
+#define MUSKET_ACTTABLE( name )\
+acttable_t CWeapon##name::m_acttable[] = \
+{\
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_SHOTGUN,					false },\
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_SHOTGUN,					false },\
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_SHOTGUN,			false },\
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_SHOTGUN,			false },\
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN,	false },\
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,		false },\
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_SHOTGUN,					false },\
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SHOTGUN,				false },\
+	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,					false },\
+};\
+IMPLEMENT_ACTTABLE( CWeapon##name );
+
+//acttable def for rifles, without bayo
+#define RIFLE_ACTTABLE( name )\
+acttable_t CWeapon##name::m_acttable[] = \
+{\
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_SHOTGUN,					false },\
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_SHOTGUN,					false },\
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_SHOTGUN,			false },\
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_SHOTGUN,			false },\
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN,	false },\
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,		false },\
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_SHOTGUN,					false },\
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SHOTGUN,				false },\
+	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,					false },\
+};\
+IMPLEMENT_ACTTABLE( CWeapon##name );
+
+//acttable def for pistols
+#define PISTOL_ACTTABLE( name )\
+acttable_t CWeapon##name::m_acttable[] = \
+{\
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_PISTOL,					false },\
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_PISTOL,					false },\
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_PISTOL,			false },\
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_PISTOL,			false },\
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,	false },\
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_PISTOL,		false },\
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_PISTOL,					false },\
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_PISTOL,				false },\
+	{ ACT_RANGE_ATTACK2,				ACT_VM_SECONDARYATTACK,					false },\
+};\
+IMPLEMENT_ACTTABLE( CWeapon##name );
+
+//acttable def for slash weapons
+#define MELEE_ACTTABLE( name )\
+acttable_t CWeapon##name::m_acttable[] =\
+{\
+	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_SLAM,					true },\
+	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_MELEE,					false },\
+	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_MELEE,					false },\
+	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_MELEE,			false },\
+	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_MELEE,			false },\
+	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },\
+	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_MELEE,			false },\
+	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_MELEE,					false },\
+	{ ACT_RANGE_ATTACK2,				ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },\
+};\
+IMPLEMENT_ACTTABLE( CWeapon##name );
