@@ -17,11 +17,11 @@ CBG2SmokeEmitter::CBG2SmokeEmitter( const char *pDebugName ) : CSimpleEmitter( p
 {
 	//velocity will converge to around (|m_vDrift| / -DROPOFF) for small timeDeltas
 
-#define DROPOFF	-1.5f	//exponential dropoff rate of velocity
+#define DROPOFF	-12.0f	//exponential dropoff rate of velocity
 
-	m_vDrift = Vector(	random->RandomFloat( -10, 10 ),
-						random->RandomFloat( -10, 10 ),
-						random->RandomFloat( 15, 30 ) );
+	m_vDrift = Vector(	random->RandomFloat( -50, 50 ),
+						random->RandomFloat( -50, 50 ),
+						random->RandomFloat( 15, 50 ) );
 }
 
 
@@ -63,9 +63,12 @@ void CBG2SmokeEmitter::UpdateVelocity( SimpleParticle *pParticle, float timeDelt
 	UTIL_TraceLine( pParticle->m_Pos, pParticle->m_Pos + ( vecDir * (3 + CSimpleEmitter::UpdateScale( pParticle )) ), MASK_SOLID_BRUSHONLY, NULL, &tr );
 	if ( tr.DidHit() && !(tr.surface.flags & SURF_SKY) )
 	{
-		float proj = pParticle->m_vecVelocity.Dot( tr.plane.normal );
-		pParticle->m_vecVelocity += tr.plane.normal * (-proj*2.0f); //Reflection
-		pParticle->m_vecVelocity *= random->RandomFloat( (REFLECTION_DAMPENING-0.1f), (REFLECTION_DAMPENING+0.1f) ); //Dampening
+		if( !tr.m_pEnt || (tr.m_pEnt && !tr.m_pEnt->IsPlayer()) )
+		{
+			float proj = pParticle->m_vecVelocity.Dot( tr.plane.normal );
+			pParticle->m_vecVelocity += tr.plane.normal * (-proj*2.0f); //Reflection
+			pParticle->m_vecVelocity *= random->RandomFloat( (REFLECTION_DAMPENING-0.1f), (REFLECTION_DAMPENING+0.1f) ); //Dampening
+		}
 	}
 
 	//slow down...
