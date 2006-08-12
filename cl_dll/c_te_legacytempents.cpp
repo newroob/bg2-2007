@@ -2869,6 +2869,11 @@ void CTempEnts::MuzzleFlash_357_Player( int entityIndex, int attachmentIndex )
 // Purpose: 
 // Input: 
 //==================================================
+
+//BG2 - Tjoppen - cl_simple_smoke
+static ConVar cl_simple_smoke( "cl_simple_smoke", "0", 0, "Simplify smoke by having it fully opaque, but with fewer particles" );
+//
+
 //BG2 - Tjoppen - shared muzzleflash function(both first- and thirdperson)
 void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFirstPerson )
 {
@@ -2928,7 +2933,7 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 	float flScale = random->RandomFloat( 1.5f, 2.0f );
 
 	// Flash
-	for ( int i = 1; i < 16; i++ )
+	for ( int i = 1; i < 8; i++ )
 	{
 		//BG2 - Tjoppen - flash shall stay!
 		offset = origin + forward * (float)(i*2);
@@ -2962,7 +2967,7 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 		//BG2 - Tjoppen - larger flash
 		//pParticle->m_uchStartSize	= ( (random->RandomFloat( 6.0f, 8.0f ) * (8-(i))/6) * flScale );
 		//pParticle->m_uchEndSize		= pParticle->m_uchStartSize;
-		pParticle->m_uchStartSize	= 0.5f * ( (random->RandomFloat( 6.0f, 8.0f ) * (24-(i))/6) * flScale );
+		pParticle->m_uchStartSize	= 0.25f * ( (random->RandomFloat( 6.0f, 8.0f ) * (24-(i))/6) * flScale );
 		pParticle->m_uchEndSize		= 0.5f * pParticle->m_uchStartSize;
 		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
 		pParticle->m_flRollDelta	= 0.0f;
@@ -2978,11 +2983,11 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 	offset = origin + forward * 8.0f;
 
 	//BG2 - Tjoppen - more smoke
-	for( int j = 0; j < 12; j++ )
+	for( int j = 0; j < (cl_simple_smoke.GetBool() ? 6 : 12); j++ )
 	//if ( random->RandomInt( 0, 3 ) != 0 )
 	{
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
-		offset = origin + forward * 2.0f * (float)j;
+		offset = origin + forward * (cl_simple_smoke.GetBool() ? 4.0f : 2.0f) * (float)j;
 
 		//pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( "particle/particle_musketsmoke" ), offset );
 		pParticle = (SimpleParticle *) pSimple3->AddParticle( sizeof( SimpleParticle ), pSimple3->GetPMaterial( "particle/particle_musketsmoke" ), offset );
@@ -3010,8 +3015,16 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 		pParticle->m_uchColor[2]	= color;
 
 		//BG2 - Tjoppen - denser smoke
-		pParticle->m_uchStartAlpha	= random->RandomInt( 150, 255 );
-		pParticle->m_uchEndAlpha	= 0;
+		if( cl_simple_smoke.GetBool() )
+		{
+			pParticle->m_uchStartAlpha	= 255;
+			pParticle->m_uchEndAlpha	= 255;
+		}
+		else
+		{
+			pParticle->m_uchStartAlpha	= random->RandomInt( 150, 255 );
+			pParticle->m_uchEndAlpha	= 0;
+		}
 
 		//BG2 - Tjoppen - larger smoke
 		pParticle->m_uchStartSize	= (float)(j+8) * 0.6f;
@@ -3059,6 +3072,10 @@ void CTempEnts::MuzzleFlash_RPG_NPC( int entityIndex, int attachmentIndex )
 void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool isFirstPerson )
 {
 	VPROF_BUDGET( "MuzzleFlash_Flashpan", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
+
+	if( cl_simple_smoke.GetBool() )
+		return;
+
 	CSmartPtr<CBG2SmokeEmitter> pSimple;
 	//CSmartPtr<CLocalSpaceEmitter> pSimple2;
 

@@ -117,6 +117,86 @@ CBaseBG2Weapon::CBaseBG2Weapon( void )
 	//m_nViewModelIndex	= random->RandomInt( 0, 1 );	//test..
 }
 
+//PrimaryAttack
+void CBaseBG2Weapon::PrimaryAttack( void )
+{
+	//disallow holding reload button
+	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+
+	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
+		return;
+
+	int drain = 0;
+	if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_STAB || GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_SLASH )
+	{
+		if( GetOwner() && (GetOwner()->GetFlags() & FL_DUCKING) )
+			return;
+
+		if( mp_disable_melee.GetInt() )
+			return;
+
+		drain = Swing( ATTACK_PRIMARY );
+	}
+	else if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_FIREARM )
+	{
+		if( mp_disable_firearms.GetInt() )
+			return;
+
+		drain = Fire( ATTACK_PRIMARY );
+	}
+	else
+		return;	//don't drain stamina
+
+	//BG2 - Draco - decrease stam when attacking
+#ifndef CLIENT_DLL
+	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
+
+	pHL2Player->m_iStamina -= drain;
+	if( pHL2Player->m_iStamina < 0 )
+		pHL2Player->m_iStamina = 0;
+#endif
+}
+
+//SecondaryAttack
+void CBaseBG2Weapon::SecondaryAttack( void )
+{
+	//disallow holding reload button
+	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+
+	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
+		return;
+
+	int drain = 0;
+	if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_STAB || GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_SLASH )
+	{
+		if( GetOwner() && (GetOwner()->GetFlags() & FL_DUCKING) )
+			return;
+
+		if( mp_disable_melee.GetInt() )
+			return;
+
+		drain = Swing( ATTACK_SECONDARY );
+	}
+	else if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_FIREARM )
+	{
+		if( mp_disable_firearms.GetInt() )
+			return;
+
+		drain = Fire( ATTACK_SECONDARY );
+	}
+	else
+		return;	//don't drain stamina
+
+	//BG2 - Draco - decrease stam when attacking
+#ifndef CLIENT_DLL
+	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
+
+	pHL2Player->m_iStamina -= drain;
+	if( pHL2Player->m_iStamina < 0 )
+		pHL2Player->m_iStamina = 0;
+#endif
+}
+
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
@@ -236,7 +316,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 //------------------------------------------------------------------------------
 // Purpose: Implement impact function
 //------------------------------------------------------------------------------
-void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )//Activity nHitActivity )
+void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )
 {
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
 
@@ -349,84 +429,6 @@ void CBaseBG2Weapon::ImpactEffect( trace_t &traceHit )
 
 	//FIXME: need new decals
 	UTIL_ImpactTrace( &traceHit, DMG_BULLET );	//BG2 - Tjoppen - surface blood
-}
-
-void CBaseBG2Weapon::PrimaryAttack( void )
-{
-	//disallow holding reload button
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-
-	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
-		return;
-
-	int drain = 0;
-	if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_STAB || GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_SLASH )
-	{
-		if( GetOwner() && (GetOwner()->GetFlags() & FL_DUCKING) )
-			return;
-
-		if( mp_disable_melee.GetInt() )
-			return;
-
-		drain = Swing( ATTACK_PRIMARY );
-	}
-	else if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_FIREARM )
-	{
-		if( mp_disable_firearms.GetInt() )
-			return;
-
-		drain = Fire( ATTACK_PRIMARY );
-	}
-	else
-		return;	//don't drain stamina
-
-	//BG2 - Draco - decrease stam when attacking
-#ifndef CLIENT_DLL
-	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
-
-	pHL2Player->m_iStamina -= drain;
-	if( pHL2Player->m_iStamina < 0 )
-		pHL2Player->m_iStamina = 0;
-#endif
-}
-
-void CBaseBG2Weapon::SecondaryAttack( void )
-{
-	//disallow holding reload button
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-
-	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
-		return;
-
-	int drain = 0;
-	if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_STAB || GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_SLASH )
-	{
-		if( GetOwner() && (GetOwner()->GetFlags() & FL_DUCKING) )
-			return;
-
-		if( mp_disable_melee.GetInt() )
-			return;
-
-		drain = Swing( ATTACK_SECONDARY );
-	}
-	else if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_FIREARM )
-	{
-		if( mp_disable_firearms.GetInt() )
-			return;
-
-		drain = Fire( ATTACK_SECONDARY );
-	}
-	else
-		return;	//don't drain stamina
-
-	//BG2 - Draco - decrease stam when attacking
-#ifndef CLIENT_DLL
-	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
-
-	pHL2Player->m_iStamina -= drain;
-	if( pHL2Player->m_iStamina < 0 )
-		pHL2Player->m_iStamina = 0;
-#endif
 }
 
 int CBaseBG2Weapon::Swing( int iAttack )
