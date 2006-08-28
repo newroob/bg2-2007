@@ -53,6 +53,7 @@ public:
 	int		m_iNearbyPlayers;
 	int		m_iForTeam;
 	float	m_flCaptureTime;
+	bool	m_pOverloading[MAX_PLAYERS];	//which players are overloading this flag?
 	
 	char	m_sFlagName[256];
 

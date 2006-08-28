@@ -37,6 +37,13 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+void RecvProxy_IsOverloading_Bit( const CRecvProxyData *pData, void *pStruct, void *pOut )
+{
+	C_Flag *pFlag = (C_Flag*)pStruct;
+	pFlag->m_pOverloading[pData->m_iElement] = pData->m_Value.m_Int;
+}
+
+
 IMPLEMENT_CLIENTCLASS_DT( C_Flag, DT_Flag, CFlag )
 	RecvPropInt( RECVINFO( m_iLastTeam ) ),
 	RecvPropInt( RECVINFO( m_iRequestingCappers ) ),
@@ -48,6 +55,15 @@ IMPLEMENT_CLIENTCLASS_DT( C_Flag, DT_Flag, CFlag )
 	RecvPropString( RECVINFO( m_sFlagName ) ),
 	RecvPropInt( RECVINFO( m_iHUDSlot ) ),
 	RecvPropBool( RECVINFO( m_bActive ) ),
+
+	RecvPropArray2( 
+		NULL, //we don't need array legth..
+		RecvPropInt("IsOverloading_Bit", 0, SIZEOF_IGNORE, 0, RecvProxy_IsOverloading_Bit),
+		MAX_PLAYERS, 
+		0,
+		"IsOverloading"
+		),
+
 END_RECV_TABLE()
 
 // Global list of client side team entities

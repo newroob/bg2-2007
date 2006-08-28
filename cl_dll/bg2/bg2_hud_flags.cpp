@@ -203,6 +203,11 @@ bool CHudFlags::ShouldDraw( void )
 //==============================================
 void CHudFlags::Paint()
 {
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+
+	if( !pPlayer )
+		return;
+
 	char text[512];
 	int i;// = 0;
 	int x_offset = 5;
@@ -255,21 +260,21 @@ void CHudFlags::Paint()
 							}
 							break;
 						case 1: // Compact Details
-							if( iTimeToCap > 0.1f )
+							if( iTimeToCap > 0 )
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i P - T %i", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap);
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i P - T %i", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
 								strcat(	text, text_add);
 							}
 							else
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i P", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers);
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i P %s", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- OL:ed" : "- not OL:ed") );
 								strcat(	text, text_add);
 							}
 							break;
 						case 2: // Full Details
-							if( iTimeToCap > 0.1f )
+							if( iTimeToCap > 0 )
 							{
 								char text_add[128];
 								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players - Time %i", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
@@ -278,30 +283,30 @@ void CHudFlags::Paint()
 							else
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers);
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players %s", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- Overloaded" : "- Not overloaded") );
 								strcat(	text, text_add);
 							}
 							break;
 					}
 					break;
 				case 1:
-					if( iTimeToCap > 0.1f )
+					if( iTimeToCap > 0 )
 					{
 						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
 					}
 					else
 					{
-						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers);
+						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players %s", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- Overloaded" : "- Not overloaded") );
 					}
 					break;
 				case 2:
-					if( iTimeToCap > 0.1f )
+					if( iTimeToCap > 0 )
 					{
 						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
 					}
 					else
 					{
-						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers);
+						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players %s", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- Overloaded" : "- Not overloaded") );
 					}
 					break;
 			}

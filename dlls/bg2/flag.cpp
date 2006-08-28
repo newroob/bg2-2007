@@ -1092,13 +1092,13 @@ BEGIN_NETWORK_TABLE( CFlag, DT_Flag )
 	//						This depends on gameplay stuff - do we want/need everyone knowing which flags
 	//						everyone else is overloading? Perhaps.
 	//BG2 - Tjoppen - TODO: implement this on client, with drawing in hud etc.
-	/*SendPropArray2( 
+	SendPropArray2( 
 		SendProxyArrayLength_IsOverloading,
 		SendPropInt("IsOverloading_Bit", 0, SIZEOF_IGNORE, 1, SPROP_UNSIGNED, SendProxy_IsOverloading_Bit),
 		MAX_PLAYERS, 
 		0,
 		"IsOverloading"
-		),*/
+		),
 
 END_NETWORK_TABLE()
 

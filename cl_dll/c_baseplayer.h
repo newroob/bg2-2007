@@ -306,6 +306,11 @@ public:
 	float			m_flConstraintWidth;
 	float			m_flConstraintSpeedFactor;
 
+	//BG2 - Tjoppen - GetClientIndex()
+	// Get the client index (entindex-1).
+	int						GetClientIndex()	{ return entindex() - 1; }
+	//
+
 protected:
 
 	void				CalcPlayerView( Vector& eyeOrigin, QAngle& eyeAngles, float& fov );
