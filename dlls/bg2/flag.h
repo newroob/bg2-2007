@@ -98,6 +98,37 @@ class CFlag : public CBaseAnimating
 
 	float	m_flNextTeamBonus;
 
+	string_t	m_sNeutralFlagModelName,
+				m_sBritishFlagModelName,
+				m_sAmericanFlagModelName;
+
+	const char* GetNeutralModelName()
+	{
+		//for backward compatibility without this name defined
+		if( strlen(STRING( m_sNeutralFlagModelName )) == 0 )
+			return "models/other/flag_n.mdl";
+		else
+			return STRING( m_sNeutralFlagModelName );
+	}
+
+	const char* GetBritishModelName()
+	{
+		//for backward compatibility without this name defined
+		if( strlen(STRING( m_sBritishFlagModelName )) == 0 )
+			return "models/other/flag_b.mdl";
+		else
+			return STRING( m_sBritishFlagModelName );
+	}
+
+	const char* GetAmericanModelName()
+	{
+		//for backward compatibility without this name defined
+		if( strlen(STRING( m_sAmericanFlagModelName )) == 0 )
+			return "models/other/flag_a.mdl";
+		else
+			return STRING( m_sAmericanFlagModelName );
+	}
+
 	CNetworkVar( float,	m_flCaptureTime );	//.. and for how long?
 	float	m_flCaptureRadius;				//.. and how close?
 

@@ -511,7 +511,7 @@ void CFlag::InputEnable( inputdata_t &inputData )
 	m_bActive = true;
 	ChangeTeam( TEAM_UNASSIGNED );
 	m_iLastTeam = TEAM_UNASSIGNED;
-	SetModel( "models/other/flag_n.mdl" );
+	SetModel( GetNeutralModelName() );
 	m_OnEnable.FireOutput( inputData.pActivator, this );
 	Think(); // think immediately and restart the thinking cycle
 }
@@ -630,9 +630,9 @@ void CFlag::Spawn( void )
 }
 void CFlag::Precache( void )
 {
-	PrecacheModel ("models/other/flag_n.mdl");
-	PrecacheModel ("models/other/flag_a.mdl");
-	PrecacheModel ("models/other/flag_b.mdl");
+	PrecacheModel( GetNeutralModelName() );
+	PrecacheModel( GetAmericanModelName() );
+	PrecacheModel( GetBritishModelName() );
 	//BG2 - Tjoppen - temp
 	//PrecacheModel ("models/other/flag_w.mdl");  // BG2 - SaintGreg - flag when disabled
 
@@ -1005,22 +1005,22 @@ void CFlag::ChangeTeam( int iTeamNum )
 	switch( iTeamNum )
 	{
 	case TEAM_AMERICANS:
-		SetModel( "models/other/flag_a.mdl" );
+		SetModel( GetAmericanModelName() );
 		break;
 	case TEAM_BRITISH:
-		SetModel( "models/other/flag_b.mdl" );
+		SetModel( GetBritishModelName() );
 		break;
 	default:
 		switch( m_iForTeam )
 		{
 			case 1://amer
-				SetModel( "models/other/flag_b.mdl" );
+				SetModel( GetBritishModelName() );
 				break;
 			case 2://brit
-				SetModel( "models/other/flag_a.mdl" );
+				SetModel( GetAmericanModelName() );
 				break;
 			default:
-				SetModel( "models/other/flag_n.mdl" );
+				SetModel( GetNeutralModelName() );
 				break;
 		}
 		//SetModel( "models/other/flag_n.mdl" );
@@ -1118,6 +1118,9 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_KEYFIELD( m_sFlagName, FIELD_STRING, "FlagName" ),
 	DEFINE_KEYFIELD( m_iHUDSlot, FIELD_INTEGER, "HUDSlot" ),
 	DEFINE_KEYFIELD( m_iNotUncappable, FIELD_BOOLEAN, "NotUncappable" ),
+	DEFINE_KEYFIELD( m_sNeutralFlagModelName, FIELD_STRING, "NeutralFlagModelName" ),
+	DEFINE_KEYFIELD( m_sBritishFlagModelName, FIELD_STRING, "BritishFlagModelName" ),
+	DEFINE_KEYFIELD( m_sAmericanFlagModelName, FIELD_STRING, "AmericanFlagModelName" ),
 
 #ifndef CLIENT_DLL
 	DEFINE_THINKFUNC( Think ),
