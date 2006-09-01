@@ -57,13 +57,13 @@ void CHudCrosshair::ApplySchemeSettings( IScheme *scheme )
 }
 
 //BG2 - Tjoppen - cl_crosshairstyle
-static ConVar cl_crosshair( "cl_crosshair", "8", 0, "Bitmask describing how to draw the crosshair\n  1 = dynamic circular\n  2 = static three-lined\n  4 = dot(square) in the middle\n  8 = hud/crosshair.vtf" );
-static ConVar cl_crosshair_scale( "cl_crosshair_scale", "1", 0, "Scale of cl_crosshairstyle 1, 2 and 4" );
+ConVar cl_crosshair( "cl_crosshair", "8", 0, "Bitmask describing how to draw the crosshair\n  1 = dynamic circular\n  2 = static three-lined\n  4 = dot(square) in the middle\n  8 = hud/crosshair.vtf" );
+ConVar cl_crosshair_scale( "cl_crosshair_scale", "1", 0, "Scale of cl_crosshairstyle 1, 2 and 4" );
 
-static ConVar cl_crosshair_r( "cl_crosshair_r", "0", 0, "Crosshair redness. 0-255" );
-static ConVar cl_crosshair_g( "cl_crosshair_g", "221", 0, "Crosshair greenness. 0-255" );
-static ConVar cl_crosshair_b( "cl_crosshair_b", "47", 0, "Crosshair blueness. 0-255" );
-static ConVar cl_crosshair_a( "cl_crosshair_a", "167", 0, "Crosshair opacity(alpha). 0-255" );
+ConVar cl_crosshair_r( "cl_crosshair_r", "0", 0, "Crosshair redness. 0-255" );
+ConVar cl_crosshair_g( "cl_crosshair_g", "221", 0, "Crosshair greenness. 0-255" );
+ConVar cl_crosshair_b( "cl_crosshair_b", "47", 0, "Crosshair blueness. 0-255" );
+ConVar cl_crosshair_a( "cl_crosshair_a", "167", 0, "Crosshair opacity(alpha). 0-255" );
 //
 
 void CHudCrosshair::Paint( void )

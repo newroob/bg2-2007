@@ -21,6 +21,9 @@
 #include "iclientmode.h"
 #include <vgui_controls/Panel.h>
 #include <KeyValues.h>
+//BG2 - Tjoppen - options panel
+#include "../bg2/vgui_bg2_options.h"
+//
 
 using namespace vgui;
 
@@ -158,6 +161,11 @@ void VGui_CreateGlobalPanels( void )
 	fps->Create( toolParent );
 	netgraphpanel->Create( toolParent );
 	debugoverlaypanel->Create( toolParent );
+
+	//BG2 - Tjoppen - options panel
+	VPANEL GameUiDll = enginevgui->GetPanel( PANEL_GAMEUIDLL );
+	bg2options = new CBG2OptionsPanel( GameUiDll );	//make into main menu panel
+	//
 }
 
 void VGui_Shutdown()
@@ -173,6 +181,14 @@ void VGui_Shutdown()
 	internalCenterPrint->Destroy();
 	textmessage->Destroy();
 	//console->Destroy();
+
+	//BG2 - Tjoppen - options panel
+	if( bg2options )
+	{
+		delete bg2options;
+		bg2options = NULL;
+	}
+	//
 
 	if ( g_pClientMode )
 	{
