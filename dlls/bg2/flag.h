@@ -99,6 +99,7 @@ class CFlag : public CBaseAnimating
 	float	m_flNextTeamBonus;
 
 	string_t	m_sNeutralFlagModelName,
+				m_sDisabledFlagModelName,
 				m_sBritishFlagModelName,
 				m_sAmericanFlagModelName;
 
@@ -109,6 +110,15 @@ class CFlag : public CBaseAnimating
 			return "models/other/flag_n.mdl";
 		else
 			return STRING( m_sNeutralFlagModelName );
+	}
+
+	const char* GetDisabledModelName()
+	{
+		//for backward compatibility without this name defined
+		if( strlen(STRING( m_sDisabledFlagModelName )) == 0 )
+			return "models/other/flag_w.mdl";
+		else
+			return STRING( m_sDisabledFlagModelName );
 	}
 
 	const char* GetBritishModelName()

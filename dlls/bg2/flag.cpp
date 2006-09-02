@@ -495,7 +495,6 @@ A model that is used to display the status of the point and show players where i
 
 //BG2 - SaintGreg - dynamic flag settings
 //input functions
-#ifndef CLIENT_DLL
 bool CFlag::IsActive( void )
 {
 	return m_bActive;
@@ -505,9 +504,11 @@ void CFlag::InputEnable( inputdata_t &inputData )
 {
 	if( m_bActive )
 		return;
-	char msg[512];
-	Q_snprintf( msg, 512, "flag(%s) has been enabled", STRING( GetEntityName() ) );
-	ClientPrintAll( msg, true, true ); // saying whether it is enabled or not is important, so force
+
+	//char msg[512];
+	//Q_snprintf( msg, 512, "flag(%s) has been enabled", STRING( GetEntityName() ) );
+	//ClientPrintAll( msg, true, true ); // saying whether it is enabled or not is important, so force
+
 	m_bActive = true;
 	ChangeTeam( TEAM_UNASSIGNED );
 	m_iLastTeam = TEAM_UNASSIGNED;
@@ -519,9 +520,11 @@ void CFlag::InputDisable( inputdata_t &inputData )
 {
 	if( !m_bActive )
 		return;
-	char msg[512];
-	Q_snprintf( msg, 512, "flag(%s) has been disabled", STRING( GetEntityName() ) );
-	ClientPrintAll( msg, true, true ); // saying whether it is enabled or not is important, so force
+
+	//char msg[512];
+	//Q_snprintf( msg, 512, "flag(%s) has been disabled", STRING( GetEntityName() ) );
+	//ClientPrintAll( msg, true, true ); // saying whether it is enabled or not is important, so force
+
 	m_bActive = false;
 	if( GetTeamNumber() == TEAM_AMERICANS )
 	{
@@ -535,7 +538,7 @@ void CFlag::InputDisable( inputdata_t &inputData )
 	}
 	ChangeTeam( TEAM_UNASSIGNED );
 	m_iLastTeam = TEAM_UNASSIGNED;
-	SetModel( "models/other/flag_w.mdl" );
+	SetModel( GetDisabledModelName() );
 	m_OnDisable.FireOutput( inputData.pActivator, this );
 	//CFlagHandler::Update();
 }
@@ -546,68 +549,24 @@ void CFlag::InputToggle( inputdata_t &inputData )
 	else
 		InputEnable( inputData );
 }
-#endif // CLIENT_DLL
 
 void CFlag::Spawn( void )
 {
 	Precache( );
 
-	/*switch( m_iForTeam )
-	{
-	default:
-		SetModel( "models/other/flag_n.mdl" );
-#ifndef CLIENT_DLL
-		m_iLastTeam = TEAM_UNASSIGNED;
-		ChangeTeam( TEAM_UNASSIGNED );
-#endif
-		break;
-	case 1:
-		SetModel( "models/other/flag_a.mdl" );
-#ifndef CLIENT_DLL
-		m_iLastTeam = TEAM_AMERICANS;
-		ChangeTeam( TEAM_AMERICANS );
-#endif
-		break;
-	case 2:
-		SetModel( "models/other/flag_b.mdl" );
-#ifndef CLIENT_DLL
-		m_iLastTeam = TEAM_BRITISH;
-		ChangeTeam( TEAM_BRITISH );
-#endif
-		break;
-	}*/
-
-	/*switch (m_iForTeam)
-	{
-		case 1://amer
-			SetModel( "models/other/flag_b.mdl" );
-			break;
-		case 2://brit
-			SetModel( "models/other/flag_a.mdl" );
-			break;
-		default:
-			SetModel( "models/other/flag_n.mdl" );
-			break;
-	}*/
-
-	//m_iLastTeam = TEAM_UNASSIGNED;
-
-	ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
-	m_iRequestingCappers = TEAM_UNASSIGNED;
-	m_iLastTeam = TEAM_UNASSIGNED;
-
-#ifndef CLIENT_DLL
 	if (HasSpawnFlags( CFlag_START_DISABLED ))
 	{
 		m_bActive = false;
-		SetModel( "models/other/flag_w.mdl" );
+		SetModel( GetDisabledModelName() );
 	}
 	else
 	{
 		m_bActive = true;
-		//SetModel( "models/other/flag_n.mdl" );
+		ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
 	}
-#endif // CLIENT_DLL
+
+	m_iRequestingCappers = TEAM_UNASSIGNED;
+	m_iLastTeam = TEAM_UNASSIGNED;
 
 	/*int m_nIdealSequence = SelectWeightedSequence( ACT_VM_IDLE );
 	//SetActivity( ACT_VM_IDLE );
@@ -623,47 +582,18 @@ void CFlag::Spawn( void )
 
 	SetThink( &CFlag::Think );
 	SetNextThink( gpGlobals->curtime );
-
-	//SetSolid( SOLID_BBOX );
-	//SetSolid( SOLID_BBOX );
-	//m_iTeam = TEAM_UNASSIGNED;
 }
 void CFlag::Precache( void )
 {
 	PrecacheModel( GetNeutralModelName() );
 	PrecacheModel( GetAmericanModelName() );
 	PrecacheModel( GetBritishModelName() );
-	//BG2 - Tjoppen - temp
-	//PrecacheModel ("models/other/flag_w.mdl");  // BG2 - SaintGreg - flag when disabled
+	PrecacheModel( GetDisabledModelName() );  // BG2 - SaintGreg - flag when disabled
 
 	PrecacheScriptSound( "British.win" );
 	PrecacheScriptSound( "Americans.win" );
 	PrecacheScriptSound( "Flag.capture" );
-
-	//PrecacheScriptSound( "ItemBattery.Touch" );
-
 }
-/*void MyTouch( CBaseEntity *pEntity )
-{
-#ifndef CLIENT_DLL
-	CBasePlayer *pPlayer = (CBasePlayer*)pEntity;
-	if( !pPlayer )
-		return;
-	
-	if( pPlayer->GetTeamNumber() != GetTeamNumber() )
-	{
-		Msg( "%s touched the flag\n", pPlayer->PlayerData()->netname );
-		ChangeTeam( pPlayer->GetTeamNumber() );
-		CFlagHandler::Update();
-	}
-
-	//PhysicsRemoveTouchedList( this );
-
-#endif
-	/*SetCheckUntouch( true );
-	EndTouch( pEntity );
-	SetTouch(&CFlag::MyTouch);*//*
-}*/
 
 void CFlag::Think( void )
 {
@@ -990,18 +920,6 @@ void CFlag::ThinkCapped( void )
 
 void CFlag::ChangeTeam( int iTeamNum )
 {
-//#ifndef CLIENT_DLL
-#ifndef CLIENT_DLL
-		if (HasSpawnFlags( CFlag_START_DISABLED ))
-		{
-			m_bActive = false;
-			SetModel( "models/other/flag_w.mdl" );
-			return;
-		}
-		
-		m_bActive = true;
-#endif // CLIENT_DLL
-
 	switch( iTeamNum )
 	{
 	case TEAM_AMERICANS:
@@ -1023,10 +941,9 @@ void CFlag::ChangeTeam( int iTeamNum )
 				SetModel( GetNeutralModelName() );
 				break;
 		}
-		//SetModel( "models/other/flag_n.mdl" );
 		break;
 	}
-//#endif
+
 	//m_iLastTeam = iTeamNum;
 	//m_iLastTeam = TEAM_UNASSIGNED;
 
@@ -1119,6 +1036,7 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_KEYFIELD( m_iHUDSlot, FIELD_INTEGER, "HUDSlot" ),
 	DEFINE_KEYFIELD( m_iNotUncappable, FIELD_BOOLEAN, "NotUncappable" ),
 	DEFINE_KEYFIELD( m_sNeutralFlagModelName, FIELD_STRING, "NeutralFlagModelName" ),
+	DEFINE_KEYFIELD( m_sDisabledFlagModelName, FIELD_STRING, "DisabledFlagModelName" ),
 	DEFINE_KEYFIELD( m_sBritishFlagModelName, FIELD_STRING, "BritishFlagModelName" ),
 	DEFINE_KEYFIELD( m_sAmericanFlagModelName, FIELD_STRING, "AmericanFlagModelName" ),
 

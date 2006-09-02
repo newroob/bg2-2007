@@ -310,83 +310,91 @@ void CHudFlags::Paint()
 					}
 					break;
 			}
+
 			float r = 0;
 			float g = 0;
 			float b = 0;
-			switch( g_Flags[i]->m_iLastTeam )
+
+			if( !g_Flags[i]->m_bActive )
 			{
-				case TEAM_AMERICANS:
-					r = 66;
-					g = 115;
-					b = 247;
-					r += 188 * (sin(iTimeToCap*4) + 1)/2;
-					g += 139 * (sin(iTimeToCap*4) + 1)/2;
-					b += 7 * (sin(iTimeToCap*4) + 1)/2;
-					break;
-				case TEAM_BRITISH:
-					r = 255;
-					g = 16;
-					b = 16;
-					g += 238 * (sin(iTimeToCap*4) + 1)/2;
-					b += 238 * (sin(iTimeToCap*4) + 1)/2;
-					break;
-				default:
-				case TEAM_UNASSIGNED:
-					switch (g_Flags[i]->GetTeamNumber())
-					{
-						case TEAM_AMERICANS:
-							r = 66;
-							g = 115;
-							b = 247;
-							break;
-						case TEAM_BRITISH:
-							r = 255;
-							g = 16;
-							b = 16;
-							break;
-						case TEAM_UNASSIGNED:
-							switch (g_Flags[i]->m_iRequestingCappers)
-							{
-								case TEAM_BRITISH:
-									r = 255;
-									g = 16;
-									b = 16;
-									g += 238 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
-									b += 238 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
-									break;
-								case TEAM_AMERICANS:
-									r = 66;
-									g = 115;
-									b = 247;
-									r += 188 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
-									g += 139 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
-									b += 7 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
-									break;
-								case TEAM_UNASSIGNED:
-									switch( g_Flags[i]->m_iForTeam )
-									{
-									case 0:
-										r = 255;
-										g = 255;
-										b = 255;
-										break;
-									case 1:
+				//BG2 - Tjoppen - inactive flags simply have grey text for now
+				r = g = b = 96;
+			}
+			else
+				switch( g_Flags[i]->m_iLastTeam )
+				{
+					case TEAM_AMERICANS:
+						r = 66;
+						g = 115;
+						b = 247;
+						r += 188 * (sin(iTimeToCap*4) + 1)/2;
+						g += 139 * (sin(iTimeToCap*4) + 1)/2;
+						b += 7 * (sin(iTimeToCap*4) + 1)/2;
+						break;
+					case TEAM_BRITISH:
+						r = 255;
+						g = 16;
+						b = 16;
+						g += 238 * (sin(iTimeToCap*4) + 1)/2;
+						b += 238 * (sin(iTimeToCap*4) + 1)/2;
+						break;
+					default:
+					case TEAM_UNASSIGNED:
+						switch (g_Flags[i]->GetTeamNumber())
+						{
+							case TEAM_AMERICANS:
+								r = 66;
+								g = 115;
+								b = 247;
+								break;
+							case TEAM_BRITISH:
+								r = 255;
+								g = 16;
+								b = 16;
+								break;
+							case TEAM_UNASSIGNED:
+								switch (g_Flags[i]->m_iRequestingCappers)
+								{
+									case TEAM_BRITISH:
 										r = 255;
 										g = 16;
 										b = 16;
+										g += 238 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
+										b += 238 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
 										break;
-									case 2:
+									case TEAM_AMERICANS:
 										r = 66;
 										g = 115;
 										b = 247;
+										r += 188 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
+										g += 139 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
+										b += 7 * (int)((sin(iTimeToCap*8) + 2.7f)/2);
 										break;
-									}
-									break;
-							}
-							break;
-					}
-					break;
-			}
+									case TEAM_UNASSIGNED:
+										switch( g_Flags[i]->m_iForTeam )
+										{
+										case 0:
+											r = 255;
+											g = 255;
+											b = 255;
+											break;
+										case 1:
+											r = 255;
+											g = 16;
+											b = 16;
+											break;
+										case 2:
+											r = 66;
+											g = 115;
+											b = 247;
+											break;
+										}
+										break;
+								}
+								break;
+						}
+						break;
+				}
 			m_pLabelFlag[i]->SetFgColor(Color(r,g,b,255));
 			m_pLabelFlag[i]->SetText( text );
 			m_pLabelFlag[i]->SizeToContents();
