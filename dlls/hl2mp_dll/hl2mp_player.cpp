@@ -321,6 +321,7 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_brownbess" );
 	GiveNamedItem( "weapon_charleville" );
 	GiveNamedItem( "weapon_pennsylvania" );
+	GiveNamedItem( "weapon_jaeger" );
 	GiveNamedItem( "weapon_pistol_a" );
 	GiveNamedItem( "weapon_pistol_b" );
 	GiveNamedItem( "weapon_sabre_a" );
@@ -355,23 +356,12 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			GiveNamedItem( "weapon_sabre_a" );
 			break;
 		case CLASS_SNIPER:
-			GiveNamedItem( "weapon_revolutionnaire" );
+			//GiveNamedItem( "weapon_revolutionnaire" );	//rev is no more
+			GiveNamedItem( "weapon_pennsylvania" );
+			GiveNamedItem( "weapon_knife" );
 			break;
 		}
 
-		/*switch( x )
-		{
-		case 0:
-			GiveNamedItem( "weapon_revolutionnaire" );
-			break;
-		case 1:
-			GiveNamedItem( "weapon_charleville" );
-			break;
-		case 2:
-			GiveNamedItem( "weapon_pistol_a" );
-			GiveNamedItem( "weapon_sabre" );
-			break;
-		}*/
 		//Weapon_Switch( Weapon_OwnsThisType( "weapon_revolutionnaire" ) );
 	}
 	else if( GetTeam()->GetTeamNumber() == TEAM_BRITISH )	//british
@@ -386,25 +376,10 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			GiveNamedItem( "weapon_sabre_b" );
 			break;
 		case CLASS_SNIPER:
-			GiveNamedItem( "weapon_pennsylvania" );
-			GiveNamedItem( "weapon_knife" );
+			GiveNamedItem( "weapon_jaeger" );
+			GiveNamedItem( "weapon_sabre_b" );	//BG2 - Tjoppen - TODO: hirschfänger
 			break;
 		}
-
-		/*switch( x )
-		{
-		case 0:
-			GiveNamedItem( "weapon_brownbess" );
-			break;
-		case 1:
-			GiveNamedItem( "weapon_pennsylvania" );
-			GiveNamedItem( "weapon_knife" );
-			break;
-		case 2:
-			GiveNamedItem( "weapon_pistol_b" );
-			GiveNamedItem( "weapon_sabre" );
-			break;
-		}*/
 		
 		//Weapon_Switch( Weapon_OwnsThisType( "weapon_brownbess" ) );
 	}
