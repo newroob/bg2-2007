@@ -1182,6 +1182,11 @@ Activity CBaseCombatWeapon::GetDrawActivity( void )
 //-----------------------------------------------------------------------------
 bool CBaseCombatWeapon::Holster( CBaseCombatWeapon *pSwitchingTo )
 { 
+	//BG2 - Tjoppen - m_bCantAbortReload
+	if( m_bCantAbortReload && m_bInReload )
+		return false;
+	//
+
 	// cancel any reload in progress.
 	m_bInReload = false; 
 

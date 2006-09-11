@@ -96,6 +96,8 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_bFiresUnderwater	= true;
 	m_bDontAutoreload	= true;
 
+	m_bCantAbortReload	= true;
+
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= REVOL_FIRE_DAMAGE;//75;
@@ -139,6 +141,8 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_bFiresUnderwater	= true;
 	m_bDontAutoreload	= true;
 
+	m_bCantAbortReload	= true;
+
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= BESS_FIRE_DAMAGE;//75;
@@ -146,9 +150,9 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 12.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 4.0f;
+	m_Attackinfos[0].m_flCrouchStill		= 2.4f;
 	m_Attackinfos[0].m_flStandMoving		= 12.0f;
-	m_Attackinfos[0].m_flStandStill			= 4.0f;
+	m_Attackinfos[0].m_flStandStill			= 2.4f;
 	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 4.00 );
 	m_Attackinfos[0].m_vStandSpread			= Cone( 4.00 );*/
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
@@ -182,6 +186,8 @@ DECLARE_BG2_WEAPON( charleville )
 	m_bFiresUnderwater	= true;
 	m_bDontAutoreload	= true;
 
+	m_bCantAbortReload	= true;
+
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= CHARLE_FIRE_DAMAGE;//75;
@@ -189,9 +195,9 @@ DECLARE_BG2_WEAPON( charleville )
 	m_Attackinfos[0].m_flRecoil				= 0.6;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 11.5f;
-	m_Attackinfos[0].m_flCrouchStill		= 3.5f;
+	m_Attackinfos[0].m_flCrouchStill		= 2.1f;
 	m_Attackinfos[0].m_flStandMoving		= 11.5f;
-	m_Attackinfos[0].m_flStandStill			= 3.5f;
+	m_Attackinfos[0].m_flStandStill			= 2.1f;
 	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 3.50 );
 	m_Attackinfos[0].m_vStandSpread			= Cone( 3.50 );*/
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
@@ -226,6 +232,8 @@ DECLARE_BG2_WEAPON( jaeger )
 	m_bFiresUnderwater	= true;
 	m_bDontAutoreload	= true;
 
+	m_bCantAbortReload	= true;
+
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= JAEGER_FIRE_DAMAGE;//75;
@@ -233,7 +241,7 @@ DECLARE_BG2_WEAPON( jaeger )
 	m_Attackinfos[0].m_flRecoil				= 0.3;
 	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 10.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 1.5f;
+	m_Attackinfos[0].m_flCrouchStill		= 1.0f;
 	m_Attackinfos[0].m_flStandMoving		= 8.0f;
 	m_Attackinfos[0].m_flStandStill			= 5.0f;
 	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 1.50 );
@@ -260,6 +268,8 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_bReloadsSingly	= false;
 	m_bFiresUnderwater	= true;
 	m_bDontAutoreload	= true;
+
+	m_bCantAbortReload	= true;
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;

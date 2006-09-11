@@ -453,6 +453,9 @@ public:
 	//BG2 - Tjoppen - m_bDontAutoreload
 	bool					m_bDontAutoreload;
 	//
+	//BG2 - Tjoppen - m_bCantAbortReload
+	bool					m_bCantAbortReload;
+	//
 	// Weapon art
 	CNetworkVar( int, m_iViewModelIndex );
 	CNetworkVar( int, m_iWorldModelIndex );
