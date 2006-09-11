@@ -220,7 +220,7 @@ void CHudCrosshair::Paint( void )
 		//Msg( "Radius: %f \n", r);
 		//r = lastr = r * 5.0f * gpGlobals->frametime + lastr * (1.f - 5.0f * gpGlobals->frametime);
 
-		r = lastr = r + (lastr - r) * expf( -9.0f * gpGlobals->frametime );
+		r = lastr = r + (lastr - r) * expf( -13.0f * gpGlobals->frametime );
 
 		//Msg( "%f %f %f\n", cx, cy, r );
 		if( cl_crosshair.GetInt() & 4 )
