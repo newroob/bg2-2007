@@ -454,12 +454,12 @@ void CClassMenu::OnThink()
 		case TEAM_AMERICANS:
 			m_pInfantryButton->SetText("1. Continental Soldier");
 			m_pOfficerButton->SetText("2. Continental Officer");
-			m_pSniperButton->SetText("3. Minute Man");
+			m_pSniperButton->SetText("3. Frontiersman");
 			break;
 		case TEAM_BRITISH:
 			m_pInfantryButton->SetText("1. Royal Infantry");
 			m_pOfficerButton->SetText("2. Royal Commander");
-			m_pSniperButton->SetText("3. Loyalist");
+			m_pSniperButton->SetText("3. Jaeger");
 			break;
 	}
 }

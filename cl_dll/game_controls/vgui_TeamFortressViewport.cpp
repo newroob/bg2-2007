@@ -75,7 +75,7 @@
 #include "NavProgress.h"
 //BG2 - Tjoppen - class selection menu
 #include "bg2/classmenu.h"
-#include "bg2/teammenu2.h"
+//#include "bg2/teammenu2.h"
 #include "bg2/commmenu.h"
 #include "bg2/commmenu2.h"
 //

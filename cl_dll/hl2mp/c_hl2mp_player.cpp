@@ -661,8 +661,8 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 	switch (m_iClass)
 	{
 		case CLASS_INFANTRY:
-			iSpeed = 190;
-			iSpeed2 = 130;
+			iSpeed = 180;
+			iSpeed2 = 120;
 			break;
 		case CLASS_OFFICER:
 			/*switch (m_iOfficerLevel)
@@ -686,8 +686,8 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 			}*/
 			break;
 		case CLASS_SNIPER:
-			iSpeed = 180;
-			iSpeed2 = 120;
+			iSpeed = 190;
+			iSpeed2 = 130;
 			break;
 	}
 

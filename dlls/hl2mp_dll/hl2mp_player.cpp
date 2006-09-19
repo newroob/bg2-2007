@@ -69,7 +69,7 @@ ConVar mp_limit_light_a( "mp_limit_light_a", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
 						"When != -1 : Maximum amount of Continental Officers for the Americans" );//cont officer
 
 ConVar mp_limit_medium_a( "mp_limit_medium_a", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
-						 "When != -1 : Maximum amount of Minute Men for the Americans" );//minute man
+						 "When != -1 : Maximum amount of Frontiersmen for the Americans" );//minute man
 
 ConVar mp_limit_heavy_a( "mp_limit_heavy_a", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
 						"When != -1 : Maximum amount of Continental Soldiers for the Americans" );//cont soldier
@@ -81,7 +81,7 @@ ConVar mp_limit_medium_b( "mp_limit_medium_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIF
 						 "When != -1 : Maximum amount of Royal Infantry for the British" );//royal inf
 
 ConVar mp_limit_heavy_b( "mp_limit_heavy_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
-						"When != -1 : Maximum amount of Loyalists for the British" );//loyalist
+						"When != -1 : Maximum amount of Jaegers for the British" );//loyalist
 
 extern ConVar mp_autobalanceteams;
 extern ConVar mp_autobalancetolerance;
@@ -147,7 +147,7 @@ END_DATADESC()
 const char *g_ppszRandomCitizenModels[] = 
 {
 	//BG2 - Tjoppen - models
-	"models/player/british/heavy_b/heavy_b.mdl",
+	"models/player/british/jager/jager.mdl",
 	"models/player/british/medium_b/medium_b.mdl",
 	"models/player/british/light_b/light_b.mdl",
 	/*"models/heavy_b/heavy_b.mdl",
@@ -317,7 +317,7 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_physcannon" );*/
 	
 	//BG2 - Tjoppen - impulse 101
-	GiveNamedItem( "weapon_revolutionnaire" );
+	//GiveNamedItem( "weapon_revolutionnaire" );
 	GiveNamedItem( "weapon_brownbess" );
 	GiveNamedItem( "weapon_charleville" );
 	GiveNamedItem( "weapon_pennsylvania" );
@@ -429,7 +429,7 @@ void CHL2MP_Player::PickDefaultSpawnTeam( void )
 
 	//show classmenu
 	//engine->ClientCommand( edict(), "classmenu" );
-	SetModel( "models/player/british/heavy_b/heavy_b.mdl" );	//shut up about no model already!
+	SetModel( "models/player/british/jager/jager.mdl" );	//shut up about no model already!
 	AddEffects( EF_NODRAW );
 	//try to find a spot..
 	CBaseEntity *pSpot = gEntList.FindEntityByClassname( g_pLastIntermission, "info_intermission");
@@ -956,8 +956,8 @@ void CHL2MP_Player::HandleSpeedChanges( void )
 	switch (m_iClass)
 	{
 		case CLASS_INFANTRY:
-			iSpeed = 190;
-			iSpeed2 = 130;
+			iSpeed = 180;
+			iSpeed2 = 120;
 			break;
 		case CLASS_OFFICER:
 			/*switch (m_iOfficerLevel)
@@ -981,8 +981,8 @@ void CHL2MP_Player::HandleSpeedChanges( void )
 			}*/
 			break;
 		case CLASS_SNIPER:
-			iSpeed = 180;
-			iSpeed2 = 120;
+			iSpeed = 190;
+			iSpeed2 = 130;
 			break;
 	}
 
@@ -1482,12 +1482,12 @@ const char* CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
 			return "models/player/british/light_b/light_b.mdl";
 
 		case CLASS_SNIPER:
-			return "models/player/british/heavy_b/heavy_b.mdl";
+			return "models/player/british/jager/jager.mdl";
 		}
 	}
 
 	//default model
-	return "models/player/british/heavy_b/heavy_b.mdl";
+	return "models/player/british/jager/jager.mdl";
 }
 
 //BG2 - Tjoppen - CHL2MP_Player::MayRespawn()
@@ -1688,7 +1688,7 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 
 		char str[512];
 		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
-		strncat( str, " is going to fight as a Minute Man for the Americans\n", 512 );
+		strncat( str, " is going to fight as a Frontiersman for the Americans\n", 512 );
 		ClientPrinttTalkAll( str );
 
 		m_iNextClass = CLASS_SNIPER;
@@ -1865,7 +1865,7 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 
 		char str[512];
 		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
-		strncat( str, " is going to fight as a Loyalist for the British\n", 512 );
+		strncat( str, " is going to fight as a Jaeger for the British\n", 512 );
 		ClientPrinttTalkAll( str );
 
 		m_iNextClass = CLASS_SNIPER;

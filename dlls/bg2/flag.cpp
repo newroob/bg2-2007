@@ -904,7 +904,7 @@ void CFlag::ThinkCapped( void )
 
 	//if someone steals the flag, or we run out of holders - uncap
 	//don't uncap flags that aren't non-uncappable
-	if( !m_iNotUncappable && (enemies > 0 && friendlies <= 0 || m_vOverloadingPlayers.Count() <= 0) )
+	if( !m_bNotUncappable && (enemies > 0 && friendlies <= 0 || m_vOverloadingPlayers.Count() <= 0) )
 	{
 		//uncap
 		ChangeTeam( TEAM_UNASSIGNED );
@@ -997,6 +997,7 @@ BEGIN_NETWORK_TABLE( CFlag, DT_Flag )
 	SendPropStringT( SENDINFO( m_sFlagName ) ),
 	SendPropInt( SENDINFO( m_iHUDSlot ), 5 ),	//15 slots.. 0 = sequential tile, -1 = hidden(don't draw)
 	SendPropBool( SENDINFO( m_bActive ) ),
+	SendPropBool( SENDINFO( m_bNotUncappable ) ),
 	
 	//each bit corresponds to player #id overloading current flag or not
 	//BG2 - Tjoppen - TODO: is there a way to set a specific bit depending on who the recipient is?
@@ -1034,7 +1035,7 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_KEYFIELD( m_iForTeam, FIELD_INTEGER, "ForTeam" ),
 	DEFINE_KEYFIELD( m_sFlagName, FIELD_STRING, "FlagName" ),
 	DEFINE_KEYFIELD( m_iHUDSlot, FIELD_INTEGER, "HUDSlot" ),
-	DEFINE_KEYFIELD( m_iNotUncappable, FIELD_BOOLEAN, "NotUncappable" ),
+	DEFINE_KEYFIELD( m_bNotUncappable, FIELD_BOOLEAN, "NotUncappable" ),
 	DEFINE_KEYFIELD( m_sNeutralFlagModelName, FIELD_STRING, "NeutralFlagModelName" ),
 	DEFINE_KEYFIELD( m_sDisabledFlagModelName, FIELD_STRING, "DisabledFlagModelName" ),
 	DEFINE_KEYFIELD( m_sBritishFlagModelName, FIELD_STRING, "BritishFlagModelName" ),

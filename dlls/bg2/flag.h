@@ -65,7 +65,7 @@ class CFlag : public CBaseAnimating
 	CNetworkVar( bool, m_bActive );		//BG2 - Tjoppen - adding SaintGreg's flag stuff from way back as a placeholder
 										//				  until the new flag code is done.
 
-	int	m_iNotUncappable;				//is flag non-uncappable?
+	CNetworkVar( bool, m_bNotUncappable );	//is flag non-uncappable?
 
 #ifndef CLIENT_DLL
 	//BG2 - SaintGreg - Output functions similar to BG's

@@ -42,8 +42,8 @@ const float	PISTOL_RANGE = 40 * 3 * 12,		//40 yards
 const float BESS_FIRE_DAMAGE = 60.0;
 const float BESS_BAYONET_DAMAGE = 43.0;
 
-const float REVOL_FIRE_DAMAGE = 37.0;
-const float REVOL_BAYONET_DAMAGE = 40.0;
+/*const float REVOL_FIRE_DAMAGE = 37.0;
+const float REVOL_BAYONET_DAMAGE = 40.0;*/
 
 //BG2 - Tjoppen - roundoff errors makes me have to increase CHARLE_FIRE_DAMAGE by 0.5
 const float CHARLE_FIRE_DAMAGE = 58.0;//57.5;
@@ -51,7 +51,7 @@ const float CHARLE_BAYONET_DAMAGE = 41.0;
 
 const float PENNY_FIRE_DAMAGE = 58.0;
 
-const float JAEGER_FIRE_DAMAGE = 50.0;
+const float JAEGER_FIRE_DAMAGE = 54.0;
 
 const float PISTOLA_FIRE_DAMAGE = 40.0;
 const float PISTOLB_FIRE_DAMAGE = 40.0;
@@ -87,7 +87,7 @@ m_fMaxRange2	= 64;
 	return Vector(flCone, flCone, flCone);
 }*/
 
-#ifdef CLIENT_DLL
+/*#ifdef CLIENT_DLL
 #define CWeaponrevolutionnaire C_Weaponrevolutionnaire
 #endif
 DECLARE_BG2_WEAPON( revolutionnaire )
@@ -108,8 +108,6 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_Attackinfos[0].m_flCrouchStill		= 1.75f;
 	m_Attackinfos[0].m_flStandMoving		= 9.0f;
 	m_Attackinfos[0].m_flStandStill			= 6.0f;
-	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 1.75 );
-	m_Attackinfos[0].m_vStandSpread			= Cone( 6.00 );*/
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;
@@ -130,7 +128,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 
 #ifndef CLIENT_DLL
 MUSKET_ACTTABLE( revolutionnaire )
-#endif
+#endif*/
 
 #ifdef CLIENT_DLL
 #define CWeaponbrownbess C_Weaponbrownbess
@@ -195,9 +193,9 @@ DECLARE_BG2_WEAPON( charleville )
 	m_Attackinfos[0].m_flRecoil				= 0.6;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 11.5f;
-	m_Attackinfos[0].m_flCrouchStill		= 2.1f;
+	m_Attackinfos[0].m_flCrouchStill		= 2.2f;
 	m_Attackinfos[0].m_flStandMoving		= 11.5f;
-	m_Attackinfos[0].m_flStandStill			= 2.1f;
+	m_Attackinfos[0].m_flStandStill			= 2.2f;
 	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 3.50 );
 	m_Attackinfos[0].m_vStandSpread			= Cone( 3.50 );*/
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
@@ -238,12 +236,12 @@ DECLARE_BG2_WEAPON( jaeger )
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= JAEGER_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
-	m_Attackinfos[0].m_flRecoil				= 0.3;
+	m_Attackinfos[0].m_flRecoil				= 0.9;
 	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 10.0f;
 	m_Attackinfos[0].m_flCrouchStill		= 1.0f;
 	m_Attackinfos[0].m_flStandMoving		= 8.0f;
-	m_Attackinfos[0].m_flStandStill			= 5.0f;
+	m_Attackinfos[0].m_flStandStill			= 2.0f;
 	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 1.50 );
 	m_Attackinfos[0].m_vStandSpread			= Cone( 5.00 );*/
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
@@ -275,12 +273,12 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= PENNY_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
-	m_Attackinfos[0].m_flRecoil				= 0.3;
+	m_Attackinfos[0].m_flRecoil				= 1.0;
 	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 10.0f;
 	m_Attackinfos[0].m_flCrouchStill		= 0.75f;
 	m_Attackinfos[0].m_flStandMoving		= 8.0f;
-	m_Attackinfos[0].m_flStandStill			= 5.0f;
+	m_Attackinfos[0].m_flStandStill			= 1.75f;
 	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 1.50 );
 	m_Attackinfos[0].m_vStandSpread			= Cone( 5.00 );*/
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
@@ -309,7 +307,7 @@ DECLARE_BG2_WEAPON( pistol_a )
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= PISTOLA_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
-	m_Attackinfos[0].m_flRecoil				= 1.0;
+	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= PISTOL_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 7.5f;
 	m_Attackinfos[0].m_flCrouchStill		= 5.0f;
@@ -343,7 +341,7 @@ DECLARE_BG2_WEAPON( pistol_b )
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= PISTOLB_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
-	m_Attackinfos[0].m_flRecoil				= 1.0;
+	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= PISTOL_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 7.5f;
 	m_Attackinfos[0].m_flCrouchStill		= 5.0f;
