@@ -269,7 +269,7 @@ void CHudFlags::Paint()
 							else
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i %s", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED || g_Flags[i]->m_bNotUncappable) ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- OL:ed" : "- not OL:ed") );
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i %s", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED || g_Flags[i]->m_bNotUncappable || g_Flags[i]->GetTeamNumber() != pPlayer->GetTeamNumber()) ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- OL:ed" : "- not OL:ed") );
 								strcat(	text, text_add);
 							}
 							break;
@@ -283,7 +283,7 @@ void CHudFlags::Paint()
 							else
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players %s", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED || g_Flags[i]->m_bNotUncappable) ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- Overloaded" : "- Not overloaded") );
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players %s", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED || g_Flags[i]->m_bNotUncappable || g_Flags[i]->GetTeamNumber() != pPlayer->GetTeamNumber()) ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- Overloaded" : "- Not overloaded") );
 								strcat(	text, text_add);
 							}
 							break;
@@ -296,7 +296,7 @@ void CHudFlags::Paint()
 					}
 					else
 					{
-						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players %s", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED || g_Flags[i]->m_bNotUncappable) ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- Overloaded" : "- Not overloaded") );
+						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players %s", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED || g_Flags[i]->m_bNotUncappable || g_Flags[i]->GetTeamNumber() != pPlayer->GetTeamNumber()) ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- Overloaded" : "- Not overloaded") );
 					}
 					break;
 				case 2:
@@ -306,7 +306,7 @@ void CHudFlags::Paint()
 					}
 					else
 					{
-						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players %s", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED || g_Flags[i]->m_bNotUncappable) ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- Overloaded" : "- Not overloaded") );
+						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players %s", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED || g_Flags[i]->m_bNotUncappable || g_Flags[i]->GetTeamNumber() != pPlayer->GetTeamNumber()) ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- Overloaded" : "- Not overloaded") );
 					}
 					break;
 			}
