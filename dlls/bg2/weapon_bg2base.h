@@ -87,7 +87,7 @@ public:
 		float	m_flRange,
 				m_flDamage,
 				m_flRecoil,				//factor of 357 standard recoil - firearm only
-				m_flCosAngleTolerance,	//tolerance of melee hits(sqrt(0.5) for crowbar, or 45 degrees)
+				//m_flCosAngleTolerance,	//tolerance of melee hits(sqrt(0.5) for crowbar, or 45 degrees)
 										// - melee only
 				m_flAttackrate;
 

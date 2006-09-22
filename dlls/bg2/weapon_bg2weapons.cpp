@@ -58,7 +58,7 @@ const float PISTOLB_FIRE_DAMAGE = 40.0;
 
 const float KNIFE_DAMAGE = 30.0;
 const float SABRE_DAMAGE = 38.0;
-const float HIRSCHFAENGER_DAMAGE = 35.0;
+const float HIRSCHFAENGER_DAMAGE = KNIFE_DAMAGE;		//same damage as knife
 
 //BG2 - Tjoppen - own constants, interpreted from various places in the BG source
 const float BESS_BAYONET_RANGE = 80.0;
@@ -66,7 +66,7 @@ const float REVOL_BAYONET_RANGE = 75.0;
 const float CHARLE_BAYONET_RANGE = 77.0;
 const float SABRE_RANGE = 57.0;
 const float KNIFE_RANGE = 46.0;
-const float HIRSCHFAENGER_RANGE = 50.0;
+const float HIRSCHFAENGER_RANGE = 0.95 * SABRE_RANGE;	//-5% of sabre range
 
 /*
 m_fMinRange1	= 0;
@@ -118,7 +118,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_Attackinfos[1].m_flDamage				= REVOL_BAYONET_DAMAGE;//60;
 	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;				//BG2 - Tjoppen - negative means use SequenceDuration()
 	m_Attackinfos[1].m_flRange				= REVOL_BAYONET_RANGE;
-	m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
+	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
 
@@ -163,7 +163,7 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_Attackinfos[1].m_flDamage				= BESS_BAYONET_DAMAGE;//60;
 	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;
 	m_Attackinfos[1].m_flRange				= BESS_BAYONET_RANGE;
-	m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
+	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
 
@@ -208,7 +208,7 @@ DECLARE_BG2_WEAPON( charleville )
 	m_Attackinfos[1].m_flDamage				= CHARLE_BAYONET_DAMAGE;//60;
 	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;
 	m_Attackinfos[1].m_flRange				= CHARLE_BAYONET_RANGE;
-	m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
+	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
 
@@ -376,7 +376,7 @@ DECLARE_BG2_WEAPON( sabre_a )
 	m_Attackinfos[0].m_flDamage				= SABRE_DAMAGE;//60;
 	m_Attackinfos[0].m_flAttackrate			= 1.4;//-0.7f;
 	m_Attackinfos[0].m_flRange				= SABRE_RANGE;
-	m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
+	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
@@ -404,7 +404,7 @@ DECLARE_BG2_WEAPON( sabre_b )
 	m_Attackinfos[0].m_flDamage				= SABRE_DAMAGE;//60;
 	m_Attackinfos[0].m_flAttackrate			= 1.4;//-0.7f;
 	m_Attackinfos[0].m_flRange				= SABRE_RANGE;
-	m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
+	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
@@ -432,7 +432,7 @@ DECLARE_BG2_WEAPON( knife )
 	m_Attackinfos[0].m_flDamage				= KNIFE_DAMAGE;//60;
 	m_Attackinfos[0].m_flAttackrate			= 1.1;//-0.7f;
 	m_Attackinfos[0].m_flRange				= KNIFE_RANGE;
-	m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
+	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
@@ -460,7 +460,7 @@ DECLARE_BG2_WEAPON( hirschfaenger )
 	m_Attackinfos[0].m_flDamage				= HIRSCHFAENGER_DAMAGE;//60;
 	m_Attackinfos[0].m_flAttackrate			= 1.1;//-0.7f;
 	m_Attackinfos[0].m_flRange				= HIRSCHFAENGER_RANGE;
-	m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
+	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1 = m_fMinRange2	= 0;

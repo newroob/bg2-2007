@@ -326,6 +326,7 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_pistol_b" );
 	GiveNamedItem( "weapon_sabre_a" );
 	GiveNamedItem( "weapon_sabre_b" );
+	GiveNamedItem( "weapon_hirschfaenger" );
 	GiveNamedItem( "weapon_knife" );
 }
 
@@ -377,7 +378,7 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			break;
 		case CLASS_SNIPER:
 			GiveNamedItem( "weapon_jaeger" );
-			GiveNamedItem( "weapon_sabre_b" );	//BG2 - Tjoppen - TODO: hirschfänger
+			GiveNamedItem( "weapon_hirschfaenger" );
 			break;
 		}
 		
