@@ -331,23 +331,8 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )
 
 		float	damage		= GetDamage( iAttack );	
 
-		//relative velocity, projected on aim vector..
-		//only for stabbing weapons
-		Vector	vecAiming;
-		AngleVectors( pPlayer->EyeAngles() + pPlayer->m_Local.m_vecPunchAngle, &vecAiming );
-
-		float	bonus1		= pPlayer->GetLocalVelocity().Dot( vecAiming ) * 0.08f,
-				bonus2		= pHitEntity->GetLocalVelocity().Dot( vecAiming ) * -0.08f;
-
-		float	bonus = bonus1 + bonus2;
-		bonus *= 0.8f;	//BG2 - Tjoppen - TWEAKME
-		if( bonus < 0 ) bonus = 0;
-
-		if( GetAttackType(iAttack) != ATTACKTYPE_STAB )
-			bonus = 0;
-
-		//BG2 - Tjoppen - apply force to both attacker and victim
-		CTakeDamageInfo info( GetOwner(), GetOwner(), damage + bonus, DMG_BULLET | DMG_PREVENT_PHYSICS_FORCE | DMG_NEVERGIB );
+		//BG2 - Tjoppen - apply no force
+		CTakeDamageInfo info( GetOwner(), GetOwner(), damage, DMG_BULLET | DMG_PREVENT_PHYSICS_FORCE | DMG_NEVERGIB );
 		info.SetDamagePosition( traceHit.endpos );
 
 		pHitEntity->DispatchTraceAttack( info, hitDirection, &traceHit );	//negative dir for weird reasons
