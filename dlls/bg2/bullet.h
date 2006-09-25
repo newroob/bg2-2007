@@ -50,7 +50,7 @@ public:
 	void BoltTouch( CBaseEntity *pOther );
 	bool CreateVPhysics( void );
 	unsigned int PhysicsSolidMaskForEntity() const;
-	static CBullet *BoltCreate( const Vector &vecOrigin, const QAngle &angAngles, int iDamage, CBasePlayer *pentOwner = NULL );
+	static CBullet *BulletCreate( const Vector &vecOrigin, const QAngle &angAngles, int iDamage, float flConstantDamageRange, float flRelativeDrag, CBasePlayer *pentOwner = NULL );
 
 protected:
 
@@ -63,6 +63,12 @@ protected:
 	float	m_flDyingTime;	//BG2 - Tjoppen - bullets must die after a while. say ten seconds
 							//					otherwise they'll lay around the map consuming
 							//					bandwidth
+	float	m_flConstantDamageRange;	//BG2 - Tjoppen - within this range there is no velocity/range based
+										//					damage. helps balancing.
+	float	m_flRelativeDrag;			//BG2 - Tjoppen - multiply drag by this amount, to separate
+										//					pistols, muskets and rifles in terms of range,
+										//					dropoff and other things..
+	Vector	m_vTrajStart;	//BG2 - Tjoppen - where the bullet started. for range calculations
 
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();

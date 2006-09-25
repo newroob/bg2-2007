@@ -151,8 +151,8 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_Attackinfos[0].m_flCrouchStill		= 2.4f;
 	m_Attackinfos[0].m_flStandMoving		= 12.0f;
 	m_Attackinfos[0].m_flStandStill			= 2.4f;
-	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 4.00 );
-	m_Attackinfos[0].m_vStandSpread			= Cone( 4.00 );*/
+	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
+	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;
@@ -196,8 +196,8 @@ DECLARE_BG2_WEAPON( charleville )
 	m_Attackinfos[0].m_flCrouchStill		= 2.2f;
 	m_Attackinfos[0].m_flStandMoving		= 11.5f;
 	m_Attackinfos[0].m_flStandStill			= 2.2f;
-	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 3.50 );
-	m_Attackinfos[0].m_vStandSpread			= Cone( 3.50 );*/
+	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
+	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;
@@ -242,8 +242,8 @@ DECLARE_BG2_WEAPON( jaeger )
 	m_Attackinfos[0].m_flCrouchStill		= 1.0f;
 	m_Attackinfos[0].m_flStandMoving		= 8.0f;
 	m_Attackinfos[0].m_flStandStill			= 2.0f;
-	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 1.50 );
-	m_Attackinfos[0].m_vStandSpread			= Cone( 5.00 );*/
+	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
+	m_Attackinfos[0].m_flRelativeDrag		= 0.75;			//rifle
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;
@@ -279,8 +279,8 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_Attackinfos[0].m_flCrouchStill		= 0.75f;
 	m_Attackinfos[0].m_flStandMoving		= 8.0f;
 	m_Attackinfos[0].m_flStandStill			= 1.75f;
-	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 1.50 );
-	m_Attackinfos[0].m_vStandSpread			= Cone( 5.00 );*/
+	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
+	m_Attackinfos[0].m_flRelativeDrag		= 0.75;			//rifle
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;
@@ -313,8 +313,8 @@ DECLARE_BG2_WEAPON( pistol_a )
 	m_Attackinfos[0].m_flCrouchStill		= 5.0f;
 	m_Attackinfos[0].m_flStandMoving		= 9.0f;
 	m_Attackinfos[0].m_flStandStill			= 7.0f;
-	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 5.00 );
-	m_Attackinfos[0].m_vStandSpread			= Cone( 7.00 );*/
+	m_Attackinfos[0].m_flConstantDamageRange= 15.0 * 36.0;	//15 yards
+	m_Attackinfos[0].m_flRelativeDrag		= 1.25;			//pistol
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;
@@ -347,8 +347,8 @@ DECLARE_BG2_WEAPON( pistol_b )
 	m_Attackinfos[0].m_flCrouchStill		= 5.0f;
 	m_Attackinfos[0].m_flStandMoving		= 9.0f;
 	m_Attackinfos[0].m_flStandStill			= 7.0f;
-	/*m_Attackinfos[0].m_vDuckSpread			= Cone( 5.00 );
-	m_Attackinfos[0].m_vStandSpread			= Cone( 7.00 );*/
+	m_Attackinfos[0].m_flConstantDamageRange= 15.0 * 36.0;	//15 yards
+	m_Attackinfos[0].m_flRelativeDrag		= 1.25;			//pistol
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
 	m_fMinRange1	= 0;

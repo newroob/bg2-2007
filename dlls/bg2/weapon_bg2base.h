@@ -98,7 +98,9 @@ public:
 		float	m_flStandMoving,
 				m_flStandStill,
 				m_flCrouchMoving,
-				m_flCrouchStill;
+				m_flCrouchStill,
+				m_flConstantDamageRange,	//how long until we start losing damage?
+				m_flRelativeDrag;			//how does the drag on this bullet compare to a musket's?
 	};
 
 	attackinfo	m_Attackinfos[2];

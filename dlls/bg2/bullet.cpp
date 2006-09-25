@@ -94,7 +94,7 @@ END_DATADESC()
 IMPLEMENT_SERVERCLASS_ST( CBullet, DT_Bullet )
 END_SEND_TABLE()
 
-CBullet *CBullet::BoltCreate( const Vector &vecOrigin, const QAngle &angAngles, int iDamage, CBasePlayer *pentOwner )
+CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles, int iDamage, float flConstantDamageRange, float flRelativeDrag, CBasePlayer *pentOwner )
 {
 	// Create a new entity with CBullet private data
 	CBullet *pBolt = (CBullet *)CreateEntityByName( "bullet" );
@@ -111,6 +111,9 @@ CBullet *CBullet::BoltCreate( const Vector &vecOrigin, const QAngle &angAngles, 
 
 #define LIFETIME	10.f
 	pBolt->m_flDyingTime = gpGlobals->curtime + LIFETIME;
+	pBolt->m_flConstantDamageRange = flConstantDamageRange;
+	pBolt->m_flRelativeDrag = flRelativeDrag;
+	pBolt->m_vTrajStart = pBolt->GetAbsOrigin();
 
 	return pBolt;
 }
@@ -224,8 +227,7 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 
 	if ( pOther->m_takedamage != DAMAGE_NO )
 	{
-		trace_t	tr;//, tr2;
-		//tr = BaseClass::GetTouchTrace();
+		trace_t	tr;
 		Vector	vecNormalizedVel = GetAbsVelocity();
 
 		ClearMultiDamage();
@@ -239,8 +241,11 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 			return;
 		}
 
-		float	dmg = (float)m_iDamage * speed * speed / (float)(BOLT_AIR_VELOCITY*BOLT_AIR_VELOCITY);/*,
-				dmgforcescale = 100.f / speed;*/
+		float	dmg;
+		if( (GetAbsOrigin() - m_vTrajStart).Length() < m_flConstantDamageRange )
+			dmg = (float)m_iDamage;
+		else
+			dmg = floorf( (float)m_iDamage * speed * speed / (float)(BOLT_AIR_VELOCITY*BOLT_AIR_VELOCITY) );
 
 		Vector vForward;
 
@@ -256,19 +261,11 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 			SetAbsOrigin( GetAbsOrigin() + vForward * 4.f );
 			return;
 		}
-		/*else
-		{
-			//revert
-			tr = tr2;
-		}*/
-
-		//Msg( "%f / %f => %f / %f\n", speed, (float)BOLT_AIR_VELOCITY, dmg, (float)m_iDamage );
 
 		UTIL_ImpactTrace( &tr, DMG_BULLET );	//BG2 - Tjoppen - surface blood
 
 		//no force!
 		CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_PREVENT_PHYSICS_FORCE | DMG_NEVERGIB );
-		//CalculateMeleeDamageForce( &dmgInfo, vecNormalizedVel, tr.endpos, dmgforcescale );
 		dmgInfo.SetDamagePosition( tr.endpos );
 		pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
 
@@ -436,7 +433,7 @@ void CBullet::BubbleThink( void )
 
 		float	speed = VectorNormalize( vecDir ),
 				//drag = 0.0001f;
-				drag = sv_simulatedbullets_drag.GetFloat();
+				drag = sv_simulatedbullets_drag.GetFloat() * m_flRelativeDrag;
 
 		speed -= drag * speed*speed * gpGlobals->frametime;
 		if( speed < 1000 )

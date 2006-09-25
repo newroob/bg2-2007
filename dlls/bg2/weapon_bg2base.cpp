@@ -271,7 +271,9 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		QAngle angDir;
 		VectorAngles( vecDir, angDir );
 
-		CBullet::BoltCreate( vecSrc, angDir, GetDamage(iAttack), pPlayer );
+		CBullet::BulletCreate( vecSrc, angDir, GetDamage(iAttack),
+								m_Attackinfos[iAttack].m_flConstantDamageRange,
+								m_Attackinfos[iAttack].m_flRelativeDrag, pPlayer );
 #endif
 	}
 	else
