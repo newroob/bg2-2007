@@ -43,7 +43,9 @@ static ConCommand dropprimary("dropprimary", CC_DropPrimary, "dropprimary: Drops
 //-----------------------------------------------------------------------------
 C_BaseHLPlayer::C_BaseHLPlayer()
 {
-	AddVar( &m_Local.m_vecPunchAngle, &m_Local.m_iv_vecPunchAngle, LATCH_SIMULATION_VAR );
+	//BG2 - Tjoppen - no punchangle over the network!
+	//AddVar( &m_Local.m_vecPunchAngle, &m_Local.m_iv_vecPunchAngle, LATCH_SIMULATION_VAR );
+	//
 
 	m_flZoomStart		= 0.0f;
 	m_flZoomEnd			= 0.0f;

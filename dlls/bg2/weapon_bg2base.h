@@ -155,12 +155,6 @@ public:
 		if( iAttack == ATTACK_NONE )
 			return 0;
 
-		if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
-			return 0.5f;	//stab weapons all have the same recoil...
-
-		if( GetAttackType(iAttack) == ATTACKTYPE_SLASH )
-			return 0.5f;
-
 		return m_Attackinfos[iAttack].m_flRecoil;
 	}
 

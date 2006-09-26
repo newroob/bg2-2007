@@ -295,14 +295,18 @@ int CBaseBG2Weapon::Fire( int iAttack )
 
 	if( sv_steadyhand.GetInt() == 0 )
 	{
-		angles.x += random->RandomInt( -1, 1 ) * GetRecoil(iAttack);
+		int iSeed = CBaseEntity::GetPredictionRandomSeed() & 255;
+		RandomSeed( iSeed );
+
+		/*angles.x += random->RandomInt( -1, 1 ) * GetRecoil(iAttack);
 		angles.y += random->RandomInt( -1, 1 ) * GetRecoil(iAttack);
-		angles.z = 0;
+		angles.z = 0;*/
 
 /*#ifndef CLIENT_DLL
 	pPlayer->SnapEyeAngles( angles );
 #endif*/
 
+		//BG2 - Tjoppen - TODO: make viewpunch not return
 		pPlayer->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(iAttack) );
 	}
 
@@ -463,11 +467,6 @@ int CBaseBG2Weapon::Swing( int iAttack )
 	// Send the anim
 	SendWeaponAnim( GetActivity( iAttack ) );
 	pOwner->SetAnimation( PLAYER_ATTACK2 );
-
-	if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
-        pOwner->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(iAttack) );
-	else if( GetAttackType(iAttack) == ATTACKTYPE_SLASH )
-		pOwner->ViewPunch( QAngle( random->RandomFloat( -2, 2 ), random->RandomFloat( -8, 8 ), 0 ) * GetRecoil(iAttack) );
 
 	//BG2 - Draco - you cant stab very fast when your nackered, add quarter of a second
 #ifndef CLIENT_DLL

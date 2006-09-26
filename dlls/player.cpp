@@ -1160,7 +1160,10 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		}
 	}
 
-	m_Local.m_vecPunchAngle.SetX( -2 );
+	//BG2 - Tjoppen - non-networked punchangle
+	//m_Local.m_vecPunchAngle.SetX( -2 );
+	m_Local.m_vecPunchAngle.x = -2;
+	//
 
 	if (fTookDamage && !ftrivial && fmajor && flHealthPrev >= 75) 
 	{
@@ -6922,7 +6925,10 @@ void CBasePlayer::ModifyOrAppendPlayerCriteria( AI_CriteriaSet& set )
 
 const QAngle& CBasePlayer::GetPunchAngle()
 {
-	return m_Local.m_vecPunchAngle.Get();
+	//BG2 - Tjoppen - non-networked punchangle
+	//return m_Local.m_vecPunchAngle.Get();
+	return m_Local.m_vecPunchAngle;
+	//
 }
 
 

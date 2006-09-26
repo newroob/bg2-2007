@@ -458,7 +458,7 @@ DECLARE_BG2_WEAPON( hirschfaenger )
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
 	m_Attackinfos[0].m_flDamage				= HIRSCHFAENGER_DAMAGE;//60;
-	m_Attackinfos[0].m_flAttackrate			= 1.3;//-0.7f;
+	m_Attackinfos[0].m_flAttackrate			= 1.4;//-0.7f;
 	m_Attackinfos[0].m_flRange				= HIRSCHFAENGER_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;

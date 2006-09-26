@@ -795,7 +795,10 @@ void CGameMovement::FinishMove( void )
 //-----------------------------------------------------------------------------
 void CGameMovement::DecayPunchAngle( void )
 {
-	if ( player->m_Local.m_vecPunchAngle->LengthSqr() > 0.001 || player->m_Local.m_vecPunchAngleVel->LengthSqr() > 0.001 )
+	//BG2 - Tjoppen - non-networked punchangle
+	//if ( player->m_Local.m_vecPunchAngle->LengthSqr() > 0.001 || player->m_Local.m_vecPunchAngleVel->LengthSqr() > 0.001 )
+	if ( player->m_Local.m_vecPunchAngle.LengthSqr() > 0.001 || player->m_Local.m_vecPunchAngleVel.LengthSqr() > 0.001 )
+	//
 	{
 		player->m_Local.m_vecPunchAngle += player->m_Local.m_vecPunchAngleVel * gpGlobals->frametime;
 		float damping = 1 - (PUNCH_DAMPING * gpGlobals->frametime);
@@ -812,12 +815,43 @@ void CGameMovement::DecayPunchAngle( void )
 		springForceMagnitude = clamp(springForceMagnitude, 0, 2 );
 		player->m_Local.m_vecPunchAngleVel -= player->m_Local.m_vecPunchAngle * springForceMagnitude;
 
-		// don't wrap around
-		player->m_Local.m_vecPunchAngle.Init( 
-			clamp(player->m_Local.m_vecPunchAngle->x, -89, 89 ), 
-			clamp(player->m_Local.m_vecPunchAngle->y, -179, 179 ),
-			clamp(player->m_Local.m_vecPunchAngle->z, -89, 89 ) );
+		//BG2 - Tjoppen - once punchanglevel starts to go towards (0,0,0), stop.
+		if( (player->m_Local.m_vecPunchAngleVel.x * player->m_Local.m_vecPunchAngle.x < 0 || 
+			player->m_Local.m_vecPunchAngleVel.y * player->m_Local.m_vecPunchAngle.y < 0) &&
+			!(player->m_Local.m_vecPunchAngle.LengthSqr() < 0.001 && player->m_Local.m_vecPunchAngleVel.LengthSqr() > 0.001) )
+		{
+			//different signs and we not just started to move - stop.
+			//HOWEVER: roll must still go back so we don't end up in "drunk" mode
+#ifdef CLIENT_DLL
+			QAngle viewangles;
+			engine->GetViewAngles( viewangles );
+			engine->SetViewAngles( viewangles + player->m_Local.m_vecPunchAngle );
+			//mv->m_vecViewAngles = engine->GetViewAngles();	//try me!
+			//player->SetLocalViewAngles( player->pl.v_angle + player->m_Local.m_vecPunchAngle );
+#endif
+			//set all but z to zero
+			player->SetPunchAngle( QAngle( 0, 0, clamp(player->m_Local.m_vecPunchAngle.z, -89, 89) ) );	//clamp
+			player->m_Local.m_vecPunchAngleVel.x = player->m_Local.m_vecPunchAngleVel.y = 0;
+			return;
+		}
+		else
+		{
+			// don't wrap around
+			//BG2 - Tjoppen - non-networked punchangle
+			player->m_Local.m_vecPunchAngle.Init( 
+				clamp(player->m_Local.m_vecPunchAngle.x, -89, 89 ), 
+				clamp(player->m_Local.m_vecPunchAngle.y, -179, 179 ),
+				clamp(player->m_Local.m_vecPunchAngle.z, -89, 89 ) );
+		}
+		//
 	}
+	//BG2 - Tjoppen - make sure punchangle is absolutely straight-on if we're done adjusting it
+	else
+	{
+		player->SetPunchAngle( vec3_angle );
+		player->m_Local.m_vecPunchAngleVel.Init();
+	}
+	//
 }
 
 //-----------------------------------------------------------------------------
@@ -3355,11 +3389,17 @@ void CGameMovement::CheckFalling( void )
 			//
 			// Knock the screen around a little bit, temporary effect.
 			//
-			player->m_Local.m_vecPunchAngle.Set( ROLL, player->m_Local.m_flFallVelocity * 0.013 );
+			//BG2 - Tjoppen - non-networked punchangle
+			//player->m_Local.m_vecPunchAngle.Set( ROLL, player->m_Local.m_flFallVelocity * 0.013 );
+			player->m_Local.m_vecPunchAngle[ROLL] = player->m_Local.m_flFallVelocity * 0.013;
+			//
 
 			if ( player->m_Local.m_vecPunchAngle[PITCH] > 8 )
 			{
-				player->m_Local.m_vecPunchAngle.Set( PITCH, 8 );
+				//BG2 - Tjoppen - non-networked punchangle
+				//player->m_Local.m_vecPunchAngle.Set( PITCH, 8 );
+				player->m_Local.m_vecPunchAngle[PITCH] = 8;
+				//
 			}
 		}
 

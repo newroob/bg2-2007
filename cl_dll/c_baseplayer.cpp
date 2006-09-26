@@ -104,8 +104,10 @@ BEGIN_RECV_TABLE_NOBASE( CPlayerLocalData, DT_Local )
 	RecvPropFloat	(RECVINFO(m_flFallVelocity)),
 //	RecvPropInt		(RECVINFO(m_nOldButtons)),
 	RecvPropVector	(RECVINFO(m_vecClientBaseVelocity)),
-	RecvPropVector	(RECVINFO(m_vecPunchAngle)),
-	RecvPropVector	(RECVINFO(m_vecPunchAngleVel)),
+	//BG2 - Tjoppen - no punchangle over the network!
+	/*RecvPropVector	(RECVINFO(m_vecPunchAngle)),
+	RecvPropVector	(RECVINFO(m_vecPunchAngleVel)),*/
+	//BG2 - Tjoppen - no punchangle over the network!
 	RecvPropInt		(RECVINFO(m_bDrawViewmodel)),
 	RecvPropInt		(RECVINFO(m_bWearingSuit)),
 	RecvPropBool	(RECVINFO(m_bPoisoned)),
@@ -243,8 +245,10 @@ BEGIN_PREDICTION_DATA_NO_BASE( CPlayerLocalData )
 
 	DEFINE_PRED_FIELD( m_iHideHUD, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_iFOV, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
-	DEFINE_PRED_FIELD_TOL( m_vecPunchAngle, FIELD_VECTOR, FTYPEDESC_INSENDTABLE, 0.125f ),
-	DEFINE_PRED_FIELD_TOL( m_vecPunchAngleVel, FIELD_VECTOR, FTYPEDESC_INSENDTABLE, 0.125f ),
+	//BG2 - Tjoppen - no punchangle over the network!
+	/*DEFINE_PRED_FIELD_TOL( m_vecPunchAngle, FIELD_VECTOR, FTYPEDESC_INSENDTABLE, 0.125f ),
+	DEFINE_PRED_FIELD_TOL( m_vecPunchAngleVel, FIELD_VECTOR, FTYPEDESC_INSENDTABLE, 0.125f ),*/
+	//
 	DEFINE_PRED_FIELD( m_bDrawViewmodel, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_bWearingSuit, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_bPoisoned, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
@@ -1553,7 +1557,10 @@ void C_BasePlayer::PhysicsSimulate( void )
 
 const QAngle& C_BasePlayer::GetPunchAngle()
 {
-	return m_Local.m_vecPunchAngle.Get();
+	//BG2 - Tjoppen - non-networked punchangle
+	//return m_Local.m_vecPunchAngle.Get();
+	return m_Local.m_vecPunchAngle;
+	//
 }
 
 
