@@ -795,9 +795,45 @@ void CGameMovement::FinishMove( void )
 //-----------------------------------------------------------------------------
 void CGameMovement::DecayPunchAngle( void )
 {
+	float fact = expf( -9.0f * gpGlobals->frametime );
+
+	if( player->m_Local.m_vecPunchAngleVel.LengthSqr() > 0.001 )
+	{
+		player->m_Local.m_vecPunchAngleVel *= fact;
+
+		QAngle newpunch = player->m_Local.m_vecPunchAngle +
+							player->m_Local.m_vecPunchAngleVel * gpGlobals->frametime;
+
+		player->SetPunchAngle( QAngle(	clamp(newpunch.x, -89, 89 ), 
+										clamp(newpunch.y, -179, 179 ),
+										clamp(newpunch.z, -89, 89 )) );
+	}
+	else if( (player->m_Local.m_vecPunchAngle.x*player->m_Local.m_vecPunchAngle.x +
+		player->m_Local.m_vecPunchAngle.y*player->m_Local.m_vecPunchAngle.y) > 0.001 )
+	{
+#ifdef CLIENT_DLL
+		QAngle viewangles;
+		engine->GetViewAngles( viewangles );
+		engine->SetViewAngles( viewangles + player->m_Local.m_vecPunchAngle );
+#endif
+
+		player->SetPunchAngle( QAngle( 0, 0, player->m_Local.m_vecPunchAngle.z ) );
+		player->m_Local.m_vecPunchAngleVel.Init();//.x = player->m_Local.m_vecPunchAngleVel.y = 0;
+	}
+
+	if( player->m_Local.m_vecPunchAngle.z > 0.00001 )
+	{
+		//decay roll
+		player->SetPunchAngle( QAngle( player->m_Local.m_vecPunchAngle.x, player->m_Local.m_vecPunchAngle.y, player->m_Local.m_vecPunchAngle.z*fact ) );
+	}
+	else if( player->m_Local.m_vecPunchAngle.z != 0 )
+	{
+		player->SetPunchAngle( QAngle( player->m_Local.m_vecPunchAngle.x, player->m_Local.m_vecPunchAngle.y, 0 ) );
+	}
+	
 	//BG2 - Tjoppen - non-networked punchangle
 	//if ( player->m_Local.m_vecPunchAngle->LengthSqr() > 0.001 || player->m_Local.m_vecPunchAngleVel->LengthSqr() > 0.001 )
-	if ( player->m_Local.m_vecPunchAngle.LengthSqr() > 0.001 || player->m_Local.m_vecPunchAngleVel.LengthSqr() > 0.001 )
+	/*if ( player->m_Local.m_vecPunchAngle.LengthSqr() > 0.001 || player->m_Local.m_vecPunchAngleVel.LengthSqr() > 0.001 )
 	//
 	{
 		player->m_Local.m_vecPunchAngle += player->m_Local.m_vecPunchAngleVel * gpGlobals->frametime;
@@ -850,7 +886,7 @@ void CGameMovement::DecayPunchAngle( void )
 	{
 		player->SetPunchAngle( vec3_angle );
 		player->m_Local.m_vecPunchAngleVel.Init();
-	}
+	}*/
 	//
 }
 

@@ -222,6 +222,8 @@ public:
 		return (char*)GetClassname();
 	}
 
+	float	m_flLastRecoil;		//for multiple recoil supression on client
+
 	/*bool	IsMeleeWeapon( void )
 	{
 		return m_Attackinfos[ATTACK_PRIMARY].m_iAttacktype == ATTACKTYPE_STAB ? true : false;

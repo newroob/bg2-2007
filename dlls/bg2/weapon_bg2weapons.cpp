@@ -49,9 +49,9 @@ const float REVOL_BAYONET_DAMAGE = 40.0;*/
 const float CHARLE_FIRE_DAMAGE = 58.0;//57.5;
 const float CHARLE_BAYONET_DAMAGE = 41.0;
 
-const float PENNY_FIRE_DAMAGE = 58.0;
+const float PENNY_FIRE_DAMAGE = 55.0;
 
-const float JAEGER_FIRE_DAMAGE = 54.0;
+const float JAEGER_FIRE_DAMAGE = 58.0;
 
 const float PISTOLA_FIRE_DAMAGE = 40.0;
 const float PISTOLB_FIRE_DAMAGE = 40.0;
@@ -239,7 +239,7 @@ DECLARE_BG2_WEAPON( jaeger )
 	m_Attackinfos[0].m_flRecoil				= 0.9;
 	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 10.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 1.0f;
+	m_Attackinfos[0].m_flCrouchStill		= 0.83f;
 	m_Attackinfos[0].m_flStandMoving		= 8.0f;
 	m_Attackinfos[0].m_flStandStill			= 2.0f;
 	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards

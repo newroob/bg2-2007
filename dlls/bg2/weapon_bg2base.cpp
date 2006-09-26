@@ -241,7 +241,6 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	else
 		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.1f;
 
-
 	WeaponSound(SINGLE);
 
 	if( sv_turboshots.GetInt() == 0 )
@@ -291,23 +290,17 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	}
 
 	//Disorient the player
-	QAngle angles = pPlayer->GetLocalAngles();
-
 	if( sv_steadyhand.GetInt() == 0 )
 	{
 		int iSeed = CBaseEntity::GetPredictionRandomSeed() & 255;
 		RandomSeed( iSeed );
 
-		/*angles.x += random->RandomInt( -1, 1 ) * GetRecoil(iAttack);
-		angles.y += random->RandomInt( -1, 1 ) * GetRecoil(iAttack);
-		angles.z = 0;*/
+		//BG2 - Tjoppen - HACKHACK: weapon attacks get called multiple times on client. until we figure out
+		//							why, multiple recoils must be supressed.
+		if( m_flLastRecoil + 0.1f < gpGlobals->curtime )
+			pPlayer->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(iAttack) );
 
-/*#ifndef CLIENT_DLL
-	pPlayer->SnapEyeAngles( angles );
-#endif*/
-
-		//BG2 - Tjoppen - TODO: make viewpunch not return
-		pPlayer->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(iAttack) );
+		m_flLastRecoil = gpGlobals->curtime;
 	}
 
 	if ( !m_iClip1 && pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 )
