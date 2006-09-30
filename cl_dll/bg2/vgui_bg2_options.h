@@ -10,7 +10,9 @@ extern ConVar	cl_crosshair,
 				cl_crosshair_b,
 				cl_crosshair_a,
 
-				cl_simple_smoke;
+				cl_simple_smoke,
+
+				cl_flagstatusdetail;
 
 
 class CBG2OptionsPanel : public vgui::Frame
@@ -52,6 +54,8 @@ class CBG2OptionsPanel : public vgui::Frame
 
 		if( pSender == m_pSimpleSmokeCheckButton )
 			cl_simple_smoke.SetValue( data->GetInt("state") );
+		if( pSender == m_pSimpleFlagHUDCheckButton )
+			cl_flagstatusdetail.SetValue( data->GetInt("state") ? 1 : 2 );
 		else if( pSender == m_pFlag0CrosshairCheckButton )
 			cl_crosshair.SetValue( (cl_crosshair.GetInt() & ~1) | (data->GetInt("state") ? 1 : 0) );
 		else if( pSender == m_pFlag1CrosshairCheckButton )
@@ -95,6 +99,10 @@ class CBG2OptionsPanel : public vgui::Frame
 		m_pSimpleSmokeCheckButton->SetSelected( cl_simple_smoke.GetBool() );
 		m_pSimpleSmokeCheckButton->AddActionSignalTarget( this );
 
+		m_pSimpleFlagHUDCheckButton = new vgui::CheckButton( this, "SimpleFlagHUDCheckButton", "" );
+		m_pSimpleFlagHUDCheckButton->SetSelected( cl_flagstatusdetail.GetInt() == 1 ? true : false );
+		m_pSimpleFlagHUDCheckButton->AddActionSignalTarget( this );
+
 		m_pFlag0CrosshairCheckButton = new vgui::CheckButton( this, "Flag0CrosshairCheckButton", "" );
 		m_pFlag0CrosshairCheckButton->SetSelected( (cl_crosshair.GetInt() & 1) ? true : false );
 		m_pFlag0CrosshairCheckButton->AddActionSignalTarget( this );
@@ -124,6 +132,7 @@ class CBG2OptionsPanel : public vgui::Frame
 					*m_pAlphaCrosshairSlider;
 
 	vgui::CheckButton	*m_pSimpleSmokeCheckButton,
+						*m_pSimpleFlagHUDCheckButton,
 
 						*m_pFlag0CrosshairCheckButton,
 						*m_pFlag1CrosshairCheckButton,
