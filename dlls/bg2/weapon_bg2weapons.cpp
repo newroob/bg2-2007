@@ -61,9 +61,9 @@ const float SABRE_DAMAGE = 38.0;
 const float HIRSCHFAENGER_DAMAGE = KNIFE_DAMAGE;		//same damage as knife
 
 //BG2 - Tjoppen - own constants, interpreted from various places in the BG source
-const float BESS_BAYONET_RANGE = 80.0;
-const float REVOL_BAYONET_RANGE = 75.0;
-const float CHARLE_BAYONET_RANGE = 77.0;
+const float BESS_BAYONET_RANGE = 90.0;
+//const float REVOL_BAYONET_RANGE = 75.0;
+const float CHARLE_BAYONET_RANGE = 87.0;
 const float SABRE_RANGE = 57.0;
 const float KNIFE_RANGE = 46.0;
 const float HIRSCHFAENGER_RANGE = 0.95 * SABRE_RANGE;	//-5% of sabre range
