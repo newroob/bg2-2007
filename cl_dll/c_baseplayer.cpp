@@ -167,7 +167,9 @@ END_RECV_TABLE()
 
 		RecvPropArray3		( RECVINFO_ARRAY(m_iAmmo), RecvPropInt( RECVINFO(m_iAmmo[0])) ),
 		
-		RecvPropInt			( RECVINFO(m_fOnTarget) ),
+		//BG2 - Tjoppen - we don't need m_fOnTarget
+		//RecvPropInt			( RECVINFO(m_fOnTarget) ),
+		//
 
 		RecvPropInt			( RECVINFO( m_nTickBase ) ),
 		RecvPropInt			( RECVINFO( m_nNextThinkTick ) ),
@@ -276,7 +278,9 @@ BEGIN_PREDICTION_DATA( C_BasePlayer )
 	DEFINE_PRED_FIELD( m_hVehicle, FIELD_EHANDLE, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD_TOL( m_flMaxspeed, FIELD_FLOAT, FTYPEDESC_INSENDTABLE, 0.5f ),
 	DEFINE_PRED_FIELD( m_iHealth, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
-	DEFINE_PRED_FIELD( m_fOnTarget, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
+	//BG2 - Tjoppen - we don't need m_fOnTarget
+	//DEFINE_PRED_FIELD( m_fOnTarget, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
+	//
 	DEFINE_PRED_FIELD( m_nNextThinkTick, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_lifeState, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_nWaterLevel, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
@@ -1492,7 +1496,9 @@ void C_BasePlayer::ResetAutoaim( void )
 		engine->CrosshairAngle( edict(), 0, 0 );
 	}
 #endif
-	m_fOnTarget = false;
+	//BG2 - Tjoppen - we don't need m_fOnTarget
+	//m_fOnTarget = false;
+	//
 }
 
 bool C_BasePlayer::ShouldPredict( void )

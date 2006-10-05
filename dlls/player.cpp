@@ -5809,8 +5809,10 @@ Vector CBasePlayer::GetAutoaimVector( float flDelta )
 	QAngle angles = AutoaimDeflection( vecSrc, flDist, flDelta );
 
 	// update ontarget if changed
-	if ( !g_pGameRules->AllowAutoTargetCrosshair() )
-		m_fOnTarget = 0;
+	//BG2 - Tjoppen - we don't need m_fOnTarget
+	/*if ( !g_pGameRules->AllowAutoTargetCrosshair() )
+		m_fOnTarget = 0;*/
+	//
 
 	if (angles.x > 180)
 		angles.x -= 360;
@@ -5855,11 +5857,13 @@ QAngle CBasePlayer::AutoaimDeflection( Vector &vecSrc, float flDist, float flDel
 	trace_t		tr;
 	Vector		v_forward, v_right, v_up;
 
-	if ( ShouldAutoaim() == false )
+	//BG2 - Tjoppen - we don't need m_fOnTarget
+	/*if ( ShouldAutoaim() == false )
 	{
 		m_fOnTarget = false;
 		return vec3_angle;
-	}
+	}*/
+	//
 
 	AngleVectors( EyeAngles() + m_Local.m_vecPunchAngle + m_vecAutoAim, &v_forward, &v_right, &v_up );
 
@@ -5869,7 +5873,9 @@ QAngle CBasePlayer::AutoaimDeflection( Vector &vecSrc, float flDist, float flDel
 	bestent = NULL;
 
 	//Reset this data
-	m_fOnTarget			= false;
+	//BG2 - Tjoppen - we don't need m_fOnTarget
+	//m_fOnTarget			= false;
+	//
 	m_hAutoAimTarget	= NULL;
 
 	UTIL_TraceLine( vecSrc, vecSrc + bestdir * flDist, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
@@ -5883,10 +5889,12 @@ QAngle CBasePlayer::AutoaimDeflection( Vector &vecSrc, float flDist, float flDel
 		// don't look through water
 		if (!((GetWaterLevel() != 3 && pEntHit->GetWaterLevel() == 3) || (GetWaterLevel() == 3 && pEntHit->GetWaterLevel() == 0)))
 		{
-			if ( pEntHit->GetFlags() & FL_AIMTARGET )
+			//BG2 - Tjoppen - we don't need m_fOnTarget
+			/*if ( pEntHit->GetFlags() & FL_AIMTARGET )
 			{
 				m_fOnTarget = true;
-			}
+			}*/
+			//
 
 			//Already on target, don't autoaim
 			return vec3_angle;
@@ -5968,7 +5976,9 @@ QAngle CBasePlayer::AutoaimDeflection( Vector &vecSrc, float flDist, float flDel
 
 			m_hAutoAimTarget = bestent;
 
-			m_fOnTarget = true;
+			//BG2 - Tjoppen - we don't need m_fOnTarget
+			//m_fOnTarget = true;
+			//
 
 			return bestang;
 		}
@@ -5987,7 +5997,9 @@ void CBasePlayer::ResetAutoaim( void )
 		m_vecAutoAim = QAngle( 0, 0, 0 );
 		engine->CrosshairAngle( edict(), 0, 0 );
 	}
-	m_fOnTarget = false;
+	//BG2 - Tjoppen - we don't need m_fOnTarget
+	//m_fOnTarget = false;
+	//
 }
 
 // ==========================================================================
@@ -6450,7 +6462,9 @@ void SendProxy_CropFlagsToPlayerFlagBitsLength( const SendProp *pProp, const voi
 
 		SendPropArray3		( SENDINFO_ARRAY3(m_iAmmo), SendPropInt( SENDINFO_ARRAY(m_iAmmo), 10, SPROP_UNSIGNED ) ),
 			
-		SendPropInt			( SENDINFO( m_fOnTarget ), 2, SPROP_UNSIGNED ),
+		//BG2 - Tjoppen - we don't need m_fOnTarget
+		//SendPropInt			( SENDINFO( m_fOnTarget ), 2, SPROP_UNSIGNED ),
+		//
 
 		SendPropInt			( SENDINFO( m_nTickBase ), -1, SPROP_CHANGES_OFTEN ),
 		SendPropInt			( SENDINFO( m_nNextThinkTick ) ),

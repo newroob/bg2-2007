@@ -807,11 +807,13 @@ int CBaseCombatWeapon::UpdateClientData( CBasePlayer *pPlayer )
 {
 	if ( pPlayer->GetActiveWeapon() == this )
 	{
-		if ( pPlayer->m_fOnTarget ) 
+		//BG2 - Tjoppen - we don't need m_fOnTarget
+		/*if ( pPlayer->m_fOnTarget ) 
 		{
 			m_iState = WEAPON_IS_ONTARGET;
 		}
-		else
+		else*/
+		//
 		{
 			m_iState = WEAPON_IS_ACTIVE;
 		}

@@ -287,7 +287,9 @@ public:
 	CPlayerState			pl;
 
 	// For weapon prediction
-	bool			m_fOnTarget;		//Is the crosshair on a target?
+	//BG2 - Tjoppen - we don't need m_fOnTarget
+	//bool			m_fOnTarget;		//Is the crosshair on a target?
+	//
 	
 	char			m_szAnimExtension[32];
 
