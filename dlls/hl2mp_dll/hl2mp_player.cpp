@@ -1528,369 +1528,146 @@ bool CHL2MP_Player::MayRespawn( void )
 }
 //
 
+int CHL2MP_Player::GetLimitTeamClass( int iTeam, int iClass )
+{
+	switch( iTeam )
+	{
+	case TEAM_AMERICANS:
+		switch( iClass )
+		{
+		case CLASS_INFANTRY:
+			return mp_limit_heavy_a.GetInt();
+		case CLASS_OFFICER:
+			return mp_limit_light_a.GetInt();
+		case CLASS_SNIPER:
+			return mp_limit_medium_a.GetInt();
+		default:
+			return -1;
+		}
+		break;
+	case TEAM_BRITISH:
+		switch( iClass )
+		{
+		case CLASS_INFANTRY:
+			return mp_limit_medium_b.GetInt();
+		case CLASS_OFFICER:
+			return mp_limit_light_b.GetInt();
+		case CLASS_SNIPER:
+			return mp_limit_heavy_b.GetInt();
+		default:
+			return -1;
+		}
+	default:
+		return -1;
+	}
+}
+
+bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
+{
+	//returns true on success, false otherwise
+	CTeam	*pAmericans = g_Teams[TEAM_AMERICANS],
+			*pBritish = g_Teams[TEAM_BRITISH];
+	
+	if( GetTeamNumber() == iTeam && m_iNextClass == iClass )
+		return true;
+	
+	//check so we don't ruin the team balance..
+	if (mp_autobalanceteams.GetInt() == 1)
+	{
+		int iAutoTeamBalanceTeamDiff,
+			iAutoTeamBalanceBiggerTeam;
+		
+		if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
+		{
+			iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
+			iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
+		}
+		else
+		{
+			iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
+			iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
+		}
+
+		if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == iTeam))
+		{
+			//BG2 - Tjoppen - TODO: usermessage this
+			ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
+			return false;
+		}
+	}
+
+	int limit = GetLimitTeamClass( iTeam, iClass );
+	if( limit >= 0 )	//not unlimited?
+	{
+		if (g_Teams[iTeam]->GetNumOfClass(iClass) >= limit)
+		{
+			//BG2 - Tjoppen - TODO: usermessage this
+			ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
+			return false;
+		}
+	}
+
+	//BG2 - Tjoppen - TODO: usermessage this
+	char str[512];
+	Q_snprintf( str, 512, "%s is going to fight as %s for the %s\n", STRING(PlayerData()->netname), pClassName, iTeam == TEAM_AMERICANS ? "Americans" : "British" );
+	ClientPrinttTalkAll( str );
+
+	m_iNextClass = iClass;
+	if( GetTeamNumber() != iTeam )
+	{
+		//let Spawn() figure the model out
+		ClientKill( edict() );
+
+		if( GetTeamNumber() <= TEAM_SPECTATOR )
+		{
+			ChangeTeam( iTeam );
+			if( MayRespawn() )
+				Spawn();
+		}
+		else
+			ChangeTeam( iTeam );
+	}
+
+	return true;
+}
+
 bool CHL2MP_Player::ClientCommand( const char *cmd )
 {
-	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
-	CTeam *pBritish = g_Teams[TEAM_BRITISH];
 	//BG2 - Tjoppen - class selection
 	if ( FStrEq( cmd, "heavy_a" ) )
 	{
-		if( GetTeamNumber() == TEAM_AMERICANS && m_iNextClass == CLASS_INFANTRY )
-			return true;
-		
-		if (mp_autobalanceteams.GetInt() == 1)
-		{
-			int iAutoTeamBalanceTeamDiff = 0;
-			int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
-			if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
-			{
-				iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
-				iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
-			}
-			else
-			{
-				iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
-				iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
-			}
-
-			if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == TEAM_AMERICANS))
-			{
-				ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
-				return true;
-			}
-		}
-
-		if( mp_limit_heavy_a.GetInt() != -1)//not unlimited?
-		{
-			if (g_Teams[TEAM_AMERICANS]->GetHeavyA() >= mp_limit_heavy_a.GetInt())
-			{
-				ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
-				return true;
-			}
-		}
-
-		char str[512];
-		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
-		strncat( str, " is going to fight as a Continental Soldier for the Americans\n", 512 );
-		ClientPrinttTalkAll( str );
-
-		m_iNextClass = CLASS_INFANTRY;
-		if( GetTeamNumber() != TEAM_AMERICANS )
-		{
-			//let Spawn() figure the model out
-			ClientKill( edict() );
-
-			if( GetTeamNumber() <= TEAM_SPECTATOR )
-			{
-				ChangeTeam( TEAM_AMERICANS );
-				if( MayRespawn() )
-					Spawn();
-			}
-			else
-				ChangeTeam( TEAM_AMERICANS );
-		}
-
+		AttemptJoin( TEAM_AMERICANS, CLASS_INFANTRY, "a Continental Soldier" );
 		return true;
 	}
 	else if ( FStrEq( cmd, "light_a" ) )
 	{
-		if( GetTeamNumber() == TEAM_AMERICANS && m_iNextClass == CLASS_OFFICER )
-			return true;
-
-		if (mp_autobalanceteams.GetInt() == 1)
-		{
-			int iAutoTeamBalanceTeamDiff = 0;
-			int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
-			if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
-			{
-				iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
-				iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
-			}
-			else
-			{
-				iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
-				iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
-			}
-
-			if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == TEAM_AMERICANS))
-			{
-				ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
-				return true;
-			}
-		}
-
-		if( mp_limit_light_a.GetInt() != -1)//not unlimited?
-		{
-			if (g_Teams[TEAM_AMERICANS]->GetLightA() >= mp_limit_light_a.GetInt())
-			{
-				ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
-				return true;
-			}
-		}
-
-		char str[512];
-		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
-		strncat( str, " is going to fight as a Continental Officer for the Americans\n", 512 );
-		ClientPrinttTalkAll( str );
-
-		m_iNextClass = CLASS_OFFICER;
-		if( GetTeamNumber() != TEAM_AMERICANS )
-		{
-			//let Spawn() figure the model out
-			ClientKill( edict() );
-			
-			if( GetTeamNumber() <= TEAM_SPECTATOR )
-			{
-				ChangeTeam( TEAM_AMERICANS );
-				if( MayRespawn() )
-					Spawn();
-			}
-			else
-				ChangeTeam( TEAM_AMERICANS );
-		}
-
+		AttemptJoin( TEAM_AMERICANS, CLASS_OFFICER, "a Continental Officer" );
 		return true;
 	}
 	else if ( FStrEq( cmd, "medium_a" ) )
 	{
-		if( GetTeamNumber() == TEAM_AMERICANS && m_iNextClass == CLASS_SNIPER )
-			return true;
-
-		if (mp_autobalanceteams.GetInt() == 1)
-		{
-			int iAutoTeamBalanceTeamDiff = 0;
-			int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
-			if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
-			{
-				iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
-				iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
-			}
-			else
-			{
-				iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
-				iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
-			}
-
-			if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == TEAM_AMERICANS))
-			{
-				ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
-				return true;
-			}
-		}
-
-		if( mp_limit_medium_a.GetInt() != -1)//not unlimited?
-		{
-			if (g_Teams[TEAM_AMERICANS]->GetMediumA() >= mp_limit_medium_a.GetInt())
-			{
-				ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
-				return true;
-			}
-		}
-
-		char str[512];
-		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
-		strncat( str, " is going to fight as a Frontiersman for the Americans\n", 512 );
-		ClientPrinttTalkAll( str );
-
-		m_iNextClass = CLASS_SNIPER;
-		if( GetTeamNumber() != TEAM_AMERICANS )
-		{
-			//let Spawn() figure the model out
-			ClientKill( edict() );
-			
-			if( GetTeamNumber() <= TEAM_SPECTATOR )
-			{
-				ChangeTeam( TEAM_AMERICANS );
-				if( MayRespawn() )
-					Spawn();
-			}
-			else
-				ChangeTeam( TEAM_AMERICANS );
-		}
-
+		AttemptJoin( TEAM_AMERICANS, CLASS_SNIPER, "a Frontiersman" );
 		return true;
 	}
 	if ( FStrEq( cmd, "medium_b" ) )
 	{
-		if( GetTeamNumber() == TEAM_BRITISH && m_iNextClass == CLASS_INFANTRY )
-			return true;
-
-		if (mp_autobalanceteams.GetInt() == 1)
-		{
-			int iAutoTeamBalanceTeamDiff = 0;
-			int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
-			if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
-			{
-				iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
-				iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
-			}
-			else
-			{
-				iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
-				iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
-			}
-
-			if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == TEAM_BRITISH))
-			{
-				ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
-				return true;
-			}
-		}
-
-		if( mp_limit_medium_b.GetInt() != -1)//not unlimited?
-		{
-			if (g_Teams[TEAM_BRITISH]->GetMediumB() >= mp_limit_medium_b.GetInt())
-			{
-				ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
-				return true;
-			}
-		}
-
-		char str[512];
-		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
-		strncat( str, " is going to fight as Royal Infantry for the British\n", 512 );
-		ClientPrinttTalkAll( str );
-
-		m_iNextClass = CLASS_INFANTRY;
-		if( GetTeamNumber() != TEAM_BRITISH )
-		{
-			//let Spawn() figure the model out
-			ClientKill( edict() );
-			
-			if( GetTeamNumber() <= TEAM_SPECTATOR )
-			{
-				ChangeTeam( TEAM_BRITISH );
-				if( MayRespawn() )
-					Spawn();
-			}
-			else
-				ChangeTeam( TEAM_BRITISH );
-		}
-
+		AttemptJoin( TEAM_BRITISH, CLASS_INFANTRY, "Royal Infantry" );
 		return true;
 	}
 	else if ( FStrEq( cmd, "light_b" ) )
 	{
-		if( GetTeamNumber() == TEAM_BRITISH && m_iNextClass == CLASS_OFFICER )
-			return true;
-
-		if (mp_autobalanceteams.GetInt() == 1)
-		{
-			int iAutoTeamBalanceTeamDiff = 0;
-			int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
-			if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
-			{
-				iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
-				iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
-			}
-			else
-			{
-				iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
-				iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
-			}
-
-			if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == TEAM_BRITISH))
-			{
-				ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
-				return true;
-			}
-		}
-
-		if( mp_limit_light_b.GetInt() != -1)//not unlimited?
-		{
-			if (g_Teams[TEAM_BRITISH]->GetLightB() >= mp_limit_light_b.GetInt())
-			{
-				ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
-				return true;
-			}
-		}
-
-		char str[512];
-		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
-		strncat( str, " is going to fight as a Royal Commander for the British\n", 512 );
-		ClientPrinttTalkAll( str );
-
-		m_iNextClass = CLASS_OFFICER;
-		if( GetTeamNumber() != TEAM_BRITISH )
-		{
-			//let Spawn() figure the model out
-			ClientKill( edict() );
-			
-			if( GetTeamNumber() <= TEAM_SPECTATOR )
-			{
-				ChangeTeam( TEAM_BRITISH );
-				if( MayRespawn() )
-					Spawn();
-			}
-			else
-				ChangeTeam( TEAM_BRITISH );
-		}
-
+		AttemptJoin( TEAM_BRITISH, CLASS_OFFICER, "a Royal Commander" );
 		return true;
 	}
 	else if ( FStrEq( cmd, "heavy_b" ) )
 	{
-		if( GetTeamNumber() == TEAM_BRITISH && m_iNextClass == CLASS_SNIPER )
-			return true;
-
-		if (mp_autobalanceteams.GetInt() == 1)
-		{
-			int iAutoTeamBalanceTeamDiff = 0;
-			int iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
-			if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
-			{
-				iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
-				iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
-			}
-			else
-			{
-				iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
-				iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
-			}
-
-			if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == TEAM_BRITISH))
-			{
-				ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
-				return true;
-			}
-		}
-
-		if( mp_limit_heavy_b.GetInt() != -1)//not unlimited?
-		{
-			if (g_Teams[TEAM_BRITISH]->GetHeavyB() >= mp_limit_heavy_b.GetInt())
-			{
-				ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
-				return true;
-			}
-		}
-
-		char str[512];
-		Q_strncpy( str, STRING(PlayerData()->netname), 512 );
-		strncat( str, " is going to fight as a Jaeger for the British\n", 512 );
-		ClientPrinttTalkAll( str );
-
-		m_iNextClass = CLASS_SNIPER;
-		if( GetTeamNumber() != TEAM_BRITISH )
-		{
-			//let Spawn() figure the model out
-			ClientKill( edict() );
-			
-			if( GetTeamNumber() <= TEAM_SPECTATOR )
-			{
-				ChangeTeam( TEAM_BRITISH );
-				if( MayRespawn() )
-					Spawn();
-			}
-			else
-				ChangeTeam( TEAM_BRITISH );
-		}
-
+		AttemptJoin( TEAM_BRITISH, CLASS_SNIPER, "a Jaeger" );
 		return true;
 	}
 	//BG2 - Tjoppen - voice comms
 	else if( FStrEq( cmd, "voicecomm" ) )
 	{
-		if( engine->Cmd_Argc() > 1 && GetTeamNumber() >= TEAM_AMERICANS
+		if( engine->Cmd_Argc() > 1 && GetTeamNumber() > TEAM_SPECTATOR
 			&& IsAlive() && m_flNextVoicecomm <= gpGlobals->curtime )
 		{
 			//only alive assigned player can to voice comms

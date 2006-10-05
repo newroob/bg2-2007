@@ -163,6 +163,8 @@ private:
 public:
 	const char*	PlayermodelTeamClass( int team, int classid );
 	void RemoveSelfFromFlags( void );	//BG2 - Tjoppen - do this whenever we die, change team or disconnect or anything similar
+	int GetLimitTeamClass( int iTeam, int iClass );
+	bool AttemptJoin( int iTeam, int iClass, const char *pClassName );
 
 private:
 	//int		m_iClass;			//BG2 - Tjoppen - class system

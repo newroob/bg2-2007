@@ -61,12 +61,10 @@ public:
 	virtual int  GetNumPlayers( void );
 	virtual CBasePlayer *GetPlayer( int iIndex );
 	//BG2 - Draco - Get amount of players with this class
-	int GetLightA();
-	int GetMediumA();
-	int GetHeavyA();
-	int GetLightB();
-	int GetMediumB();
-	int GetHeavyB();
+	int GetNumInfantry();
+	int GetNumOfficers();
+	int GetNumSnipers();
+	int GetNumOfClass( int iClass );
 	float GetMorale();
 	void AddMorale(float New, float Time);
 	void AddMoralePoint(CBaseEntity * pEnt);

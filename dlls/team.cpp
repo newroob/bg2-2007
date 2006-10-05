@@ -337,71 +337,11 @@ int CTeam::GetScore( void )
 }
 
 //BG2 - Draco - Start
-int CTeam::GetLightA()
+int CTeam::GetNumInfantry()
 {
 	int iAmount = 0;
-	int x;
-	for( x = 0; x < GetNumPlayers(); x++ )
-	{
-		CBasePlayer *pPlayer = GetPlayer( x );
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
-		if (pHL2Player->GetClass() == CLASS_OFFICER)
-		{
-			iAmount++;
-		}
-	}
-	return iAmount;
-}
-int CTeam::GetMediumA()
-{
-	int iAmount = 0;
-	int x;
-	for( x = 0; x < GetNumPlayers(); x++ )
-	{
-		CBasePlayer *pPlayer = GetPlayer( x );
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
-		if (pHL2Player->GetClass() == CLASS_SNIPER)//CLASS_INFANTRY) //BG2 - Tjoppen - fixed medium_a
-		{
-			iAmount++;
-		}
-	}
-	return iAmount;
-}
-int CTeam::GetHeavyA()
-{
-	int iAmount = 0;
-	int x;
-	for( x = 0; x < GetNumPlayers(); x++ )
-	{
-		CBasePlayer *pPlayer = GetPlayer( x );
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
-		if (pHL2Player->GetClass() == CLASS_INFANTRY)//CLASS_SNIPER) //BG2 - Tjoppen - fixed heavy_a
-		{
-			iAmount++;
-		}
-	}
-	return iAmount;
-}
-int CTeam::GetLightB()
-{
-	int iAmount = 0;
-	int x;
-	for( x = 0; x < GetNumPlayers(); x++ )
-	{
-		CBasePlayer *pPlayer = GetPlayer( x );
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
-		if (pHL2Player->GetClass() == CLASS_OFFICER)
-		{
-			iAmount++;
-		}
-	}
-	return iAmount;
-}
-int CTeam::GetMediumB()
-{
-	int iAmount = 0;
-	int x;
-	for( x = 0; x < GetNumPlayers(); x++ )
+	
+	for( int x = 0; x < GetNumPlayers(); x++ )
 	{
 		CBasePlayer *pPlayer = GetPlayer( x );
 		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
@@ -412,11 +352,27 @@ int CTeam::GetMediumB()
 	}
 	return iAmount;
 }
-int CTeam::GetHeavyB()
+
+int CTeam::GetNumOfficers()
 {
 	int iAmount = 0;
-	int x;
-	for( x = 0; x < GetNumPlayers(); x++ )
+	
+	for( int x = 0; x < GetNumPlayers(); x++ )
+	{
+		CBasePlayer *pPlayer = GetPlayer( x );
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+		if (pHL2Player->GetClass() == CLASS_OFFICER)
+		{
+			iAmount++;
+		}
+	}
+	return iAmount;
+}
+int CTeam::GetNumSnipers()
+{
+	int iAmount = 0;
+	
+	for( int x = 0; x < GetNumPlayers(); x++ )
 	{
 		CBasePlayer *pPlayer = GetPlayer( x );
 		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
@@ -426,6 +382,21 @@ int CTeam::GetHeavyB()
 		}
 	}
 	return iAmount;
+}
+
+int CTeam::GetNumOfClass( int iClass )
+{
+	switch( iClass )
+	{
+	case CLASS_INFANTRY:
+		return GetNumInfantry();
+	case CLASS_OFFICER:
+		return GetNumOfficers();
+	case CLASS_SNIPER:
+		return GetNumSnipers();
+	default:
+		return 0;
+	}
 }
 
 void CTeam::AddMorale(float New, float Time)
