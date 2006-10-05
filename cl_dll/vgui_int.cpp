@@ -35,6 +35,10 @@ vgui::IInputInternal *g_InputInternal = NULL;
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+//BG2 - Tjoppen - options panel
+CBG2OptionsPanel *bg2options = NULL;
+//
+
 void GetVGUICursorPos( int& x, int& y )
 {
 	vgui::input()->GetCursorPos(x, y);

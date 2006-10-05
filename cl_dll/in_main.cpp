@@ -22,6 +22,7 @@
 //BG2 - Tjoppen - #includes
 #include "vguicenterprint.h"
 #include "bg2/classmenu.h"
+#include "bg2/vgui_bg2_options.h"
 //
 
 
@@ -625,6 +626,14 @@ void CommMenu2( void )
 		gViewPortInterface->ShowPanel( PANEL_CLASSES, false );
 		gViewPortInterface->ShowPanel( PANEL_COMM, false );
 	}
+}
+//
+
+//BG2 - Tjoppen - OpenBG2OptionsDialog
+void Do_OpenBG2OptionsDialog( void )
+{
+	bg2options->SetVisible( true );
+	bg2options->Activate();
 }
 //
 
@@ -1417,6 +1426,9 @@ static ConCommand teammenu("teammenu", TeamMenu);
 static ConCommand classmenu("classmenu", ClassMenu);
 static ConCommand commmenu(PANEL_COMM, CommMenu);
 static ConCommand commmenu2(PANEL_COMM2, CommMenu2);
+//
+//BG2 - Tjoppen - OpenBG2OptionsDialog
+static ConCommand OpenBG2OptionsDialog("OpenBG2OptionsDialog", Do_OpenBG2OptionsDialog);
 //
 static ConCommand startgraph("+graph", IN_GraphDown);
 static ConCommand endgraph("-graph", IN_GraphUp);

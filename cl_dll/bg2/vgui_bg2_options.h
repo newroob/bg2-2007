@@ -1,3 +1,4 @@
+#include "KeyValues.h"
 #include <vgui_controls/Frame.h>
 #include <vgui_controls/Slider.h>
 #include <vgui_controls/CheckButton.h>
@@ -73,7 +74,7 @@ class CBG2OptionsPanel : public vgui::Frame
 		vgui::HScheme scheme = vgui::scheme()->LoadSchemeFromFile( "resource/SourceScheme.res", "SourceScheme" );
 		SetScheme( scheme );
 		
-		SetVisible( true );
+		SetVisible( false );
 
 		m_pRedCrosshairSlider = new vgui::Slider( this, "RedCrosshairSlider" );
 		m_pRedCrosshairSlider->SetRange( 0, 255 );
@@ -146,4 +147,4 @@ protected:
 	}*/
 };
 
-CBG2OptionsPanel *bg2options = NULL;
+extern CBG2OptionsPanel *bg2options;
