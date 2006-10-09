@@ -2024,11 +2024,18 @@ void CBasePlayer::PlayerDeathThink(void)
 // if the player has been dead for one second longer than allowed by forcerespawn, 
 // forcerespawn isn't on. Send the player off to an intermission camera until they 
 // choose to respawn.
-	if ( g_pGameRules->IsMultiplayer() && ( gpGlobals->curtime > (m_flDeathTime + DEATH_ANIMATION_TIME) ) && !IsObserver() )
+	//BG2 - Tjoppen - send the recently deceased off to deathcam, and then let them roam until they respawn
+	if ( g_pGameRules->IsMultiplayer() && ( gpGlobals->curtime > (m_flDeathTime + DEATH_ANIMATION_TIME) ) && (!IsObserver() || GetObserverMode() == OBS_MODE_DEATHCAM) )
 	{
 		// go to dead camera. 
 		StartObserverMode( m_iObserverLastMode );
 	}
+	else if( g_pGameRules->IsMultiplayer() && !IsObserver() )
+	{
+		//look at the bastard that killed us
+		StartObserverMode( OBS_MODE_DEATHCAM );
+	}
+	//
 	
 // wait for any button down,  or mp_forcerespawn is set and the respawn time is up
 	if (!fAnyButtonDown 
