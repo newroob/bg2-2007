@@ -65,7 +65,7 @@
 //BG2 - Draco - Start
 //BG2 - Tjoppen - added explainations to mp_limit_* cvars
 //class limit cvars, -1 is unlimited, any non -1 value will enforce a limit
-ConVar mp_limit_light_a( "mp_limit_light_a", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
+/*ConVar mp_limit_light_a( "mp_limit_light_a", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
 						"When != -1 : Maximum amount of Continental Officers for the Americans" );//cont officer
 
 ConVar mp_limit_medium_a( "mp_limit_medium_a", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
@@ -81,7 +81,29 @@ ConVar mp_limit_medium_b( "mp_limit_medium_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIF
 						 "When != -1 : Maximum amount of Royal Infantry for the British" );//royal inf
 
 ConVar mp_limit_heavy_b( "mp_limit_heavy_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
-						"When != -1 : Maximum amount of Jaegers for the British" );//loyalist
+						"When != -1 : Maximum amount of Jaegers for the British" );//loyalist*/
+
+//BG2 - Tjoppen - beautiful define. you will see another one further down
+#define LIMIT_DEFINES( size, sizename )\
+	ConVar mp_limit_inf_a_##size( "mp_limit_inf_a_"#size, "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,\
+									"Max number of Continental Soldiers on " sizename " maps" );\
+	ConVar mp_limit_off_a_##size( "mp_limit_off_a_"#size, "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,\
+									"Max number of Continental Officers on " sizename " maps" );\
+	ConVar mp_limit_rif_a_##size( "mp_limit_rif_a_"#size, "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,\
+									"Max number of Frontiersmen on " sizename " maps" );\
+	ConVar mp_limit_inf_b_##size( "mp_limit_inf_b_"#size, "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,\
+									"Max number of Royal Infantry on " sizename " maps" );\
+	ConVar mp_limit_off_b_##size( "mp_limit_off_b_"#size, "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,\
+									"Max number of Royal Commanders on " sizename " maps" );\
+	ConVar mp_limit_rif_b_##size( "mp_limit_rif_b_"#size, "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,\
+									"Max number of Jägers on " sizename " maps" );
+
+//as you can see, the macro is a shorthand and should also help avoid misspellings and such that are
+//usually common with repetitive stuff like this
+LIMIT_DEFINES( sml, "small" )
+LIMIT_DEFINES( med, "medium" )
+LIMIT_DEFINES( lrg, "large" )
+
 
 extern ConVar mp_autobalanceteams;
 extern ConVar mp_autobalancetolerance;
@@ -1530,7 +1552,48 @@ bool CHL2MP_Player::MayRespawn( void )
 
 int CHL2MP_Player::GetLimitTeamClass( int iTeam, int iClass )
 {
-	switch( iTeam )
+	//mp_limit_<inf/off/rif>_<a/b>_<sml/med/lrg> - mp_limit_inf_a_sml
+
+	//count players - is there a better way? this looks stupid
+	int num = 0;
+	for( int x = 1; x <= gpGlobals->maxClients; x++ )
+		if( UTIL_PlayerByIndex( x ) )
+			num++;
+
+	//BG2 - Tjoppen - more macro goodness
+#define LIMIT_SWITCH( size )\
+	switch( iTeam ){\
+	case TEAM_AMERICANS:\
+		switch( iClass ){\
+		case CLASS_INFANTRY: return mp_limit_inf_a_##size.GetInt();\
+		case CLASS_OFFICER: return mp_limit_off_a_##size.GetInt();\
+		case CLASS_SNIPER: return mp_limit_rif_a_##size.GetInt();\
+		default: return -1;}\
+	case TEAM_BRITISH:\
+		switch( iClass ){\
+		case CLASS_INFANTRY: return mp_limit_inf_b_##size.GetInt();\
+		case CLASS_OFFICER: return mp_limit_off_b_##size.GetInt();\
+		case CLASS_SNIPER: return mp_limit_rif_b_##size.GetInt();\
+		default: return -1;}\
+	default: return -1;}
+
+	if( num <= 10 )
+	{
+		//small
+		LIMIT_SWITCH( sml )
+	}
+	else if( num <= 20 )
+	{
+		//medium
+		LIMIT_SWITCH( med )
+	}
+	else
+	{
+		//large
+		LIMIT_SWITCH( lrg )
+	}
+
+	/*switch( iTeam )
 	{
 	case TEAM_AMERICANS:
 		switch( iClass )
@@ -1544,7 +1607,6 @@ int CHL2MP_Player::GetLimitTeamClass( int iTeam, int iClass )
 		default:
 			return -1;
 		}
-		break;
 	case TEAM_BRITISH:
 		switch( iClass )
 		{
@@ -1559,7 +1621,7 @@ int CHL2MP_Player::GetLimitTeamClass( int iTeam, int iClass )
 		}
 	default:
 		return -1;
-	}
+	}*/
 }
 
 bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
