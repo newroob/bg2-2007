@@ -104,6 +104,8 @@ LIMIT_DEFINES( sml, "small" )
 LIMIT_DEFINES( med, "medium" )
 LIMIT_DEFINES( lrg, "large" )
 
+ConVar mp_limit_mapsize_low( "mp_limit_mapsize_low", "10", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Servers with player counts <= this number are small, above it are medium or large" );
+ConVar mp_limit_mapsize_high( "mp_limit_mapsize_high", "20", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Servers with player counts <= this number are small or medium, above it are large" );
 
 extern ConVar mp_autobalanceteams;
 extern ConVar mp_autobalancetolerance;
@@ -1577,12 +1579,12 @@ int CHL2MP_Player::GetLimitTeamClass( int iTeam, int iClass )
 		default: return -1;}\
 	default: return -1;}
 
-	if( num <= 10 )
+	if( num <= mp_limit_mapsize_low.GetInt() )
 	{
 		//small
 		LIMIT_SWITCH( sml )
 	}
-	else if( num <= 20 )
+	else if( num <= mp_limit_mapsize_high.GetInt() )
 	{
 		//medium
 		LIMIT_SWITCH( med )

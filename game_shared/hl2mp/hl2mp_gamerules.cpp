@@ -86,6 +86,9 @@ ConVar mp_autobalanceteams( "mp_autobalanceteams", "1", FCVAR_GAMEDLL | FCVAR_NO
 ConVar mp_autobalancetolerance( "mp_autobalancetolerance", "3", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_timeleft( "mp_timeleft", "1200", FCVAR_GAMEDLL);
 //BG2 - Draco - End
+//BG2 - Tjoppen - mp_winbonus
+ConVar mp_winbonus( "mp_winbonus", "200", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Amount of points awarded to team winning the round" );
+//
 
 
 //BG2 - Tjoppen - away with these
@@ -1549,7 +1552,7 @@ void CHL2MPRules::UpdateFlags( void )
 		if( (foramericans - american_flags) == 0 && foramericans != 0 )
 		{
 			ClientPrintAll( "The americans won this round!", true );
-			g_Teams[TEAM_AMERICANS]->AddScore( 200 );
+			g_Teams[TEAM_AMERICANS]->AddScore( mp_winbonus.GetInt() );
 			RestartRound();
 			WinSong("Americans.win");
 			//do not cause two simultaneous round restarts..
@@ -1560,7 +1563,7 @@ void CHL2MPRules::UpdateFlags( void )
 		if( (forbritish - british_flags) == 0 && forbritish != 0 )
 		{
 			ClientPrintAll( "The british won this round!", true );
-			g_Teams[TEAM_BRITISH]->AddScore( 200 );
+			g_Teams[TEAM_BRITISH]->AddScore( mp_winbonus.GetInt() );
 			RestartRound();
 			WinSong("British.win");
 			//do not cause two simultaneous round restarts..
@@ -1588,7 +1591,7 @@ void CHL2MPRules::UpdateFlags( void )
 			//british win
 			//Msg( "british win\n" );
 			ClientPrintAll( "The british won this round!", true );
-			g_Teams[TEAM_BRITISH]->AddScore( 200 );
+			g_Teams[TEAM_BRITISH]->AddScore( mp_winbonus.GetInt() );
 			RestartRound();
 			WinSong("British.win");
 			//do not cause two simultaneous round restarts..
@@ -1602,7 +1605,7 @@ void CHL2MPRules::UpdateFlags( void )
 			//americans win
 			//Msg( "americans win\n" );
 			ClientPrintAll( "The americans won this round!", true );
-			g_Teams[TEAM_AMERICANS]->AddScore( 200 );
+			g_Teams[TEAM_AMERICANS]->AddScore( mp_winbonus.GetInt() );
 			RestartRound();
 			WinSong("Americans.win");
 			//do not cause two simultaneous round restarts..
