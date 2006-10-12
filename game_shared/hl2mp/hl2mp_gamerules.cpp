@@ -78,7 +78,7 @@ ConVar sv_hl2mp_item_respawn_time( "sv_hl2mp_item_respawn_time", "30", FCVAR_GAM
 extern ConVar mp_chattime;
 //BG2 - Draco - Start
 ConVar mp_respawnstyle( "mp_respawnstyle", "1", FCVAR_REPLICATED | FCVAR_NOTIFY );	//0 = regular dm, 1 = waves, 2 = rounds
-ConVar mp_respawntime( "mp_respawntime", "5", FCVAR_REPLICATED | FCVAR_NOTIFY );
+ConVar mp_respawntime( "mp_respawntime", "14", FCVAR_REPLICATED | FCVAR_NOTIFY );
 ConVar sv_restartround( "sv_restartround", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_americanscore( "mp_americanscore", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_britishscore( "mp_britishscore", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );

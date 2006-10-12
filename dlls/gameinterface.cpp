@@ -749,6 +749,27 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	g_OneWayTransition = false;
 
 	//BG2 - Tjoppen - exec <mapname>.cfg
+	//first reset relevant cvars to their default values
+#define LIMIT_REVERT( size )\
+	extern ConVar mp_limit_inf_a_##size, mp_limit_off_a_##size, mp_limit_rif_a_##size,\
+					mp_limit_inf_b_##size, mp_limit_off_b_##size, mp_limit_rif_b_##size;\
+	mp_limit_inf_a_##size.Revert(); mp_limit_off_a_##size.Revert(); mp_limit_rif_a_##size.Revert();\
+	mp_limit_inf_b_##size.Revert(); mp_limit_off_b_##size.Revert(); mp_limit_rif_b_##size.Revert();
+
+	//class limits..
+	LIMIT_REVERT( sml )
+	LIMIT_REVERT( med )
+	LIMIT_REVERT( lrg )
+
+	//other game related cvars
+	extern ConVar mp_winbonus, mp_respawnstyle, mp_respawntime, mp_limit_mapsize_low, mp_limit_mapsize_high;
+	mp_winbonus.Revert();
+	mp_respawnstyle.Revert();
+	mp_respawntime.Revert();
+	mp_limit_mapsize_low.Revert();
+	mp_limit_mapsize_high.Revert();
+
+	//done. we can now exec the map config
 	char	szExec[256];
 	Q_snprintf( szExec, sizeof(szExec), "exec %s.cfg\n", pMapName );
 	engine->ServerCommand( szExec );
