@@ -1633,10 +1633,13 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 			*pBritish = g_Teams[TEAM_BRITISH];
 	
 	if( GetTeamNumber() == iTeam && m_iNextClass == iClass )
-		return true;
+			return true;
 	
 	//check so we don't ruin the team balance..
-	if (mp_autobalanceteams.GetInt() == 1)
+	//BG2 - Tjoppen - don't bother with checking balance if we're just changing class, not team.
+	//					CHL2MPRules::Think() will make sure the teams are kept balanced.
+	//					We want to allow people to change class even if their team is too big.
+	if( mp_autobalanceteams.GetInt() == 1 && GetTeamNumber() != iTeam )
 	{
 		int iAutoTeamBalanceTeamDiff,
 			iAutoTeamBalanceBiggerTeam;
@@ -1660,15 +1663,16 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 		}
 	}
 
+	//check if there's a limit for this class, and if it has been exceeded
+	//if we're changing back to the class we currently are, because perhaps we regret choosing
+	// a new class, skip the limit check
 	int limit = GetLimitTeamClass( iTeam, iClass );
-	if( limit >= 0 )	//not unlimited?
+	if( limit >= 0 && g_Teams[iTeam]->GetNumOfClass(iClass) >= limit &&
+		!(GetTeamNumber() == iTeam && m_iClass == iClass ) )
 	{
-		if (g_Teams[iTeam]->GetNumOfClass(iClass) >= limit)
-		{
-			//BG2 - Tjoppen - TODO: usermessage this
-			ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
-			return false;
-		}
+		//BG2 - Tjoppen - TODO: usermessage this
+		ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
+		return false;
 	}
 
 	//BG2 - Tjoppen - TODO: usermessage this
