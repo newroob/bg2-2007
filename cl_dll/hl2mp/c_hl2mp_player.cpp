@@ -68,9 +68,10 @@ IMPLEMENT_CLIENTCLASS_DT(C_HL2MP_Player, DT_HL2MP_Player, CHL2MP_Player)
 	RecvPropInt( RECVINFO( m_iClass ) ),
 	//
 	//BG@ - Draco - Rewards
-	RecvPropInt( RECVINFO( m_iOfficerReward ) ),
+	//BG2 - Tjoppen - rewards put on hold
+	/*RecvPropInt( RECVINFO( m_iOfficerReward ) ),
 	RecvPropInt( RECVINFO( m_iSniperReward ) ),
-	RecvPropInt( RECVINFO( m_iInfantryReward ) ),
+	RecvPropInt( RECVINFO( m_iInfantryReward ) ),*/
 END_RECV_TABLE()
 
 #define	HL2_WALK_SPEED 150

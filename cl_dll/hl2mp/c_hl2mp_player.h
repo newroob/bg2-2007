@@ -85,9 +85,10 @@ public:
 	int		m_iClass;
 	//
 	//BG@ - Draco - Rewards
-	int m_iInfantryReward;
+	//BG2 - Tjoppen - rewards put on hold
+	/*int m_iInfantryReward;
 	int m_iOfficerReward;
-	int m_iSniperReward;
+	int m_iSniperReward;*/
 
 private:
 	

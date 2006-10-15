@@ -156,9 +156,10 @@ IMPLEMENT_SERVERCLASS_ST(CHL2MP_Player, DT_HL2MP_Player)
 	//BG2 - Tjoppen - m_iClass is a network var
 	SendPropInt( SENDINFO( m_iClass), 2, SPROP_UNSIGNED ),	//BG2 - Tjoppen - remember: max four classes or increase this
 	//
-	SendPropInt( SENDINFO( m_iOfficerReward), 7, SPROP_UNSIGNED ),	//BG2 - Draco - Rewards
+	//BG2 - Tjoppen - rewards put on hold
+	/*SendPropInt( SENDINFO( m_iOfficerReward), 7, SPROP_UNSIGNED ),	//BG2 - Draco - Rewards
 	SendPropInt( SENDINFO( m_iSniperReward), 7, SPROP_UNSIGNED ),	//BG2 - Draco - Rewards
-	SendPropInt( SENDINFO( m_iInfantryReward), 7, SPROP_UNSIGNED ),	//BG2 - Draco - Rewards
+	SendPropInt( SENDINFO( m_iInfantryReward), 7, SPROP_UNSIGNED ),	//BG2 - Draco - Rewards*/
 
 //	SendPropExclude( "DT_ServerAnimationData" , "m_flCycle" ),	
 //	SendPropExclude( "DT_AnimTimeMustBeFirst" , "m_flAnimTime" ),
@@ -872,7 +873,8 @@ bool CHL2MP_Player::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelinde
 //CHL2MP_Player's IncreaseReward
 //increases the points towards a bonus, 1 for class, 2 for team
 //=============================================================
-void CHL2MP_Player::IncreaseReward(int iType)
+//BG2 - Tjoppen - rewards put on hold
+/*void CHL2MP_Player::IncreaseReward(int iType)
 {
 /*	switch (iType)
 	{
@@ -961,8 +963,8 @@ void CHL2MP_Player::IncreaseReward(int iType)
 					break;
 			}
 			break;
-	}*/
-}
+	}*//*
+}*/
 
 void CHL2MP_Player::HandleSpeedChanges( void )
 {

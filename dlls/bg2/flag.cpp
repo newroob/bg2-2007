@@ -841,7 +841,8 @@ void CFlag::Capture( int iTeam )
 		if( pPlayer->GetTeamNumber() == iTeam )
 		{
 			pPlayer->IncrementFragCount(m_iPlayerBonus);
-			pPlayer->IncreaseReward(1);
+			//BG2 - Tjoppen - rewards put on hold
+			//pPlayer->IncreaseReward(1);
 			m_vOverloadingPlayers.AddToHead( pPlayer );
 		}
 	}

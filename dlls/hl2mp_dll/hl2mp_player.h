@@ -131,10 +131,12 @@ public:
 	
 	void  DetonateTripmines( void );
 
-	void IncreaseReward(int iType);
+	//BG2 - Tjoppen - rewards put on hold
+	/*void IncreaseReward(int iType);
 	CNetworkVar( int, m_iInfantryReward );
 	CNetworkVar( int, m_iOfficerReward );
-	CNetworkVar( int, m_iSniperReward );
+	CNetworkVar( int, m_iSniperReward );*/
+	//
 
 
 	Vector m_vecTotalBulletForce;	//Accumulator for bullet force in a single frame
