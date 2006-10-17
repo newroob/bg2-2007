@@ -106,6 +106,7 @@ public:
 	int m_iTeamSelection;
 
 	void OnThink();
+	void UpdateClassButtonText( CClassButton *pButton, int iClass, const char *pPrefix );
 	void ToggleButtons(int iShowScreen);
 
 	//being in classmenu mode means we must be visible aswell

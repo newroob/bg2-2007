@@ -90,7 +90,6 @@ ConVar mp_timeleft( "mp_timeleft", "1200", FCVAR_GAMEDLL);
 ConVar mp_winbonus( "mp_winbonus", "200", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Amount of points awarded to team winning the round" );
 //
 
-
 //BG2 - Tjoppen - away with these
 /*extern CBaseEntity	 *g_pLastCombineSpawn;
 extern CBaseEntity	 *g_pLastRebelSpawn;*/
@@ -99,6 +98,36 @@ extern CBaseEntity	 *g_pLastRebelSpawn;*/
 #define WEAPON_MAX_DISTANCE_FROM_SPAWN 64
 
 #endif
+
+//BG2 - Tjoppen - beautiful defines. you will see another one further down
+#ifdef CLIENT_DLL
+#define CVAR_FLAGS	(FCVAR_REPLICATED | FCVAR_NOTIFY)
+#else
+#define CVAR_FLAGS	(FCVAR_GAMEDLL | FCVAR_REPLICATED | FCVAR_NOTIFY)
+#endif
+#define LIMIT_DEFINES( size, sizename )\
+	ConVar mp_limit_inf_a_##size( "mp_limit_inf_a_"#size, "-1", CVAR_FLAGS,\
+									"Max number of Continental Soldiers on " sizename " maps" );\
+	ConVar mp_limit_off_a_##size( "mp_limit_off_a_"#size, "-1", CVAR_FLAGS,\
+									"Max number of Continental Officers on " sizename " maps" );\
+	ConVar mp_limit_rif_a_##size( "mp_limit_rif_a_"#size, "-1", CVAR_FLAGS,\
+									"Max number of Frontiersmen on " sizename " maps" );\
+	ConVar mp_limit_inf_b_##size( "mp_limit_inf_b_"#size, "-1", CVAR_FLAGS,\
+									"Max number of Royal Infantry on " sizename " maps" );\
+	ConVar mp_limit_off_b_##size( "mp_limit_off_b_"#size, "-1", CVAR_FLAGS,\
+									"Max number of Royal Commanders on " sizename " maps" );\
+	ConVar mp_limit_rif_b_##size( "mp_limit_rif_b_"#size, "-1", CVAR_FLAGS,\
+									"Max number of Jägers on " sizename " maps" );
+
+//as you can see, the macro is a shorthand and should also help avoid misspellings and such that are
+//usually common with repetitive stuff like this
+LIMIT_DEFINES( sml, "small" )
+LIMIT_DEFINES( med, "medium" )
+LIMIT_DEFINES( lrg, "large" )
+
+ConVar mp_limit_mapsize_low( "mp_limit_mapsize_low", "10", CVAR_FLAGS, "Servers with player counts <= this number are small, above it are medium or large" );
+ConVar mp_limit_mapsize_high( "mp_limit_mapsize_high", "20", CVAR_FLAGS, "Servers with player counts <= this number are small or medium, above it are large" );
+
 
 
 REGISTER_GAMERULES_CLASS( CHL2MPRules );
@@ -1616,3 +1645,47 @@ void CHL2MPRules::UpdateFlags( void )
 	}
 }
 #endif
+
+int CHL2MPRules::GetLimitTeamClass( int iTeam, int iClass )
+{
+	//mp_limit_<inf/off/rif>_<a/b>_<sml/med/lrg> - mp_limit_inf_a_sml
+
+	//count players - is there a better way? this looks stupid
+	int num = 0;
+	for( int x = 1; x <= gpGlobals->maxClients; x++ )
+		if( UTIL_PlayerByIndex( x ) )
+			num++;
+
+	//BG2 - Tjoppen - more macro goodness
+#define LIMIT_SWITCH( size )\
+	switch( iTeam ){\
+	case TEAM_AMERICANS:\
+		switch( iClass ){\
+		case CLASS_INFANTRY: return mp_limit_inf_a_##size.GetInt();\
+		case CLASS_OFFICER: return mp_limit_off_a_##size.GetInt();\
+		case CLASS_SNIPER: return mp_limit_rif_a_##size.GetInt();\
+		default: return -1;}\
+	case TEAM_BRITISH:\
+		switch( iClass ){\
+		case CLASS_INFANTRY: return mp_limit_inf_b_##size.GetInt();\
+		case CLASS_OFFICER: return mp_limit_off_b_##size.GetInt();\
+		case CLASS_SNIPER: return mp_limit_rif_b_##size.GetInt();\
+		default: return -1;}\
+	default: return -1;}
+
+	if( num <= mp_limit_mapsize_low.GetInt() )
+	{
+		//small
+		LIMIT_SWITCH( sml )
+	}
+	else if( num <= mp_limit_mapsize_high.GetInt() )
+	{
+		//medium
+		LIMIT_SWITCH( med )
+	}
+	else
+	{
+		//large
+		LIMIT_SWITCH( lrg )
+	}
+}

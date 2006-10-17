@@ -161,6 +161,8 @@ public:
 	void RespawnWave();
 	void ResetFlags();
 	void UpdateFlags();
+
+	int GetLimitTeamClass( int iTeam, int iClass );
 	//
 };
 

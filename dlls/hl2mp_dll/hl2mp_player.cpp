@@ -83,30 +83,6 @@ ConVar mp_limit_medium_b( "mp_limit_medium_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIF
 ConVar mp_limit_heavy_b( "mp_limit_heavy_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
 						"When != -1 : Maximum amount of Jaegers for the British" );//loyalist*/
 
-//BG2 - Tjoppen - beautiful define. you will see another one further down
-#define LIMIT_DEFINES( size, sizename )\
-	ConVar mp_limit_inf_a_##size( "mp_limit_inf_a_"#size, "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,\
-									"Max number of Continental Soldiers on " sizename " maps" );\
-	ConVar mp_limit_off_a_##size( "mp_limit_off_a_"#size, "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,\
-									"Max number of Continental Officers on " sizename " maps" );\
-	ConVar mp_limit_rif_a_##size( "mp_limit_rif_a_"#size, "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,\
-									"Max number of Frontiersmen on " sizename " maps" );\
-	ConVar mp_limit_inf_b_##size( "mp_limit_inf_b_"#size, "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,\
-									"Max number of Royal Infantry on " sizename " maps" );\
-	ConVar mp_limit_off_b_##size( "mp_limit_off_b_"#size, "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,\
-									"Max number of Royal Commanders on " sizename " maps" );\
-	ConVar mp_limit_rif_b_##size( "mp_limit_rif_b_"#size, "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,\
-									"Max number of Jägers on " sizename " maps" );
-
-//as you can see, the macro is a shorthand and should also help avoid misspellings and such that are
-//usually common with repetitive stuff like this
-LIMIT_DEFINES( sml, "small" )
-LIMIT_DEFINES( med, "medium" )
-LIMIT_DEFINES( lrg, "large" )
-
-ConVar mp_limit_mapsize_low( "mp_limit_mapsize_low", "10", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Servers with player counts <= this number are small, above it are medium or large" );
-ConVar mp_limit_mapsize_high( "mp_limit_mapsize_high", "20", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Servers with player counts <= this number are small or medium, above it are large" );
-
 extern ConVar mp_autobalanceteams;
 extern ConVar mp_autobalancetolerance;
 
@@ -1554,80 +1530,6 @@ bool CHL2MP_Player::MayRespawn( void )
 }
 //
 
-int CHL2MP_Player::GetLimitTeamClass( int iTeam, int iClass )
-{
-	//mp_limit_<inf/off/rif>_<a/b>_<sml/med/lrg> - mp_limit_inf_a_sml
-
-	//count players - is there a better way? this looks stupid
-	int num = 0;
-	for( int x = 1; x <= gpGlobals->maxClients; x++ )
-		if( UTIL_PlayerByIndex( x ) )
-			num++;
-
-	//BG2 - Tjoppen - more macro goodness
-#define LIMIT_SWITCH( size )\
-	switch( iTeam ){\
-	case TEAM_AMERICANS:\
-		switch( iClass ){\
-		case CLASS_INFANTRY: return mp_limit_inf_a_##size.GetInt();\
-		case CLASS_OFFICER: return mp_limit_off_a_##size.GetInt();\
-		case CLASS_SNIPER: return mp_limit_rif_a_##size.GetInt();\
-		default: return -1;}\
-	case TEAM_BRITISH:\
-		switch( iClass ){\
-		case CLASS_INFANTRY: return mp_limit_inf_b_##size.GetInt();\
-		case CLASS_OFFICER: return mp_limit_off_b_##size.GetInt();\
-		case CLASS_SNIPER: return mp_limit_rif_b_##size.GetInt();\
-		default: return -1;}\
-	default: return -1;}
-
-	if( num <= mp_limit_mapsize_low.GetInt() )
-	{
-		//small
-		LIMIT_SWITCH( sml )
-	}
-	else if( num <= mp_limit_mapsize_high.GetInt() )
-	{
-		//medium
-		LIMIT_SWITCH( med )
-	}
-	else
-	{
-		//large
-		LIMIT_SWITCH( lrg )
-	}
-
-	/*switch( iTeam )
-	{
-	case TEAM_AMERICANS:
-		switch( iClass )
-		{
-		case CLASS_INFANTRY:
-			return mp_limit_heavy_a.GetInt();
-		case CLASS_OFFICER:
-			return mp_limit_light_a.GetInt();
-		case CLASS_SNIPER:
-			return mp_limit_medium_a.GetInt();
-		default:
-			return -1;
-		}
-	case TEAM_BRITISH:
-		switch( iClass )
-		{
-		case CLASS_INFANTRY:
-			return mp_limit_medium_b.GetInt();
-		case CLASS_OFFICER:
-			return mp_limit_light_b.GetInt();
-		case CLASS_SNIPER:
-			return mp_limit_heavy_b.GetInt();
-		default:
-			return -1;
-		}
-	default:
-		return -1;
-	}*/
-}
-
 bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 {
 	//returns true on success, false otherwise
@@ -1668,7 +1570,7 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 	//check if there's a limit for this class, and if it has been exceeded
 	//if we're changing back to the class we currently are, because perhaps we regret choosing
 	// a new class, skip the limit check
-	int limit = GetLimitTeamClass( iTeam, iClass );
+	int limit = HL2MPRules()->GetLimitTeamClass( iTeam, iClass );
 	if( limit >= 0 && g_Teams[iTeam]->GetNumOfClass(iClass) >= limit &&
 		!(GetTeamNumber() == iTeam && m_iClass == iClass ) )
 	{

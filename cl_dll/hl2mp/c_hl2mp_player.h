@@ -81,7 +81,10 @@ public:
 
 	//BG2 - Tjoppen - vars in C_HL2MP_Player
 	//CNetworkVar( int, m_iStamina );	//doesn't have to be a CNetworkVar appearently
-	int		m_iStamina;		//yeah it's public integer, big woop, wanna fight about it?
+	int		m_iStamina;		//yeah it's a public integer, big woop, wanna fight about it?
+
+	int		GetClass( void )	{ return m_iClass; }
+private:
 	int		m_iClass;
 	//
 	//BG@ - Draco - Rewards

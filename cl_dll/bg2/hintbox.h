@@ -50,9 +50,6 @@ enum
 
 extern char *pHints[NUM_HINTS];
 
-// not implemented yet
-static ConVar cl_hintbox( "cl_hintbox", "0", 0, "0 - Off, 1 - game relevant hints, 2 -  with newbie notices" );
-
 class CHint
 {
 public:

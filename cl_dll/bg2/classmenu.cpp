@@ -38,19 +38,13 @@
 #include <igameresources.h>
 
 #include "classmenu.h"
+#include "hl2mp_gamerules.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 extern IGameUIFuncs *gameuifuncs; // for key binding details
 
-enum
-{
-	TEAM_AMERICANS = 2,
-	TEAM_BRITISH,
-	//BG2 - Tjoppen - NUM_TEAMS is useful
-	NUM_TEAMS,	//!! must be last !!
-};
 
 
 using namespace vgui;
@@ -223,17 +217,17 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pSpectateButton->SetVisible( true );
 
 	m_pInfantryButton->SetPos( 50, 50 );
-	m_pInfantryButton->SetSize( 200, 30 );
+	m_pInfantryButton->SetSize( 250, 30 );
 	m_pInfantryButton->SetCommand( 2 );
 	m_pInfantryButton->SetVisible( false );
 
 	m_pOfficerButton->SetPos( 50, 100 );
-	m_pOfficerButton->SetSize( 200, 30 );
+	m_pOfficerButton->SetSize( 250, 30 );
 	m_pOfficerButton->SetCommand( 1 );
 	m_pOfficerButton->SetVisible( false );
 
 	m_pSniperButton->SetPos( 50, 150 );
-	m_pSniperButton->SetSize( 200, 30 );
+	m_pSniperButton->SetSize( 250, 30 );
 	m_pSniperButton->SetCommand( 3 );
 	m_pSniperButton->SetVisible( false );
 
@@ -449,19 +443,38 @@ void CClassMenu::OnThink()
 	}
 
 	//BG2 - Draco - set the proper names for the classes
-	switch( m_iTeamSelection )
-	{
-		case TEAM_AMERICANS:
-			m_pInfantryButton->SetText("1. Continental Soldier");
-			m_pOfficerButton->SetText("2. Continental Officer");
-			m_pSniperButton->SetText("3. Frontiersman");
-			break;
-		case TEAM_BRITISH:
-			m_pInfantryButton->SetText("1. Royal Infantry");
-			m_pOfficerButton->SetText("2. Royal Commander");
-			m_pSniperButton->SetText("3. Jaeger");
-			break;
-	}
+	//BG2 - Tjoppen - updated to use UpdateClassButtonText()
+	UpdateClassButtonText( m_pInfantryButton, CLASS_INFANTRY, 
+			m_iTeamSelection == TEAM_AMERICANS ? "1. Continental Soldier" : "1. Royal Infantry" );
+
+	UpdateClassButtonText( m_pOfficerButton, CLASS_OFFICER, 
+			m_iTeamSelection == TEAM_AMERICANS ? "2. Continental Officer" : "1. Royal Commander" );
+
+	UpdateClassButtonText( m_pSniperButton, CLASS_SNIPER, 
+			m_iTeamSelection == TEAM_AMERICANS ? "3. Frontiersman" : "3. Jaeger" );
+}
+
+void CClassMenu::UpdateClassButtonText( CClassButton *pButton, int iClass, const char *pPrefix )
+{
+	//BG2 - Tjoppen - this function figures out what to print on the specified button's text field
+	//					based on class limits and such
+	char temp[512];
+	int limit = HL2MPRules()->GetLimitTeamClass(m_iTeamSelection, iClass);
+
+	if( m_iTeamSelection != TEAM_AMERICANS && m_iTeamSelection != TEAM_BRITISH )
+		return;
+
+	C_Team *pCurrentTeam = g_Teams[m_iTeamSelection];
+
+	if( !pCurrentTeam )
+		return;
+
+	if( limit >= 0 )
+		Q_snprintf( temp, sizeof temp, "%s (%i/%i)", pPrefix, pCurrentTeam->GetNumOfClass(iClass), limit );
+	else
+		Q_snprintf( temp, sizeof temp, "%s (%i)", pPrefix, pCurrentTeam->GetNumOfClass(iClass) );
+
+	pButton->SetText( temp );
 }
 
 void CClassMenu::SetData(KeyValues *data)

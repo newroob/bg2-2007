@@ -91,6 +91,9 @@ hintbox->SetHint(hint, displaytime, displaymode);
 ##########################################################################################
 */
 
+// not implemented yet
+static ConVar cl_hintbox( "cl_hintbox", "0", FCVAR_CLIENTDLL, "0 - Off, 1 - game relevant hints, 2 -  with newbie notices" );
+
 DECLARE_HUDELEMENT( CHintbox );
 DECLARE_HUD_MESSAGE( CHintbox, Hintbox );
 

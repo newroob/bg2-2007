@@ -63,6 +63,13 @@ public:
 	int		m_iPing;
 	int		m_iPacketloss;
 	int		m_iTeamNum;
+
+	//BG2 - Tjoppen - stuff in C_Team
+	int GetNumInfantry();
+	int GetNumOfficers();
+	int GetNumSnipers();
+	int GetNumOfClass( int iClass );
+	//
 };
 
 

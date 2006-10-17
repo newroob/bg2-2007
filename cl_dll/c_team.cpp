@@ -6,6 +6,9 @@
 //=============================================================================//
 #include "cbase.h"
 #include "c_team.h"
+//BG2 - Tjoppen - #includes
+#include "hl2mp_gamerules.h"
+#include "c_hl2mp_player.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -232,3 +235,68 @@ bool ArePlayersOnSameTeam( int iPlayerIndex1, int iPlayerIndex2 )
 
 	return false;
 }
+
+//BG2 - Tjoppen - stuff in C_Team
+int C_Team::GetNumInfantry()
+{
+	int iAmount = 0;
+	
+	for( int x = 0; x < Get_Number_Players(); x++ )
+	{
+		CBasePlayer *pPlayer = GetPlayer( x );
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+		if (pHL2Player->GetClass() == CLASS_INFANTRY)
+		{
+			iAmount++;
+		}
+	}
+	return iAmount;
+}
+
+int C_Team::GetNumOfficers()
+{
+	int iAmount = 0;
+	
+	for( int x = 0; x < Get_Number_Players(); x++ )
+	{
+		CBasePlayer *pPlayer = GetPlayer( x );
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+		if (pHL2Player->GetClass() == CLASS_OFFICER)
+		{
+			iAmount++;
+		}
+	}
+	return iAmount;
+}
+
+int C_Team::GetNumSnipers()
+{
+	int iAmount = 0;
+	
+	for( int x = 0; x < Get_Number_Players(); x++ )
+	{
+		CBasePlayer *pPlayer = GetPlayer( x );
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+		if (pHL2Player->GetClass() == CLASS_SNIPER)
+		{
+			iAmount++;
+		}
+	}
+	return iAmount;
+}
+
+int C_Team::GetNumOfClass( int iClass )
+{
+	switch( iClass )
+	{
+	case CLASS_INFANTRY:
+		return GetNumInfantry();
+	case CLASS_OFFICER:
+		return GetNumOfficers();
+	case CLASS_SNIPER:
+		return GetNumSnipers();
+	default:
+		return 0;
+	}
+}
+//
