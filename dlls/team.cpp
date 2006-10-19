@@ -343,12 +343,9 @@ int CTeam::GetNumInfantry()
 	
 	for( int x = 0; x < GetNumPlayers(); x++ )
 	{
-		CBasePlayer *pPlayer = GetPlayer( x );
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
-		if (pHL2Player->GetClass() == CLASS_INFANTRY)
-		{
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetPlayer( x ) );
+		if( pHL2Player && pHL2Player->GetClass() == CLASS_INFANTRY )
 			iAmount++;
-		}
 	}
 	return iAmount;
 }
@@ -359,12 +356,9 @@ int CTeam::GetNumOfficers()
 	
 	for( int x = 0; x < GetNumPlayers(); x++ )
 	{
-		CBasePlayer *pPlayer = GetPlayer( x );
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
-		if (pHL2Player->GetClass() == CLASS_OFFICER)
-		{
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetPlayer( x ) );
+		if( pHL2Player && pHL2Player->GetClass() == CLASS_OFFICER )
 			iAmount++;
-		}
 	}
 	return iAmount;
 }
@@ -374,12 +368,9 @@ int CTeam::GetNumSnipers()
 	
 	for( int x = 0; x < GetNumPlayers(); x++ )
 	{
-		CBasePlayer *pPlayer = GetPlayer( x );
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
-		if (pHL2Player->GetClass() == CLASS_SNIPER)
-		{
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetPlayer( x ) );
+		if( pHL2Player && pHL2Player->GetClass() == CLASS_SNIPER )
 			iAmount++;
-		}
 	}
 	return iAmount;
 }
