@@ -447,9 +447,9 @@ MELEE_ACTTABLE( knife )
 #endif
 
 #ifdef CLIENT_DLL
-#define CWeaponhirschfaenger C_Weaponhirschfaenger
+#define CWeaponhirschf C_Weaponhirschf
 #endif
-DECLARE_BG2_WEAPON( hirschfaenger )
+DECLARE_BG2_WEAPON( hirschf )
 {
 	m_bReloadsSingly	= false;
 	m_bFiresUnderwater	= true;
@@ -471,5 +471,5 @@ DECLARE_BG2_WEAPON( hirschfaenger )
 }
 
 #ifndef CLIENT_DLL
-MELEE_ACTTABLE( hirschfaenger )
+MELEE_ACTTABLE( hirschf )
 #endif

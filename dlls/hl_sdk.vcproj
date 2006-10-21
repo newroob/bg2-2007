@@ -128,10 +128,10 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Compiling The Battlegrounds II 0.16 Alpha server binary for Draco(copying to C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin)"
-				CommandLine="if exist &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.dll&quot; attrib -r &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.dll&quot;
-if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.dll &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.dll&quot;
-if exist &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.pdb&quot; attrib -r &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.pdb&quot;
-if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.pdb &quot;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin&quot;
+				CommandLine="if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.dll&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.dll&quot;
+if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.dll &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.dll&quot;
+if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.pdb&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.pdb&quot;
+if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.pdb &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin&quot;
 "
 				Outputs="C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.dll;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.pdb"/>
 			<Tool
@@ -2711,48 +2711,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				Name="HL2 DLL"
 				Filter="">
 				<File
-					RelativePath="hl2_dll\ai_allymanager.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\ai_behavior_actbusy.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\ai_behavior_actbusy.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\ai_behavior_functank.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\ai_behavior_functank.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\ai_behavior_holster.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\ai_behavior_holster.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\ai_behavior_police.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\ai_behavior_police.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\ai_goal_police.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\ai_goal_police.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\AI_Interactions.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\ai_spotlight.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\ai_spotlight.h">
-				</File>
-				<File
 					RelativePath="hl2_dll\antlion_dust.cpp">
 				</File>
 				<File
@@ -2763,12 +2721,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath="hl2_dll\antlion_maker.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\ar2_explosion.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\ar2_explosion.h">
 				</File>
 				<File
 					RelativePath="BaseBludgeonWeapon.cpp">
@@ -2816,21 +2768,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					RelativePath="hl2_dll\energy_wave.h">
 				</File>
 				<File
-					RelativePath="hl2_dll\env_alyxemp.cpp">
-				</File>
-				<File
-					RelativePath="..\game_shared\hl2\env_alyxemp_shared.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\env_headcrabcanister.cpp">
-				</File>
-				<File
-					RelativePath="..\game_shared\hl2\env_headcrabcanister_shared.cpp">
-				</File>
-				<File
-					RelativePath="..\game_shared\hl2\env_headcrabcanister_shared.h">
-				</File>
-				<File
 					RelativePath="hl2_dll\env_speaker.cpp">
 				</File>
 				<File
@@ -2838,12 +2775,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath="hl2_dll\func_recharge.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\func_tank.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\func_tank.h">
 				</File>
 				<File
 					RelativePath="hl2_dll\grenade_ar2.cpp">
@@ -2939,12 +2870,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					RelativePath="hl2_dll\monster_dummy.cpp">
 				</File>
 				<File
-					RelativePath="hl2_dll\npc_alyx.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_alyx.h">
-				</File>
-				<File
 					RelativePath="hl2_dll\npc_antlion.cpp">
 				</File>
 				<File
@@ -2957,19 +2882,10 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					RelativePath="hl2_dll\npc_apcdriver.cpp">
 				</File>
 				<File
-					RelativePath="hl2_dll\npc_attackchopper.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_attackchopper.h">
-				</File>
-				<File
 					RelativePath="hl2_dll\npc_Barnacle.cpp">
 				</File>
 				<File
 					RelativePath="hl2_dll\npc_Barnacle.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_Barney.cpp">
 				</File>
 				<File
 					RelativePath="hl2_dll\npc_BaseZombie.cpp">
@@ -2987,31 +2903,10 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					RelativePath="hl2_dll\npc_Bullseye.h">
 				</File>
 				<File
-					RelativePath="hl2_dll\npc_citizen17.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_citizen17.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_Combine.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_Combine.h">
-				</File>
-				<File
 					RelativePath="hl2_dll\npc_combinecamera.cpp">
 				</File>
 				<File
 					RelativePath="hl2_dll\npc_combinedropship.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_combinegunship.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_CombineS.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_CombineS.h">
 				</File>
 				<File
 					RelativePath="hl2_dll\npc_cranedriver.cpp">
@@ -3059,22 +2954,10 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					RelativePath="hl2_dll\npc_Manhack.h">
 				</File>
 				<File
-					RelativePath="hl2_dll\npc_metropolice.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_metropolice.h">
-				</File>
-				<File
 					RelativePath="hl2_dll\npc_monk.cpp">
 				</File>
 				<File
 					RelativePath="hl2_dll\npc_mossman.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_playercompanion.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_playercompanion.h">
 				</File>
 				<File
 					RelativePath="hl2_dll\npc_PoisonZombie.cpp">
@@ -3105,15 +2988,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath="npc_Talker.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_turret_ceiling.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_turret_floor.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\npc_turret_ground.cpp">
 				</File>
 				<File
 					RelativePath="hl2_dll\npc_Vortigaunt.cpp">
@@ -3156,9 +3030,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath="hl2_dll\script_intro.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\vehicle_airboat.cpp">
 				</File>
 				<File
 					RelativePath="hl2_dll\vehicle_apc.h">
@@ -3441,69 +3312,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 						RelativePath=".\hl2mp_dll\te_hl2mp_shotgun_shot.h">
 					</File>
 					<File
-						RelativePath="..\game_shared\hl2mp\weapon_357.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_ar2.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_ar2.h">
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_crossbow.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_crowbar.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-					</File>
-					<File
 						RelativePath="..\game_shared\hl2mp\weapon_frag.cpp">
 						<FileConfiguration
 							Name="Debug HL2MP|Win32">
@@ -3561,21 +3369,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 						RelativePath="..\game_shared\hl2mp\weapon_physcannon.h">
 					</File>
 					<File
-						RelativePath="..\game_shared\hl2mp\weapon_pistol.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-					</File>
-					<File
 						RelativePath="..\game_shared\hl2mp\weapon_rpg.cpp">
 						<FileConfiguration
 							Name="Debug HL2MP|Win32">
@@ -3628,21 +3421,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_smg1.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_stunstick.cpp">
 						<FileConfiguration
 							Name="Debug HL2MP|Win32">
 							<Tool

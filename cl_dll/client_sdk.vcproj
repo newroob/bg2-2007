@@ -1782,9 +1782,6 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					RelativePath="hl2_hud\c_antlion_dust.cpp">
 				</File>
 				<File
-					RelativePath="hl2_hud\c_ar2_explosion.cpp">
-				</File>
-				<File
 					RelativePath="hl2_hud\c_barnacle.cpp">
 				</File>
 				<File
@@ -1816,12 +1813,6 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				</File>
 				<File
 					RelativePath="hl2_hud\c_corpse.h">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_env_alyxtemp.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_env_headcrabcanister.cpp">
 				</File>
 				<File
 					RelativePath="hl2_hud\c_env_starfield.cpp">
@@ -2261,31 +2252,6 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 						RelativePath=".\hl2mp\c_te_hl2mp_shotgun_shot.cpp">
 					</File>
 					<File
-						RelativePath="..\game_shared\hl2mp\weapon_357.cpp">
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_ar2.cpp">
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_ar2.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_crossbow.cpp">
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_crowbar.cpp">
-					</File>
-					<File
 						RelativePath="..\game_shared\hl2mp\weapon_frag.cpp">
 					</File>
 					<File
@@ -2369,9 +2335,6 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\game_shared\hl2mp\weapon_pistol.cpp">
-					</File>
-					<File
 						RelativePath="..\game_shared\hl2mp\weapon_rpg.cpp">
 					</File>
 					<File
@@ -2420,9 +2383,6 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_smg1.cpp">
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_stunstick.cpp">
 					</File>
 				</Filter>
 				<Filter
@@ -3414,10 +3374,10 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				RelativePath="..\public\tier1\mempool.h">
 			</File>
 			<File
-				RelativePath="..\public\vgui_controls\Menu.h">
+				RelativePath="menu.h">
 			</File>
 			<File
-				RelativePath="menu.h">
+				RelativePath="..\public\vgui_controls\Menu.h">
 			</File>
 			<File
 				RelativePath="..\public\vgui_controls\MenuItem.h">
