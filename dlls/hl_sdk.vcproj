@@ -3270,61 +3270,10 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					Name="Weapons"
 					Filter="">
 					<File
-						RelativePath=".\hl2mp_dll\grenade_satchel.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\hl2mp_dll\grenade_satchel.h">
-					</File>
-					<File
-						RelativePath=".\hl2mp_dll\grenade_tripmine.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\hl2mp_dll\grenade_tripmine.h">
-					</File>
-					<File
 						RelativePath=".\hl2mp_dll\te_hl2mp_shotgun_shot.cpp">
 					</File>
 					<File
 						RelativePath=".\hl2mp_dll\te_hl2mp_shotgun_shot.h">
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_frag.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase.cpp">
@@ -3385,54 +3334,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_rpg.h">
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_shotgun.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)2.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)2.obj"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_slam.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_slam.h">
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_smg1.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
 					</File>
 				</Filter>
 			</Filter>

@@ -97,7 +97,9 @@ extern CBaseEntity				*g_pLastSpawn;*/
 //
 
 void ClientKill( edict_t *pEdict );
-void DropPrimedFragGrenade( CHL2MP_Player *pPlayer, CBaseCombatWeapon *pGrenade );
+//BG2 - Tjoppen - don't need this
+//void DropPrimedFragGrenade( CHL2MP_Player *pPlayer, CBaseCombatWeapon *pGrenade );
+//
 
 LINK_ENTITY_TO_CLASS( player, CHL2MP_Player );
 
@@ -1885,7 +1887,8 @@ void CHL2MP_Player::FlashlightTurnOff( void )
 void CHL2MP_Player::Weapon_Drop( CBaseCombatWeapon *pWeapon, const Vector *pvecTarget, const Vector *pVelocity )
 {
 	//Drop a grenade if it's primed.
-	if ( GetActiveWeapon() )
+	//BG2 - Tjoppen - don't need this
+	/*if ( GetActiveWeapon() )
 	{
 		CBaseCombatWeapon *pGrenade = Weapon_OwnsThisType("weapon_frag");
 
@@ -1897,7 +1900,8 @@ void CHL2MP_Player::Weapon_Drop( CBaseCombatWeapon *pWeapon, const Vector *pvecT
 				return;
 			}
 		}
-	}
+	}*/
+	//
 
 	BaseClass::Weapon_Drop( pWeapon, pvecTarget, pVelocity );
 }
