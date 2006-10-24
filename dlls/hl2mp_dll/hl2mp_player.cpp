@@ -1906,8 +1906,8 @@ void CHL2MP_Player::Weapon_Drop( CBaseCombatWeapon *pWeapon, const Vector *pvecT
 	BaseClass::Weapon_Drop( pWeapon, pvecTarget, pVelocity );
 }
 
-
-void CHL2MP_Player::DetonateTripmines( void )
+//BG2 - Tjoppen - don't need this
+/*void CHL2MP_Player::DetonateTripmines( void )
 {
 	CBaseEntity *pEntity = NULL;
 
@@ -1922,7 +1922,7 @@ void CHL2MP_Player::DetonateTripmines( void )
 
 	// Play sound for pressing the detonator
 	EmitSound( "Weapon_SLAM.SatchelDetonate" );
-}
+}*/
 
 void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 {
@@ -1955,7 +1955,8 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 	RemoveSelfFromFlags();
 	//
 
-	DetonateTripmines();
+	//BG2 - Tjoppen - don't need this
+	//DetonateTripmines();
 
 	BaseClass::Event_Killed( subinfo );
 
@@ -2260,3 +2261,14 @@ void CHL2MP_Player::RemoveSelfFromFlags( void )
 	while( (pFlag = dynamic_cast<CFlag*>( gEntList.FindEntityByClassname( pFlag, "flag" ) )) != NULL )
 		pFlag->m_vOverloadingPlayers.FindAndRemove( this );
 }
+
+//BG2 - Tjoppen - HACKHACK: no more weapon_physcannon
+void PlayerPickupObject( CBasePlayer *pPlayer, CBaseEntity *pObject ){}
+bool PlayerHasMegaPhysCannon( void ){return false;}
+void PhysCannonForceDrop( CBaseCombatWeapon *pActiveWeapon, CBaseEntity *pOnlyIfHoldingThis ){}
+void PhysCannonBeginUpgrade( CBaseAnimating *pAnim ){}
+bool PlayerPickupControllerIsHoldingEntity( CBaseEntity *pPickupControllerEntity, CBaseEntity *pHeldEntity ){return false;}
+float PhysCannonGetHeldObjectMass( CBaseCombatWeapon *pActiveWeapon, IPhysicsObject *pHeldObject ){return 0;}
+CBaseEntity *PhysCannonGetHeldEntity( CBaseCombatWeapon *pActiveWeapon ){return NULL;}
+float PlayerPickupGetHeldObjectMass( CBaseEntity *pPickupControllerEntity, IPhysicsObject *pHeldObject ){return 0;}
+//

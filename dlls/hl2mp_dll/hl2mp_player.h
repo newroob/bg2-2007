@@ -129,7 +129,8 @@ public:
 	const char *GetPlayerModelSoundPrefix( void );
 	int	  GetPlayerModelType( void ) { return m_iPlayerSoundType;	}
 	
-	void  DetonateTripmines( void );
+	//BG2 - Tjoppen - don't need this
+	//void  DetonateTripmines( void );
 
 	//BG2 - Tjoppen - rewards put on hold
 	/*void IncreaseReward(int iType);

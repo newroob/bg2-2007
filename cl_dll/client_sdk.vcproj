@@ -2268,74 +2268,10 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase_machinegun.cpp">
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase_machinegun.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasebasebludgeon.cpp">
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasebasebludgeon.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-					</File>
-					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.cpp">
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_physcannon.cpp">
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_physcannon.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_rpg.cpp">
-					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_rpg.h">
 						<FileConfiguration
 							Name="Debug HL2MP|Win32">
 							<Tool
@@ -3337,10 +3273,10 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				RelativePath="..\public\tier1\mempool.h">
 			</File>
 			<File
-				RelativePath="..\public\vgui_controls\Menu.h">
+				RelativePath="menu.h">
 			</File>
 			<File
-				RelativePath="menu.h">
+				RelativePath="..\public\vgui_controls\Menu.h">
 			</File>
 			<File
 				RelativePath="..\public\vgui_controls\MenuItem.h">
