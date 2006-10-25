@@ -340,13 +340,12 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )
 		//WeaponSound( MELEE_HIT );
 		if( pHitEntity->IsPlayer() )
 		{
-			//WeaponSound( MELEE_HIT );
+			WeaponSound( MELEE_HIT );
 			ImpactEffect( traceHit );
 		}
 		else
 		{
-			//WeaponSound( MELEE_HIT_WORLD );
-
+			WeaponSound( MELEE_HIT_WORLD );
 			if( GetAttackType(iAttack) != ATTACKTYPE_SLASH )
 				ImpactEffect( traceHit );
 		}
@@ -449,13 +448,13 @@ int CBaseBG2Weapon::Swing( int iAttack )
 		//miss, do any waterimpact stuff
 		Vector testEnd = swingStart + forward * GetRange(iAttack);
 		ImpactWater( swingStart, testEnd );
+
+		WeaponSound( SPECIAL1 );	//miss
 	}
 	else
 	{
 		Hit( traceHit, iAttack );
 	}
-
-	WeaponSound( SPECIAL1 );
 
 	// Send the anim
 	SendWeaponAnim( GetActivity( iAttack ) );

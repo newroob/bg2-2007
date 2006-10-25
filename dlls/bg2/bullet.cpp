@@ -210,6 +210,10 @@ void CBullet::Precache( void )
 {
 	PrecacheModel( BOLT_MODEL );
 
+	//BG2 - Tjoppen - Bullet.Hit*
+	//PrecacheScriptSound( "Bullet.HitWorld" );
+	PrecacheScriptSound( "Bullet.HitBody" );
+
 	// This is used by C_TEStickyBolt, despte being different from above!!!
 	//PrecacheModel( "models/crossbow_bolt.mdl" );
 
@@ -278,7 +282,8 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		SetAbsVelocity( Vector( 0, 0, 0 ) );
 
 		// play body "thwack" sound
-		EmitSound( "Weapon_Pistol.HitBody" );
+		//BG2 - Tjoppen - Bullet.HitBody
+		EmitSound( "Bullet.HitBody" );
 
 		UTIL_TraceLine( GetAbsOrigin(),	GetAbsOrigin() + vForward * 128, MASK_OPAQUE, pOther, COLLISION_GROUP_NONE, &tr );
 
@@ -316,7 +321,8 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		// See if we struck the world
 		if ( pOther->GetMoveType() == MOVETYPE_NONE && !( tr.surface.flags & SURF_SKY ) )
 		{
-			EmitSound( "Weapon_Pistol.BoltHitWorld" );
+			//BG2 - Tjoppen - Bullet.HitWorld
+			//EmitSound( "Bullet.HitWorld" );
 
 			// if what we hit is static architecture, can stay around for a while.
 			Vector vecDir = GetAbsVelocity();

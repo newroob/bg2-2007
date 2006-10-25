@@ -255,7 +255,11 @@ void CHL2MP_Player::Precache( void )
 	PrecacheScriptSound( "NPC_CombineS.Die" );
 	PrecacheScriptSound( "NPC_Citizen.die" );
 	PrecacheScriptSound( "BG2Player.die" );
-	PrecacheScriptSound( "BG2Player.pain" );
+	//PrecacheScriptSound( "BG2Player.pain" );
+
+	//assume right leg is the biggest
+	for( i = 0; i <= HITGROUP_RIGHTLEG; i++ )
+		PrecacheScriptSound( GetHitgroupPainSound(i)  );
 
 	char msg[512];
 	
@@ -1991,34 +1995,51 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 	StopZooming();
 }
 
+//BG2 - Tjoppen - GetHitgroupPainSound
+const char* CHL2MP_Player::GetHitgroupPainSound( int hitgroup )
+{
+	switch( hitgroup )
+	{
+	default:
+	case HITGROUP_GENERIC	: return "BG2Player.pain_generic";
+	case HITGROUP_HEAD		: return "BG2Player.pain_head";
+	case HITGROUP_CHEST		: return "BG2Player.pain_chest";
+	case HITGROUP_STOMACH	: return "BG2Player.pain_stomach";
+	case HITGROUP_LEFTARM	: return "BG2Player.pain_arm";
+	case HITGROUP_RIGHTARM	: return "BG2Player.pain_arm";
+	case HITGROUP_LEFTLEG	: return "BG2Player.pain_leg";
+	case HITGROUP_RIGHTLEG	: return "BG2Player.pain_leg";
+	}
+}
+//
+
 int CHL2MP_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 {
 	m_vecTotalBulletForce += inputInfo.GetDamageForce();
 	
 	//BG2 - Tjoppen - pain sound
-	{
-		const char *pModelName = STRING( GetModelName() );
+	const char *pModelName = STRING( GetModelName() );
 
-		CSoundParameters params;
-		if ( GetParametersForSound( "BG2Player.pain", params, pModelName ) == false )
-			return BaseClass::OnTakeDamage( inputInfo );
+	CSoundParameters params;
+	//if ( GetParametersForSound( "BG2Player.pain", params, pModelName ) == false )
+	if( GetParametersForSound( GetHitgroupPainSound(LastHitGroup()), params, pModelName ) == false )
+		return BaseClass::OnTakeDamage( inputInfo );
 
-		Vector vecOrigin = GetAbsOrigin();
-		
-		CRecipientFilter filter;
-		filter.AddRecipientsByPAS( vecOrigin );
+	Vector vecOrigin = GetAbsOrigin();
+	
+	CRecipientFilter filter;
+	filter.AddRecipientsByPAS( vecOrigin );
 
-		EmitSound_t ep;
-		ep.m_nChannel = params.channel;
-		ep.m_pSoundName = params.soundname;
-		ep.m_flVolume = params.volume;
-		ep.m_SoundLevel = params.soundlevel;
-		ep.m_nFlags = 0;
-		ep.m_nPitch = params.pitch;
-		ep.m_pOrigin = &vecOrigin;
+	EmitSound_t ep;
+	ep.m_nChannel = params.channel;
+	ep.m_pSoundName = params.soundname;
+	ep.m_flVolume = params.volume;
+	ep.m_SoundLevel = params.soundlevel;
+	ep.m_nFlags = 0;
+	ep.m_nPitch = params.pitch;
+	ep.m_pOrigin = &vecOrigin;
 
-		EmitSound( filter, entindex(), ep );
-	}
+	EmitSound( filter, entindex(), ep );
 
 	//BG2 - Draco
 	CBaseEntity * pAttacker = inputInfo.GetInflictor();
