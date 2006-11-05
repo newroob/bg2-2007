@@ -905,7 +905,7 @@ void CFlag::ThinkCapped( void )
 
 	//if someone steals the flag, or we run out of holders - uncap
 	//don't uncap flags that aren't non-uncappable
-	if( !m_bNotUncappable && (enemies > 0 && friendlies <= 0 || m_vOverloadingPlayers.Count() <= 0) )
+	if( !m_bNotUncappable && (enemies > 0 && friendlies <= 0 || (m_bUncapOnDeath && m_vOverloadingPlayers.Count() <= 0)) )
 	{
 		//uncap
 		ChangeTeam( TEAM_UNASSIGNED );
@@ -1037,6 +1037,7 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_KEYFIELD( m_sFlagName, FIELD_STRING, "FlagName" ),
 	DEFINE_KEYFIELD( m_iHUDSlot, FIELD_INTEGER, "HUDSlot" ),
 	DEFINE_KEYFIELD( m_bNotUncappable, FIELD_BOOLEAN, "NotUncappable" ),
+	DEFINE_KEYFIELD( m_bUncapOnDeath, FIELD_BOOLEAN, "UncapOnDeath" ),
 	DEFINE_KEYFIELD( m_sNeutralFlagModelName, FIELD_STRING, "NeutralFlagModelName" ),
 	DEFINE_KEYFIELD( m_sDisabledFlagModelName, FIELD_STRING, "DisabledFlagModelName" ),
 	DEFINE_KEYFIELD( m_sBritishFlagModelName, FIELD_STRING, "BritishFlagModelName" ),

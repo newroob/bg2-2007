@@ -96,6 +96,8 @@ class CFlag : public CBaseAnimating
 			m_iTeamBonusInterval,
 			m_iPlayerBonus;
 
+	bool	m_bUncapOnDeath;
+
 	float	m_flNextTeamBonus;
 
 	string_t	m_sNeutralFlagModelName,
