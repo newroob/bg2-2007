@@ -16,7 +16,8 @@
 //-----------------------------------------------------------------------------
 // Purpose: RecvProxy that converts the Team's player UtlVector to entindexes
 //-----------------------------------------------------------------------------
-void RecvProxy_PlayerList(  const CRecvProxyData *pData, void *pStruct, void *pOut )
+//BG2 - Tjoppen - don't need this
+/*void RecvProxy_PlayerList(  const CRecvProxyData *pData, void *pStruct, void *pOut )
 {
 	C_Team *pTeam = (C_Team*)pOut;
 	pTeam->m_aPlayers[pData->m_iElement] = pData->m_Value.m_Int;
@@ -29,7 +30,7 @@ void RecvProxyArrayLength_PlayerArray( void *pStruct, int objectID, int currentA
 	
 	if ( pTeam->m_aPlayers.Size() != currentArrayLength )
 		pTeam->m_aPlayers.SetSize( currentArrayLength );
-}
+}*/
 
 
 IMPLEMENT_CLIENTCLASS_DT_NOBASE(C_Team, DT_Team, CTeam)
@@ -37,13 +38,14 @@ IMPLEMENT_CLIENTCLASS_DT_NOBASE(C_Team, DT_Team, CTeam)
 	RecvPropInt( RECVINFO(m_iScore)),
 	RecvPropString( RECVINFO(m_szTeamname)),
 	
-	RecvPropArray2( 
+	//BG2 - Tjoppen - don't need this
+	/*RecvPropArray2( 
 		RecvProxyArrayLength_PlayerArray,
 		RecvPropInt( "player_array_element", 0, SIZEOF_IGNORE, 0, RecvProxy_PlayerList ), 
 		MAX_PLAYERS, 
 		0, 
 		"player_array"
-		)
+		)*/
 END_RECV_TABLE()
 
 // Global list of client side team entities
@@ -76,11 +78,11 @@ C_Team::~C_Team()
 	g_Teams.FindAndRemove( this );
 }
 
-
-void C_Team::RemoveAllPlayers()
+//BG2 - Tjoppen - part of bandwidth saving
+/*void C_Team::RemoveAllPlayers()
 {
 	m_aPlayers.RemoveAll();
-}
+}*/
 
 void C_Team::PreDataUpdate( DataUpdateType_t updateType )
 {
@@ -91,10 +93,11 @@ void C_Team::PreDataUpdate( DataUpdateType_t updateType )
 //-----------------------------------------------------------------------------
 // Gets the ith player on the team (may return NULL) 
 //-----------------------------------------------------------------------------
-C_BasePlayer* C_Team::GetPlayer( int idx )
+//BG2 - Tjoppen - part of bandwidth saving
+/*C_BasePlayer* C_Team::GetPlayer( int idx )
 {
 	return (C_BasePlayer*)cl_entitylist->GetEnt(m_aPlayers[idx]);
-}
+}*/
 
 
 int C_Team::GetTeamNumber()
@@ -142,13 +145,25 @@ int C_Team::Get_Ping( void )
 //-----------------------------------------------------------------------------
 int C_Team::Get_Number_Players( void )
 {
-	return m_aPlayers.Size();
+	//BG2 - Tjoppen - part of bandwidth saving
+	int n = 0;
+	for( int x = 1; x <= gpGlobals->maxClients; x++ )
+	{
+		C_BasePlayer *pPlayer = static_cast<C_BasePlayer*>( cl_entitylist->GetEnt(x) );
+
+		if( pPlayer && pPlayer->GetTeamNumber() == GetTeamNumber() )
+			n++;
+	}
+
+	return n;
+	//return m_aPlayers.Size();
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Returns true if the specified player is on this team
 //-----------------------------------------------------------------------------
-bool C_Team::ContainsPlayer( int iPlayerIndex )
+//BG2 - Tjoppen - part of bandwidth saving
+/*bool C_Team::ContainsPlayer( int iPlayerIndex )
 {
 	for (int i = 0; i < m_aPlayers.Size(); i++ )
 	{
@@ -157,7 +172,7 @@ bool C_Team::ContainsPlayer( int iPlayerIndex )
 	}
 
 	return false;
-}
+}*/
 
 
 void C_Team::ClientThink()
@@ -205,9 +220,16 @@ int GetNumTeams()
 //-----------------------------------------------------------------------------
 C_Team *GetPlayersTeam( int iPlayerIndex )
 {
+	//BG2 - Tjoppen - part of bandwidth saving
+	C_BasePlayer *pPlayer = static_cast<C_BasePlayer*>( cl_entitylist->GetEnt(iPlayerIndex) );
+
+	if( !pPlayer )
+		return NULL;
+
 	for (int i = 0; i < g_Teams.Count(); i++ )
 	{
-		if ( g_Teams[i]->ContainsPlayer( iPlayerIndex ) )
+		//if ( g_Teams[i]->ContainsPlayer( iPlayerIndex ) )
+		if( g_Teams[i]->GetTeamNumber() == pPlayer->GetTeamNumber() )
 			return g_Teams[i];
 	}
 
@@ -227,13 +249,19 @@ C_Team *GetPlayersTeam( C_BasePlayer *pPlayer )
 //-----------------------------------------------------------------------------
 bool ArePlayersOnSameTeam( int iPlayerIndex1, int iPlayerIndex2 )
 {
-	for (int i = 0; i < g_Teams.Count(); i++ )
+	//BG2 - Tjoppen - part of bandwidth saving
+	C_BasePlayer	*pPlayer1 = static_cast<C_BasePlayer*>( cl_entitylist->GetEnt(iPlayerIndex1) ),
+					*pPlayer2 = static_cast<C_BasePlayer*>( cl_entitylist->GetEnt(iPlayerIndex2) );
+
+	return pPlayer1 && pPlayer2 && pPlayer1->GetTeamNumber() == pPlayer2->GetTeamNumber();
+
+	/*for (int i = 0; i < g_Teams.Count(); i++ )
 	{
 		if ( g_Teams[i]->ContainsPlayer( iPlayerIndex1 ) && g_Teams[i]->ContainsPlayer( iPlayerIndex2 ) )
 			return true;
 	}
 
-	return false;
+	return false;*/
 }
 
 //BG2 - Tjoppen - stuff in C_Team
@@ -241,10 +269,11 @@ int C_Team::GetNumInfantry()
 {
 	int iAmount = 0;
 	
-	for( int x = 0; x < Get_Number_Players(); x++ )
+	for( int x = 1; x <= gpGlobals->maxClients; x++ )
 	{
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetPlayer( x ) );
-		if( pHL2Player && pHL2Player->GetClass() == CLASS_INFANTRY )
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( cl_entitylist->GetEnt(x) );
+		if( pHL2Player && pHL2Player->GetTeamNumber() == GetTeamNumber() && 
+			pHL2Player->GetClass() == CLASS_INFANTRY )
 			iAmount++;
 	}
 	return iAmount;
@@ -254,10 +283,11 @@ int C_Team::GetNumOfficers()
 {
 	int iAmount = 0;
 	
-	for( int x = 0; x < Get_Number_Players(); x++ )
+	for( int x = 1; x <= gpGlobals->maxClients; x++ )
 	{
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetPlayer( x ) );
-		if( pHL2Player && pHL2Player->GetClass() == CLASS_OFFICER )
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( cl_entitylist->GetEnt(x) );
+		if( pHL2Player && pHL2Player->GetTeamNumber() == GetTeamNumber() && 
+			pHL2Player->GetClass() == CLASS_OFFICER )
 			iAmount++;
 	}
 	return iAmount;
@@ -267,10 +297,11 @@ int C_Team::GetNumSnipers()
 {
 	int iAmount = 0;
 	
-	for( int x = 0; x < Get_Number_Players(); x++ )
+	for( int x = 1; x <= gpGlobals->maxClients; x++ )
 	{
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetPlayer( x ) );
-		if( pHL2Player && pHL2Player->GetClass() == CLASS_SNIPER )
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( cl_entitylist->GetEnt(x) );
+		if( pHL2Player && pHL2Player->GetTeamNumber() == GetTeamNumber() && 
+			pHL2Player->GetClass() == CLASS_SNIPER )
 			iAmount++;
 	}
 	return iAmount;

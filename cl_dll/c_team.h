@@ -37,12 +37,14 @@ public:
 
 	// Player Handling
 	virtual int		Get_Number_Players( void );
-	virtual bool	ContainsPlayer( int iPlayerIndex );
-	C_BasePlayer*	GetPlayer( int idx );
+	//BG2 - Tjoppen - part of bandwidth saving
+	/*virtual bool	ContainsPlayer( int iPlayerIndex );
+	C_BasePlayer*	GetPlayer( int idx );*/
 
 	int		GetTeamNumber();
 
-	void	RemoveAllPlayers();
+	//BG2 - Tjoppen - part of bandwidth saving
+	//void	RemoveAllPlayers();
 
 
 // IClientThinkable overrides.
@@ -54,7 +56,8 @@ public:
 public:
 
 	// Data received from the server
-	CUtlVector< int > m_aPlayers;
+	//BG2 - Tjoppen - part of bandwidth saving
+	//CUtlVector< int > m_aPlayers;
 	char	m_szTeamname[ MAX_TEAM_NAME_LENGTH ];
 	int		m_iScore;
 

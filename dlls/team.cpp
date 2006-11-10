@@ -21,7 +21,8 @@ CUtlVector< CTeam * > g_Teams;
 //-----------------------------------------------------------------------------
 // Purpose: SendProxy that converts the Team's player UtlVector to entindexes
 //-----------------------------------------------------------------------------
-void SendProxy_PlayerList( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID )
+//BG2 - Tjoppen - don't need this
+/*void SendProxy_PlayerList( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID )
 {
 	CTeam *pTeam = (CTeam*)pData;
 
@@ -37,7 +38,7 @@ int SendProxyArrayLength_PlayerArray( const void *pStruct, int objectID )
 {
 	CTeam *pTeam = (CTeam*)pStruct;
 	return pTeam->m_aPlayers.Count();
-}
+}*/
 
 
 // Datatable
@@ -49,13 +50,14 @@ IMPLEMENT_SERVERCLASS_ST_NOBASE(CTeam, DT_Team)
 	//
 	SendPropString( SENDINFO( m_szTeamname ) ),
 
-	SendPropArray2( 
+	//BG2 - Tjoppen - don't need this
+	/*SendPropArray2( 
 		SendProxyArrayLength_PlayerArray,
 		SendPropInt("player_array_element", 0, 4, 10, SPROP_UNSIGNED, SendProxy_PlayerList), 
 		MAX_PLAYERS, 
 		0, 
 		"player_array"
-		)
+		)*/
 END_SEND_TABLE()
 
 LINK_ENTITY_TO_CLASS( team_manager, CTeam );
