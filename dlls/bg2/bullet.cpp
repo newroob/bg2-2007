@@ -212,7 +212,7 @@ void CBullet::Precache( void )
 
 	//BG2 - Tjoppen - Bullet.Hit*
 	//PrecacheScriptSound( "Bullet.HitWorld" );
-	PrecacheScriptSound( "Bullet.HitBody" );
+	//PrecacheScriptSound( "Bullet.HitBody" );
 
 	// This is used by C_TEStickyBolt, despte being different from above!!!
 	//PrecacheModel( "models/crossbow_bolt.mdl" );
@@ -282,8 +282,8 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		SetAbsVelocity( Vector( 0, 0, 0 ) );
 
 		// play body "thwack" sound
-		//BG2 - Tjoppen - Bullet.HitBody
-		EmitSound( "Bullet.HitBody" );
+		//BG2 - Tjoppen - no sound..
+		//EmitSound( "Bullet.HitBody" );
 
 		UTIL_TraceLine( GetAbsOrigin(),	GetAbsOrigin() + vForward * 128, MASK_OPAQUE, pOther, COLLISION_GROUP_NONE, &tr );
 
