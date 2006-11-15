@@ -267,58 +267,31 @@ bool ArePlayersOnSameTeam( int iPlayerIndex1, int iPlayerIndex2 )
 //BG2 - Tjoppen - stuff in C_Team
 int C_Team::GetNumInfantry()
 {
-	int iAmount = 0;
-	
-	for( int x = 1; x <= gpGlobals->maxClients; x++ )
-	{
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( cl_entitylist->GetEnt(x) );
-		if( pHL2Player && pHL2Player->GetTeamNumber() == GetTeamNumber() && 
-			pHL2Player->GetClass() == CLASS_INFANTRY )
-			iAmount++;
-	}
-	return iAmount;
+	return GetNumOfClass( CLASS_INFANTRY );
 }
 
 int C_Team::GetNumOfficers()
 {
-	int iAmount = 0;
-	
-	for( int x = 1; x <= gpGlobals->maxClients; x++ )
-	{
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( cl_entitylist->GetEnt(x) );
-		if( pHL2Player && pHL2Player->GetTeamNumber() == GetTeamNumber() && 
-			pHL2Player->GetClass() == CLASS_OFFICER )
-			iAmount++;
-	}
-	return iAmount;
+	return GetNumOfClass( CLASS_OFFICER );
 }
 
 int C_Team::GetNumSnipers()
 {
+	return GetNumOfClass( CLASS_SNIPER );
+}
+
+int C_Team::GetNumOfClass( int iClass )
+{
 	int iAmount = 0;
 	
 	for( int x = 1; x <= gpGlobals->maxClients; x++ )
 	{
 		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( cl_entitylist->GetEnt(x) );
-		if( pHL2Player && pHL2Player->GetTeamNumber() == GetTeamNumber() && 
-			pHL2Player->GetClass() == CLASS_SNIPER )
+
+		if( pHL2Player && pHL2Player->GetTeamNumber() == GetTeamNumber() && pHL2Player->GetClass() == iClass )
 			iAmount++;
 	}
-	return iAmount;
-}
 
-int C_Team::GetNumOfClass( int iClass )
-{
-	switch( iClass )
-	{
-	case CLASS_INFANTRY:
-		return GetNumInfantry();
-	case CLASS_OFFICER:
-		return GetNumOfficers();
-	case CLASS_SNIPER:
-		return GetNumSnipers();
-	default:
-		return 0;
-	}
+	return iAmount;
 }
 //

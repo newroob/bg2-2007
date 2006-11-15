@@ -341,55 +341,31 @@ int CTeam::GetScore( void )
 //BG2 - Draco - Start
 int CTeam::GetNumInfantry()
 {
-	int iAmount = 0;
-	
-	for( int x = 0; x < GetNumPlayers(); x++ )
-	{
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetPlayer( x ) );
-		if( pHL2Player && pHL2Player->GetClass() == CLASS_INFANTRY )
-			iAmount++;
-	}
-	return iAmount;
+	return GetNumOfClass( CLASS_INFANTRY );
 }
 
 int CTeam::GetNumOfficers()
 {
-	int iAmount = 0;
-	
-	for( int x = 0; x < GetNumPlayers(); x++ )
-	{
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetPlayer( x ) );
-		if( pHL2Player && pHL2Player->GetClass() == CLASS_OFFICER )
-			iAmount++;
-	}
-	return iAmount;
+	return GetNumOfClass( CLASS_OFFICER );
 }
 int CTeam::GetNumSnipers()
 {
-	int iAmount = 0;
-	
-	for( int x = 0; x < GetNumPlayers(); x++ )
-	{
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetPlayer( x ) );
-		if( pHL2Player && pHL2Player->GetClass() == CLASS_SNIPER )
-			iAmount++;
-	}
-	return iAmount;
+	return GetNumOfClass( CLASS_SNIPER );
 }
 
 int CTeam::GetNumOfClass( int iClass )
 {
-	switch( iClass )
+	int iAmount = 0;
+	
+	for( int x = 0; x < GetNumPlayers(); x++ )
 	{
-	case CLASS_INFANTRY:
-		return GetNumInfantry();
-	case CLASS_OFFICER:
-		return GetNumOfficers();
-	case CLASS_SNIPER:
-		return GetNumSnipers();
-	default:
-		return 0;
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetPlayer( x ) );
+
+		if( pHL2Player && pHL2Player->GetClass() == iClass )
+			iAmount++;
 	}
+
+	return iAmount;
 }
 
 void CTeam::AddMorale(float New, float Time)
