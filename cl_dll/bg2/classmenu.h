@@ -14,6 +14,7 @@
 #include <vgui/IScheme.h>
 #include <vgui/keycode.h>
 #include <vgui/MouseCode.h>
+#include <vgui_controls/HTML.h>
 #include <vgui_controls/Frame.h>
 #include <vgui_controls/Button.h>
 #include <vgui_controls/ComboBox.h>
@@ -103,6 +104,8 @@ public:
 					*m_pSpectateButton,
 					*m_pAutoassignButton;
 
+	vgui::HTML		*m_pInfoHTML;
+
 	int m_iTeamSelection;
 
 	void OnThink();
@@ -111,6 +114,8 @@ public:
 
 	//being in classmenu mode means we must be visible aswell
 	bool IsInClassMenu( void ) { return m_pInfantryButton->IsVisible() && IsVisible(); }
+
+	void ShowFile( const char *filename );
 
 private:
 	// VGUI2 overrides

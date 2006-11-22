@@ -15,8 +15,8 @@
 #include <vgui/ILocalize.h>
 #include <vgui/ISurface.h>
 #include <vgui/IPanel.h>
-#include <vgui_controls/ImageList.h>
-#include <vgui_controls/MenuItem.h>
+/*#include <vgui_controls/ImageList.h>
+#include <vgui_controls/MenuItem.h>*/
 
 #include <stdio.h> // _snprintf define
 
@@ -177,67 +177,69 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	SetTitleBarVisible( false ); // don't draw a title bar
 	SetMoveable( false );
 	SetSizeable( false );
-	SetProportional(true);
+	//SetProportional(true);
+	SetProportional(false);
 
 	SetScheme("ClientScheme");
 
-	SetSize( 640, 480 );
-	SetPos( 100, 100 );
+	/*SetSize( 640, 480 );
+	SetPos( (ScreenWidth() - 640) / 2, (ScreenHeight() - 480) / 2 );*/
 
-	m_pBritishButton = new CTeamButton( this, "britbutton", "1. British" );
-	m_pAmericanButton = new CTeamButton( this, "amerbutton", "2. American" );
-	m_pAutoassignButton = new CTeamButton( this, "specbutton", "3. Autoassign team" );
-	m_pSpectateButton = new CTeamButton( this, "specbutton", "4. Spectate" );
+	m_pBritishButton = new CTeamButton( this, "BritishButton", "1. British" );
+	m_pAmericanButton = new CTeamButton( this, "AmericanButton", "2. American" );
+	m_pAutoassignButton = new CTeamButton( this, "AutoassignButton", "3. Autoassign team" );
+	m_pSpectateButton = new CTeamButton( this, "SpectateButton", "4. Spectate" );
 	
-	m_pInfantryButton = new CClassButton( this, "infantrybutton", "1. Infantry" );
-	m_pOfficerButton = new CClassButton( this, "officerbutton", "2. Officer" );
-	m_pSniperButton = new CClassButton( this, "sniperbutton", "3. Sniper" );
+	m_pInfantryButton = new CClassButton( this, "InfantryButton", "1. Infantry(in code)" );
+	m_pOfficerButton = new CClassButton( this, "OfficerButton", "2. Officer(in code)" );
+	m_pSniperButton = new CClassButton( this, "RiflemanButton", "3. Rifleman(in code)" );
 
-	m_pCancelButton = new CClassButton( this, "cancelbutton", "0. Cancel" );
-	//button positions reordered
-	
-	m_pBritishButton->SetPos( 50, 100 );
-	m_pBritishButton->SetSize( 200, 30 );
+	m_pCancelButton = new CClassButton( this, "CancelButton", "0. Cancel" );
+
+	m_pInfoHTML = new HTML( this, "InfoHTML" );
+	//m_pInfoHTML->SetPos( 100, 100 );
+	//m_pInfoHTML->SetSize( 540, 380 );
+
+	ShowFile( "readme.txt" );
+
+	m_pInfoHTML->SetVisible( true );
+
+	LoadControlSettings( "Resource/BG2Classmenu.res" );
+
 	m_pBritishButton->SetCommand(TEAM_BRITISH);
-	m_pBritishButton->SetVisible( true );
-
-	m_pAmericanButton->SetPos( 300, 100 );
-	m_pAmericanButton->SetSize( 200, 30 );
 	m_pAmericanButton->SetCommand(TEAM_AMERICANS);
-	m_pAmericanButton->SetVisible( true );
-
-	m_pAutoassignButton->SetPos( 50, 150 );
-	m_pAutoassignButton->SetSize( 200, 30 );
 	m_pAutoassignButton->SetCommand(-1);
-	m_pAutoassignButton->SetVisible( true );
-
-	m_pSpectateButton->SetPos( 50, 200 );
-	m_pSpectateButton->SetSize( 200, 30 );
 	m_pSpectateButton->SetCommand(TEAM_UNASSIGNED);
-	m_pSpectateButton->SetVisible( true );
 
-	m_pInfantryButton->SetPos( 50, 50 );
-	m_pInfantryButton->SetSize( 250, 30 );
 	m_pInfantryButton->SetCommand( 2 );
-	m_pInfantryButton->SetVisible( false );
-
-	m_pOfficerButton->SetPos( 50, 100 );
-	m_pOfficerButton->SetSize( 250, 30 );
 	m_pOfficerButton->SetCommand( 1 );
-	m_pOfficerButton->SetVisible( false );
-
-	m_pSniperButton->SetPos( 50, 150 );
-	m_pSniperButton->SetSize( 250, 30 );
 	m_pSniperButton->SetCommand( 3 );
-	m_pSniperButton->SetVisible( false );
 
-	m_pCancelButton->SetPos( 50, 250 );
-	m_pCancelButton->SetSize( 150, 30 );
+	//FIXME: perhaps use a different layout .res file for this vgui?
+	m_pInfoHTML->SetBorder( NULL );
+	SetBorder( NULL );
+
+	ToggleButtons( 1 );
+}
+
+void CClassMenu::ShowFile( const char *filename )
+{
+	char localURL[_MAX_PATH + 7];
+	Q_strncpy( localURL, "file://", sizeof( localURL ) );
+		
+	char pPathData[ _MAX_PATH ];
+	vgui::filesystem()->GetLocalPath( filename, pPathData, sizeof(pPathData) );
+	Q_strncat( localURL, pPathData, sizeof( localURL ), COPY_ALL_CHARACTERS );
+
+	m_pInfoHTML->OpenURL( localURL );
 }
 
 void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
+
+	SetSize( 640, 480 );
+	SetPos( (ScreenWidth() - 640) / 2, (ScreenHeight() - 480) / 2 );
 
 	m_pAmericanButton->MakeReadyForUse();
 	m_pBritishButton->MakeReadyForUse();
