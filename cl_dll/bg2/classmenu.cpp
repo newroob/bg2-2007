@@ -200,10 +200,6 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	//m_pInfoHTML->SetPos( 100, 100 );
 	//m_pInfoHTML->SetSize( 540, 380 );
 
-	ShowFile( "readme.txt" );
-
-	m_pInfoHTML->SetVisible( true );
-
 	LoadControlSettings( "Resource/BG2Classmenu.res" );
 
 	m_pBritishButton->SetCommand(TEAM_BRITISH);
@@ -215,9 +211,13 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pOfficerButton->SetCommand( 1 );
 	m_pSniperButton->SetCommand( 3 );
 
+	ShowFile( "readme.txt" );
+
+	//m_pInfoHTML->SetVisible( true );
+
 	//FIXME: perhaps use a different layout .res file for this vgui?
-	m_pInfoHTML->SetBorder( NULL );
-	SetBorder( NULL );
+	//m_pInfoHTML->SetBorder( NULL );
+	//SetBorder( NULL );
 
 	ToggleButtons( 1 );
 }
@@ -256,6 +256,12 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 
 	m_pCancelButton->MakeReadyForUse();
 	m_pCancelButton->SetBgColor( BLACK_BAR_COLOR );
+
+	//m_pInfoHTML->PerformLayout();
+	/*int w, h;
+	m_pInfoHTML->GetSize( w, h );
+	m_pInfoHTML->OnSizeChanged( w, h );
+	/*m_pInfoHTML->CalcScrollBars( w, h );*/
 }
 
 //-----------------------------------------------------------------------------

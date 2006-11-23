@@ -15,6 +15,9 @@
 #include <vgui/VGUI.h>
 #include <vgui_controls/Panel.h>
 
+//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+#include <vgui/MouseCode.h>
+
 namespace vgui
 {
 
@@ -75,6 +78,13 @@ public:
 	// Update and look for clicks when mouse is in the scroll bar window.
 	virtual void	OnMouseFocusTicked();
 
+	//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+	virtual void	OnMousePressed(MouseCode code);
+	virtual void	OnMouseReleased(MouseCode code);
+
+	void			SetButtonClicked( int i ) { m_iCurrButton = i; }
+	int				GetClickedButton() { return m_iCurrButton; }
+
 	// Set the slider's Paint border enabled.
 	virtual void   SetPaintBorderEnabled(bool state);
 	// Set the slider's Paint background enabled.
@@ -103,6 +113,10 @@ private:
 	int     _buttonPressedScrollValue;
 	int		_scrollDelay; // used to control delays in scrolling
 	bool	_respond;
+	//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+	int		m_iCurrButton;
+	int		m_iScrollX;
+	int		m_iScrollY;		// Saves the mouse offset for scrollbar dragging
 };
 
 }

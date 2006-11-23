@@ -43,6 +43,11 @@ public:
 		SetButtonActivationType(ACTIVATE_ONPRESSED);
 
 		SetContentAlignment(Label::a_center);
+
+		//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+		SetEnabled(true);
+		SetMouseInputEnabled(true);
+		SetUseCaptureMouse(true);
 	}
 
 	void OnMouseFocusTicked()
@@ -82,7 +87,8 @@ public:
 			}
 			
 			// lock mouse input to going to this button
-			input()->SetMouseCapture(GetVPanel());
+			//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+			//input()->SetMouseCapture(GetVPanel());
 		}
 	}
     virtual void OnMouseReleased(MouseCode code)
@@ -101,7 +107,8 @@ public:
 			}
 			
 			// lock mouse input to going to this button
-			input()->SetMouseCapture(NULL);
+			//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+			//input()->SetMouseCapture(NULL);
 		}
     }
 
@@ -146,6 +153,10 @@ ScrollBar::ScrollBar(Panel *parent, const char *panelName, bool vertical) : Pane
 	Panel::SetPaintBackgroundEnabled(false);
 	Panel::SetPaintEnabled(true);
 	SetButtonPressedScrollValue(20);
+
+	//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+	SetEnabled(true);
+	SetMouseInputEnabled(true);
 
 	Validate();
 }
@@ -211,6 +222,133 @@ void ScrollBar::SetPaintEnabled(bool state)
 	{
 		_slider->SetPaintEnabled( state );
 	}
+}
+
+//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+// HACKHACK: This is INSANE hackery to determine if we've clicked a button or not.
+// Perhaps we should get the buttons to actually accept mouse input?
+void ScrollBar::OnMousePressed(MouseCode code) {
+	int x,y;
+	input()->GetCursorPos(x,y);
+
+	int px,py,sx,sy;
+	GetPos(py,px);
+	_slider->GetPos(sx,sy);
+	
+	int true_x = 0;
+	int true_y = 0; // This is where the buttons *really* are.. start with top button, top-left corner
+	int true_slider_x = 0;
+	int true_slider_y = 0;
+
+	// Find out where we *really* are on the screen.
+	Panel *parent = GetParent();
+	if( parent ) {
+		int pix,piy,p2x,p2y;
+		parent->GetPos(pix,piy);
+		// Vertical Scrollbar
+		if( !Q_stricmp(GetName(),"VertScrollBar") ) {
+			//DevMsg("Vertical\n");
+			true_x += (pix + parent->GetWide() - GetWide());
+			true_y += piy;
+			true_slider_x = true_x;
+			true_slider_y = true_y + _button[0]->GetTall(); // Below the button
+		}
+		else if( !Q_stricmp(GetName(),"HorizScrollBar") ) {
+			//DevMsg("Horizontal\n");
+			true_x += pix;
+			true_y += (piy + parent->GetTall() - GetTall());
+			true_slider_x = true_x + _button[0]->GetWide(); // Beside the button
+			true_slider_y = true_y;
+		}
+		
+		Panel *parent2 = parent->GetParent();
+		if( parent2 ) {
+			parent2->GetPos(p2x,p2y);
+			true_x += p2x;
+			true_y += p2y;
+			true_slider_x += p2x;
+			true_slider_y += p2y;
+		}
+	}
+
+//	DevMsg("----------\nButton at: %d,%d\nSlider at: %d,%d----------\n",true_x,true_y,true_slider_x,true_slider_y);
+
+	//if( x >= px + GetWide() - _button[0]->GetWide() && x <= px + GetWide() ) {
+	if( !Q_stricmp(GetName(),"VertScrollBar") ) {
+		// Check for button press
+		if( x >= true_x && x <= true_x + _button[0]->GetWide() ) {
+			if( y >= true_y && y <= true_y + _button[0]->GetTall() ) {
+				_button[0]->OnMousePressed(code);
+				SetButtonClicked(0);
+				input()->SetMouseCapture(GetVPanel());
+				//DevMsg("Vert top button\n");
+			}
+
+			if( y >= true_y + GetTall() - _button[1]->GetTall() && y <= true_y + GetTall() ) { // Bottom button
+				_button[1]->OnMousePressed(code);
+				SetButtonClicked(1);
+				input()->SetMouseCapture(GetVPanel());
+				//DevMsg("Vert bottom button\n");
+			}
+			if( x >= true_slider_x && x <= true_slider_x + _slider->GetWide() ) {
+				if( y >= true_slider_y && y <= true_slider_y + _slider->GetTall() ) { // We clicked on the slider
+					_slider->OnMousePressed(code);
+					SetButtonClicked(2);
+					input()->SetMouseCapture(GetVPanel());
+					m_iScrollX = x;
+					m_iScrollY = y;
+					//DevMsg("Vert slider\n");
+				}
+			}
+		}
+
+	}
+	else if( !Q_stricmp(GetName(),"HorizScrollBar") ) {
+		// Check for button press
+		if( y >= true_y && y <= true_y + _button[0]->GetTall() ) {
+			if( x >= true_x && x <= true_x + _button[0]->GetWide() ) {
+				_button[0]->OnMousePressed(code);
+				SetButtonClicked(0);
+				input()->SetMouseCapture(GetVPanel());
+				//DevMsg("Horiz left button\n");
+			}
+
+			if( x >= true_x + GetWide() - _button[1]->GetWide() && x <= true_x + GetWide() ) { // Bottom button
+				_button[1]->OnMousePressed(code);
+				SetButtonClicked(1);
+				input()->SetMouseCapture(GetVPanel());
+				//DevMsg("Horiz right button\n");
+			}
+
+			if( y >= true_slider_y && y <= true_slider_y + _slider->GetTall() ) {
+				if( x >= true_slider_x && x <= true_slider_x + _slider->GetWide() ) { // We clicked on the slider
+					_slider->OnMousePressed(code);
+					SetButtonClicked(2);
+					input()->SetMouseCapture(GetVPanel());
+					m_iScrollX = x;
+					m_iScrollY = y;
+					//DevMsg("Horiz slider\n");
+				}
+			}
+		}
+	}
+
+}
+
+void ScrollBar::OnMouseReleased(MouseCode code) {
+	if( GetClickedButton() == 1 || GetClickedButton() == 0 ) {
+		_button[ GetClickedButton() ]->OnMouseReleased(code);
+		input()->SetMouseCapture(NULL);
+	}
+	else if( GetClickedButton() == 2 ) {
+		//DevMsg("Releasing the slider.\n");
+		_slider->OnMouseReleased(code);
+		input()->SetMouseCapture(NULL);
+	}
+
+	m_iScrollX = -1;
+	m_iScrollY = -1;
+	SetButtonClicked(-1);
 }
 
 //-----------------------------------------------------------------------------
@@ -376,12 +514,14 @@ void ScrollBar::OnMouseFocusTicked()
 	int direction = 0;
 	
 	// top button is down
-	if ( _button[0]->IsDepressed() )
+	//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+	if ( _button[0]->IsSelected() )
 	{
 		direction = -1;
 	}
 	// bottom top button is down
-	else if (_button[1]->IsDepressed())
+	//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+	else if (_button[1]->IsSelected())
 	{
 		direction = 1;
 	}
@@ -406,6 +546,14 @@ void ScrollBar::OnMouseFocusTicked()
 		// if neither button is down keep delay at max
 		_scrollDelay = system()->GetTimeMillis() + SCROLL_BAR_DELAY;
 		_respond = true; 
+	}
+
+	//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+	if( GetClickedButton() == 2 ) { // We're clicking on the scrollbar
+		int x,y;
+		input()->GetCursorPos(x,y);
+		_slider->ScreenToLocal(x,y);
+		_slider->OnCursorMoved(x,y);
 	}
 }
 

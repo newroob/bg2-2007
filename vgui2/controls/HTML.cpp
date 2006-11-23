@@ -84,6 +84,8 @@ HTML::~HTML()
 void HTML::ApplySchemeSettings(IScheme *pScheme)
 {
     BaseClass::ApplySchemeSettings(pScheme);
+	//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+	SetBgColor(pScheme->GetColor("HTML.BgColor", GetBgColor()));
 	SetBorder(pScheme->GetBorder( "BrowserBorder"));
 	BrowserResize();
 }
@@ -118,13 +120,16 @@ void HTML::PaintBackground()
 
 	if (m_bRegenerateHTMLBitmap)
 	{
+		//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+		int w, h;
+		GetSize(w, h);
+		
 		if ( !surface()->SupportsFeature( ISurface::DIRECT_HWND_RENDER ) )
 		{	
 			surface()->PaintHTMLWindow(browser);
 		}
 		m_bRegenerateHTMLBitmap = false;
-		int w, h;
-		GetSize(w, h);
+		
 		CalcScrollBars(w, h);
 	}
 
@@ -141,6 +146,34 @@ void HTML::PaintBackground()
 
 			picture->SetPos(0,0);
 			picture->Paint();
+		}
+
+		//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+		// If we have scrollbars, we need to draw the bg color under them, since the browser
+		// bitmap is a checkerboard under them, and they are transparent in the in-game client
+		if ( m_iScrollBorderX > 0 || m_iScrollBorderY > 0 )
+		{
+			int w, h;
+			GetSize( w, h );
+			IBorder *border = GetBorder();
+			int left = 0, top = 0, right = 0, bottom = 0;
+			if ( border )
+			{
+				border->GetInset( left, top, right, bottom );
+			}
+
+			//BG2 - Tjoppen - added HTML.BgColor to ClientScheme.res so we can revert to the old code
+			surface()->DrawSetColor( GetBgColor() );
+			// TODO: This shouldn't be a hardcoded colour. :: ssba
+			//surface()->DrawSetColor( 88,20,21,255 );
+			if ( m_iScrollBorderX )
+			{
+				surface()->DrawFilledRect( w-m_iScrollBorderX - right, top, w - right, h - bottom );
+			}
+			if ( m_iScrollBorderY )
+			{
+				surface()->DrawFilledRect( left, h-m_iScrollBorderY - bottom, w-m_iScrollBorderX - right, h - bottom );
+			}
 		}
 	}
 }
@@ -593,7 +626,6 @@ void HTML::OnFinishURL(const char *url)
 	GetSize(w, h);
 	CalcScrollBars(w, h);
 	BrowserResize();
-
 	m_bRegenerateHTMLBitmap = true; // repaint the window, as we have a new picture to show
 	if ( !surface()->SupportsFeature( ISurface::DIRECT_HWND_RENDER ) )
 	{

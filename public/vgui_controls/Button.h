@@ -140,6 +140,10 @@ public:
 	virtual void OnCursorExited();
 	virtual void SizeToContents();
 
+	//BG2 - Tjoppen - vgui::HTML fix from VERC. thanks to ssba
+	virtual void OnMousePressed(MouseCode code);
+	virtual void OnMouseReleased(MouseCode code);
+
 protected:
 	virtual void DrawFocusBorder(int tx0, int ty0, int tx1, int ty1);
 
@@ -151,9 +155,7 @@ protected:
 	virtual void ApplySchemeSettings(IScheme *pScheme);
 	MESSAGE_FUNC_INT( OnSetState, "SetState", state );		
 	
-	virtual void OnMousePressed(MouseCode code);
 	virtual void OnMouseDoublePressed(MouseCode code);
-	virtual void OnMouseReleased(MouseCode code);
 	virtual void OnKeyCodePressed(KeyCode code);
 	virtual void OnKeyCodeReleased(KeyCode code);
 
