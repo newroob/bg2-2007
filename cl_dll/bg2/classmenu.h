@@ -48,9 +48,8 @@ public:
 	CClassButton(Panel *parent, const char *panelName, const char *text) : Button( parent, panelName, text ) { m_iCommand = 0; }
 
 	void SetCommand( int command );
-
 	void OnMousePressed(vgui::MouseCode code);
-
+	void OnCursorEntered( void );
 	void PerformCommand( void );
 
 private:
@@ -65,9 +64,8 @@ public:
 	CTeamButton(Panel *parent, const char *panelName, const char *text) : Button( parent, panelName, text ) { m_iCommand = 0; }
 
 	void SetCommand( int command );
-
 	void OnMousePressed(vgui::MouseCode code);
-
+	void OnCursorEntered( void );
 	void PerformCommand( void );
 
 private:

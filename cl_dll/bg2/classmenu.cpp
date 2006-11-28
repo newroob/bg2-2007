@@ -66,47 +66,74 @@ void CClassButton::OnMousePressed(MouseCode code)
 	PerformCommand();
 }
 
+void CClassButton::OnCursorEntered( void )
+{
+	BaseClass::OnCursorEntered();
+
+	CClassMenu *pThisMenu = (CClassMenu*)GetParent();
+	const wchar_t *pPath = NULL;
+
+	if( m_iCommand == 1 )
+	{
+		//officer
+		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+			pPath = vgui::localize()->Find("#BG2_InfoHTML_A_Off_Path");
+		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+			pPath = vgui::localize()->Find("#BG2_InfoHTML_B_Off_Path");
+	}
+	else if( m_iCommand == 2 )
+	{
+		//infantry
+		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+			pPath = vgui::localize()->Find("#BG2_InfoHTML_A_Inf_Path");
+		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+			pPath = vgui::localize()->Find("#BG2_InfoHTML_B_Inf_Path");
+	}
+	else if( m_iCommand == 3 )
+	{
+		//rifleman
+		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+			pPath = vgui::localize()->Find("#BG2_InfoHTML_A_Rif_Path");
+		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+			pPath = vgui::localize()->Find("#BG2_InfoHTML_B_Rif_Path");
+	}
+
+	if( pPath )
+	{
+		char pANSIPath[512];
+
+		vgui::localize()->ConvertUnicodeToANSI( pPath, pANSIPath, sizeof pANSIPath );
+		pThisMenu->ShowFile( pANSIPath );
+	}
+}
+
 void CClassButton::PerformCommand( void )
 {
-	CClassMenu * pThisMenu = (CClassMenu *)GetParent();
-	switch (m_iCommand)
+	CClassMenu *pThisMenu = (CClassMenu*)GetParent();
+
+    if( m_iCommand == 1 )
 	{
-		case 1:
-			//officer
-			switch ( pThisMenu->m_iTeamSelection )
-			{
-				case TEAM_AMERICANS:
-					engine->ServerCmd( "light_a" );
-					break;
-				case TEAM_BRITISH:
-					engine->ServerCmd( "light_b" );
-					break;
-			}
-			break;
-		case 2:
-			//infantry
-			switch ( pThisMenu->m_iTeamSelection )
-			{
-				case TEAM_AMERICANS:
-					engine->ServerCmd( "heavy_a" );
-					break;
-				case TEAM_BRITISH:
-					engine->ServerCmd( "medium_b" );
-					break;
-			}
-			break;
-		case 3:
-			//sniper
-			switch ( pThisMenu->m_iTeamSelection )
-			{
-				case TEAM_AMERICANS:
-					engine->ServerCmd( "medium_a" );
-					break;
-				case TEAM_BRITISH:
-					engine->ServerCmd( "heavy_b" );
-					break;
-			}
-			break;
+		//officer
+		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+			engine->ServerCmd( "light_a" );
+		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+			engine->ServerCmd( "light_b" );
+	}
+	else if( m_iCommand == 2 )
+	{
+		//infantry
+		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+			engine->ServerCmd( "heavy_a" );
+		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+			engine->ServerCmd( "medium_b" );
+	}
+	else if( m_iCommand == 3 )
+	{
+		//rifleman
+		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+			engine->ServerCmd( "medium_a" );
+		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+			engine->ServerCmd( "heavy_b" );
 	}
 }
 
@@ -152,6 +179,31 @@ void CTeamButton::OnMousePressed(MouseCode code)
 	}
 
 	PerformCommand();
+}
+
+void CTeamButton::OnCursorEntered( void )
+{
+	BaseClass::OnCursorEntered();
+	
+	CClassMenu *pThisMenu = (CClassMenu *)GetParent();
+	const wchar_t *pPath = NULL;
+
+	if( m_iCommand == TEAM_AMERICANS )
+		pPath = vgui::localize()->Find("#BG2_InfoHTML_Americans_Path");
+	if( m_iCommand == TEAM_BRITISH )
+		pPath = vgui::localize()->Find("#BG2_InfoHTML_British_Path");
+	else if( m_iCommand == TEAM_UNASSIGNED )	//spectate
+		pPath = vgui::localize()->Find("#BG2_InfoHTML_Spectate_Path");
+	else if( m_iCommand == -1 )					//autoassign
+		pPath = vgui::localize()->Find("#BG2_InfoHTML_Autoassign_Path");
+	
+	if( pPath )
+	{
+		char pANSIPath[512];
+
+		vgui::localize()->ConvertUnicodeToANSI( pPath, pANSIPath, sizeof pANSIPath );
+		pThisMenu->ShowFile( pANSIPath );
+	}
 }
 
 void CTeamButton::PerformCommand( void )
@@ -213,12 +265,6 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 
 	ShowFile( "readme.txt" );
 
-	//m_pInfoHTML->SetVisible( true );
-
-	//FIXME: perhaps use a different layout .res file for this vgui?
-	//m_pInfoHTML->SetBorder( NULL );
-	//SetBorder( NULL );
-
 	ToggleButtons( 1 );
 }
 
@@ -230,6 +276,8 @@ void CClassMenu::ShowFile( const char *filename )
 	char pPathData[ _MAX_PATH ];
 	vgui::filesystem()->GetLocalPath( filename, pPathData, sizeof(pPathData) );
 	Q_strncat( localURL, pPathData, sizeof( localURL ), COPY_ALL_CHARACTERS );
+
+	//Msg( "ShowFile(%s)\n", localURL );
 
 	m_pInfoHTML->OpenURL( localURL );
 }
@@ -256,12 +304,6 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 
 	m_pCancelButton->MakeReadyForUse();
 	m_pCancelButton->SetBgColor( BLACK_BAR_COLOR );
-
-	//m_pInfoHTML->PerformLayout();
-	/*int w, h;
-	m_pInfoHTML->GetSize( w, h );
-	m_pInfoHTML->OnSizeChanged( w, h );
-	/*m_pInfoHTML->CalcScrollBars( w, h );*/
 }
 
 //-----------------------------------------------------------------------------
