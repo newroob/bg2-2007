@@ -97,25 +97,26 @@ END_SEND_TABLE()
 CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles, int iDamage, float flConstantDamageRange, float flRelativeDrag, CBasePlayer *pentOwner )
 {
 	// Create a new entity with CBullet private data
-	CBullet *pBolt = (CBullet *)CreateEntityByName( "bullet" );
-	UTIL_SetOrigin( pBolt, vecOrigin );
-	pBolt->SetAbsAngles( angAngles );
+	CBullet *pBullet = (CBullet *)CreateEntityByName( "bullet" );
+	UTIL_SetOrigin( pBullet, vecOrigin );
+	pBullet->SetAbsAngles( angAngles );
 	Vector vecDir;
 	AngleVectors( angAngles, &vecDir );
-	pBolt->SetAbsVelocity( vecDir * BOLT_AIR_VELOCITY );
+	pBullet->SetAbsVelocity( vecDir * BOLT_AIR_VELOCITY );
 
-	pBolt->Spawn();
-	pBolt->SetOwnerEntity( pentOwner );
+	pBullet->Spawn();
+	pBullet->SetOwnerEntity( pentOwner );
 
-	pBolt->m_iDamage = iDamage;
+	pBullet->m_iDamage = iDamage;
 
 #define LIFETIME	10.f
-	pBolt->m_flDyingTime = gpGlobals->curtime + LIFETIME;
-	pBolt->m_flConstantDamageRange = flConstantDamageRange;
-	pBolt->m_flRelativeDrag = flRelativeDrag;
-	pBolt->m_vTrajStart = pBolt->GetAbsOrigin();
+	pBullet->m_flDyingTime = gpGlobals->curtime + LIFETIME;
+	pBullet->m_flConstantDamageRange = flConstantDamageRange;
+	pBullet->m_flRelativeDrag = flRelativeDrag;
+	pBullet->m_vTrajStart = pBullet->GetAbsOrigin();
+	pBullet->m_bHasPlayedNearmiss = false;
 
-	return pBolt;
+	return pBullet;
 }
 
 //-----------------------------------------------------------------------------
@@ -213,6 +214,7 @@ void CBullet::Precache( void )
 	//BG2 - Tjoppen - Bullet.Hit*
 	//PrecacheScriptSound( "Bullet.HitWorld" );
 	//PrecacheScriptSound( "Bullet.HitBody" );
+	PrecacheScriptSound( "Bullets.DefaultNearmiss" );
 
 	// This is used by C_TEStickyBolt, despte being different from above!!!
 	//PrecacheModel( "models/crossbow_bolt.mdl" );
@@ -437,7 +439,7 @@ void CBullet::BubbleThink( void )
 						sv_simulatedbullets_overshoot_force,
 						sv_gravity;
 
-		float	speed = VectorNormalize( vecDir ),
+		float	speed = vecDir.NormalizeInPlace(),
 				//drag = 0.0001f;
 				drag = sv_simulatedbullets_drag.GetFloat() * m_flRelativeDrag;
 
@@ -462,6 +464,72 @@ void CBullet::BubbleThink( void )
 			vecDir = GetAbsVelocity();
 			vecDir.z += F * gpGlobals->frametime;
 			SetAbsVelocity( vecDir );
+		}
+
+		//8 units "safety margin" to make sure we passed our victim's head
+		float	margin = 8,
+				headTolerance = 32,		//how close to the head must the bullet be?
+				desiredBacktrace = margin + speed * gpGlobals->frametime * 2;	//*2 due to frametime variations
+		if( !m_bHasPlayedNearmiss && (GetAbsOrigin() - m_vTrajStart).LengthSqr() > desiredBacktrace*desiredBacktrace )
+		{
+			//has gone desiredBacktrace units and not played nearmiss so far. trace backward
+			//find any player except the shooter who is within the margin and desiredBacktrace distance when projected
+			//onto the ray
+			//the ray in this case extends behind the bullet
+
+			//re-normalize because overshoot messed it up
+			vecDir.NormalizeInPlace();
+
+			//Msg( "%f\t", vecDir.Length() );
+			for( int x = 1; x <= gpGlobals->maxClients; x++ )
+			{
+				CBasePlayer *pPlayer = UTIL_PlayerByIndex( x );
+
+				//only want connected, alive players
+				if( !pPlayer || !pPlayer->IsAlive() || x == GetOwnerEntity()->entindex() )
+					continue;
+
+				//distance along ray, behind the bullet
+				float d = vecDir.Dot(GetAbsOrigin() - pPlayer->EyePosition());
+
+				//Msg( "%i: %f < %f < %f\t", x, desiredBacktrace, d, margin );
+
+				if( d < margin || d > desiredBacktrace )
+					continue;
+
+				//Msg( "go on.. " );
+
+				//shortest distance to eyes from ray must be less than headTolerance
+				if( (GetAbsOrigin() - pPlayer->EyePosition()).LengthSqr() - d*d < headTolerance*headTolerance )
+				{
+					//this player's head is within the desired cylinder.. play the sound and make sure it doesn't
+					//play again for this bullet(to avoid HORRIBLE SOUNDS)
+
+					//FIXME: make me play correctly
+					//we might have to make some sort of clientside thing, since the server appearently is too stupid
+					//to be able to play a sound in a static point in space
+
+					/*const char *name =  "Bullets.DefaultNearmiss";
+					const char *name =  "BaseExplosionEffect.Sound";
+					CPASAttenuationFilter filter( this, name );
+					Vector soundOrigin = GetAbsOrigin() - vecDir * d;
+
+					new CSound();
+					//why does EmitSound want a Vector pointer? this seems unsafe. soundOrigin will go missing once
+					//its out of scope...
+					EmitSound( filter, entindex(), name, &soundOrigin );
+					//EmitSound( filter, entindex(), "BaseExplosionEffect.Sound", &soundOrigin );*/
+					
+					EmitSound( "Bullets.DefaultNearmiss" );
+					m_bHasPlayedNearmiss = true;
+
+					//Msg( "nearmiss!\n" );
+
+					break;
+				}
+			}
+
+			//Msg( "\n" );
 		}
 
 		return;

@@ -70,6 +70,8 @@ protected:
 										//					dropoff and other things..
 	Vector	m_vTrajStart;	//BG2 - Tjoppen - where the bullet started. for range calculations
 
+	bool	m_bHasPlayedNearmiss;
+
 	DECLARE_DATADESC();
 	DECLARE_SERVERCLASS();
 };
