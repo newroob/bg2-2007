@@ -62,30 +62,12 @@
 #include "engine/IEngineSound.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
 
-//BG2 - Draco - Start
-//BG2 - Tjoppen - added explainations to mp_limit_* cvars
-//class limit cvars, -1 is unlimited, any non -1 value will enforce a limit
-/*ConVar mp_limit_light_a( "mp_limit_light_a", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
-						"When != -1 : Maximum amount of Continental Officers for the Americans" );//cont officer
-
-ConVar mp_limit_medium_a( "mp_limit_medium_a", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
-						 "When != -1 : Maximum amount of Frontiersmen for the Americans" );//minute man
-
-ConVar mp_limit_heavy_a( "mp_limit_heavy_a", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
-						"When != -1 : Maximum amount of Continental Soldiers for the Americans" );//cont soldier
-
-ConVar mp_limit_light_b( "mp_limit_light_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
-						"When != -1 : Maximum amount of Royal Officers for the British" );//royal officer
-
-ConVar mp_limit_medium_b( "mp_limit_medium_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
-						 "When != -1 : Maximum amount of Royal Infantry for the British" );//royal inf
-
-ConVar mp_limit_heavy_b( "mp_limit_heavy_b", "-1", FCVAR_GAMEDLL | FCVAR_NOTIFY,
-						"When != -1 : Maximum amount of Jaegers for the British" );//loyalist*/
-
 extern ConVar mp_autobalanceteams;
 extern ConVar mp_autobalancetolerance;
 
+//BG2 - Tjoppen - sv_voicecomm_text, set to zero for realism
+ConVar sv_voicecomm_text( "sv_voicecomm_text", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Show voicecomm text on clients?" );
+//
 
 int g_iLastCitizenModel = 0;
 int g_iLastCombineModel = 0;
@@ -1657,53 +1639,58 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 				//char *chat = NULL;
 				bool teamonly = comm != 6;	//battlecries are not team only
 
-				char msg[512];
+				char snd[512];
 				if( GetTeamNumber() == TEAM_AMERICANS )
 				{
-					Q_snprintf( msg, 512, "VoicecommsA%s", pVComms[comm]);
+					Q_snprintf( snd, 512, "VoicecommsA%s", pVComms[comm]);
 				}
 				else if( GetTeamNumber() == TEAM_BRITISH )
 				{
-					Q_snprintf( msg, 512, "VoicecommsB%s", pVComms[comm]);
+					Q_snprintf( snd, 512, "VoicecommsB%s", pVComms[comm]);
 				}
-				//BG2 - Tjoppen - no attenuation on vcomms
+				/*//BG2 - Tjoppen - no attenuation on vcomms
 				CPASAttenuationFilter filter( this, ATTN_NONE );
 				filter.UsePredictionRules();
-				EmitSound( filter, entindex(), msg );
+				EmitSound( filter, entindex(), snd );*/
+				//yes, we want attenuation
+				EmitSound( snd );
 
-				CBasePlayer *client = NULL;
-
-				//figure out which players should get this message
-				CRecipientFilter recpfilter;
-
-				for ( int i = 1; i <= gpGlobals->maxClients; i++ )
-				{
-					client = UTIL_PlayerByIndex( i );
-					if ( !client || !client->edict() )
-						continue;
-
-					if ( !(client->IsNetClient()) )	// Not a client ? (should never be true)
-						continue;
-
-					if ( teamonly && !g_pGameRules->PlayerCanHearChat( client, this ) )//!= GR_TEAMMATE )
-						continue;
-
-					if ( !client->CanHearChatFrom( this ) )
-						continue;
-
-					recpfilter.AddRecipient( client );
-				}
-
-				//make reliable and send
-				recpfilter.MakeReliable();
-
-				UserMessageBegin( recpfilter, "VoiceComm" );
-					WRITE_BYTE( entindex() );	//voicecomm originator
-					WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );	//pack comm number and team
-				MessageEnd();
-
-				//done
+				//done. possibly also tell clients to draw text and stuff if sv_voicecomm_text is true
 				m_flNextVoicecomm = gpGlobals->curtime + 2.0f;
+
+				if( sv_voicecomm_text.GetBool() )
+				{
+					CBasePlayer *client = NULL;
+
+					//figure out which players should get this message
+					CRecipientFilter recpfilter;
+
+					for ( int i = 1; i <= gpGlobals->maxClients; i++ )
+					{
+						client = UTIL_PlayerByIndex( i );
+						if ( !client || !client->edict() )
+							continue;
+
+						if ( !(client->IsNetClient()) )	// Not a client ? (should never be true)
+							continue;
+
+						if ( teamonly && !g_pGameRules->PlayerCanHearChat( client, this ) )//!= GR_TEAMMATE )
+							continue;
+
+						if ( !client->CanHearChatFrom( this ) )
+							continue;
+
+						recpfilter.AddRecipient( client );
+					}
+
+					//make reliable and send
+					recpfilter.MakeReliable();
+
+					UserMessageBegin( recpfilter, "VoiceComm" );
+						WRITE_BYTE( entindex() );	//voicecomm originator
+						WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );	//pack comm number and team
+					MessageEnd();
+				}
 			}
 		}
 

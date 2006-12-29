@@ -165,6 +165,9 @@ void CTargetID::Paint()
 			}
 			else
 			{
+				//BG2 - Tjoppen - don't show enemies' names under crosshair!
+				return;
+				//
 				printFormatString = "#Playerid_diffteam";
 			}
 		
