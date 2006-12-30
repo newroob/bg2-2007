@@ -1573,6 +1573,15 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 	ClientPrinttTalkAll( str );
 
 	m_iNextClass = iClass;
+
+	//The following line prevents anyone else from stealing our spot..
+	//Without this line several teamswitching/new players can pick a free class, so there can be for instance 
+	// two loyalists even though the limit is one.
+	//This may be slightly unfair since a still living player may "steal" a spot without spawning as that class,
+	// since it's possible to switch classes around very fast. a player could block the use of a limited class,
+	// though it'd be very tedious. It's a tradeoff.
+	m_iClass = m_iNextClass;
+
 	if( GetTeamNumber() != iTeam )
 	{
 		//let Spawn() figure the model out
