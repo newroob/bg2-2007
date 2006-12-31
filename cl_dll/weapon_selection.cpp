@@ -464,7 +464,8 @@ void CBaseHudWeaponSelection::SelectWeapon( void )
 	// Don't allow selections of weapons that can't be selected (out of ammo, etc)
 	if ( !GetSelectedWeapon()->CanBeSelected() )
 	{
-		player->EmitSound( "Player.DenyWeaponSelection" );
+		//BG2 - Tjoppen - HACKHACK
+		player->EmitSound( "BGPlayer.DenyWeaponSelection" );
 	}
 	else
 	{
@@ -475,7 +476,8 @@ void CBaseHudWeaponSelection::SelectWeapon( void )
 		engine->ClientCmd( "cancelselect\n" );
 
 		// Play the "weapon selected" sound
-		player->EmitSound( "Player.WeaponSelected" );
+		//BG2 - Tjoppen - HACKHACK
+		player->EmitSound( "BG2Player.WeaponSelected" );
 	}
 }
 
@@ -498,7 +500,8 @@ void CBaseHudWeaponSelection::CancelWeaponSelection( void )
 		m_hSelectedWeapon = NULL;
 
 		// Play the "close weapon selection" sound
-		player->EmitSound( "Player.WeaponSelectionClose" );
+		//BG2 - Tjoppen - HACKHACK
+		player->EmitSound( "BG2Player.WeaponSelectionClose" );
 	}
 	else
 	{
