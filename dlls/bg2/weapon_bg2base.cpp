@@ -514,3 +514,11 @@ Activity CBaseBG2Weapon::GetDrawActivity( void )
 
 	return ACT_VM_DRAW;
 }
+
+bool CBaseBG2Weapon::Holster( CBaseCombatWeapon *pSwitchingTo )
+{
+	//stop reload
+	StopWeaponSound( RELOAD );
+
+	return BaseClass::Holster( pSwitchingTo );
+}

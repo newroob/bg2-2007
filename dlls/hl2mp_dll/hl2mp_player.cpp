@@ -1634,72 +1634,65 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		return true;
 	}
 	//BG2 - Tjoppen - voice comms
-	else if( FStrEq( cmd, "voicecomm" ) )
+	else if( FStrEq( cmd, "voicecomm" ) && engine->Cmd_Argc() > 1 )
 	{
-		if( engine->Cmd_Argc() > 1 && GetTeamNumber() > TEAM_SPECTATOR
-			&& IsAlive() && m_flNextVoicecomm <= gpGlobals->curtime )
+		int comm = atoi( engine->Cmd_Argv( 1 ) );
+		bool teamonly = comm != 6;	//battlecries are not team only (global)
+
+		//only alive assigned player can do voice comms
+		//also make sure index not out of bounds
+		//make sure global voicecomms are only played ever so often - no FREEDOM! spam
+		if( GetTeamNumber() > TEAM_SPECTATOR && IsAlive() && m_flNextVoicecomm <= gpGlobals->curtime &&
+			comm >= 0 && comm < NUM_VOICECOMMS && comm != VCOMM1_NUM && comm != VCOMM2_START+VCOMM2_NUM &&
+			(teamonly || m_flNextGlobalVoicecomm <= gpGlobals->curtime) )
 		{
-			//only alive assigned player can to voice comms
-			int comm = atoi( engine->Cmd_Argv( 1 ) );
+			char snd[512];
 
-			//make sure index not out of bounds or cancel
-			if( comm >= 0 && comm < NUM_VOICECOMMS && comm != VCOMM1_NUM && comm != VCOMM2_START+VCOMM2_NUM )
+			if( GetTeamNumber() == TEAM_AMERICANS )
+				Q_snprintf( snd, 512, "VoicecommsA%s", pVComms[comm]);
+			else if( GetTeamNumber() == TEAM_BRITISH )
+				Q_snprintf( snd, 512, "VoicecommsB%s", pVComms[comm]);
+
+			//play voicecomm, with attenuation
+			EmitSound( snd );
+
+			//done. possibly also tell clients to draw text and stuff if sv_voicecomm_text is true
+			m_flNextVoicecomm		= gpGlobals->curtime + 2.0f;
+
+			if( !teamonly )
+				m_flNextGlobalVoicecomm	= gpGlobals->curtime + 10.0f;
+
+			if( sv_voicecomm_text.GetBool() )
 			{
-				//char *chat = NULL;
-				bool teamonly = comm != 6;	//battlecries are not team only
+				//figure out which players should get this message
+				CRecipientFilter recpfilter;
+				CBasePlayer *client = NULL;
 
-				char snd[512];
-				if( GetTeamNumber() == TEAM_AMERICANS )
+				for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 				{
-					Q_snprintf( snd, 512, "VoicecommsA%s", pVComms[comm]);
+					client = UTIL_PlayerByIndex( i );
+					if ( !client || !client->edict() )
+						continue;
+
+					if ( !(client->IsNetClient()) )	// Not a client ? (should never be true)
+						continue;
+
+					if ( teamonly && !g_pGameRules->PlayerCanHearChat( client, this ) )//!= GR_TEAMMATE )
+						continue;
+
+					if ( !client->CanHearChatFrom( this ) )
+						continue;
+
+					recpfilter.AddRecipient( client );
 				}
-				else if( GetTeamNumber() == TEAM_BRITISH )
-				{
-					Q_snprintf( snd, 512, "VoicecommsB%s", pVComms[comm]);
-				}
-				/*//BG2 - Tjoppen - no attenuation on vcomms
-				CPASAttenuationFilter filter( this, ATTN_NONE );
-				filter.UsePredictionRules();
-				EmitSound( filter, entindex(), snd );*/
-				//yes, we want attenuation
-				EmitSound( snd );
 
-				//done. possibly also tell clients to draw text and stuff if sv_voicecomm_text is true
-				m_flNextVoicecomm = gpGlobals->curtime + 2.0f;
+				//make reliable and send
+				recpfilter.MakeReliable();
 
-				if( sv_voicecomm_text.GetBool() )
-				{
-					CBasePlayer *client = NULL;
-
-					//figure out which players should get this message
-					CRecipientFilter recpfilter;
-
-					for ( int i = 1; i <= gpGlobals->maxClients; i++ )
-					{
-						client = UTIL_PlayerByIndex( i );
-						if ( !client || !client->edict() )
-							continue;
-
-						if ( !(client->IsNetClient()) )	// Not a client ? (should never be true)
-							continue;
-
-						if ( teamonly && !g_pGameRules->PlayerCanHearChat( client, this ) )//!= GR_TEAMMATE )
-							continue;
-
-						if ( !client->CanHearChatFrom( this ) )
-							continue;
-
-						recpfilter.AddRecipient( client );
-					}
-
-					//make reliable and send
-					recpfilter.MakeReliable();
-
-					UserMessageBegin( recpfilter, "VoiceComm" );
-						WRITE_BYTE( entindex() );	//voicecomm originator
-						WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );	//pack comm number and team
-					MessageEnd();
-				}
+				UserMessageBegin( recpfilter, "VoiceComm" );
+					WRITE_BYTE( entindex() );	//voicecomm originator
+					WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );	//pack comm number and team
+				MessageEnd();
 			}
 		}
 

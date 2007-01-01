@@ -67,6 +67,8 @@ bool CBaseCombatCharacter::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmo
 			return false;
 	}
 
+	//BG2 - Tjoppen - TODO: if in the future we want holster/draw animations to play correctly, delay the following two
+	//						lines until the holster animation has finished. that should work.
 	m_hActiveWeapon = pWeapon;
 	return pWeapon->Deploy( );
 }

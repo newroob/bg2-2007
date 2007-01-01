@@ -244,6 +244,8 @@ public:
 	virtual void		WeaponIdle( void );
 	virtual Activity	GetDrawActivity( void );
 
+	bool		Holster( CBaseCombatWeapon *pSwitchingTo );
+
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
 
