@@ -263,7 +263,7 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pOfficerButton->SetCommand( 1 );
 	m_pSniperButton->SetCommand( 3 );
 
-	ShowFile( "readme.txt" );
+	//ShowFile( "readme.txt" );
 
 	ToggleButtons( 1 );
 }
