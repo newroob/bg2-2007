@@ -1987,17 +1987,35 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 //BG2 - Tjoppen - GetHitgroupPainSound
 const char* CHL2MP_Player::GetHitgroupPainSound( int hitgroup )
 {
-	switch( hitgroup )
+	if( GetTeamNumber() == TEAM_AMERICANS )
 	{
-	default:
-	case HITGROUP_GENERIC	: return "BG2Player.pain_generic";
-	case HITGROUP_HEAD		: return "BG2Player.pain_head";
-	case HITGROUP_CHEST		: return "BG2Player.pain_chest";
-	case HITGROUP_STOMACH	: return "BG2Player.pain_stomach";
-	case HITGROUP_LEFTARM	: return "BG2Player.pain_arm";
-	case HITGROUP_RIGHTARM	: return "BG2Player.pain_arm";
-	case HITGROUP_LEFTLEG	: return "BG2Player.pain_leg";
-	case HITGROUP_RIGHTLEG	: return "BG2Player.pain_leg";
+		switch( hitgroup )
+		{
+		default:
+		case HITGROUP_GENERIC	: return "BG2Player.American.pain_generic";
+		case HITGROUP_HEAD		: return "BG2Player.American.pain_head";
+		case HITGROUP_CHEST		: return "BG2Player.American.pain_chest";
+		case HITGROUP_STOMACH	: return "BG2Player.American.pain_stomach";
+		case HITGROUP_LEFTARM	: return "BG2Player.American.pain_arm";
+		case HITGROUP_RIGHTARM	: return "BG2Player.American.pain_arm";
+		case HITGROUP_LEFTLEG	: return "BG2Player.American.pain_leg";
+		case HITGROUP_RIGHTLEG	: return "BG2Player.American.pain_leg";
+		}
+	}
+	else
+	{
+		switch( hitgroup )
+		{
+		default:
+		case HITGROUP_GENERIC	: return "BG2Player.British.pain_generic";
+		case HITGROUP_HEAD		: return "BG2Player.British.pain_head";
+		case HITGROUP_CHEST		: return "BG2Player.British.pain_chest";
+		case HITGROUP_STOMACH	: return "BG2Player.British.pain_stomach";
+		case HITGROUP_LEFTARM	: return "BG2Player.British.pain_arm";
+		case HITGROUP_RIGHTARM	: return "BG2Player.British.pain_arm";
+		case HITGROUP_LEFTLEG	: return "BG2Player.British.pain_leg";
+		case HITGROUP_RIGHTLEG	: return "BG2Player.British.pain_leg";
+		}
 	}
 }
 //

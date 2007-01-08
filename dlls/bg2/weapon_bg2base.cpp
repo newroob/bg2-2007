@@ -341,7 +341,9 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )
 		if( pHitEntity->IsPlayer() )
 		{
 			WeaponSound( MELEE_HIT );
+#ifndef CLIENT_DLL
 			ImpactEffect( traceHit );
+#endif
 		}
 		else
 		{
