@@ -49,9 +49,8 @@ const float REVOL_BAYONET_DAMAGE = 40.0;*/
 const float CHARLE_FIRE_DAMAGE = 58.0;//57.5;
 const float CHARLE_BAYONET_DAMAGE = 41.0;
 
-const float PENNY_FIRE_DAMAGE = 55.0;
-
-const float JAEGER_FIRE_DAMAGE = 58.0;
+const float PENNY_FIRE_DAMAGE = 57.3;
+const float JAEGER_FIRE_DAMAGE = 60.0;
 
 const float PISTOLA_FIRE_DAMAGE = 40.0;
 const float PISTOLB_FIRE_DAMAGE = 40.0;
