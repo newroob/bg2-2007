@@ -114,6 +114,8 @@ public:
 	Vector		m_vDuckSpread,
 				m_vStandSpread;*/
 
+	const char	*m_pBayonetDeathNotice;
+
 	CBaseBG2Weapon( void );
 
 	void	PrimaryAttack( void );
@@ -215,11 +217,10 @@ public:
 	bool m_bLastAttackStab;
 	char *GetDeathNoticeName( void )
 	{
-		//Msg( "GetDeathNoticeName: %i\n", m_bLastAttackStab );
-		if( m_bLastAttackStab )
-			return "bayonet";
-
-		return (char*)GetClassname();
+		if( m_bLastAttackStab && m_pBayonetDeathNotice )
+			return (char*)m_pBayonetDeathNotice;
+		else
+			return (char*)GetClassname();
 	}
 
 	float	m_flLastRecoil;		//for multiple recoil supression on client

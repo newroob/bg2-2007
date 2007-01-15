@@ -67,68 +67,6 @@ const float SABRE_RANGE = 57.0;
 const float KNIFE_RANGE = 46.0;
 const float HIRSCHFAENGER_RANGE = 0.95 * SABRE_RANGE;	//-5% of sabre range
 
-/*
-m_fMinRange1	= 0;
-m_fMinRange2	= 0;
-m_fMaxRange1	= 64;
-m_fMaxRange2	= 64;
-	*/
-
-//BG2 - Tjoppen - this one from base_weapon.cpp
-//			for now, just have cone for standing and crouching, and double them when moving
-//			(see GetSpread())
-//works out the accuracy cone, so we can use cones of varying sizes
-/*Vector Cone(float flConeSize)
-{
-	const double flBaseSize = 0.008725;
-	float flCone = (float)flBaseSize * flConeSize;
-
-	return Vector(flCone, flCone, flCone);
-}*/
-
-/*#ifdef CLIENT_DLL
-#define CWeaponrevolutionnaire C_Weaponrevolutionnaire
-#endif
-DECLARE_BG2_WEAPON( revolutionnaire )
-{
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
-	m_bCantAbortReload	= true;
-
-	//primary
-	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= REVOL_FIRE_DAMAGE;//75;
-	m_Attackinfos[0].m_flAttackrate			= 1.0f;
-	m_Attackinfos[0].m_flRecoil				= 0.3;
-	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
-	m_Attackinfos[0].m_flCrouchMoving		= 11.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 1.75f;
-	m_Attackinfos[0].m_flStandMoving		= 9.0f;
-	m_Attackinfos[0].m_flStandStill			= 6.0f;
-	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
-
-	m_fMinRange1	= 0;
-	m_fMaxRange1	= RIFLE_RANGE;
-	
-	//secondary
-	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
-	m_Attackinfos[1].m_flDamage				= REVOL_BAYONET_DAMAGE;//60;
-	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;				//BG2 - Tjoppen - negative means use SequenceDuration()
-	m_Attackinfos[1].m_flRange				= REVOL_BAYONET_RANGE;
-	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
-	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
-	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
-
-	m_fMinRange2	= 0;
-	m_fMaxRange2	= REVOL_BAYONET_RANGE;
-}
-
-#ifndef CLIENT_DLL
-MUSKET_ACTTABLE( revolutionnaire )
-#endif*/
-
 #ifdef CLIENT_DLL
 #define CWeaponbrownbess C_Weaponbrownbess
 #endif
@@ -165,6 +103,8 @@ DECLARE_BG2_WEAPON( brownbess )
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
+
+	m_pBayonetDeathNotice = "brownbess_bayonet";
 
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= BESS_BAYONET_RANGE;
@@ -210,6 +150,8 @@ DECLARE_BG2_WEAPON( charleville )
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
+
+	m_pBayonetDeathNotice = "charleville_bayonet";
 
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= CHARLE_BAYONET_RANGE;

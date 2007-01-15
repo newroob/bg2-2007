@@ -484,9 +484,10 @@ int CBaseBG2Weapon::Swing( int iAttack )
 
 void CBaseBG2Weapon::Drop( const Vector &vecVelocity )
 {
-#ifndef CLIENT_DLL
+/*#ifndef CLIENT_DLL
 	UTIL_Remove( this );
-#endif
+#endif*/
+	BaseClass::Drop(vecVelocity);
 }
 
 //-----------------------------------------------------------------------------

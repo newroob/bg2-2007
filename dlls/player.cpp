@@ -4840,21 +4840,24 @@ CBaseEntity	*CBasePlayer::GiveNamedItem( const char *pszName, int iSubType )
 	pent->SetLocalOrigin( GetLocalOrigin() );
 	pent->AddSpawnFlags( SF_NORESPAWN );
 
-	if ( iSubType )
-	{
-		CBaseCombatWeapon *pWeapon = dynamic_cast<CBaseCombatWeapon*>( (CBaseEntity*)pent );
-		if ( pWeapon )
-		{
-			pWeapon->SetSubType( iSubType );
-		}
-	}
+	//BG2 - Tjoppen - restructured a bit..
+	CBaseCombatWeapon *pWeapon = dynamic_cast<CBaseCombatWeapon*>( static_cast<CBaseEntity*>(pent) );
+	if ( iSubType && pWeapon )
+		pWeapon->SetSubType( iSubType );
+	//
 
 	DispatchSpawn( pent );
 
-	if ( pent != NULL && !(pent->IsMarkedForDeletion()) ) 
+	//BG2 - Tjoppen - no weapon pickup
+#ifndef CLIENT_DLL
+	if( pent != NULL && !(pent->IsMarkedForDeletion()) ) 
 	{
-		pent->Touch( this );
+		if( pWeapon && !pWeapon->IsDissolving() && BumpWeapon(pWeapon) )
+			pWeapon->OnPickedUp(this);
 	}
+#endif
+		//pent->Touch( this );
+	//
 
 	return pent;
 }
