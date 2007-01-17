@@ -19,9 +19,9 @@ CBG2SmokeEmitter::CBG2SmokeEmitter( const char *pDebugName ) : CSimpleEmitter( p
 
 #define DROPOFF	-12.0f	//exponential dropoff rate of velocity
 
-	m_vDrift = Vector(	random->RandomFloat( -50, 50 ),
-						random->RandomFloat( -50, 50 ),
-						random->RandomFloat( 15, 50 ) );
+	m_vDrift = Vector(	random->RandomFloat( -150, 150 ),
+						random->RandomFloat( -150, 150 ),
+						random->RandomFloat( 15, 200 ) );
 }
 
 
