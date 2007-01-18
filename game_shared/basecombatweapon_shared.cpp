@@ -681,10 +681,8 @@ void CBaseCombatWeapon::MakeTracer( const Vector &vecTracerSrc, const trace_t &t
 //-----------------------------------------------------------------------------
 void CBaseCombatWeapon::DefaultTouch( CBaseEntity *pOther )
 {
-	//BG2 - Tjoppen - no weapon pickup
-	return;
-	//
-#if !defined( CLIENT_DLL )
+//BG2 - Tjoppen - no weapon pickup
+/*#if !defined( CLIENT_DLL )
 	// Can't pick up dissolving weapons
 	if ( IsDissolving() )
 		return;
@@ -698,7 +696,8 @@ void CBaseCombatWeapon::DefaultTouch( CBaseEntity *pOther )
 	{
 		OnPickedUp( pPlayer );
 	}
-#endif
+#endif*/
+//
 }
 
 void CBaseCombatWeapon::SetPickupTouch( void )

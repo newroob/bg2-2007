@@ -603,7 +603,8 @@ int	CBaseCombatWeapon::ObjectCaps( void )
 //-----------------------------------------------------------------------------
 void CBaseCombatWeapon::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( pActivator );
+	//BG2 - Tjoppen - no +use on weapons. ANY weapon - including accidentally spawned HL2 ones
+	/*CBasePlayer *pPlayer = ToBasePlayer( pActivator );
 	
 	if ( pPlayer )
 	{
@@ -622,6 +623,7 @@ void CBaseCombatWeapon::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_
 		{
 			pPlayer->PickupObject( this );
 		}
-	}
+	}*/
+	//
 }
 

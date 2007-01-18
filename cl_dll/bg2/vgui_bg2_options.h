@@ -3,7 +3,6 @@
 #include <vgui_controls/Slider.h>
 #include <vgui_controls/CheckButton.h>
 
-//BG2 - Tjoppen - temp
 extern ConVar	cl_crosshair,
 
 				cl_crosshair_r,
