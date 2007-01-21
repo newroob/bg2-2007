@@ -1,4 +1,9 @@
 //BG2 - Tjoppen - CBG2SmokeEmitter
+
+//velocity will converge to around (E(|GetDrift()|) / -DROPOFF) for small timeDeltas
+//where E(x) is the expected value of x, since it's brownian
+#define DROPOFF	-12.0f	//exponential dropoff rate of velocity
+
 class CBG2SmokeEmitter : public CSimpleEmitter
 {
 public:
@@ -9,21 +14,19 @@ public:
 	virtual	float UpdateRoll( SimpleParticle *pParticle, float timeDelta );
 
 private:
+	Vector GetDrift();
 	CBG2SmokeEmitter( const CBG2SmokeEmitter & );
-	Vector	m_vDrift;
 };
 
-CBG2SmokeEmitter::CBG2SmokeEmitter( const char *pDebugName ) : CSimpleEmitter( pDebugName )
+CBG2SmokeEmitter::CBG2SmokeEmitter( const char *pDebugName ) : CSimpleEmitter( pDebugName ) {}
+
+Vector CBG2SmokeEmitter::GetDrift( void )
 {
-	//velocity will converge to around (|m_vDrift| / -DROPOFF) for small timeDeltas
-
-#define DROPOFF	-12.0f	//exponential dropoff rate of velocity
-
-	m_vDrift = Vector(	random->RandomFloat( -150, 150 ),
-						random->RandomFloat( -150, 150 ),
-						random->RandomFloat( 15, 200 ) );
+	//Brownian drift
+	return Vector(	random->RandomFloat( -300, 300 ),
+					random->RandomFloat( -300, 300 ),
+					random->RandomFloat( 50, 600 ) );
 }
-
 
 CSmartPtr<CBG2SmokeEmitter> CBG2SmokeEmitter::Create( const char *pDebugName )
 {
@@ -74,8 +77,8 @@ void CBG2SmokeEmitter::UpdateVelocity( SimpleParticle *pParticle, float timeDelt
 	//slow down...
 	pParticle->m_vecVelocity *= expf( DROPOFF * timeDelta );
 
-	//..and drift upwards and sideways as dictated by m_vDrift
-	pParticle->m_vecVelocity += m_vDrift * timeDelta;
+	//..and drift upwards and sideways as dictated by GetDrift
+	pParticle->m_vecVelocity += GetDrift() * timeDelta;
 }
 
 float CBG2SmokeEmitter::UpdateRoll( SimpleParticle *pParticle, float timeDelta )
