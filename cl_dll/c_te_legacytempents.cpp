@@ -3001,13 +3001,10 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 		pParticle->m_flDieTime		= random->RandomFloat( 6.0f, 10.0f );
 
 		//BG2 - Tjoppen - a little bit more speed to the smoke
-		pParticle->m_vecVelocity = forward * (float)(j+6) * 192.0f;
-		pParticle->m_vecVelocity += ownervelocity;
+		pParticle->m_vecVelocity = forward * (float)(j+6) * 384.0f;
 
 		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
-		C_BaseEntity *pEnt = ClientEntityList().GetEnt( entityIndex );
-		pParticle->m_vecVelocity += pEnt->GetLocalVelocity();
-
+		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 
 		int color = random->RandomInt( 200, 255 );
 		pParticle->m_uchColor[0]	= color;
@@ -3137,14 +3134,11 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 
 		//BG2 - Tjoppen - a little bit more speed to the smoke
 		//pParticle->m_vecVelocity = forward * random->RandomFloat( 48.0f, 64.0f );
-		pParticle->m_vecVelocity = forward * (float)(j+7) * 64.0f;
+		pParticle->m_vecVelocity = forward * (float)(j+7) * 128.0f;
 		//pParticle->m_vecVelocity[2] += 0.25f * random->RandomFloat( 7.0f, 28.0f );
-		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 
 		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
-		C_BaseEntity *pEnt = ClientEntityList().GetEnt( entityIndex );
-		pParticle->m_vecVelocity += pEnt->GetLocalVelocity();
-
+		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 
 		int color = random->RandomInt( 220, 255 );
 		pParticle->m_uchColor[0]	= color;
@@ -3181,14 +3175,11 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 
 		//BG2 - Tjoppen - a little bit more speed to the smoke
 		//pParticle->m_vecVelocity = forward * random->RandomFloat( 48.0f, 64.0f );
-		pParticle->m_vecVelocity = right * (float)(j+7) * 0.1f * random->RandomFloat( 32.0f, 32.0f );
+		pParticle->m_vecVelocity = right * (float)(j+7) * 6.4f;
 		//pParticle->m_vecVelocity[2] += 0.25f * random->RandomFloat( 7.0f, 28.0f );
-		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 
 		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
-		C_BaseEntity *pEnt = ClientEntityList().GetEnt( entityIndex );
-		pParticle->m_vecVelocity += pEnt->GetLocalVelocity();
-
+		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 
 		int color = random->RandomInt( 220, 255 );
 		pParticle->m_uchColor[0]	= color;

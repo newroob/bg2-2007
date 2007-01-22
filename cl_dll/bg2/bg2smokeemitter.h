@@ -2,7 +2,7 @@
 
 //velocity will converge to around (E(|GetDrift()|) / -DROPOFF) for small timeDeltas
 //where E(x) is the expected value of x, since it's brownian
-#define DROPOFF	-12.0f	//exponential dropoff rate of velocity
+#define DROPOFF	-24.0f	//exponential dropoff rate of velocity
 
 class CBG2SmokeEmitter : public CSimpleEmitter
 {
