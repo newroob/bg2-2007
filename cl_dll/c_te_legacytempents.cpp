@@ -2911,11 +2911,15 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 	}
 
 	//assume this is a weapon. it's owned by a player. the player has a velocity
+	//BG2 - Tjoppen - HACKHACK: dropped weapons used to discharge smoke. this fixes it, while getting the velocty
 	Vector	ownervelocity(0,0,0);
 	C_BaseViewModel *pEnt = dynamic_cast<C_BaseViewModel*>( ClientEntityList().GetEnt( entityIndex ) );
+	C_BaseCombatWeapon *pWeap = dynamic_cast<C_BaseCombatWeapon*>( ClientEntityList().GetEnt( entityIndex ) );
+
 	if( pEnt )
 	{
 		C_BaseEntity *pEnt2 = pEnt->GetOwner();
+
 		if( pEnt2 )
 		{
 			ownervelocity = pEnt2->GetLocalVelocity();	//success!
@@ -2923,7 +2927,11 @@ void MuzzleFlash_Pistol_Shared( int entityIndex, int attachmentIndex, bool isFir
 			//					the muzzle attachment is either angled the wrong way or the entire model is(pistols)
 			AngleVectors( pEnt2->EyeAngles(), &forward, NULL, NULL );
 		}
+		else
+			return;	//vphysobj = on ground, or no owner. don't do smoke.
 	}
+	else if( !(pWeap && !pWeap->VPhysicsGetObject() && pWeap->GetOwner()) )
+		return;		//vphysobj = on ground, or no owner. don't do smoke.
 
 	SimpleParticle *pParticle;
 	Vector			offset;
@@ -3101,18 +3109,26 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 	SimpleParticle *pParticle;
 
 	//assume this is a weapon. it's owned by a player. the player has a velocity
+	//BG2 - Tjoppen - HACKHACK: dropped weapons used to discharge smoke. this fixes it, while getting the velocty
 	Vector	ownervelocity(0,0,0);
 	C_BaseViewModel *pEnt = dynamic_cast<C_BaseViewModel*>( ClientEntityList().GetEnt( entityIndex ) );
+	C_BaseCombatWeapon *pWeap = dynamic_cast<C_BaseCombatWeapon*>( ClientEntityList().GetEnt( entityIndex ) );
+
 	if( pEnt )
 	{
 		C_BaseEntity *pEnt2 = pEnt->GetOwner();
+
 		if( pEnt2 )
 		{
 			ownervelocity = pEnt2->GetLocalVelocity();	//success!
 
 			AngleVectors( pEnt2->GetLocalAngles(), NULL, &right, NULL );
 		}
+		else
+			return;	//vphysobj = on ground, or no owner. don't do smoke.
 	}
+	else if( !(pWeap && !pWeap->VPhysicsGetObject() && pWeap->GetOwner()) )
+		return;		//vphysobj = on ground, or no owner. don't do smoke.
 
 
 	//BG2 - Tjoppen - more smoke
