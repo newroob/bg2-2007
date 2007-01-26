@@ -498,7 +498,7 @@ void CClassMenu::OnThink()
 			m_iTeamSelection == TEAM_AMERICANS ? "1. Continental Soldier" : "1. Royal Infantry" );
 
 	UpdateClassButtonText( m_pOfficerButton, CLASS_OFFICER, 
-			m_iTeamSelection == TEAM_AMERICANS ? "2. Continental Officer" : "1. Royal Commander" );
+			m_iTeamSelection == TEAM_AMERICANS ? "2. Continental Officer" : "2. Royal Commander" );
 
 	UpdateClassButtonText( m_pSniperButton, CLASS_SNIPER, 
 			m_iTeamSelection == TEAM_AMERICANS ? "3. Frontiersman" : "3. Jaeger" );
