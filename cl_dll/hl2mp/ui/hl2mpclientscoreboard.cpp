@@ -515,7 +515,13 @@ bool CHL2MPClientScoreBoardDialog::GetPlayerScoreInfo(int playerIndex, KeyValues
 	kv->SetInt("playerIndex", playerIndex);
 	kv->SetInt("team", g_PR->GetTeam( playerIndex ) );
 	kv->SetString("name", g_PR->GetPlayerName(playerIndex) );
-	kv->SetInt("deaths", g_PR->GetDeaths( playerIndex ));
+	//BG2 - Tjoppen - hide non-local player damage
+	//kv->SetInt("deaths", g_PR->GetDeaths( playerIndex ));
+	if( playerIndex == C_BasePlayer::GetLocalPlayer()->entindex() )
+		kv->SetInt("deaths", g_PR->GetDeaths( playerIndex ) );
+	else
+		kv->SetString("deaths", "" );
+	//
 	kv->SetInt("frags", g_PR->GetPlayerScore( playerIndex ));
 	//BG2 - Tjoppen - dead column
 	//kv->SetString("class", "");
