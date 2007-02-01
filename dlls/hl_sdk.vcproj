@@ -3062,55 +3062,25 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					RelativePath="hl2_dll\WaterLODControl.cpp">
 				</File>
 				<File
-					RelativePath="hl2_dll\weapon_alyxgun.h">
-				</File>
-				<File
-					RelativePath="hl2_dll\weapon_annabelle.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\weapon_bugbait.cpp">
-				</File>
-				<File
-					RelativePath="hl2_dll\weapon_citizenpackage.cpp">
-				</File>
-				<File
 					RelativePath="weapon_cubemap.cpp">
 				</File>
 				<Filter
 					Name="unused"
 					Filter="">
 					<File
-						RelativePath="hl2_dll\grenade_beam.cpp">
+						RelativePath=".\hl2_dll\grenade_homer.cpp">
 					</File>
 					<File
-						RelativePath="hl2_dll\grenade_beam.h">
+						RelativePath=".\hl2_dll\grenade_homer.h">
 					</File>
 					<File
-						RelativePath="hl2_dll\grenade_homer.cpp">
+						RelativePath=".\hl2_dll\grenade_pathfollower.cpp">
 					</File>
 					<File
-						RelativePath="hl2_dll\grenade_homer.h">
+						RelativePath=".\hl2_dll\grenade_pathfollower.h">
 					</File>
 					<File
-						RelativePath="hl2_dll\grenade_hopwire.h">
-					</File>
-					<File
-						RelativePath="hl2_dll\grenade_pathfollower.cpp">
-					</File>
-					<File
-						RelativePath="hl2_dll\grenade_pathfollower.h">
-					</File>
-					<File
-						RelativePath="hl2_dll\npc_missiledefense.cpp">
-					</File>
-					<File
-						RelativePath="hl2_dll\weapon_cguard.cpp">
-					</File>
-					<File
-						RelativePath="hl2_dll\weapon_flaregun.cpp">
-					</File>
-					<File
-						RelativePath="hl2_dll\weapon_flaregun.h">
+						RelativePath=".\hl2_dll\weapon_cguard.cpp">
 					</File>
 				</Filter>
 			</Filter>
@@ -3278,9 +3248,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.cpp">
 					</File>
-					<File
-						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.h">
-					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -3345,6 +3312,9 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 							Name="VCCLCompilerTool"
 							UsePrecompiledHeader="0"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.h">
 				</File>
 				<Filter
 					Name="bot stuff"
