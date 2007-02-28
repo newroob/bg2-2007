@@ -64,8 +64,8 @@ const float BESS_BAYONET_RANGE = 90.0;
 //const float REVOL_BAYONET_RANGE = 75.0;
 const float CHARLE_BAYONET_RANGE = 87.0;
 const float SABRE_RANGE = 57.0;
-const float KNIFE_RANGE = 46.0;
-const float HIRSCHFAENGER_RANGE = 0.95 * SABRE_RANGE;	//-5% of sabre range
+const float HIRSCHFAENGER_RANGE = 57.0;
+const float KNIFE_RANGE = 52.0;
 
 #ifdef CLIENT_DLL
 #define CWeaponbrownbess C_Weaponbrownbess

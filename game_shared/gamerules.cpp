@@ -43,7 +43,9 @@ static CViewVectors g_DefaultViewVectors(
 	Vector( 16,  16,  72 ),
 	
 	Vector(-16, -16, 0 ),
-	Vector( 16,  16,  36 ),
+	//BG2 - Tjoppen - need crouch bbox slightly larger so we can score headshots on crouching players :o
+	Vector( 16,  16,  45 ),//Vector( 16,  16,  36 ),
+	//
 	Vector( 0, 0, 28 ),
 	
 	Vector(-10, -10, -10 ),
