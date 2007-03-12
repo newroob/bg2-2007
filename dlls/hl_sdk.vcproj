@@ -128,10 +128,10 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Compiling The Battlegrounds II 0.16 Alpha server binary for Draco(copying to C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin)"
-				CommandLine="if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.dll&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.dll&quot;
-if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.dll &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.dll&quot;
-if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.pdb&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.pdb&quot;
-if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.pdb &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin&quot;
+				CommandLine="if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\server.dll&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\server.dll&quot;
+if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.dll &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\server.dll&quot;
+if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\server.pdb&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\server.pdb&quot;
+if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.pdb &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin&quot;
 "
 				Outputs="C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.dll;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.pdb"/>
 			<Tool

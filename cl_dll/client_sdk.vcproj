@@ -131,10 +131,10 @@ copy &quot;$(TargetDir)&quot;client.dll &quot;d:\program\valve\steam\steamapps\S
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Compiling The Battlegrounds II 0.16 Alpha client binary for Draco(copying to C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin)"
-				CommandLine="if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\client.dll&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\client.dll&quot;
-if exist &quot;$(TargetDir)&quot;client.dll copy &quot;$(TargetDir)&quot;client.dll &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\client.dll&quot;
-if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\client.pdb&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\client.pdb&quot;
-if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.pdb &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin&quot;
+				CommandLine="if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\client.dll&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\client.dll&quot;
+if exist &quot;$(TargetDir)&quot;client.dll copy &quot;$(TargetDir)&quot;client.dll &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\client.dll&quot;
+if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\client.pdb&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\client.pdb&quot;
+if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.pdb &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin&quot;
 "
 				Outputs="C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\client.dll;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\client.pdb"/>
 			<Tool
@@ -3273,10 +3273,10 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				RelativePath="..\public\tier1\mempool.h">
 			</File>
 			<File
-				RelativePath="menu.h">
+				RelativePath="..\public\vgui_controls\Menu.h">
 			</File>
 			<File
-				RelativePath="..\public\vgui_controls\Menu.h">
+				RelativePath="menu.h">
 			</File>
 			<File
 				RelativePath="..\public\vgui_controls\MenuItem.h">

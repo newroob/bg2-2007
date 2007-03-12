@@ -848,7 +848,10 @@ protected:
 private:
 
 // Replicated to all clients
-	CNetworkVar( float, m_flMaxspeed );
+	//BG2 - Tjoppen - max speed is figured out by client
+	//CNetworkVar( float, m_flMaxspeed );
+	float					m_flMaxspeed;
+	//
 	
 // Not transmitted
 	float					m_flWaterJumpTime;  // used to be called teleport_time

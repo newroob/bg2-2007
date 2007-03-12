@@ -217,7 +217,9 @@ END_RECV_TABLE()
 		//
 		RecvPropInt		(RECVINFO(m_lifeState)),
 
-		RecvPropFloat	(RECVINFO(m_flMaxspeed)),
+		//BG2 - Tjoppen - max speed is figured out by client
+		//RecvPropFloat	(RECVINFO(m_flMaxspeed)),
+		//
 		RecvPropInt		(RECVINFO(m_fFlags)),
 
 		RecvPropInt		(RECVINFO(m_iObserverMode) ),
@@ -276,7 +278,9 @@ BEGIN_PREDICTION_DATA( C_BasePlayer )
 	DEFINE_PRED_TYPEDESCRIPTION( pl, CPlayerState ),
 
 	DEFINE_PRED_FIELD( m_hVehicle, FIELD_EHANDLE, FTYPEDESC_INSENDTABLE ),
-	DEFINE_PRED_FIELD_TOL( m_flMaxspeed, FIELD_FLOAT, FTYPEDESC_INSENDTABLE, 0.5f ),
+	//BG2 - Tjoppen - max speed is figured out by client
+	//DEFINE_PRED_FIELD_TOL( m_flMaxspeed, FIELD_FLOAT, FTYPEDESC_INSENDTABLE, 0.5f ),
+	//
 	DEFINE_PRED_FIELD( m_iHealth, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	//BG2 - Tjoppen - we don't need m_fOnTarget
 	//DEFINE_PRED_FIELD( m_fOnTarget, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
