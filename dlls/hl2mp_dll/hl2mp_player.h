@@ -125,9 +125,13 @@ public:
 	float GetNextModelChangeTime( void ) { return m_flNextModelChangeTime; }
 	float GetNextTeamChangeTime( void ) { return m_flNextTeamChangeTime; }
 	void  PickDefaultSpawnTeam( void );
-	void  SetupPlayerSoundsByModel( const char *pModelName );
+	//BG2 - Tjoppen - don't need this
+	//void  SetupPlayerSoundsByModel( const char *pModelName );
+	//
 	const char *GetPlayerModelSoundPrefix( void );
-	int	  GetPlayerModelType( void ) { return m_iPlayerSoundType;	}
+	//BG2 - Tjoppen - don't need this
+	//int	  GetPlayerModelType( void ) { return m_iPlayerSoundType;	}
+	//
 	
 	//BG2 - Tjoppen - don't need this
 	//void  DetonateTripmines( void );
@@ -157,7 +161,9 @@ private:
 	int m_iLastWeaponFireUsercmd;
 	int m_iModelType;
 	CNetworkVar( int, m_iSpawnInterpCounter );
-	CNetworkVar( int, m_iPlayerSoundType );
+	//BG2 - Tjoppen - don't need this
+	//CNetworkVar( int, m_iPlayerSoundType );
+	//
 
 	float m_flNextModelChangeTime;
 	float m_flNextTeamChangeTime;

@@ -126,7 +126,9 @@ private:
 	int	  m_iSpawnInterpCounter;
 	int	  m_iSpawnInterpCounterCache;
 
-	int	  m_iPlayerSoundType;
+	//BG2 - Tjoppen - don't need this
+	//int	  m_iPlayerSoundType;
+	//
 
 	void ReleaseFlashlight( void );
 	Beam_t	*m_pFlashlightBeam;

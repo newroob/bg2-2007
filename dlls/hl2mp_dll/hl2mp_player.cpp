@@ -104,8 +104,11 @@ IMPLEMENT_SERVERCLASS_ST(CHL2MP_Player, DT_HL2MP_Player)
 	SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 0), 11, SPROP_CHANGES_OFTEN ),
 	SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 1), 11, SPROP_CHANGES_OFTEN ),
 	SendPropEHandle( SENDINFO( m_hRagdoll ) ),
-	SendPropInt( SENDINFO( m_iSpawnInterpCounter), 4 ),
-	SendPropInt( SENDINFO( m_iPlayerSoundType), 3 ),
+	//BG2 - Tjoppen - tweaking
+	SendPropInt( SENDINFO( m_iSpawnInterpCounter), 2, SPROP_UNSIGNED ), //4 ),
+	//BG2 - Tjoppen - don't need this
+	//SendPropInt( SENDINFO( m_iPlayerSoundType), 3 ),
+	//
 	
 	SendPropExclude( "DT_BaseAnimating", "m_flPoseParameter" ),
 	SendPropExclude( "DT_BaseFlex", "m_viewtarget" ),
@@ -582,7 +585,9 @@ void CHL2MP_Player::Spawn(void)
 		RemoveFlag( FL_FROZEN );
 	}
 
-	m_iSpawnInterpCounter = (m_iSpawnInterpCounter + 1) % 8;
+	//BG2 - Tjoppen - don't need quite this many bits
+	m_iSpawnInterpCounter = (m_iSpawnInterpCounter + 1) & 3; //8;
+	//
 
 	m_Local.m_bDucked = false;
 }
@@ -682,7 +687,9 @@ void CHL2MP_Player::SetPlayerTeamModel( void )
 	}
 	
 	SetModel( szModelName );
-	SetupPlayerSoundsByModel( szModelName );
+	//BG2 - Tjoppen - don't need this
+	//SetupPlayerSoundsByModel( szModelName );
+	//
 
 	//BG2 - Tjoppen - TEAM_UNASSIGNED doesn't limit teamchange.. and stuff
 	if( GetTeamNumber() == TEAM_UNASSIGNED )
@@ -774,7 +781,9 @@ void CHL2MP_Player::SetPlayerModel( void )
 	}
 
 	SetModel( szModelName );
-	SetupPlayerSoundsByModel( szModelName );
+	//BG2 - Tjoppen - don't need this
+	//SetupPlayerSoundsByModel( szModelName );
+	//
 
 	//BG2 - Tjoppen - TEAM_UNASSIGNED doesn't limit teamchange.. and stuff
 	if( GetTeamNumber() == TEAM_UNASSIGNED )
@@ -784,7 +793,8 @@ void CHL2MP_Player::SetPlayerModel( void )
 	m_flNextModelChangeTime = gpGlobals->curtime + MODEL_CHANGE_INTERVAL;
 }
 
-void CHL2MP_Player::SetupPlayerSoundsByModel( const char *pModelName )
+//BG2 - Tjoppen - don't need this
+/*void CHL2MP_Player::SetupPlayerSoundsByModel( const char *pModelName )
 {
 	//BG2 - Tjoppen - only one sound type
 	m_iPlayerSoundType = PLAYER_SOUNDS_CITIZEN;
@@ -802,7 +812,8 @@ void CHL2MP_Player::SetupPlayerSoundsByModel( const char *pModelName )
 	{
 		m_iPlayerSoundType = PLAYER_SOUNDS_COMBINESOLDIER;
 	}
-}
+}*/
+//
 
 void CHL2MP_Player::ResetAnimation( void )
 {
@@ -1011,12 +1022,12 @@ void CHL2MP_Player::PostThink( void )
 	BaseClass::PostThink();
 
 	//BG2 - Draco - recurring stamina regen
-	//BG2 - Tjoppen - update stamina 3 units at a time, at about 4Hz, to reduce network load
+	//BG2 - Tjoppen - update stamina 6 units at a time, at about 3Hz, to reduce network load
 	if ( m_fNextStamRegen <= gpGlobals->curtime )
 	{
 		if( m_iStamina < 100 )
 		{
-			m_iStamina += 3;
+			m_iStamina += 6;
 
 			/*CSingleUserRecipientFilter user( this );
 			user.MakeReliable();
@@ -1025,7 +1036,7 @@ void CHL2MP_Player::PostThink( void )
 			MessageEnd();*/
 		}
 
-		m_fNextStamRegen = gpGlobals->curtime + 0.15;	//was 0.225
+		m_fNextStamRegen = gpGlobals->curtime + 0.3;	//was 0.225
 		//m_fNextStamRegen = gpGlobals->curtime + 0.075;
 	}
 
