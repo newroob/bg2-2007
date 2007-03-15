@@ -157,7 +157,7 @@ private:
 public:
 	void RestartRound();
 	void RespawnAll();
-	void WinSong( char *pSound );
+	void WinSong( int team );
 	void RespawnWave();
 	void ResetFlags();
 	void UpdateFlags();

@@ -590,8 +590,6 @@ void CFlag::Precache( void )
 	PrecacheModel( GetBritishModelName() );
 	PrecacheModel( GetDisabledModelName() );  // BG2 - SaintGreg - flag when disabled
 
-	PrecacheScriptSound( "British.win" );
-	PrecacheScriptSound( "Americans.win" );
 	PrecacheScriptSound( "Flag.capture" );
 }
 

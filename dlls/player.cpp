@@ -108,9 +108,6 @@ static ConVar physicsshadowupdate_render( "physicsshadowupdate_render", "0" );
 
 // This is declared in the engine, too
 ConVar	sv_noclipduringpause( "sv_noclipduringpause", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "If cheats are enabled, then you can noclip with the game paused (for doing screenshots, etc.)." );
-//BG2 - Tjoppen - sv_hitverif
-static ConVar	sv_hitverif( "sv_hitverif", "0", FCVAR_GAMEDLL, "Send hit verification text to clients?" );
-//
 
 extern ConVar sv_maxunlag;
 
@@ -817,16 +814,12 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 			recpfilter.AddRecipient( pVictim );
 			recpfilter.MakeReliable();
 
-			//mostly for debugging
-			if( sv_hitverif.GetBool() )
-			{
-				UserMessageBegin( recpfilter, "HitVerif" );
-					WRITE_BYTE( pAttacker->entindex() );	//attacker id
-					WRITE_BYTE( pVictim->entindex() );		//victim id
-					WRITE_BYTE( ptr->hitgroup );			//where?
-					WRITE_SHORT( (int)floorf(info.GetDamage()) );	//damage
-				MessageEnd();
-			}
+			UserMessageBegin( recpfilter, "HitVerif" );
+				WRITE_BYTE( pAttacker->entindex() );	//attacker id
+				WRITE_BYTE( pVictim->entindex() );		//victim id
+				WRITE_BYTE( ptr->hitgroup );			//where?
+				WRITE_SHORT( (int)floorf(info.GetDamage()) );	//damage
+			MessageEnd();
 
 			//BG2 - Tjoppen - serverside blood
 			UserMessageBegin( recpfilter, "ServerBlood" );

@@ -378,13 +378,13 @@ void CHL2MPRules::Think( void )
 			if (pAmericans->GetScore() < pBritish->GetScore())
 			{
 				ClientPrintAll( "British win!", true, true );
-				WinSong("British.win");
+				WinSong( TEAM_BRITISH );
 			}
 
 			if (pAmericans->GetScore() > pBritish->GetScore())
 			{
 				ClientPrintAll( "Americans win!", true, true );
-				WinSong("Americans.win");
+				WinSong( TEAM_AMERICANS );
 			}
 
 			if (pAmericans->GetScore() == pBritish->GetScore())
@@ -624,12 +624,12 @@ void CHL2MPRules::Think( void )
 				if( m_iTDMTeamThatWon == 2 )
 				{
 					//british
-					WinSong("British.win");
+					WinSong( TEAM_BRITISH);
 				}
 				else if( m_iTDMTeamThatWon == 1 )
 				{
 					//americans
-					WinSong("Americans.win");
+					WinSong( TEAM_AMERICANS );
 				}
 				//else it was a draw, so play no music
 			}
@@ -1317,17 +1317,25 @@ void CHL2MPRules::RespawnAll()
 	HL2MPRules()->m_flNextRoundRestart = gpGlobals->curtime + 1;*/
 }
 
-void CHL2MPRules::WinSong( char *pSound )
+void CHL2MPRules::WinSong( int team )
 {
 	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
 		return;
 
-	if( m_fNextWinSong > gpGlobals->curtime && pSound )
+	if( m_fNextWinSong > gpGlobals->curtime )
 		return;
 	
 	m_fNextWinSong = gpGlobals->curtime + 20;
+
+	CRecipientFilter recpfilter;
+	recpfilter.AddAllPlayers();
+	recpfilter.MakeReliable();
 	
-	int x;
+	UserMessageBegin( recpfilter, "WinMusic" );
+		WRITE_BYTE( team );
+	MessageEnd();
+	
+	/*int x;
 	
 	for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
 	{
@@ -1357,7 +1365,7 @@ void CHL2MPRules::WinSong( char *pSound )
 			filter.UsePredictionRules();
 			pPlayer->EmitSound( filter, pPlayer->entindex(), pSound );
 		}
-	}
+	}*/
 }
 
 void CHL2MPRules::RespawnWave()
@@ -1583,7 +1591,7 @@ void CHL2MPRules::UpdateFlags( void )
 			ClientPrintAll( "The americans won this round!", true );
 			g_Teams[TEAM_AMERICANS]->AddScore( mp_winbonus.GetInt() );
 			RestartRound();
-			WinSong("Americans.win");
+			WinSong( TEAM_AMERICANS );
 			//do not cause two simultaneous round restarts..
 			m_bIsRestartingRound = false;
 			m_flNextRoundRestart = gpGlobals->curtime + 1;
@@ -1594,7 +1602,7 @@ void CHL2MPRules::UpdateFlags( void )
 			ClientPrintAll( "The british won this round!", true );
 			g_Teams[TEAM_BRITISH]->AddScore( mp_winbonus.GetInt() );
 			RestartRound();
-			WinSong("British.win");
+			WinSong( TEAM_BRITISH );
 			//do not cause two simultaneous round restarts..
 			m_bIsRestartingRound = false;
 			m_flNextRoundRestart = gpGlobals->curtime + 1;
@@ -1622,7 +1630,7 @@ void CHL2MPRules::UpdateFlags( void )
 			ClientPrintAll( "The british won this round!", true );
 			g_Teams[TEAM_BRITISH]->AddScore( mp_winbonus.GetInt() );
 			RestartRound();
-			WinSong("British.win");
+			WinSong( TEAM_BRITISH);
 			//do not cause two simultaneous round restarts..
 			m_bIsRestartingRound = false;
 			m_flNextRoundRestart = gpGlobals->curtime + 1;
@@ -1636,7 +1644,7 @@ void CHL2MPRules::UpdateFlags( void )
 			ClientPrintAll( "The americans won this round!", true );
 			g_Teams[TEAM_AMERICANS]->AddScore( mp_winbonus.GetInt() );
 			RestartRound();
-			WinSong("Americans.win");
+			WinSong( TEAM_AMERICANS );
 			//do not cause two simultaneous round restarts..
 			m_bIsRestartingRound = false;
 			m_flNextRoundRestart = gpGlobals->curtime + 1;

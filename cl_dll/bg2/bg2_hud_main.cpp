@@ -37,6 +37,9 @@
 #include "c_team.h"
 #include "c_hl2mp_player.h"
 #include "hl2mp_gamerules.h"
+//BG2 - Tjoppen - #includes
+#include "engine/IEngineSound.h"
+//
 
 // hintbox header
 #include "hintbox.h"
@@ -63,6 +66,7 @@ public:
 	void Reset( void );
 
 	void MsgFunc_HitVerif( bf_read &msg );
+	void MsgFunc_WinMusic( bf_read &msg );
 	
 	void HideShowAll( bool visible );
 
@@ -90,6 +94,7 @@ using namespace vgui;
 
 DECLARE_HUDELEMENT( CHudBG2 );
 DECLARE_HUD_MESSAGE( CHudBG2, HitVerif );
+DECLARE_HUD_MESSAGE( CHudBG2, WinMusic );
 
 //==============================================
 // CHudBG2's CHudFlags
@@ -160,6 +165,9 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_pLabelLMS->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelLMS->SetFgColor( ColourWhite );
 
+	CBaseEntity::PrecacheScriptSound( "Americans.win" );
+	CBaseEntity::PrecacheScriptSound( "British.win" );
+
 	//hide all
 	HideShowAll(false);
 }
@@ -182,6 +190,7 @@ void CHudBG2::ApplySchemeSettings( IScheme *scheme )
 void CHudBG2::Init( void )
 {
 	HOOK_HUD_MESSAGE( CHudBG2, HitVerif );
+	HOOK_HUD_MESSAGE( CHudBG2, WinMusic );
 	//BG2 - Tjoppen - serverside blood, a place to hook as good as any
 	extern void  __MsgFunc_ServerBlood( bf_read &msg );
 	HOOK_MESSAGE( ServerBlood );
@@ -415,9 +424,18 @@ const char* CHudBG2::HitgroupName( int hitgroup )
 	}
 }
 
+//BG2 - Tjoppen - cl_hitverif & cl_winmusic
+ConVar	cl_hitverif( "cl_hitverif", "0", 0, "Display hit verification?" );
+ConVar	cl_winmusic( "cl_winmusic", "1", 0, "Play win music?" );
+//
+
+
 void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 {
 	int attacker, victim, hitgroup, damage;
+
+	if( !cl_hitverif.GetBool() )
+		return;
 
 	attacker	= msg.ReadByte();
 	victim		= msg.ReadByte();
@@ -456,4 +474,19 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 
 	m_pLabelDamageVerificator->SetText( txt );
 	m_flExpireTime = gpGlobals->curtime + 5.0f;
+}
+
+void CHudBG2::MsgFunc_WinMusic( bf_read &msg )
+{
+	if( !cl_winmusic.GetBool() )
+		return;
+
+	int team = msg.ReadByte();
+
+	CLocalPlayerFilter filter;
+
+	if( team == TEAM_AMERICANS )
+		C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "Americans.win" );
+	else if( team == TEAM_BRITISH )
+		C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "British.win" );
 }
