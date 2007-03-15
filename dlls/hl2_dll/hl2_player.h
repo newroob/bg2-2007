@@ -251,6 +251,7 @@ private:
 
 	float				m_flTimeAllSuitDevicesOff;
 
+	//BG2 - Tjoppen - TODO: remove sprinting code, to save bandwidth
 	bool				m_bSprintEnabled;		// Used to disable sprint temporarily
 	CNetworkVar( bool, m_fIsSprinting );
 	bool				m_fIsWalking;

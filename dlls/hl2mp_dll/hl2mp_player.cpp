@@ -67,6 +67,8 @@ extern ConVar mp_autobalancetolerance;
 
 //BG2 - Tjoppen - sv_voicecomm_text, set to zero for realism
 ConVar sv_voicecomm_text( "sv_voicecomm_text", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Show voicecomm text on clients?" );
+ConVar sv_unlag_lmb( "sv_unlag_lmb", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Do unlagging for left mouse button (primary attack)?" );
+ConVar sv_unlag_rmb( "sv_unlag_rmb", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Do unlagging for right mouse button (primary attack)?" );
 //
 
 int g_iLastCitizenModel = 0;
@@ -1100,7 +1102,11 @@ bool CHL2MP_Player::WantsLagCompensationOnEntity( const CBasePlayer *pPlayer, co
 	// we haven't attacked recently.
 	//BG2 - Tjoppen - MELEE FIX! I've never been so relieved! So relieved - and ANGRY!
 	//if ( !( pCmd->buttons & IN_ATTACK ) && (pCmd->command_number - m_iLastWeaponFireUsercmd > 5) )
-	if ( !( pCmd->buttons & IN_ATTACK ) && !( pCmd->buttons & IN_ATTACK2 ) && (pCmd->command_number - m_iLastWeaponFireUsercmd > 5) )
+	//if ( !( pCmd->buttons & IN_ATTACK ) && !( pCmd->buttons & IN_ATTACK2 ) && (pCmd->command_number - m_iLastWeaponFireUsercmd > 5) )
+
+	if( (!( pCmd->buttons & IN_ATTACK ) || !sv_unlag_lmb.GetBool()) &&	//button not pressed or shouldn't be unlagged
+		(!( pCmd->buttons & IN_ATTACK2) || !sv_unlag_rmb.GetBool()) &&	//-"-
+		(pCmd->command_number - m_iLastWeaponFireUsercmd > 10) )		//unlag a bit longer
 	//
 		return false;
 

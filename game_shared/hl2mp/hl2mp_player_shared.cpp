@@ -56,7 +56,8 @@ END_PREDICTION_DATA()
 
 extern ConVar sv_footsteps;
 
-const char *g_ppszPlayerSoundPrefixNames[PLAYER_SOUNDS_MAX] =
+//BG2 - Tjoppen - don't need this
+/*const char *g_ppszPlayerSoundPrefixNames[PLAYER_SOUNDS_MAX] =
 {
 	//BG2 - Tjoppen - sound prefixes..
 	//"NPC_Citizen",
@@ -65,16 +66,22 @@ const char *g_ppszPlayerSoundPrefixNames[PLAYER_SOUNDS_MAX] =
 	"BG2Player",
 	"BG2Player",
 	"BG2Player",
-};
+};*/
+#define BG2_PLAYER_SOUND_PREFIX	"BG2Player"
+//
 
 const char *CHL2MP_Player::GetPlayerModelSoundPrefix( void )
 {
-	return g_ppszPlayerSoundPrefixNames[m_iPlayerSoundType];
+	//BG2 - Tjoppen - don't need this
+	//return g_ppszPlayerSoundPrefixNames[m_iPlayerSoundType];
+	return BG2_PLAYER_SOUND_PREFIX;
+	//
 }
 
 void CHL2MP_Player::PrecacheFootStepSounds( void )
 {
-	int iFootstepSounds = ARRAYSIZE( g_ppszPlayerSoundPrefixNames );
+	//BG2 - Tjoppen - don't need this
+	/*int iFootstepSounds = ARRAYSIZE( g_ppszPlayerSoundPrefixNames );
 	int i;
 
 	for ( i = 0; i < iFootstepSounds; ++i )
@@ -86,7 +93,9 @@ void CHL2MP_Player::PrecacheFootStepSounds( void )
 
 		Q_snprintf( szFootStepName, sizeof( szFootStepName ), "%s.RunFootstepRight", g_ppszPlayerSoundPrefixNames[i] );
 		PrecacheScriptSound( szFootStepName );
-	}
+	}*/
+	PrecacheScriptSound( BG2_PLAYER_SOUND_PREFIX ".RunFootstepLeft" );
+	PrecacheScriptSound( BG2_PLAYER_SOUND_PREFIX ".RunFootstepRight" );
 }
 
 //-----------------------------------------------------------------------------
@@ -122,7 +131,8 @@ void CHL2MP_Player::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, f
 
 	m_Local.m_nStepside = !m_Local.m_nStepside;
 
-	char szStepSound[128];
+	//BG2 - Tjoppen - changeed..
+	/*char szStepSound[128];
 
 	if ( m_Local.m_nStepside )
 	{
@@ -131,7 +141,10 @@ void CHL2MP_Player::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, f
 	else
 	{
 		Q_snprintf( szStepSound, sizeof( szStepSound ), "%s.RunFootstepRight", g_ppszPlayerSoundPrefixNames[m_iPlayerSoundType] );
-	}
+	}*/
+	const char *szStepSound = m_Local.m_nStepside ? BG2_PLAYER_SOUND_PREFIX ".RunFootstepLeft" :
+													BG2_PLAYER_SOUND_PREFIX ".RunFootstepRight";
+	//
 
 	CSoundParameters params;
 	if ( GetParametersForSound( szStepSound, params, NULL ) == false )
