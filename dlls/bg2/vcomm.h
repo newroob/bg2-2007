@@ -37,7 +37,6 @@
 
 #define NUM_VOICECOMMS	(VCOMM2_START+VCOMM2_NUM+1)
 
-//on client, pVComms is what should be printed in the VGUI
-//on server, it's which sounds should be played
-extern char *pVComms[];
-extern char *pVChats[];
+extern char *pVComms[];			//what should be printed in the VGUI
+extern char *pVChats[];			//what is printed in the chat
+extern char *pVCommScripts[];	//script suffices

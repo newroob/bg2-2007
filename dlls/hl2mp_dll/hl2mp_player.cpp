@@ -252,25 +252,25 @@ void CHL2MP_Player::Precache( void )
 	
 	for( i = 0; i < VCOMM1_NUM; i++ )
 	{	
-		Q_snprintf( msg, 512, "VoicecommsA%s", pVComms[i]);
+		Q_snprintf( msg, 512, "VoicecommsA%s", pVCommScripts[i]);
 		PrecacheScriptSound( msg );
 	}
 
 	for( i = 0; i < VCOMM1_NUM; i++ )
 	{	
-		Q_snprintf( msg, 512, "VoicecommsB%s", pVComms[i]);
+		Q_snprintf( msg, 512, "VoicecommsB%s", pVCommScripts[i]);
 		PrecacheScriptSound( msg );
 	}
 	
 	for( i = VCOMM2_START; i < VCOMM2_START+VCOMM2_NUM; i++ )
 	{	
-		Q_snprintf( msg, 512, "VoicecommsA%s", pVComms[i]);
+		Q_snprintf( msg, 512, "VoicecommsA%s", pVCommScripts[i]);
 		PrecacheScriptSound( msg );
 	}
 
 	for( i = VCOMM2_START; i < VCOMM2_START+VCOMM2_NUM; i++ )
 	{
-		Q_snprintf( msg, 512, "VoicecommsB%s", pVComms[i]);
+		Q_snprintf( msg, 512, "VoicecommsB%s", pVCommScripts[i]);
 		PrecacheScriptSound( msg );
 	}
 }
@@ -1666,9 +1666,9 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			char snd[512];
 
 			if( GetTeamNumber() == TEAM_AMERICANS )
-				Q_snprintf( snd, 512, "VoicecommsA%s", pVComms[comm]);
+				Q_snprintf( snd, 512, "VoicecommsA%s", pVCommScripts[comm]);
 			else if( GetTeamNumber() == TEAM_BRITISH )
-				Q_snprintf( snd, 512, "VoicecommsB%s", pVComms[comm]);
+				Q_snprintf( snd, 512, "VoicecommsB%s", pVCommScripts[comm]);
 
 			//play voicecomm, with attenuation
 			EmitSound( snd );

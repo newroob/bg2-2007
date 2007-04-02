@@ -49,6 +49,13 @@ extern IGameUIFuncs *gameuifuncs; // for key binding details
 
 using namespace vgui;
 
+void ResolveLocalizedPath( const char *localString, char *pANSIPath, int iANSIPathSize )
+{
+	//this takes a "local" string and converts it to ANSI. used for paths, therefore the name
+	const wchar_t *pPath = vgui::localize()->Find(localString);
+	vgui::localize()->ConvertUnicodeToANSI( pPath, pANSIPath, iANSIPathSize );
+}
+
 //
 //	CClassButton
 //
@@ -71,40 +78,42 @@ void CClassButton::OnCursorEntered( void )
 	BaseClass::OnCursorEntered();
 
 	CClassMenu *pThisMenu = (CClassMenu*)GetParent();
-	const wchar_t *pPath = NULL;
+	char pANSIPath[512];
 
 	if( m_iCommand == 1 )
 	{
 		//officer
 		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
-			pPath = vgui::localize()->Find("#BG2_InfoHTML_A_Off_Path");
+			ResolveLocalizedPath( "#BG2_InfoHTML_A_Off_Path", pANSIPath, sizeof pANSIPath );
 		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
-			pPath = vgui::localize()->Find("#BG2_InfoHTML_B_Off_Path");
+			ResolveLocalizedPath( "#BG2_InfoHTML_B_Off_Path", pANSIPath, sizeof pANSIPath );
+		else
+			return;
 	}
 	else if( m_iCommand == 2 )
 	{
 		//infantry
 		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
-			pPath = vgui::localize()->Find("#BG2_InfoHTML_A_Inf_Path");
+			ResolveLocalizedPath( "#BG2_InfoHTML_A_Inf_Path", pANSIPath, sizeof pANSIPath );
 		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
-			pPath = vgui::localize()->Find("#BG2_InfoHTML_B_Inf_Path");
+			ResolveLocalizedPath( "#BG2_InfoHTML_B_Inf_Path", pANSIPath, sizeof pANSIPath );
+		else
+			return;
 	}
 	else if( m_iCommand == 3 )
 	{
 		//rifleman
 		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
-			pPath = vgui::localize()->Find("#BG2_InfoHTML_A_Rif_Path");
+			ResolveLocalizedPath( "#BG2_InfoHTML_A_Rif_Path", pANSIPath, sizeof pANSIPath );
 		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
-			pPath = vgui::localize()->Find("#BG2_InfoHTML_B_Rif_Path");
+			ResolveLocalizedPath( "#BG2_InfoHTML_B_Rif_Path", pANSIPath, sizeof pANSIPath );
+		else
+			return;
 	}
+	else
+		return;
 
-	if( pPath )
-	{
-		char pANSIPath[512];
-
-		vgui::localize()->ConvertUnicodeToANSI( pPath, pANSIPath, sizeof pANSIPath );
-		pThisMenu->ShowFile( pANSIPath );
-	}
+	pThisMenu->ShowFile( pANSIPath );
 }
 
 void CClassButton::PerformCommand( void )
@@ -186,24 +195,20 @@ void CTeamButton::OnCursorEntered( void )
 	BaseClass::OnCursorEntered();
 	
 	CClassMenu *pThisMenu = (CClassMenu *)GetParent();
-	const wchar_t *pPath = NULL;
+	char pANSIPath[512];
 
 	if( m_iCommand == TEAM_AMERICANS )
-		pPath = vgui::localize()->Find("#BG2_InfoHTML_Americans_Path");
-	if( m_iCommand == TEAM_BRITISH )
-		pPath = vgui::localize()->Find("#BG2_InfoHTML_British_Path");
+		ResolveLocalizedPath( "#BG2_InfoHTML_Americans_Path", pANSIPath, sizeof pANSIPath );
+	else if( m_iCommand == TEAM_BRITISH )
+		ResolveLocalizedPath( "#BG2_InfoHTML_British_Path", pANSIPath, sizeof pANSIPath );
 	else if( m_iCommand == TEAM_UNASSIGNED )	//spectate
-		pPath = vgui::localize()->Find("#BG2_InfoHTML_Spectate_Path");
+		ResolveLocalizedPath( "#BG2_InfoHTML_Spectate_Path", pANSIPath, sizeof pANSIPath );
 	else if( m_iCommand == -1 )					//autoassign
-		pPath = vgui::localize()->Find("#BG2_InfoHTML_Autoassign_Path");
+		ResolveLocalizedPath( "#BG2_InfoHTML_Autoassign_Path", pANSIPath, sizeof pANSIPath );
+	else
+		return;
 	
-	if( pPath )
-	{
-		char pANSIPath[512];
-
-		vgui::localize()->ConvertUnicodeToANSI( pPath, pANSIPath, sizeof pANSIPath );
-		pThisMenu->ShowFile( pANSIPath );
-	}
+	pThisMenu->ShowFile( pANSIPath );
 }
 
 void CTeamButton::PerformCommand( void )
@@ -263,7 +268,9 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pOfficerButton->SetCommand( 1 );
 	m_pSniperButton->SetCommand( 3 );
 
-	//ShowFile( "readme.txt" );
+	char pANSIPath[512];
+	ResolveLocalizedPath( "#BG2_InfoHTML_Blank_Path", pANSIPath, sizeof pANSIPath );
+	ShowFile( pANSIPath );
 
 	ToggleButtons( 1 );
 }
@@ -276,8 +283,6 @@ void CClassMenu::ShowFile( const char *filename )
 	char pPathData[ _MAX_PATH ];
 	vgui::filesystem()->GetLocalPath( filename, pPathData, sizeof(pPathData) );
 	Q_strncat( localURL, pPathData, sizeof( localURL ), COPY_ALL_CHARACTERS );
-
-	//Msg( "ShowFile(%s)\n", localURL );
 
 	m_pInfoHTML->OpenURL( localURL );
 }
@@ -429,6 +434,11 @@ void CClassMenu::ShowPanel(bool bShow)
 {
 	if ( BaseClass::IsVisible() == bShow )
 		return;
+
+	//clear html screen
+	char pANSIPath[512];
+	ResolveLocalizedPath( "#BG2_InfoHTML_Blank_Path", pANSIPath, sizeof pANSIPath );
+	ShowFile( pANSIPath );
 
 	if ( bShow )
 	{

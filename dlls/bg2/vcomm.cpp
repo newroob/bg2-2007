@@ -84,7 +84,7 @@ char *pVChats[NUM_VOICECOMMS] =
 	"",
 };
 #else
-char *pVComms[NUM_VOICECOMMS] =
+char *pVCommScripts[NUM_VOICECOMMS] =
 {
 	".Yes",
 	".No",
