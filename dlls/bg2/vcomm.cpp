@@ -36,30 +36,6 @@
 #include "vcomm.h"
 
 #ifdef CLIENT_DLL
-char *pVComms[NUM_VOICECOMMS] =
-{
-	"1. Yes",
-	"2. No",
-	"3. Follow me",
-	"4. Leave it to me",
-	"5. Under fire",
-	"6. Spread out",
-	"7. Battle cry",
-	"8. Medic",
-	"0. Cancel",
-
-	"1. Advance",
-	"2. Retreat",
-	"3. Rally the men",
-	"4. Halt",
-	"5. Line up",
-	"6. Make ready",
-	"7. Present arms",
-	"8. Fire",
-	"9. Cease fire",
-	"0. Cancel",
-};
-
 char *pVChats[NUM_VOICECOMMS] =
 {
 	"Yes",

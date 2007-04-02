@@ -76,19 +76,7 @@ CCommMenu2::CCommMenu2( IViewPort *pViewPort ) : Frame( NULL, PANEL_COMM2 )
 	SetBorder( NULL );
 	//SetVisible( true );
 
-	char text[512];
-	strcpy( text, "" );
-	for( int x = 0; x < VCOMM2_NUM; x++ )
-	{
-		strcat( text, pVComms[VCOMM2_START+x] );
-		strcat( text, "\n" );
-	}
-
-	strcat( text, "\n" );
-	strcat( text, pVComms[NUM_VOICECOMMS-1] );
-	strcat( text, "\n" );
-
-	m_pLabel = new Label( this, "label", text );
+	m_pLabel = new Label( this, "label", vgui::localize()->Find("#BG2_VoiceComm_Menu_B") );
 	m_pLabel->SetPos( 50, 50 );
 	m_pLabel->SizeToContents();
 }

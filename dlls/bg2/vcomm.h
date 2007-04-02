@@ -37,6 +37,5 @@
 
 #define NUM_VOICECOMMS	(VCOMM2_START+VCOMM2_NUM+1)
 
-extern char *pVComms[];			//what should be printed in the VGUI
 extern char *pVChats[];			//what is printed in the chat
 extern char *pVCommScripts[];	//script suffices
