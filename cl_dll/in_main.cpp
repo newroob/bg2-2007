@@ -614,7 +614,9 @@ void CommMenu( void )
 
 void CommMenu2( void )
 {
-	if( gViewPortInterface )
+	bool EnforceOfficerForCommenu2( void );
+
+	if( gViewPortInterface && EnforceOfficerForCommenu2() )
 	{
 		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_COMM2 );
 		if( panel )

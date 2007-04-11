@@ -23,6 +23,7 @@
 
 //#include "spectatorgui.h"
 #include "commmenu2.h"
+#include "c_hl2mp_player.h"
 #include "../dlls/bg2/vcomm.h"
 #include "vguicenterprint.h"
 
@@ -45,6 +46,23 @@
 extern IGameUIFuncs *gameuifuncs; // for key binding details
 
 using namespace vgui;
+
+// EnforceOfficerForCommenu2
+//  checks if the local player is an officer, and prints an error message if so is not the case
+bool EnforceOfficerForCommenu2( void )
+{
+	C_HL2MP_Player *pPlayer = dynamic_cast<C_HL2MP_Player*> (C_HL2MP_Player::GetLocalPlayer());
+
+	if( pPlayer && pPlayer->GetClass() == CLASS_OFFICER )
+	{
+		return true;
+	}
+	else
+	{
+		internalCenterPrint->Print( "Only officers may use the second voicecomm menu" );
+		return false;
+	}
+}
 
 CCommMenu2::CCommMenu2( IViewPort *pViewPort ) : Frame( NULL, PANEL_COMM2 )
 {

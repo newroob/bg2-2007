@@ -1656,12 +1656,17 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 		int comm = atoi( engine->Cmd_Argv( 1 ) );
 		bool teamonly = comm != 6;	//battlecries are not team only (global)
 
-		//only alive assigned player can do voice comms
-		//also make sure index not out of bounds
-		//make sure global voicecomms are only played ever so often - no FREEDOM! spam
-		if( GetTeamNumber() > TEAM_SPECTATOR && IsAlive() && m_flNextVoicecomm <= gpGlobals->curtime &&
+		if( //only alive assigned player can do voice comms
+			GetTeamNumber() > TEAM_SPECTATOR && IsAlive() && m_flNextVoicecomm <= gpGlobals->curtime &&
+
+			//also make sure index not out of bounds
 			comm >= 0 && comm < NUM_VOICECOMMS && comm != VCOMM1_NUM && comm != VCOMM2_START+VCOMM2_NUM &&
-			(teamonly || m_flNextGlobalVoicecomm <= gpGlobals->curtime) )
+
+			//make sure global voicecomms are only played ever so often - no FREEDOM! spam
+			(teamonly || m_flNextGlobalVoicecomm <= gpGlobals->curtime) &&
+
+			//only officers may use officer-only voicecomms (commmenu2)
+			(comm < VCOMM2_NUM || m_iClass == CLASS_OFFICER) )
 		{
 			char snd[512];
 

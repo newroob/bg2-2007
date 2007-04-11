@@ -420,9 +420,14 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	}
 	else if( iLastTrappedKey == commmenu2 )
 	{
-		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
-		m_pViewPort->ShowPanel( PANEL_COMM, false );
-		m_pViewPort->ShowPanel( PANEL_COMM2, true );
+		bool EnforceOfficerForCommenu2( void );
+
+		if( EnforceOfficerForCommenu2() )
+		{
+			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+			m_pViewPort->ShowPanel( PANEL_COMM, false );
+			m_pViewPort->ShowPanel( PANEL_COMM2, true );
+		}
 		
 		return;
 	}
