@@ -1576,8 +1576,8 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 	//if we're changing back to the class we currently are, because perhaps we regret choosing
 	// a new class, skip the limit check
 	int limit = HL2MPRules()->GetLimitTeamClass( iTeam, iClass );
-	if( limit >= 0 && g_Teams[iTeam]->GetNumOfClass(iClass) >= limit &&
-		!(GetTeamNumber() == iTeam && m_iClass == iClass ) )
+	if( limit >= 0 && g_Teams[iTeam]->GetNumOfNextClass(iClass) >= limit &&
+		!(GetTeamNumber() == iTeam && m_iClass == iClass) )
 	{
 		//BG2 - Tjoppen - TODO: usermessage this
 		ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
@@ -1589,15 +1589,15 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 	Q_snprintf( str, 512, "%s is going to fight as %s for the %s\n", STRING(PlayerData()->netname), pClassName, iTeam == TEAM_AMERICANS ? "Americans" : "British" );
 	ClientPrinttTalkAll( str );
 
-	m_iNextClass = iClass;
-
 	//The following line prevents anyone else from stealing our spot..
 	//Without this line several teamswitching/new players can pick a free class, so there can be for instance 
 	// two loyalists even though the limit is one.
 	//This may be slightly unfair since a still living player may "steal" a spot without spawning as that class,
 	// since it's possible to switch classes around very fast. a player could block the use of a limited class,
 	// though it'd be very tedious. It's a tradeoff.
-	m_iClass = m_iNextClass;
+	m_iNextClass = iClass;
+
+	//m_iClass = m_iNextClass;
 
 	if( GetTeamNumber() != iTeam )
 	{

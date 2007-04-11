@@ -368,6 +368,21 @@ int CTeam::GetNumOfClass( int iClass )
 	return iAmount;
 }
 
+int CTeam::GetNumOfNextClass( int iNextClass )
+{
+	int iAmount = 0;
+	
+	for( int x = 0; x < GetNumPlayers(); x++ )
+	{
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetPlayer( x ) );
+
+		if( pHL2Player && pHL2Player->GetNextClass() == iNextClass )
+			iAmount++;
+	}
+
+	return iAmount;
+}
+
 void CTeam::AddMorale(float New, float Time)
 {
 	m_flMorale += New;

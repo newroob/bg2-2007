@@ -65,6 +65,7 @@ public:
 	int GetNumOfficers();
 	int GetNumSnipers();
 	int GetNumOfClass( int iClass );
+	int GetNumOfNextClass( int iNextClass );
 	float GetMorale();
 	void AddMorale(float New, float Time);
 	void AddMoralePoint(CBaseEntity * pEnt);
