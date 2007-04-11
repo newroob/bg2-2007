@@ -3132,7 +3132,7 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 
 
 	//BG2 - Tjoppen - more smoke
-	for( int j = 0; j < 8; j++ )
+	for( int j = 0; j < 4; j++ )
 	//if ( random->RandomInt( 0, 3 ) != 0 )
 	{
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
@@ -3173,7 +3173,7 @@ void CTempEnts::MuzzleFlash_Flashpan( int entityIndex, int attachmentIndex, bool
 	}
 
 	//BG2 - Tjoppen - more smoke
-	for( int j = 0; j < 6; j++ )
+	for( int j = 0; j < 3; j++ )
 	//if ( random->RandomInt( 0, 3 ) != 0 )
 	{
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust

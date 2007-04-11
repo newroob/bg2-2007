@@ -59,7 +59,7 @@ bool EnforceOfficerForCommenu2( void )
 	}
 	else
 	{
-		internalCenterPrint->Print( "Only officers may use the second voicecomm menu" );
+		internalCenterPrint->Print( vgui::localize()->Find( "#BG2_VoiceComm2_Officer_Only" ) );
 		return false;
 	}
 }
