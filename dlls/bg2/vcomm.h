@@ -37,5 +37,5 @@
 
 #define NUM_VOICECOMMS	(VCOMM2_START+VCOMM2_NUM+1)
 
-extern char *pVChats[];			//what is printed in the chat
-extern char *pVCommScripts[];	//script suffices
+//extern char *pVChats[2][NUM_VOICECOMMS];	//what is printed in the chat (0 = american, 1 = british)
+extern char *pVCommScripts[];				//script suffices

@@ -36,29 +36,56 @@
 #include "vcomm.h"
 
 #ifdef CLIENT_DLL
-char *pVChats[NUM_VOICECOMMS] =
+/*char *pVChats[2][NUM_VOICECOMMS] =
 {
-	"Yes",
-	"No",
-	"Follow me",
-	"Leave it to me",
-	"Under attack, need assistance",
-	"Spread out!",
-	"",
-	"Require medical aid!",
-	"",
+	//american voiecomm chats
+	{
+		"#BG2_VoiceComm_A1",
+		"#BG2_VoiceComm_A2",
+		"#BG2_VoiceComm_A3",
+		"#BG2_VoiceComm_A4",
+		"#BG2_VoiceComm_A5",
+		"#BG2_VoiceComm_A6",
+		"#BG2_VoiceComm_A7",
+		"#BG2_VoiceComm_A8",
+		"#BG2_VoiceComm_A9",
+		
+		"#BG2_VoiceComm_A10",
+		"#BG2_VoiceComm_A11",
+		"#BG2_VoiceComm_A12",
+		"#BG2_VoiceComm_A13",
+		"#BG2_VoiceComm_A14",
+		"#BG2_VoiceComm_A15",
+		"#BG2_VoiceComm_A16",
+		"#BG2_VoiceComm_A17",
+		"#BG2_VoiceComm_A18",
+		"#BG2_VoiceComm_A19"
+	},
 
-	"Advance!",
-	"Retreat!",
-	"Rally round lads",
-	"Halt!",
-	"Line formation",
-	"Make ready",
-	"Present!",
-	"Fire at will!",
-	"Cease fire!",
-	"",
-};
+	//british voiecomm chats
+	{
+		"#BG2_VoiceComm_B1",
+		"#BG2_VoiceComm_B2",
+		"#BG2_VoiceComm_B3",
+		"#BG2_VoiceComm_B4",
+		"#BG2_VoiceComm_B5",
+		"#BG2_VoiceComm_B6",
+		"#BG2_VoiceComm_B7",
+		"#BG2_VoiceComm_B8",
+		"#BG2_VoiceComm_B9",
+		
+		"#BG2_VoiceComm_B10",
+		"#BG2_VoiceComm_B11",
+		"#BG2_VoiceComm_B12",
+		"#BG2_VoiceComm_B13",
+		"#BG2_VoiceComm_B14",
+		"#BG2_VoiceComm_B15",
+		"#BG2_VoiceComm_B16",
+		"#BG2_VoiceComm_B17",
+		"#BG2_VoiceComm_B18",
+		"#BG2_VoiceComm_B19"
+	}
+};*/
 #else
 char *pVCommScripts[NUM_VOICECOMMS] =
 {

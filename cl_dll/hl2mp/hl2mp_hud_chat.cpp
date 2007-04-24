@@ -274,26 +274,57 @@ void CHudChat::MsgFunc_VoiceComm( bf_read &msg )
 		comm		= commdata & 31,
 		isamerican	= commdata >> 5;
 
-	// flash speaking player dot
-//	if ( client > 0 )
-//		Radar_FlashPlayer( client );
-
-	//Msg( "MsgFunc_VoiceComm: %i %i\n", client, comm );
-
 	player_info_t sPlayerInfo;
 	engine->GetPlayerInfo( client, &sPlayerInfo );
 
 	if( comm >= 0 && comm < NUM_VOICECOMMS )
 	{
-		if( comm == 6 )
+		//need to resolve unicode stuff which makes this a bit.. tricky
+		char searchstring[32];
+
+		//first build our search string
+		Q_snprintf( searchstring, sizeof searchstring, "#BG2_VoiceComm_%c%i", isamerican ? 'A' : 'B', comm + 1 );
+
+		//look up our strings
+		wchar_t *resolved = vgui::localize()->Find( searchstring ),				// "Yes"
+				*prefix = vgui::localize()->Find( "#BG2_VoiceComm_Prefix" );	// "(Command)"
+
+		//team color
+		float *flColor = GetClientColor( client );
+
+		if( !resolved || !prefix || !flColor )
+			return;
+
+		//now just use some code copied from ChatPrintf to print this in the chat
+		//this because ChatPrintf doesn't take wchar_t*
+		CHudChatLine *line = (CHudChatLine *)FindUnusedChatLine();
+		if ( !line )
 		{
-			if( isamerican )
-				ChatPrintf( client, "(Command) %s: Freedom!", sPlayerInfo.name );
-			else
-				ChatPrintf( client, "(Command) %s: For king and country!", sPlayerInfo.name );
+			ExpireOldest();
+			line = (CHudChatLine *)FindUnusedChatLine();
 		}
-		else
-			ChatPrintf( client, "(Command) %s: %s", sPlayerInfo.name, pVChats[comm] );
+
+		if ( !line )
+			return;
+
+		line->SetText( "" );
+
+		line->SetExpireTime();
+
+		//abuse InsertString()'s concatenation abilities
+		line->InsertColorChange( Color( flColor[0], flColor[1], flColor[2], 255 ) );
+		line->InsertString( prefix );
+		line->InsertString( L" " );
+		line->InsertString( sPlayerInfo.name );
+		line->InsertColorChange( Color( g_ColorYellow[0], g_ColorYellow[1], g_ColorYellow[2], 255 ) );
+		line->InsertString( L": " );
+		line->InsertString( resolved );
+		line->SetVisible( true );
+		line->SetNameLength( 0 );
+
+		//play a sound..
+		CLocalPlayerFilter filter;
+		C_BaseEntity::EmitSound( filter, -1 /*SOUND_FROM_LOCAL_PLAYER*/, "HudChat.Message" );
 	}
 }
 
