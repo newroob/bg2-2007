@@ -35,8 +35,8 @@
 
 #include "vcomm.h"
 
-#ifdef CLIENT_DLL
-/*char *pVChats[2][NUM_VOICECOMMS] =
+/*#ifdef CLIENT_DLL
+char *pVChats[2][NUM_VOICECOMMS] =
 {
 	//american voiecomm chats
 	{
@@ -85,7 +85,7 @@
 		"#BG2_VoiceComm_B18",
 		"#BG2_VoiceComm_B19"
 	}
-};*/
+};
 #else
 char *pVCommScripts[NUM_VOICECOMMS] =
 {
@@ -108,6 +108,5 @@ char *pVCommScripts[NUM_VOICECOMMS] =
 	".PresentArms",
 	".Fire",
 	".CeaseFire",
-	"",
 };
-#endif
+#endif*/

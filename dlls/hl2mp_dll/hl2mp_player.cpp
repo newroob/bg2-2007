@@ -248,7 +248,26 @@ void CHL2MP_Player::Precache( void )
 	for( i = 0; i <= HITGROUP_RIGHTLEG; i++ )
 		PrecacheScriptSound( GetHitgroupPainSound(i)  );
 
-	char msg[512];
+	for( i = 0; i < NUM_VOICECOMMS; i++ )
+	{
+		char name[256];
+
+		Q_snprintf( name, sizeof name, "Voicecomms.American.Inf_%i", i+1 );
+		PrecacheScriptSound( name );
+		Q_snprintf( name, sizeof name, "Voicecomms.American.Off_%i", i+1 );
+		PrecacheScriptSound( name );
+		Q_snprintf( name, sizeof name, "Voicecomms.American.Rif_%i", i+1 );
+		PrecacheScriptSound( name );
+
+		Q_snprintf( name, sizeof name, "Voicecomms.British.Inf_%i", i+1 );
+		PrecacheScriptSound( name );
+		Q_snprintf( name, sizeof name, "Voicecomms.British.Off_%i", i+1 );
+		PrecacheScriptSound( name );
+		Q_snprintf( name, sizeof name, "Voicecomms.British.Rif_%i", i+1 );
+		PrecacheScriptSound( name );
+	}
+
+	/*char msg[512];
 	
 	for( i = 0; i < VCOMM1_NUM; i++ )
 	{	
@@ -272,7 +291,7 @@ void CHL2MP_Player::Precache( void )
 	{
 		Q_snprintf( msg, 512, "VoicecommsB%s", pVCommScripts[i]);
 		PrecacheScriptSound( msg );
-	}
+	}*/
 }
 
 void CHL2MP_Player::GiveAllItems( void )
@@ -1660,20 +1679,34 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			GetTeamNumber() > TEAM_SPECTATOR && IsAlive() && m_flNextVoicecomm <= gpGlobals->curtime &&
 
 			//also make sure index not out of bounds
-			comm >= 0 && comm < NUM_VOICECOMMS && comm != VCOMM1_NUM && comm != VCOMM2_START+VCOMM2_NUM &&
+			comm >= 0 && comm < NUM_VOICECOMMS && //comm != VCOMM1_NUM && comm != VCOMM2_START+VCOMM2_NUM &&
 
 			//make sure global voicecomms are only played ever so often - no FREEDOM! spam
 			(teamonly || m_flNextGlobalVoicecomm <= gpGlobals->curtime) &&
 
 			//only officers may use officer-only voicecomms (commmenu2)
-			(comm < VCOMM2_NUM || m_iClass == CLASS_OFFICER) )
+			(comm < VCOMM2_START || m_iClass == CLASS_OFFICER) )
 		{
 			char snd[512];
+			char *pClassString, *pTeamString;
+
+			if( m_iClass == CLASS_INFANTRY )
+				pClassString = "Inf";
+			else if( m_iClass == CLASS_OFFICER )
+				pClassString = "Off";
+			else if( m_iClass == CLASS_SNIPER )
+				pClassString = "Rif";
+			else
+				return true;	//catch, just in case
 
 			if( GetTeamNumber() == TEAM_AMERICANS )
-				Q_snprintf( snd, 512, "VoicecommsA%s", pVCommScripts[comm]);
+				pTeamString = "American";
 			else if( GetTeamNumber() == TEAM_BRITISH )
-				Q_snprintf( snd, 512, "VoicecommsB%s", pVCommScripts[comm]);
+				pTeamString = "British";
+			else
+				return true;	//catch, just in case
+
+			Q_snprintf( snd, sizeof snd, "Voicecomms.%s.%s_%i", pTeamString, pClassString, comm + 1 );
 
 			//play voicecomm, with attenuation
 			EmitSound( snd );

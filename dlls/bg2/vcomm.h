@@ -31,11 +31,11 @@
 	//BG2 - <name of contributer>[ - <small description>]
 */
 
-#define VCOMM1_NUM		8	//this many in menu 1
-#define VCOMM2_NUM		9	//menu 2
-#define VCOMM2_START	9	//.. which starts here in the array
+/*#define VCOMM1_NUM		8	//this many in menu 1
+#define VCOMM2_NUM		9	//menu 2*/
+#define VCOMM2_START	9	//.. which starts here in the array*/
 
-#define NUM_VOICECOMMS	(VCOMM2_START+VCOMM2_NUM+1)
+#define NUM_VOICECOMMS	18		//(VCOMM2_START+VCOMM2_NUM)
 
 //extern char *pVChats[2][NUM_VOICECOMMS];	//what is printed in the chat (0 = american, 1 = british)
-extern char *pVCommScripts[];				//script suffices
+//extern char *pVCommScripts[];				//script suffices
