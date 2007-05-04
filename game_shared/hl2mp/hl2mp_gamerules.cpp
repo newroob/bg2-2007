@@ -334,7 +334,8 @@ void CHL2MPRules::ResetMap()
 	pEnt = gEntList.FirstEnt();
 	// as long as we've got a valid pointer, keep looping through the list
 	while (pEnt != NULL) {
-		if (filter.ShouldCreateEntity (pEnt->GetClassname() ) )
+		//BG2 - Tjoppen - also pass on targetname
+		if( filter.ShouldCreateEntity( pEnt->GetClassname(), STRING(pEnt->GetEntityName()) ) )
 		{
 			// if we don't need to keep the entity, we remove it from the list
 			tmpEnt = gEntList.NextEnt (pEnt);

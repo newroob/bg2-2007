@@ -1,10 +1,37 @@
 #include "cbase.h"
+#include "BaseEntity.h"
 #include "mapfilter.h"
  
 // Constructor
 CMapEntityFilter::CMapEntityFilter() 
 {
-	keepList = new CUtlSortVector< const char *> (StrLessThan);
+	keepList			= new CUtlSortVector<const char *>( StrLessThan );
+	keepTargetnameList	= new CUtlSortVector<const char *>( StrLessThan );
+	
+	//BG2 - Tjoppen - mapfilter_excluder related logic. also make sure we keep them by adding to the list
+	AddKeep( "mapfilter_excluder" );
+
+	CMapEntityFilterExcluder *pExcluder = NULL;
+
+	Msg( "EXCLUDER: looking for mapfilter_excluders\n" );
+
+	while( (pExcluder = dynamic_cast<CMapEntityFilterExcluder*>(
+			gEntList.FindEntityByClassname( pExcluder, "mapfilter_excluder") )) != NULL )
+	{
+		if( pExcluder->m_bExcludeByTargetName )
+		{
+			Msg( "EXCLUDER: by targetname %s\n", STRING( pExcluder->m_sClassOrTargetName ) );
+
+			AddTargetnameKeep( STRING( pExcluder->m_sClassOrTargetName ) );
+		}
+		else
+		{
+			Msg( "EXCLUDER: by classname %s\n", STRING( pExcluder->m_sClassOrTargetName ) );
+
+			AddKeep( STRING( pExcluder->m_sClassOrTargetName ) );
+		}
+	}
+	
 }
  
 // Deconstructor
@@ -22,6 +49,17 @@ bool CMapEntityFilter::ShouldCreateEntity( const char *pClassname )
 {
 	//Check if the entity is in our keep list.
 	if( keepList->Find( pClassname ) >= 0 )
+		return false;
+	else
+		return true;
+}
+
+//BG2 - Tjoppen - targetname version
+bool CMapEntityFilter::ShouldCreateEntity( const char *pClassname, const char *pTargetname ) 
+{
+	//BG2 - Tjoppen - check both lists
+	if( (pClassname && keepList->Find( pClassname ) >= 0) || 
+			(pTargetname && keepTargetnameList->Find( pTargetname ) >= 0) )
 		return false;
 	else
 		return true;
@@ -46,3 +84,17 @@ void CMapEntityFilter::AddKeep( const char *sz)
 {
 	keepList->Insert(sz);
 }
+
+//BG2 - Tjoppen - AddTargetnameKeep. same as AddKeep, but for targetnames
+void CMapEntityFilter::AddTargetnameKeep( const char *sz) 
+{
+	keepTargetnameList->Insert(sz);
+}
+
+//BG2 - Tjoppen - CMapEntityFilterExcluder
+BEGIN_DATADESC( CMapEntityFilterExcluder )
+	DEFINE_KEYFIELD( m_bExcludeByTargetName, FIELD_BOOLEAN, "ExcludeByTargetName" ),
+	DEFINE_KEYFIELD( m_sClassOrTargetName, FIELD_STRING, "ClassOrTargetName" ),
+END_DATADESC()
+
+LINK_ENTITY_TO_CLASS( mapfilter_excluder, CMapEntityFilterExcluder );

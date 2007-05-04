@@ -25,14 +25,30 @@ public:
 	
 	// used to check if we should reset an entity or not
 	virtual bool ShouldCreateEntity( const char *pClassname );
+	bool ShouldCreateEntity( const char *pClassname, const char *pTargetname );
 	// creates the next entity in our stored list.
 	virtual CBaseEntity* CreateNextEntity( const char *pClassname );
 	// add an entity to our list
-	void AddKeep( const char*);
+	void AddKeep( const char* );
+	//BG2 - Tjoppen - AddTargetnameKeep
+	void AddTargetnameKeep( const char* );
  
 private:
 	// our list of entities to keep
-	CUtlSortVector< const char* > *keepList;
+	CUtlSortVector<const char*>		*keepList,
+									*keepTargetnameList;	//BG2 - Tjoppen - keepTargetnameList
+};
+
+//BG2 - Tjoppen - CMapEntityFilterExcluder
+class CMapEntityFilterExcluder : public CPointEntity
+{
+public:
+	DECLARE_CLASS( CMapEntityFilterExcluder, CPointEntity );
+
+	DECLARE_DATADESC();
+
+	bool		m_bExcludeByTargetName;
+	string_t	m_sClassOrTargetName;
 };
  
 #endif 
