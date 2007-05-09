@@ -13,23 +13,13 @@ CMapEntityFilter::CMapEntityFilter()
 
 	CMapEntityFilterExcluder *pExcluder = NULL;
 
-	Msg( "EXCLUDER: looking for mapfilter_excluders\n" );
-
 	while( (pExcluder = dynamic_cast<CMapEntityFilterExcluder*>(
 			gEntList.FindEntityByClassname( pExcluder, "mapfilter_excluder") )) != NULL )
 	{
 		if( pExcluder->m_bExcludeByTargetName )
-		{
-			Msg( "EXCLUDER: by targetname %s\n", STRING( pExcluder->m_sClassOrTargetName ) );
-
 			AddTargetnameKeep( STRING( pExcluder->m_sClassOrTargetName ) );
-		}
 		else
-		{
-			Msg( "EXCLUDER: by classname %s\n", STRING( pExcluder->m_sClassOrTargetName ) );
-
 			AddKeep( STRING( pExcluder->m_sClassOrTargetName ) );
-		}
 	}
 	
 }
