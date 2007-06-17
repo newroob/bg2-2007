@@ -1,5 +1,5 @@
 #include "cbase.h"
-#include "BaseEntity.h"
+#include "baseentity.h"
 #include "mapfilter.h"
  
 // Constructor
