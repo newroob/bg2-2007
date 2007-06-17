@@ -223,17 +223,20 @@ public:
 			return (char*)GetClassname();
 	}
 
-	float	m_flLastRecoil;		//for multiple recoil supression on client
+	float	m_flLastRecoil,					//for multiple recoil supression on client
+			m_flStopAttemptingSwing;		//this is for melee attacks that go on for several frames
+											// in other words, the game will attempt to do the tracelines for say 100 ms
+	int		m_iLastAttack;					//for reattempting swings
 
 	/*bool	IsMeleeWeapon( void )
 	{
 		return m_Attackinfos[ATTACK_PRIMARY].m_iAttacktype == ATTACKTYPE_STAB ? true : false;
 	}*/
 
-	//void		ItemPostFrame( void );
+	void		ItemPostFrame( void );
 	int			Fire( int iAttack );
 	int			FireBullet( int iAttack );
-	int			Swing( int iAttack );
+	int			Swing( int iAttack, bool bDoEffects );
 
 	void		Hit( trace_t &traceHit, int iAttack );
 	Activity	ChooseIntersectionPointAndActivity( int iAttack, trace_t &hitTrace, const Vector &mins, const Vector &maxs, CBasePlayer *pOwner );

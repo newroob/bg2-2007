@@ -82,6 +82,7 @@ ConVar sv_steadyhand( "sv_steadyhand", "0", FCVAR_CHEAT | FCVAR_NOTIFY | FCVAR_R
 ConVar mp_disable_melee( "mp_disable_melee", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "When non-zero, melee weapons are disabled" );
 ConVar mp_disable_firearms( "mp_disable_firearms", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "When non-zero, firearms are disabled" );
 
+#define SWING_ATTEMPT_TIME 0.2
 
 //-----------------------------------------------------------------------------
 // CBaseBG2Weapon
@@ -126,6 +127,8 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
 		return;
 
+	m_iLastAttack = ATTACK_PRIMARY;
+
 	int drain = 0;
 	if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_STAB || GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_SLASH )
 	{
@@ -135,7 +138,10 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 		if( mp_disable_melee.GetInt() )
 			return;
 
-		drain = Swing( ATTACK_PRIMARY );
+		//do tracelines for so many seconds
+		m_flStopAttemptingSwing = gpGlobals->curtime + SWING_ATTEMPT_TIME;
+
+		drain = Swing( ATTACK_PRIMARY, true );
 	}
 	else if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_FIREARM )
 	{
@@ -166,6 +172,8 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
 		return;
 
+	m_iLastAttack = ATTACK_SECONDARY;
+
 	int drain = 0;
 	if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_STAB || GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_SLASH )
 	{
@@ -175,7 +183,10 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 		if( mp_disable_melee.GetInt() )
 			return;
 
-		drain = Swing( ATTACK_SECONDARY );
+		//do tracelines for so many seconds
+		m_flStopAttemptingSwing = gpGlobals->curtime + SWING_ATTEMPT_TIME;
+
+		drain = Swing( ATTACK_SECONDARY, true );
 	}
 	else if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_FIREARM )
 	{
@@ -416,7 +427,7 @@ void CBaseBG2Weapon::ImpactEffect( trace_t &traceHit )
 	UTIL_ImpactTrace( &traceHit, DMG_BULLET );	//BG2 - Tjoppen - surface blood
 }
 
-int CBaseBG2Weapon::Swing( int iAttack )
+int CBaseBG2Weapon::Swing( int iAttack, bool bDoEffects )
 {
 	trace_t traceHit;
 
@@ -448,36 +459,45 @@ int CBaseBG2Weapon::Swing( int iAttack )
 	if ( traceHit.fraction == 1.0f )
 	{
 		//miss, do any waterimpact stuff
-		Vector testEnd = swingStart + forward * GetRange(iAttack);
-		ImpactWater( swingStart, testEnd );
+		if( bDoEffects )
+		{
+			Vector testEnd = swingStart + forward * GetRange(iAttack);
+			ImpactWater( swingStart, testEnd );
 
-		WeaponSound( SPECIAL1 );	//miss
+			WeaponSound( SPECIAL1 );	//miss
+		}
 	}
 	else
 	{
+		//stop attempting more swings (don't cut through masses of people or hit the same person ten times)
+		m_flStopAttemptingSwing = 0;
+
 		Hit( traceHit, iAttack );
 	}
 
 	// Send the anim
-	SendWeaponAnim( GetActivity( iAttack ) );
-	pOwner->SetAnimation( PLAYER_ATTACK2 );
+	if( bDoEffects )
+	{
+		SendWeaponAnim( GetActivity( iAttack ) );
+		pOwner->SetAnimation( PLAYER_ATTACK2 );
 
-	//BG2 - Draco - you cant stab very fast when your nackered, add quarter of a second
+		//BG2 - Draco - you cant stab very fast when your nackered, add quarter of a second
 #ifndef CLIENT_DLL
-	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
 #else
-	C_HL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
+		C_HL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
 #endif
 
-	if (pHL2Player->m_iStamina <= 35)
-		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate(iAttack) + 0.25f;
-	else
-		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate(iAttack);
+		if (pHL2Player->m_iStamina <= 35)
+			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate(iAttack) + 0.25f;
+		else
+			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate(iAttack);
 
 #ifndef CLIENT_DLL
-	//BG2 - Tjoppen - melee lag fix - this makes sure we get lag compensation for the next five frames or so
-	pHL2Player->NoteWeaponFired();
+		//BG2 - Tjoppen - melee lag fix - this makes sure we get lag compensation for the next five frames or so
+		pHL2Player->NoteWeaponFired();
 #endif
+	}
 
 	return 25;
 }
@@ -505,10 +525,16 @@ void CBaseBG2Weapon::WeaponIdle( void )
 	}
 }
 
-/*void CBaseBG2Weapon::ItemPostFrame( void )
+void CBaseBG2Weapon::ItemPostFrame( void )
 {
+	if( m_flStopAttemptingSwing > gpGlobals->curtime )
+	{
+		//we're attempting another swing. do. but don't play any animation or swing sound. just hit sound
+		Swing( m_iLastAttack, false );
+	}
+
 	BaseClass::ItemPostFrame();
-}*/
+}
 
 Activity CBaseBG2Weapon::GetDrawActivity( void )
 {

@@ -419,6 +419,8 @@ float _SSE_Sqrt(float x)
 
 // Simple SSE rsqrt.  Usually accurate to around 6 (relative) decimal places 
 // or so, so ok for closed transforms.  (ie, computing lighting normals)
+//BG2 - Tjoppen - this doesn't work under Linux. revert to default rsqrt
+#ifndef _LINUX
 inline float _SSE_RSqrtFast(float x)
 {
 	Assert( s_bMathlibInitialized );
@@ -436,7 +438,7 @@ inline float _SSE_RSqrtFast(float x)
 		"movss %%xmm0, %0 \n\t"
 		: "=m" (x)
 		: "m" (rroot)
-		: "%xmm0"
+		: "%%xmm0"
 	);
 #else
 #error
@@ -444,6 +446,8 @@ inline float _SSE_RSqrtFast(float x)
 
 	return rroot;
 }
+#endif
+//
 
 float FASTCALL _SSE_VectorNormalize (Vector& vec)
 {
@@ -4566,7 +4570,13 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 		pfInvRSquared = _SSE_InvRSquared;
 		pfSqrt = _SSE_Sqrt;
 		pfRSqrt = _SSE_RSqrtAccurate;
-		pfRSqrtFast = _SSE_RSqrtFast;
+		//BG2 - Tjoppen - this doesn't work under Linux. revert to default rsqrt
+#ifndef _LINUX
+		pfRSqrtFast = _SSE_RSqrtFast;	//WIN32
+#else
+		pfRSqrtFast = _rsqrtf;			//Linux
+#endif
+		//
 #ifdef _WIN32
 		pfFastSinCos = _SSE_SinCos;
 		pfFastCos = _SSE_cos;
