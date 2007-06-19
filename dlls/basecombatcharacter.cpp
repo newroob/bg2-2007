@@ -43,7 +43,9 @@
 #include "tier0/memdbgon.h"
 
 #ifdef HL2_DLL
-extern int	g_interactionBarnacleVictimReleased;
+//BG2 - Tjoppen - removing more npcs and weapons
+//extern int	g_interactionBarnacleVictimReleased;
+//
 #endif //HL2_DLL
 
 extern ConVar weapon_showproficiency;
@@ -348,12 +350,13 @@ bool CBaseCombatCharacter::FInAimCone( const Vector &vecSpot )
 bool CBaseCombatCharacter::HandleInteraction( int interactionType, void *data, CBaseCombatCharacter* sourceEnt )
 {
 #ifdef HL2_DLL
-	if ( interactionType == g_interactionBarnacleVictimReleased )
+	//BG2 - Tjoppen - removing more npcs and weapons
+	/*if ( interactionType == g_interactionBarnacleVictimReleased )
 	{
 		// For now, throw away the NPC and leave the ragdoll.
 		UTIL_Remove( this );
 		return true;
-	}
+	}*/
 #endif // HL2_DLL
 	return false;
 }

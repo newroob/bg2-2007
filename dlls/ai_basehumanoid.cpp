@@ -33,7 +33,8 @@ bool CAI_BaseHumanoid::HandleInteraction(int interactionType, void *data, CBaseC
 {
 #ifdef HL2_DLL
 	// Annoying to ifdef this out. Copy it into all the HL2 specific humanoid NPC's instead?
-	if ( interactionType == g_interactionBarnacleVictimDangle )
+	//BG2 - Tjoppen - removing more npcs and weapons
+	/*if ( interactionType == g_interactionBarnacleVictimDangle )
 	{
 		// Force choosing of a new schedule
 		ClearSchedule();
@@ -45,7 +46,7 @@ bool CAI_BaseHumanoid::HandleInteraction(int interactionType, void *data, CBaseC
 		// as the corpse.
 		UTIL_Remove( this );
 		return true;
-	}
+	}*/
 #endif
 	return BaseClass::HandleInteraction( interactionType, data, sourceEnt);
 }

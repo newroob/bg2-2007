@@ -626,7 +626,8 @@ Class_T  CHL2_Player::Classify ( void )
 //-----------------------------------------------------------------------------
 bool CHL2_Player::HandleInteraction(int interactionType, void *data, CBaseCombatCharacter* sourceEnt)
 {
-	if ( interactionType == g_interactionBarnacleVictimDangle )
+	//BG2 - Tjoppen - removing more npcs and weapons
+	/*if ( interactionType == g_interactionBarnacleVictimDangle )
 		return false;
 	
 	if (interactionType ==	g_interactionBarnacleVictimReleased)
@@ -640,7 +641,8 @@ bool CHL2_Player::HandleInteraction(int interactionType, void *data, CBaseCombat
 		m_afPhysicsFlags |= PFLAG_ONBARNACLE;
 		ClearUseEntity();
 		return true;
-	}
+	}*/
+	//
 	return false;
 }
 

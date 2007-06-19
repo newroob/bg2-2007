@@ -19,7 +19,9 @@ class CHL2NetworkBuildHelper : public CAI_NetworkBuildHelper
 
 	void PostInitNodePosition( CAI_Network *pNetwork, CAI_Node *pNode )
 	{
-		AdjustStriderNodePosition( pNetwork, pNode );
+		//BG2 - Tjoppen - removing more npcs and weapons
+		//AdjustStriderNodePosition( pNetwork, pNode );
+		//
 	}
 };
 

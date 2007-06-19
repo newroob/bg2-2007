@@ -1779,21 +1779,6 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					RelativePath="..\game_shared\hl2\basehlcombatweapon_shared.cpp">
 				</File>
 				<File
-					RelativePath="hl2_hud\c_antlion_dust.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_barnacle.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_barney.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_basehelicopter.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_basehelicopter.h">
-				</File>
-				<File
 					RelativePath="hl2_hud\c_basehlcombatweapon.cpp">
 				</File>
 				<File
@@ -1804,9 +1789,6 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				</File>
 				<File
 					RelativePath="hl2_hud\c_basehlplayer.h">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_citadel_effects.cpp">
 				</File>
 				<File
 					RelativePath="hl2_hud\c_corpse.cpp">
@@ -1821,88 +1803,22 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					RelativePath="c_fire_smoke.h">
 				</File>
 				<File
-					RelativePath="hl2_hud\c_func_tankmortar.cpp">
-				</File>
-				<File
 					RelativePath="hl2_hud\c_hl2_playerlocaldata.cpp">
 				</File>
 				<File
 					RelativePath="hl2_hud\c_hl2_playerlocaldata.h">
 				</File>
 				<File
-					RelativePath="hl2_hud\c_info_teleporter_countdown.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_npc_combinegunship.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_npc_manhack.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_npc_rollermine.cpp">
-				</File>
-				<File
 					RelativePath="hl2_hud\c_plasma_beam_node.cpp">
 				</File>
 				<File
-					RelativePath="hl2_hud\c_prop_combine_ball.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_rotorwash.cpp">
-				</File>
-				<File
 					RelativePath="hl2_hud\c_script_intro.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_strider.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_te_concussiveexplosion.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_te_flare.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_thumper_dust.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_vehicle_airboat.cpp">
-				</File>
-				<File
-					RelativePath=".\hl2_hud\c_vehicle_cannon.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_vehicle_crane.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_vehicle_crane.h">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_vehicle_prisoner_pod.cpp">
 				</File>
 				<File
 					RelativePath="hl2_hud\c_waterbullet.cpp">
 				</File>
 				<File
 					RelativePath="hl2_hud\c_weapon__stubs_hl2.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\c_weapon_crossbow.cpp">
-				</File>
-				<File
-					RelativePath="..\game_shared\hl2\citadel_effects_shared.h">
-				</File>
-				<File
-					RelativePath="..\game_shared\hl2\env_headcrabcanister_shared.cpp">
-				</File>
-				<File
-					RelativePath="..\game_shared\hl2\env_headcrabcanister_shared.h">
-				</File>
-				<File
-					RelativePath="hl2_hud\fx_antlion.cpp">
-				</File>
-				<File
-					RelativePath="hl2_hud\fx_bugbait.cpp">
 				</File>
 				<File
 					RelativePath="hl2_hud\fx_hl2_impacts.cpp">
@@ -3273,10 +3189,10 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				RelativePath="..\public\tier1\mempool.h">
 			</File>
 			<File
-				RelativePath="..\public\vgui_controls\Menu.h">
+				RelativePath="menu.h">
 			</File>
 			<File
-				RelativePath="menu.h">
+				RelativePath="..\public\vgui_controls\Menu.h">
 			</File>
 			<File
 				RelativePath="..\public\vgui_controls\MenuItem.h">

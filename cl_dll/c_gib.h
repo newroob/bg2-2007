@@ -51,8 +51,9 @@ private:
 	
 };
 
-
-extern CAntlionGibManager s_AntlionGibManager;
+//BG2 - Tjoppen - removing more npcs and weapons
+//extern CAntlionGibManager s_AntlionGibManager;
+//
 
 #endif
 

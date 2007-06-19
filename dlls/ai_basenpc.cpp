@@ -10150,7 +10150,8 @@ void CAI_BaseNPC::InputIgnoreDangerSounds( inputdata_t &inputdata )
 bool CAI_BaseNPC::HandleInteraction(int interactionType, void *data, CBaseCombatCharacter* sourceEnt)
 {
 #ifdef HL2_DLL
-	if ( interactionType == g_interactionBarnacleVictimGrab )
+	//BG2 - Tjoppen - removing more npcs and weapons
+	/*if ( interactionType == g_interactionBarnacleVictimGrab )
 	{
 		// Make the victim stop thinking so they're as good as dead without 
 		// shocking the system by destroying the entity.
@@ -10158,7 +10159,7 @@ bool CAI_BaseNPC::HandleInteraction(int interactionType, void *data, CBaseCombat
 		PainSound();
 		SetThink( NULL );
 		return true;
-	}
+	}*/
 #endif // HL2_DLL
 
 	return BaseClass::HandleInteraction( interactionType, data, sourceEnt );
