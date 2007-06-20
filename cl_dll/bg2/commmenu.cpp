@@ -48,7 +48,7 @@ using namespace vgui;
 
 CCommMenu::CCommMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_COMM )
 {
-	slot1 = slot2 = slot3 = slot4 = slot5 = slot6 = slot7 = slot8 = /*slot9 =*/ slot10 = -1;
+	slot1 = slot2 = slot3 = slot4 = slot5 = slot6 = slot7 = slot8 = slot9 = slot10 = -1;
 	teammenu = classmenu = commmenu = commmenu2 = -1;
 		
 	m_pViewPort = pViewPort;
@@ -111,6 +111,7 @@ void CCommMenu::OnKeyCodePressed(KeyCode code)
 	else	ifkey( 6, 5 )
 	else	ifkey( 7, 6 )
 	else	ifkey( 8, 7 )
+	else	ifkey( 9, 8 )
 	else if( iLastTrappedKey == slot10 )
 		m_pViewPort->ShowPanel( this, false );
 	else if( iLastTrappedKey == teammenu )
@@ -203,6 +204,7 @@ void CCommMenu::Update( void )
 	getkey( 6 );
 	getkey( 7 );
 	getkey( 8 );
+	getkey( 9 );
 	getkey( 10 );
 
 	if( teammenu < 0 ) teammenu = gameuifuncs->GetEngineKeyCodeForBind( "teammenu" );

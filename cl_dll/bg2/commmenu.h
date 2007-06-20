@@ -142,7 +142,7 @@ private:
 		slot6,
 		slot7,
 		slot8,
-		//slot9,
+		slot9,
 		slot10,
 
 		teammenu,
