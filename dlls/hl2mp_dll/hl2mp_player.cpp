@@ -2346,7 +2346,7 @@ void CHL2MP_Player::RemoveSelfFromFlags( void )
 }
 
 //BG2 - Tjoppen - HACKHACK: no more weapon_physcannon
-void PlayerPickupObject( CBasePlayer *pPlayer, CBaseEntity *pObject ){}
+/*void PlayerPickupObject( CBasePlayer *pPlayer, CBaseEntity *pObject ){}
 bool PlayerHasMegaPhysCannon( void ){return false;}
 void PhysCannonForceDrop( CBaseCombatWeapon *pActiveWeapon, CBaseEntity *pOnlyIfHoldingThis ){}
 void PhysCannonBeginUpgrade( CBaseAnimating *pAnim ){}
@@ -2354,4 +2354,4 @@ bool PlayerPickupControllerIsHoldingEntity( CBaseEntity *pPickupControllerEntity
 float PhysCannonGetHeldObjectMass( CBaseCombatWeapon *pActiveWeapon, IPhysicsObject *pHeldObject ){return 0;}
 CBaseEntity *PhysCannonGetHeldEntity( CBaseCombatWeapon *pActiveWeapon ){return NULL;}
 float PlayerPickupGetHeldObjectMass( CBaseEntity *pPickupControllerEntity, IPhysicsObject *pHeldObject ){return 0;}
-//
+//*/

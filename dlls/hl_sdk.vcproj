@@ -128,10 +128,10 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Compiling The Battlegrounds II 0.16 Alpha server binary for Draco(copying to C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin)"
-				CommandLine="if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\server.dll&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\server.dll&quot;
-if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.dll &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\server.dll&quot;
-if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\server.pdb&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin\server.pdb&quot;
-if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.pdb &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2-svn\bin&quot;
+				CommandLine="if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.dll&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.dll&quot;
+if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.dll &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.dll&quot;
+if exist &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.pdb&quot; attrib -r &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin\server.pdb&quot;
+if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.pdb &quot;D:\Program\Valve\Steam\SteamApps\SourceMods\bg2\bin&quot;
 "
 				Outputs="C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.dll;C:\Games\Steam\SteamApps\SourceMods\bg2-dev\bin\server.pdb"/>
 			<Tool
@@ -2711,6 +2711,66 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				Name="HL2 DLL"
 				Filter="">
 				<File
+					RelativePath="hl2_dll\ai_allymanager.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\ai_behavior_actbusy.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\ai_behavior_actbusy.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\ai_behavior_functank.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\ai_behavior_functank.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\ai_behavior_holster.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\ai_behavior_holster.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\ai_behavior_police.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\ai_behavior_police.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\ai_goal_police.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\ai_goal_police.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\AI_Interactions.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\ai_spotlight.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\ai_spotlight.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\antlion_dust.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\antlion_dust.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\antlion_maker.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\antlion_maker.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\ar2_explosion.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\ar2_explosion.h">
+				</File>
+				<File
 					RelativePath="BaseBludgeonWeapon.cpp">
 				</File>
 				<File
@@ -2729,13 +2789,46 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					RelativePath="..\game_shared\hl2\basehlcombatweapon_shared.h">
 				</File>
 				<File
+					RelativePath="hl2_dll\CBaseHelicopter.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\CBaseHelicopter.h">
+				</File>
+				<File
 					RelativePath="hl2_dll\CBaseSpriteProjectile.cpp">
 				</File>
 				<File
 					RelativePath="hl2_dll\CBaseSpriteProjectile.h">
 				</File>
 				<File
+					RelativePath="hl2_dll\citadel_effects.cpp">
+				</File>
+				<File
+					RelativePath="..\game_shared\hl2\citadel_effects_shared.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\combine_mine.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\combine_mine.h">
+				</File>
+				<File
 					RelativePath="hl2_dll\energy_wave.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\env_alyxemp.cpp">
+				</File>
+				<File
+					RelativePath="..\game_shared\hl2\env_alyxemp_shared.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\env_headcrabcanister.cpp">
+				</File>
+				<File
+					RelativePath="..\game_shared\hl2\env_headcrabcanister_shared.cpp">
+				</File>
+				<File
+					RelativePath="..\game_shared\hl2\env_headcrabcanister_shared.h">
 				</File>
 				<File
 					RelativePath="hl2_dll\env_speaker.cpp">
@@ -2745,6 +2838,30 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath="hl2_dll\func_recharge.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\func_tank.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\func_tank.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\grenade_ar2.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\grenade_ar2.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\grenade_bugbait.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\grenade_bugbait.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\grenade_frag.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\grenade_frag.h">
 				</File>
 				<File
 					RelativePath="hl2_dll\hl2_ai_network.cpp">
@@ -2792,16 +2909,220 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					RelativePath="hl2_dll\hl_playermove.cpp">
 				</File>
 				<File
+					RelativePath="hl2_dll\info_teleporter_countdown.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\item_ammo.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\item_battery.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\item_dynamic_resupply.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\item_dynamic_resupply.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\item_healthkit.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\item_itemcrate.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\item_suit.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\look_door.cpp">
+				</File>
+				<File
 					RelativePath="hl2_dll\monster_dummy.cpp">
 				</File>
 				<File
+					RelativePath="hl2_dll\npc_alyx.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_alyx.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_antlion.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_antlion.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_antlionguard.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_apcdriver.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_attackchopper.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_attackchopper.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Barnacle.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Barnacle.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Barney.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_BaseZombie.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_BaseZombie.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_breen.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_bullseye.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Bullseye.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_citizen17.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_citizen17.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Combine.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Combine.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_combinecamera.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_combinedropship.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_combinegunship.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_CombineS.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_CombineS.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_cranedriver.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_crow.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_crow.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_dog.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_eli.cpp">
+				</File>
+				<File
 					RelativePath="hl2_dll\npc_EnemyFinder.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_fastzombie.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_gman.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Headcrab.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Headcrab.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\NPC_Ichthyosaur.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_kleiner.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_launcher.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Manhack.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Manhack.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_metropolice.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_metropolice.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_monk.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_mossman.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_playercompanion.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_playercompanion.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_PoisonZombie.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_rollermine.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_rollermine.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Scanner.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_stalker.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_stalker.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_strider.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_strider.h">
 				</File>
 				<File
 					RelativePath="npc_Talker.cpp">
 				</File>
 				<File
 					RelativePath="npc_Talker.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_turret_ceiling.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_turret_floor.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_turret_ground.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Vortigaunt.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_Vortigaunt.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\npc_zombie.cpp">
 				</File>
 				<File
 					RelativePath="hl2_dll\player_control.cpp">
@@ -2813,10 +3134,58 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					RelativePath="hl2_dll\point_apc_controller.cpp">
 				</File>
 				<File
+					RelativePath="hl2_dll\prop_combine_ball.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\prop_combine_ball.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\prop_thumper.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\proto_sniper.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\rotorwash.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\rotorwash.h">
+				</File>
+				<File
 					RelativePath="hl2_dll\script_intro.cpp">
 				</File>
 				<File
 					RelativePath="hl2_dll\script_intro.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\vehicle_airboat.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\vehicle_apc.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\vehicle_crane.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\vehicle_crane.h">
+				</File>
+				<File
+					RelativePath=".\hl2_dll\vehicle_jeep.cpp">
+					<FileConfiguration
+						Name="Debug HL2MP|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release HL2MP|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="hl2_dll\vehicle_prisoner_pod.cpp">
 				</File>
 				<File
 					RelativePath="hl2_dll\vehicle_viewcontroller.cpp">
@@ -2825,8 +3194,60 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					RelativePath="hl2_dll\WaterLODControl.cpp">
 				</File>
 				<File
+					RelativePath="hl2_dll\weapon_alyxgun.h">
+				</File>
+				<File
+					RelativePath="hl2_dll\weapon_annabelle.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\weapon_bugbait.cpp">
+				</File>
+				<File
+					RelativePath="hl2_dll\weapon_citizenpackage.cpp">
+				</File>
+				<File
 					RelativePath="weapon_cubemap.cpp">
 				</File>
+				<Filter
+					Name="unused"
+					Filter="">
+					<File
+						RelativePath="hl2_dll\grenade_beam.cpp">
+					</File>
+					<File
+						RelativePath="hl2_dll\grenade_beam.h">
+					</File>
+					<File
+						RelativePath="hl2_dll\grenade_homer.cpp">
+					</File>
+					<File
+						RelativePath="hl2_dll\grenade_homer.h">
+					</File>
+					<File
+						RelativePath="hl2_dll\grenade_hopwire.h">
+					</File>
+					<File
+						RelativePath="hl2_dll\grenade_pathfollower.cpp">
+					</File>
+					<File
+						RelativePath="hl2_dll\grenade_pathfollower.h">
+					</File>
+					<File
+						RelativePath="hl2_dll\npc_missiledefense.cpp">
+					</File>
+					<File
+						RelativePath="hl2_dll\vehicle_apc.cpp">
+					</File>
+					<File
+						RelativePath="hl2_dll\weapon_cguard.cpp">
+					</File>
+					<File
+						RelativePath="hl2_dll\weapon_flaregun.cpp">
+					</File>
+					<File
+						RelativePath="hl2_dll\weapon_flaregun.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="TF2 DLL"
@@ -2978,10 +3399,124 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 					Name="Weapons"
 					Filter="">
 					<File
+						RelativePath=".\hl2mp_dll\grenade_satchel.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\hl2mp_dll\grenade_satchel.h">
+					</File>
+					<File
+						RelativePath=".\hl2mp_dll\grenade_tripmine.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\hl2mp_dll\grenade_tripmine.h">
+					</File>
+					<File
 						RelativePath=".\hl2mp_dll\te_hl2mp_shotgun_shot.cpp">
 					</File>
 					<File
 						RelativePath=".\hl2mp_dll\te_hl2mp_shotgun_shot.h">
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_357.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_ar2.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_ar2.h">
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_crossbow.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_crowbar.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_frag.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase.cpp">
@@ -2990,7 +3525,136 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase.h">
 					</File>
 					<File
+						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase_machinegun.cpp">
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase_machinegun.h">
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasebasebludgeon.cpp">
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasebasebludgeon.h">
+					</File>
+					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.cpp">
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.h">
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_physcannon.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_physcannon.h">
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_pistol.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_rpg.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_rpg.h">
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_shotgun.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)2.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)2.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_slam.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_slam.h">
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_smg1.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\game_shared\hl2mp\weapon_stunstick.cpp">
+						<FileConfiguration
+							Name="Debug HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release HL2MP|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
 					</File>
 				</Filter>
 			</Filter>
@@ -3027,12 +3691,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				<File
 					RelativePath=".\bg2\vcomm.cpp">
 					<FileConfiguration
-						Name="Debug HL2MP|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release HL2MP|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3057,20 +3715,11 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				<File
 					RelativePath=".\bg2\weapon_bg2weapons.cpp">
 					<FileConfiguration
-						Name="Debug HL2MP|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release HL2MP|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
 							UsePrecompiledHeader="0"/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.h">
 				</File>
 				<Filter
 					Name="bot stuff"
