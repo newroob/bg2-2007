@@ -1682,10 +1682,10 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 			comm >= 0 && comm < NUM_VOICECOMMS && //comm != VCOMM1_NUM && comm != VCOMM2_START+VCOMM2_NUM &&
 
 			//make sure global voicecomms are only played ever so often - no FREEDOM! spam
-			(teamonly || m_flNextGlobalVoicecomm <= gpGlobals->curtime) &&
+			(teamonly || m_flNextGlobalVoicecomm <= gpGlobals->curtime)  )//&&
 
 			//only officers may use officer-only voicecomms (commmenu2)
-			(comm < VCOMM2_START || m_iClass == CLASS_OFFICER) )
+			//(comm < VCOMM2_START || m_iClass == CLASS_OFFICER) )
 		{
 			char snd[512];
 			char *pClassString, *pTeamString;

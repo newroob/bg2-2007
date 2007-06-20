@@ -49,7 +49,7 @@ using namespace vgui;
 
 // EnforceOfficerForCommenu2
 //  checks if the local player is an officer, and prints an error message if so is not the case
-bool EnforceOfficerForCommenu2( void )
+/*bool EnforceOfficerForCommenu2( void )
 {
 	C_HL2MP_Player *pPlayer = dynamic_cast<C_HL2MP_Player*> (C_HL2MP_Player::GetLocalPlayer());
 
@@ -62,7 +62,7 @@ bool EnforceOfficerForCommenu2( void )
 		internalCenterPrint->Print( vgui::localize()->Find( "#BG2_VoiceComm2_Officer_Only" ) );
 		return false;
 	}
-}
+}*/
 
 CCommMenu2::CCommMenu2( IViewPort *pViewPort ) : Frame( NULL, PANEL_COMM2 )
 {

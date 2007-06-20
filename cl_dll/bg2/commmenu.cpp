@@ -156,9 +156,9 @@ void CCommMenu::OnKeyCodePressed(KeyCode code)
 	}
 	else if( iLastTrappedKey == commmenu2 )
 	{
-		bool EnforceOfficerForCommenu2( void );
+		/*bool EnforceOfficerForCommenu2( void );
 
-		if( EnforceOfficerForCommenu2() )
+		if( EnforceOfficerForCommenu2() )*/
 		{
 			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
 			m_pViewPort->ShowPanel( PANEL_COMM, false );
