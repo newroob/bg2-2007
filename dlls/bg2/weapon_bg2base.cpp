@@ -129,6 +129,9 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 
 	m_iLastAttack = ATTACK_PRIMARY;
 
+	//store forward eye vector
+	AngleVectors( pOwner->EyeAngles(), &m_vLastForward, NULL, NULL );
+
 	int drain = 0;
 	if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_STAB || GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_SLASH )
 	{
@@ -173,6 +176,9 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 		return;
 
 	m_iLastAttack = ATTACK_SECONDARY;
+
+	//store forward eye vector
+	AngleVectors( pOwner->EyeAngles(), &m_vLastForward, NULL, NULL );
 
 	int drain = 0;
 	if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_STAB || GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_SLASH )
@@ -527,10 +533,27 @@ void CBaseBG2Weapon::WeaponIdle( void )
 
 void CBaseBG2Weapon::ItemPostFrame( void )
 {
+	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+
+	if( pOwner == NULL )
+		return;
+
 	if( m_flStopAttemptingSwing > gpGlobals->curtime )
 	{
 		//we're attempting another swing. do. but don't play any animation or swing sound. just hit sound
-		Swing( m_iLastAttack, false );
+		//check to see that we're not flailing around. only allow a few angles of movement
+		Vector vForward;
+		AngleVectors( pOwner->EyeAngles(), &vForward, NULL, NULL );
+
+		if( m_vLastForward.Dot( vForward ) < RETRACE_COS_TOLERANCE )
+		{
+			//flailing too much. stop
+			m_flStopAttemptingSwing = 0;
+		}
+		else
+		{
+			Swing( m_iLastAttack, false );
+		}
 	}
 
 	BaseClass::ItemPostFrame();

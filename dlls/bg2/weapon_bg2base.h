@@ -227,6 +227,9 @@ public:
 			m_flStopAttemptingSwing;		//this is for melee attacks that go on for several frames
 											// in other words, the game will attempt to do the tracelines for say 100 ms
 	int		m_iLastAttack;					//for reattempting swings
+	Vector	m_vLastForward;					//last forward eye vector
+
+#define RETRACE_COS_TOLERANCE	0.9961946980917		//5 degrees
 
 	/*bool	IsMeleeWeapon( void )
 	{

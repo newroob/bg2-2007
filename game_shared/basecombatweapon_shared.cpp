@@ -1563,6 +1563,11 @@ bool CBaseCombatWeapon::DefaultReload( int iClipSize1, int iClipSize2, int iActi
 	if ( pOwner->GetAmmoCount(m_iPrimaryAmmoType) <= 0 )
 		return false;
 
+	//BG2 - Tjoppen - don't reload under water
+	if( pOwner->GetWaterLevel() > 2 )
+		return false;
+	//
+
 	bool bReload = false;
 
 	// If you don't have clips, then don't try to reload them.
