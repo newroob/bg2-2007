@@ -188,8 +188,9 @@ void ClientGamePrecache( void )
 	CBaseEntity::PrecacheModel( "models/game/musket_ball.mdl");
 	//
 
-	CBaseEntity::PrecacheScriptSound( "HUDQuickInfo.LowAmmo" );
-	CBaseEntity::PrecacheScriptSound( "HUDQuickInfo.LowHealth" );
+	//BG2 - Tjoppen - no "doot doot"-sound
+	/*CBaseEntity::PrecacheScriptSound( "HUDQuickInfo.LowAmmo" );
+	CBaseEntity::PrecacheScriptSound( "HUDQuickInfo.LowHealth" );*/
 
 	CBaseEntity::PrecacheScriptSound( "FX_AntlionImpact.ShellImpact" );
 	CBaseEntity::PrecacheScriptSound( "Missile.ShotDown" );

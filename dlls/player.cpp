@@ -3693,6 +3693,9 @@ void CBasePlayer::SetSuitUpdate(char *name, int fgroup, int iNoRepeatTime)
 	int isentence;
 	int iempty = -1;
 	
+	//BG2 - Tjoppen - no suit updates
+	return;
+	//
 	
 	// Ignore suit updates if no suit
 	if ( !IsSuitEquipped() )

@@ -18,6 +18,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#if 0	//BG2 - Tjoppen - no "doot doot"-sound
+
 #define	HEALTH_WARNING_THRESHOLD	25
 
 static ConVar	hud_quickinfo( "hud_quickinfo", "0", FCVAR_ARCHIVE );
@@ -402,3 +404,4 @@ bool CHUDQuickInfo::EventTimeElapsed( void )
 	return false;
 }
 
+#endif	//BG2 - Tjoppen - no "doot doot"-sound
