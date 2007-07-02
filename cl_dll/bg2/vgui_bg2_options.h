@@ -12,7 +12,10 @@ extern ConVar	cl_crosshair,
 
 				cl_simple_smoke,
 
-				cl_flagstatusdetail;
+				cl_flagstatusdetail,
+
+				cl_hitverif,
+				cl_winmusic;
 
 
 class CBG2OptionsPanel : public vgui::Frame
@@ -64,6 +67,10 @@ class CBG2OptionsPanel : public vgui::Frame
 			cl_crosshair.SetValue( (cl_crosshair.GetInt() & ~4) | (data->GetInt("state") ? 4 : 0) );
 		else if( pSender == m_pFlag3CrosshairCheckButton )
 			cl_crosshair.SetValue( (cl_crosshair.GetInt() & ~8) | (data->GetInt("state") ? 8 : 0) );
+		else if( pSender == m_pHitverifCheckButton )
+			cl_hitverif.SetValue( data->GetInt("state") );
+		else if( pSender == m_pWinmusicCheckButton )
+			cl_winmusic.SetValue( data->GetInt("state") );
 	}
 
 	CBG2OptionsPanel( vgui::VPANEL parent ) : BaseClass( NULL, "BG2OptionsPanel" )
@@ -119,6 +126,14 @@ class CBG2OptionsPanel : public vgui::Frame
 		m_pFlag3CrosshairCheckButton->SetSelected( (cl_crosshair.GetInt() & 8) ? true : false );
 		m_pFlag3CrosshairCheckButton->AddActionSignalTarget( this );
 
+		m_pHitverifCheckButton = new vgui::CheckButton( this, "HitverifCheckButton", "" );
+		m_pHitverifCheckButton->SetSelected( cl_hitverif.GetBool() );
+		m_pHitverifCheckButton->AddActionSignalTarget( this );
+
+		m_pWinmusicCheckButton = new vgui::CheckButton( this, "WinmusicCheckButton", "" );
+		m_pWinmusicCheckButton->SetSelected( cl_winmusic.GetBool() );
+		m_pWinmusicCheckButton->AddActionSignalTarget( this );
+
 		LoadControlSettings( "resource/ui/BG2OptionsPanel.res" );
 	}
 
@@ -137,7 +152,10 @@ class CBG2OptionsPanel : public vgui::Frame
 						*m_pFlag0CrosshairCheckButton,
 						*m_pFlag1CrosshairCheckButton,
 						*m_pFlag2CrosshairCheckButton,
-						*m_pFlag3CrosshairCheckButton;
+						*m_pFlag3CrosshairCheckButton,
+
+						*m_pHitverifCheckButton,
+						*m_pWinmusicCheckButton;
 
 protected:
 	//virtual void OnCommand(const char *pCommand);

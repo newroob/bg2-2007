@@ -1673,7 +1673,7 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 	else if( FStrEq( cmd, "voicecomm" ) && engine->Cmd_Argc() > 1 )
 	{
 		int comm = atoi( engine->Cmd_Argv( 1 ) );
-		bool teamonly = comm != 6;	//battlecries are not team only (global)
+		bool teamonly = true; //comm != 6;	//battlecries are not team only (global)
 
 		if( //only alive assigned player can do voice comms
 			GetTeamNumber() > TEAM_SPECTATOR && IsAlive() && m_flNextVoicecomm <= gpGlobals->curtime &&
