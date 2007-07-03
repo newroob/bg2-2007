@@ -82,7 +82,7 @@ ConVar sv_steadyhand( "sv_steadyhand", "0", FCVAR_CHEAT | FCVAR_NOTIFY | FCVAR_R
 ConVar mp_disable_melee( "mp_disable_melee", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "When non-zero, melee weapons are disabled" );
 ConVar mp_disable_firearms( "mp_disable_firearms", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "When non-zero, firearms are disabled" );
 
-#define SWING_ATTEMPT_TIME 0.2
+#define SWING_ATTEMPT_TIME 0.1
 
 //-----------------------------------------------------------------------------
 // CBaseBG2Weapon
@@ -117,6 +117,15 @@ CBaseBG2Weapon::CBaseBG2Weapon( void )
 
 	//m_nViewModelIndex	= random->RandomInt( 0, 1 );	//test..
 }
+
+bool CBaseBG2Weapon::Deploy( void )
+{
+	//stop reload
+	StopWeaponSound( RELOAD );
+
+	return BaseClass::Deploy();
+}
+
 
 //PrimaryAttack
 void CBaseBG2Weapon::PrimaryAttack( void )

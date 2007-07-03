@@ -248,6 +248,7 @@ public:
 
 	void		Drop( const Vector &vecVelocity );
 
+	virtual bool		Deploy( void );
 	virtual void		WeaponIdle( void );
 	virtual Activity	GetDrawActivity( void );
 
