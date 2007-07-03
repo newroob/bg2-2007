@@ -238,9 +238,9 @@ void CHL2MP_Player::Precache( void )
 	PrecacheFootStepSounds();
 
 	//BG2 - Tjoppen - precache sounds
-	PrecacheScriptSound( "NPC_MetroPolice.Die" );
+	/*PrecacheScriptSound( "NPC_MetroPolice.Die" );
 	PrecacheScriptSound( "NPC_CombineS.Die" );
-	PrecacheScriptSound( "NPC_Citizen.die" );
+	PrecacheScriptSound( "NPC_Citizen.die" );*/
 	PrecacheScriptSound( "BG2Player.die" );
 	//PrecacheScriptSound( "BG2Player.pain" );
 
@@ -2136,10 +2136,11 @@ void CHL2MP_Player::DeathSound( void )
 
 	Q_snprintf( szStepSound, sizeof( szStepSound ), "%s.Die", GetPlayerModelSoundPrefix() );
 
-	const char *pModelName = STRING( GetModelName() );
+	//BG2 - Tjoppen - don't care about gender
+	//const char *pModelName = STRING( GetModelName() );
 
 	CSoundParameters params;
-	if ( GetParametersForSound( szStepSound, params, pModelName ) == false )
+	if ( GetParametersForSound( szStepSound, params, NULL/*pModelName*/ ) == false )
 		return;
 
 	Vector vecOrigin = GetAbsOrigin();
