@@ -997,6 +997,7 @@ BEGIN_NETWORK_TABLE( CFlag, DT_Flag )
 	SendPropInt( SENDINFO( m_iHUDSlot ), 5 ),	//15 slots.. 0 = sequential tile, -1 = hidden(don't draw)
 	SendPropBool( SENDINFO( m_bActive ) ),
 	SendPropBool( SENDINFO( m_bNotUncappable ) ),
+	SendPropBool( SENDINFO( m_bUncapOnDeath ) ),
 	
 	//each bit corresponds to player #id overloading current flag or not
 	//BG2 - Tjoppen - TODO: is there a way to set a specific bit depending on who the recipient is?

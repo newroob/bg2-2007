@@ -66,6 +66,7 @@ class CFlag : public CBaseAnimating
 										//				  until the new flag code is done.
 
 	CNetworkVar( bool, m_bNotUncappable );	//is flag non-uncappable?
+	CNetworkVar( bool, m_bUncapOnDeath );	//does this flag uncap if all overloaders die?
 
 #ifndef CLIENT_DLL
 	//BG2 - SaintGreg - Output functions similar to BG's
@@ -95,8 +96,6 @@ class CFlag : public CBaseAnimating
 			m_iTeamBonus,
 			m_iTeamBonusInterval,
 			m_iPlayerBonus;
-
-	bool	m_bUncapOnDeath;
 
 	float	m_flNextTeamBonus;
 

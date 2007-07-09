@@ -519,8 +519,11 @@ void CBullet::BubbleThink( void )
 					//its out of scope...
 					EmitSound( filter, entindex(), name, &soundOrigin );
 					//EmitSound( filter, entindex(), "BaseExplosionEffect.Sound", &soundOrigin );*/
-					
-					EmitSound( "Bullets.DefaultNearmiss" );
+
+					//make sure only this player hears it
+					CSingleUserRecipientFilter filter( pPlayer );
+					EmitSound( filter, entindex(), "Bullets.DefaultNearmiss" );
+
 					m_bHasPlayedNearmiss = true;
 
 					//Msg( "nearmiss!\n" );

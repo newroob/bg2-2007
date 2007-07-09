@@ -56,6 +56,7 @@ IMPLEMENT_CLIENTCLASS_DT( C_Flag, DT_Flag, CFlag )
 	RecvPropInt( RECVINFO( m_iHUDSlot ) ),
 	RecvPropBool( RECVINFO( m_bActive ) ),
 	RecvPropBool( RECVINFO( m_bNotUncappable ) ),
+	RecvPropBool( RECVINFO( m_bUncapOnDeath ) ),
 
 	RecvPropArray2( 
 		NULL, //we don't need array legth..

@@ -245,10 +245,41 @@ void CHudFlags::Paint()
 
 			float iTimeToCap = g_Flags[i]->m_flNextCapture - gpGlobals->curtime;
 
+			const char *pOLString = NULL;	//describes overload status - "Overloaded", "Not overloaded", empty string of not applicable
+
+			//empty string if..
+			if( g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED ||				//flag not held by any team
+					g_Flags[i]->m_bNotUncappable ||								//flag can't be uncapped
+					!g_Flags[i]->m_bUncapOnDeath ||								//flag doesn't uncap when overloaders die
+					g_Flags[i]->GetTeamNumber() != pPlayer->GetTeamNumber() )	//flag held by other team
+			{
+				pOLString = "";
+			}
+			else if( g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] )
+			{
+				//player has overloading this flag
+				if( cl_flagstatusdetail.GetInt() <= 1 )
+					pOLString = "- OL:ed";
+				else
+					pOLString = "- Overloaded";
+				
+			}
+			else
+			{
+				//player has not overloaded this flag yet
+				if( cl_flagstatusdetail.GetInt() <= 1 )
+					pOLString = "- Not OL:ed";
+				else
+					pOLString = "- Not overloaded";
+			}
+
+			//team specific flag?
 			switch( g_Flags[i]->m_iForTeam )
 			{
 				case 0:
+					//flag can be taken by any team
 					Q_snprintf( text, sizeof(text), "%s", g_Flags[i]->m_sFlagName);
+
 					switch (cl_flagstatusdetail.GetInt())
 					{
 						case 0: // No Details
@@ -263,13 +294,17 @@ void CHudFlags::Paint()
 							if( iTimeToCap > 0 )
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i - %i", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i - %i", g_Flags[i]->m_iNearbyPlayers, 
+									g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+
 								strcat(	text, text_add);
 							}
 							else
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i %s", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED || g_Flags[i]->m_bNotUncappable || g_Flags[i]->GetTeamNumber() != pPlayer->GetTeamNumber()) ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- OL:ed" : "- not OL:ed") );
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i %s", g_Flags[i]->m_iNearbyPlayers, 
+									g_Flags[i]->m_iCapturePlayers, pOLString );
+
 								strcat(	text, text_add);
 							}
 							break;
@@ -277,40 +312,57 @@ void CHudFlags::Paint()
 							if( iTimeToCap > 0 )
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players - Time %i", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players - Time %i", 
+									g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+
 								strcat(	text, text_add);
 							}
 							else
 							{
 								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players %s", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED || g_Flags[i]->m_bNotUncappable || g_Flags[i]->GetTeamNumber() != pPlayer->GetTeamNumber()) ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- Overloaded" : "- Not overloaded") );
+								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players %s", 
+									g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, pOLString );
+
 								strcat(	text, text_add);
 							}
 							break;
 					}
 					break;
+
 				case 1:
+					//flag can only be taken by the americans
 					if( iTimeToCap > 0 )
 					{
-						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players - Time %i", 
+							g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, 
+							(int)iTimeToCap );
 					}
 					else
 					{
-						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players %s", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED || g_Flags[i]->m_bNotUncappable || g_Flags[i]->GetTeamNumber() != pPlayer->GetTeamNumber()) ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- Overloaded" : "- Not overloaded") );
+						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players %s", 
+							g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers,
+							pOLString );
 					}
 					break;
+
 				case 2:
+					//flag can only be taken by the british
 					if( iTimeToCap > 0 )
 					{
-						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players - Time %i", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players - Time %i", 
+							g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, 
+							(int)iTimeToCap );
 					}
 					else
 					{
-						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players %s", g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED || g_Flags[i]->m_bNotUncappable || g_Flags[i]->GetTeamNumber() != pPlayer->GetTeamNumber()) ? "" : (g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] ? "- Overloaded" : "- Not overloaded") );
+						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players %s", 
+							g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, 
+							pOLString );
 					}
 					break;
 			}
 
+			//figure out which colors to use
 			float r = 0;
 			float g = 0;
 			float b = 0;

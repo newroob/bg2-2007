@@ -59,7 +59,9 @@ public:
 
 	int		m_iHUDSlot;		//in which slot is the icon for this flag?
 	bool	m_bActive;
-	bool	m_bNotUncappable;
+	
+	bool	m_bNotUncappable,
+			m_bUncapOnDeath;
 };
 
 extern CUtlVector< C_Flag * > g_Flags;
