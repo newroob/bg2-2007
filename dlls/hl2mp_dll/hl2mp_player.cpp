@@ -1636,6 +1636,90 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 	return true;
 }
 
+/* HandleVoicecomm
+ *	plays supplied voicecomm by index
+ */
+void CHL2MP_Player::HandleVoicecomm( int comm )
+{
+	bool teamonly = comm != NUM_BATTLECRY;	//battlecries are not team only (global)
+
+	if( //only alive assigned player can do voice comms
+		GetTeamNumber() > TEAM_SPECTATOR && IsAlive() && m_flNextVoicecomm <= gpGlobals->curtime &&
+
+		//also make sure index not out of bounds
+		comm >= 0 && comm < NUM_VOICECOMMS && //comm != VCOMM1_NUM && comm != VCOMM2_START+VCOMM2_NUM &&
+
+		//make sure global voicecomms are only played ever so often - no FREEDOM! spam
+		(teamonly || m_flNextGlobalVoicecomm <= gpGlobals->curtime)  )//&&
+
+		//only officers may use officer-only voicecomms (commmenu2)
+		//(comm < VCOMM2_START || m_iClass == CLASS_OFFICER) )
+	{
+		char snd[512];
+		char *pClassString, *pTeamString;
+
+		if( m_iClass == CLASS_INFANTRY )
+			pClassString = "Inf";
+		else if( m_iClass == CLASS_OFFICER )
+			pClassString = "Off";
+		else if( m_iClass == CLASS_SNIPER )
+			pClassString = "Rif";
+		else
+			return;	//catch, just in case
+
+		if( GetTeamNumber() == TEAM_AMERICANS )
+			pTeamString = "American";
+		else if( GetTeamNumber() == TEAM_BRITISH )
+			pTeamString = "British";
+		else
+			return;	//catch, just in case
+
+		Q_snprintf( snd, sizeof snd, "Voicecomms.%s.%s_%i", pTeamString, pClassString, comm + 1 );
+
+		//play voicecomm, with attenuation
+		EmitSound( snd );
+
+		//done. possibly also tell clients to draw text and stuff if sv_voicecomm_text is true
+		m_flNextVoicecomm		= gpGlobals->curtime + 2.0f;
+
+		if( !teamonly )
+			m_flNextGlobalVoicecomm	= gpGlobals->curtime + 10.0f;
+
+		if( sv_voicecomm_text.GetBool() )
+		{
+			//figure out which players should get this message
+			CRecipientFilter recpfilter;
+			CBasePlayer *client = NULL;
+
+			for ( int i = 1; i <= gpGlobals->maxClients; i++ )
+			{
+				client = UTIL_PlayerByIndex( i );
+				if ( !client || !client->edict() )
+					continue;
+
+				if ( !(client->IsNetClient()) )	// Not a client ? (should never be true)
+					continue;
+
+				if ( teamonly && !g_pGameRules->PlayerCanHearChat( client, this ) )//!= GR_TEAMMATE )
+					continue;
+
+				if ( !client->CanHearChatFrom( this ) )
+					continue;
+
+				recpfilter.AddRecipient( client );
+			}
+
+			//make reliable and send
+			recpfilter.MakeReliable();
+
+			UserMessageBegin( recpfilter, "VoiceComm" );
+				WRITE_BYTE( entindex() );	//voicecomm originator
+				WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );	//pack comm number and team
+			MessageEnd();
+		}
+	}
+}
+
 bool CHL2MP_Player::ClientCommand( const char *cmd )
 {
 	//BG2 - Tjoppen - class selection
@@ -1673,83 +1757,13 @@ bool CHL2MP_Player::ClientCommand( const char *cmd )
 	else if( FStrEq( cmd, "voicecomm" ) && engine->Cmd_Argc() > 1 )
 	{
 		int comm = atoi( engine->Cmd_Argv( 1 ) );
-		bool teamonly = true; //comm != 6;	//battlecries are not team only (global)
+		HandleVoicecomm( comm );
 
-		if( //only alive assigned player can do voice comms
-			GetTeamNumber() > TEAM_SPECTATOR && IsAlive() && m_flNextVoicecomm <= gpGlobals->curtime &&
-
-			//also make sure index not out of bounds
-			comm >= 0 && comm < NUM_VOICECOMMS && //comm != VCOMM1_NUM && comm != VCOMM2_START+VCOMM2_NUM &&
-
-			//make sure global voicecomms are only played ever so often - no FREEDOM! spam
-			(teamonly || m_flNextGlobalVoicecomm <= gpGlobals->curtime)  )//&&
-
-			//only officers may use officer-only voicecomms (commmenu2)
-			//(comm < VCOMM2_START || m_iClass == CLASS_OFFICER) )
-		{
-			char snd[512];
-			char *pClassString, *pTeamString;
-
-			if( m_iClass == CLASS_INFANTRY )
-				pClassString = "Inf";
-			else if( m_iClass == CLASS_OFFICER )
-				pClassString = "Off";
-			else if( m_iClass == CLASS_SNIPER )
-				pClassString = "Rif";
-			else
-				return true;	//catch, just in case
-
-			if( GetTeamNumber() == TEAM_AMERICANS )
-				pTeamString = "American";
-			else if( GetTeamNumber() == TEAM_BRITISH )
-				pTeamString = "British";
-			else
-				return true;	//catch, just in case
-
-			Q_snprintf( snd, sizeof snd, "Voicecomms.%s.%s_%i", pTeamString, pClassString, comm + 1 );
-
-			//play voicecomm, with attenuation
-			EmitSound( snd );
-
-			//done. possibly also tell clients to draw text and stuff if sv_voicecomm_text is true
-			m_flNextVoicecomm		= gpGlobals->curtime + 2.0f;
-
-			if( !teamonly )
-				m_flNextGlobalVoicecomm	= gpGlobals->curtime + 10.0f;
-
-			if( sv_voicecomm_text.GetBool() )
-			{
-				//figure out which players should get this message
-				CRecipientFilter recpfilter;
-				CBasePlayer *client = NULL;
-
-				for ( int i = 1; i <= gpGlobals->maxClients; i++ )
-				{
-					client = UTIL_PlayerByIndex( i );
-					if ( !client || !client->edict() )
-						continue;
-
-					if ( !(client->IsNetClient()) )	// Not a client ? (should never be true)
-						continue;
-
-					if ( teamonly && !g_pGameRules->PlayerCanHearChat( client, this ) )//!= GR_TEAMMATE )
-						continue;
-
-					if ( !client->CanHearChatFrom( this ) )
-						continue;
-
-					recpfilter.AddRecipient( client );
-				}
-
-				//make reliable and send
-				recpfilter.MakeReliable();
-
-				UserMessageBegin( recpfilter, "VoiceComm" );
-					WRITE_BYTE( entindex() );	//voicecomm originator
-					WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );	//pack comm number and team
-				MessageEnd();
-			}
-		}
+		return true;
+	}
+	else if( FStrEq( cmd, "battlecry" ) )
+	{
+		HandleVoicecomm( NUM_BATTLECRY );
 
 		return true;
 	}

@@ -176,6 +176,7 @@ public:
 	int			GetLimitTeamClass( int iTeam, int iClass );
 	bool		AttemptJoin( int iTeam, int iClass, const char *pClassName );
 	const char* GetHitgroupPainSound( int hitgroup );
+	void		HandleVoicecomm( int comm );
 
 private:
 	//int		m_iClass;			//BG2 - Tjoppen - class system

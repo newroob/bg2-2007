@@ -66,13 +66,18 @@ ConVar sv_simulatedbullets( "sv_simulatedbullets", "1", FCVAR_NOTIFY | FCVAR_REP
 		"EXPERIMENTAL!\nWhen non-zero, makes all firearms shoot \"real\" bullets.");
 
 ConVar sv_simulatedbullets_drag( "sv_simulatedbullets_drag", "0.00003", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
-	   "Tweak this value to affect how fast the speed and thus damage of bullets drop off with distance.\n\tLower values => more damage over distance" );
+		"Tweak this value to affect how fast the speed and thus damage of bullets drop off with distance.\n\tLower values => more damage over distance" );
 
 ConVar sv_simulatedbullets_overshoot_range( "sv_simulatedbullets_overshoot_range", "50", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
-	   "At what range in yards overshoot reaches maximum" );
+		"At what range in yards overshoot reaches maximum" );
 
 ConVar sv_simulatedbullets_overshoot_force( "sv_simulatedbullets_overshoot_force", "3", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
-	   "How much stronger than gravity is the overshoot force at t=0?" );
+		"How much stronger than gravity is the overshoot force at t=0?" );
+
+#define SWING_ATTEMPT_TIME 0.1
+
+ConVar sv_retracing_melee( "sv_retracing_melee", "1", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
+		"Should melee weapons continue tracing a short moment after attacks? At the moment 0.1 seconds. This masks the effects of lag a bit." );
 
 ConVar sv_infiniteammo( "sv_infiniteammo", "0", FCVAR_CHEAT | FCVAR_NOTIFY | FCVAR_REPLICATED, "Bullet weapons don\'t use up ammo\n" );
 ConVar sv_turboshots( "sv_turboshots", "0", FCVAR_CHEAT | FCVAR_NOTIFY | FCVAR_REPLICATED, "Turns all guns into machineguns\n" );
@@ -81,8 +86,6 @@ ConVar sv_steadyhand( "sv_steadyhand", "0", FCVAR_CHEAT | FCVAR_NOTIFY | FCVAR_R
 
 ConVar mp_disable_melee( "mp_disable_melee", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "When non-zero, melee weapons are disabled" );
 ConVar mp_disable_firearms( "mp_disable_firearms", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "When non-zero, firearms are disabled" );
-
-#define SWING_ATTEMPT_TIME 0.1
 
 //-----------------------------------------------------------------------------
 // CBaseBG2Weapon
@@ -151,7 +154,8 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 			return;
 
 		//do tracelines for so many seconds
-		m_flStopAttemptingSwing = gpGlobals->curtime + SWING_ATTEMPT_TIME;
+		if( sv_retracing_melee.GetBool() )
+			m_flStopAttemptingSwing = gpGlobals->curtime + SWING_ATTEMPT_TIME;
 
 		drain = Swing( ATTACK_PRIMARY, true );
 	}
@@ -199,7 +203,8 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 			return;
 
 		//do tracelines for so many seconds
-		m_flStopAttemptingSwing = gpGlobals->curtime + SWING_ATTEMPT_TIME;
+		if( sv_retracing_melee.GetBool() )
+			m_flStopAttemptingSwing = gpGlobals->curtime + SWING_ATTEMPT_TIME;
 
 		drain = Swing( ATTACK_SECONDARY, true );
 	}
