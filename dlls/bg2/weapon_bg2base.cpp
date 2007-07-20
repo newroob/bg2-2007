@@ -65,13 +65,13 @@
 ConVar sv_simulatedbullets( "sv_simulatedbullets", "1", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
 		"EXPERIMENTAL!\nWhen non-zero, makes all firearms shoot \"real\" bullets.");
 
-ConVar sv_simulatedbullets_drag( "sv_simulatedbullets_drag", "0.00003", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
+ConVar sv_simulatedbullets_drag( "sv_simulatedbullets_drag", "0.00003", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO | FCVAR_CHEAT,
 		"Tweak this value to affect how fast the speed and thus damage of bullets drop off with distance.\n\tLower values => more damage over distance" );
 
-ConVar sv_simulatedbullets_overshoot_range( "sv_simulatedbullets_overshoot_range", "50", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
+ConVar sv_simulatedbullets_overshoot_range( "sv_simulatedbullets_overshoot_range", "50", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO | FCVAR_CHEAT,
 		"At what range in yards overshoot reaches maximum" );
 
-ConVar sv_simulatedbullets_overshoot_force( "sv_simulatedbullets_overshoot_force", "3", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
+ConVar sv_simulatedbullets_overshoot_force( "sv_simulatedbullets_overshoot_force", "3", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO | FCVAR_CHEAT,
 		"How much stronger than gravity is the overshoot force at t=0?" );
 
 #define SWING_ATTEMPT_TIME 0.1
