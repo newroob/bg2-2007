@@ -1,4 +1,5 @@
 #include "KeyValues.h"
+#include "FileSystem.h"
 #include <vgui_controls/Frame.h>
 #include <vgui_controls/Slider.h>
 #include <vgui_controls/CheckButton.h>
@@ -29,6 +30,51 @@ class CBG2OptionsPanel : public vgui::Frame
 	//				the MESSAGE_FUNC_PARAMS macro
 	_MessageFuncCommon( SliderMoved, "SliderMoved", 1, vgui::DATATYPE_KEYVALUES, NULL, 0, 0 );
 	_MessageFuncCommon( CheckButtonChecked, "CheckButtonChecked", 1, vgui::DATATYPE_KEYVALUES, NULL, 0, 0 );
+	_MessageFuncCommon( Close, "close", 1, vgui::DATATYPE_KEYVALUES, NULL, 0, 0 );
+	_MessageFuncCommon( Command, "Command", 1, vgui::DATATYPE_KEYVALUES, NULL, 0, 0 );
+
+	void Close( KeyValues *data )
+	{
+		Msg( "CBG2OptionsPanel::Close()\n" );
+	}
+
+	void Write_Cvar( ConVar *cvar, FileHandle_t fh )
+	{
+		const char	*name = cvar->GetName(),
+					*value = cvar->GetString();
+
+		filesystem->Write( name, strlen(name), fh );
+		filesystem->Write( "\t", 1, fh );
+		filesystem->Write( value, strlen(value), fh );
+		filesystem->Write( "\r\n", 2, fh );
+	}
+
+	void Command( KeyValues *data )
+	{
+		const char *command = data->GetString( "command" );
+
+		FileHandle_t fh = filesystem->Open( "cfg/bg2_options.cfg", "w" );
+		if(fh)
+		{
+			const char *blah = "//Auto-generated config for BG2 client-side cvars. Don\'t touch (it\'ll get rewritten).\r\n";
+
+			filesystem->Write( blah, strlen(blah), fh );
+
+			Write_Cvar( &cl_crosshair, fh );
+			Write_Cvar( &cl_crosshair_r, fh );
+			Write_Cvar( &cl_crosshair_g, fh );
+			Write_Cvar( &cl_crosshair_b, fh );
+
+			Write_Cvar( &cl_simple_smoke, fh );
+			Write_Cvar( &cl_flagstatusdetail, fh );
+			Write_Cvar( &cl_hitverif, fh );
+			Write_Cvar( &cl_winmusic, fh );
+
+			filesystem->Close(fh);
+		}
+
+		BaseClass::OnCommand( command );
+	}
 	
 	void SliderMoved( KeyValues *data )
 	{
