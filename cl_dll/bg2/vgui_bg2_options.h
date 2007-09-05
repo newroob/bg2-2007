@@ -30,14 +30,11 @@ class CBG2OptionsPanel : public vgui::Frame
 	//				the MESSAGE_FUNC_PARAMS macro
 	_MessageFuncCommon( SliderMoved, "SliderMoved", 1, vgui::DATATYPE_KEYVALUES, NULL, 0, 0 );
 	_MessageFuncCommon( CheckButtonChecked, "CheckButtonChecked", 1, vgui::DATATYPE_KEYVALUES, NULL, 0, 0 );
-	_MessageFuncCommon( Close, "close", 1, vgui::DATATYPE_KEYVALUES, NULL, 0, 0 );
 	_MessageFuncCommon( Command, "Command", 1, vgui::DATATYPE_KEYVALUES, NULL, 0, 0 );
 
-	void Close( KeyValues *data )
-	{
-		Msg( "CBG2OptionsPanel::Close()\n" );
-	}
-
+	/* Write_Cvar
+		writes a ConVar* to the specified FileHandle_t on the form "name\tvalue\r\n"
+	*/
 	void Write_Cvar( ConVar *cvar, FileHandle_t fh )
 	{
 		const char	*name = cvar->GetName(),
@@ -49,6 +46,11 @@ class CBG2OptionsPanel : public vgui::Frame
 		filesystem->Write( "\r\n", 2, fh );
 	}
 
+	/* Command
+		a command was sent from a button. since the only button we currently have is the "OK" button, write config
+		 and pass command to the baseclass (only "close" seems to be sent, but it doesn't hurt to write config if any
+		 other are sent)
+	*/
 	void Command( KeyValues *data )
 	{
 		const char *command = data->GetString( "command" );
@@ -64,6 +66,7 @@ class CBG2OptionsPanel : public vgui::Frame
 			Write_Cvar( &cl_crosshair_r, fh );
 			Write_Cvar( &cl_crosshair_g, fh );
 			Write_Cvar( &cl_crosshair_b, fh );
+			Write_Cvar( &cl_crosshair_a, fh );
 
 			Write_Cvar( &cl_simple_smoke, fh );
 			Write_Cvar( &cl_flagstatusdetail, fh );
@@ -75,7 +78,10 @@ class CBG2OptionsPanel : public vgui::Frame
 
 		BaseClass::OnCommand( command );
 	}
-	
+
+	/* SliderMoved
+		some slider was moved. see which it was and update related cvar
+	*/
 	void SliderMoved( KeyValues *data )
 	{
 		vgui::Slider *pSender = (vgui::Slider*)data->GetPtr( "panel" );
@@ -94,6 +100,9 @@ class CBG2OptionsPanel : public vgui::Frame
 			cl_crosshair_a.SetValue( data->GetInt("position") );
 	}
 
+	/* CheckButtonChecked
+		some checkbutton was checked. see which it was and update related cvar
+	*/
 	void CheckButtonChecked( KeyValues *data )
 	{
 		vgui::CheckButton *pSender = (vgui::CheckButton*)data->GetPtr( "panel" );
@@ -119,6 +128,40 @@ class CBG2OptionsPanel : public vgui::Frame
 			cl_winmusic.SetValue( data->GetInt("state") );
 	}
 
+	/* SetAdjustors
+		sets the various sliders and checkboxes to whatever value they should be
+		this function is needed because this panel gets inited before bg2_options.cfg is loaded
+	*/
+	void SetAdjustors( void )
+	{
+		m_pRedCrosshairSlider->SetRange( 0, 255 );
+		m_pRedCrosshairSlider->SetValue( cl_crosshair_r.GetInt() );
+
+		m_pGreenCrosshairSlider->SetRange( 0, 255 );
+		m_pGreenCrosshairSlider->SetValue( cl_crosshair_g.GetInt() );
+		
+		m_pBlueCrosshairSlider->SetRange( 0, 255 );
+		m_pBlueCrosshairSlider->SetValue( cl_crosshair_b.GetInt() );
+		
+		m_pAlphaCrosshairSlider->SetRange( 0, 255 );
+		m_pAlphaCrosshairSlider->SetValue( cl_crosshair_a.GetInt() );
+		
+		m_pSimpleSmokeCheckButton->SetSelected( cl_simple_smoke.GetBool() );
+		m_pSimpleFlagHUDCheckButton->SetSelected( cl_flagstatusdetail.GetInt() == 1 ? true : false );
+		
+		m_pFlag0CrosshairCheckButton->SetSelected( (cl_crosshair.GetInt() & 1) ? true : false );
+		m_pFlag1CrosshairCheckButton->SetSelected( (cl_crosshair.GetInt() & 2) ? true : false );
+		m_pFlag2CrosshairCheckButton->SetSelected( (cl_crosshair.GetInt() & 4) ? true : false );
+		m_pFlag3CrosshairCheckButton->SetSelected( (cl_crosshair.GetInt() & 8) ? true : false );
+
+		m_pHitverifCheckButton->SetSelected( cl_hitverif.GetBool() );
+		m_pWinmusicCheckButton->SetSelected( cl_winmusic.GetBool() );
+		
+	}
+
+	/* CBG2OptionsPanel
+		constructor..
+	*/
 	CBG2OptionsPanel( vgui::VPANEL parent ) : BaseClass( NULL, "BG2OptionsPanel" )
 	{
 		SetParent( parent );
@@ -129,60 +172,59 @@ class CBG2OptionsPanel : public vgui::Frame
 		SetVisible( false );
 
 		m_pRedCrosshairSlider = new vgui::Slider( this, "RedCrosshairSlider" );
-		m_pRedCrosshairSlider->SetRange( 0, 255 );
-		m_pRedCrosshairSlider->SetValue( cl_crosshair_r.GetInt() );
 		m_pRedCrosshairSlider->AddActionSignalTarget( this );
 
 		m_pGreenCrosshairSlider = new vgui::Slider( this, "GreenCrosshairSlider" );
-		m_pGreenCrosshairSlider->SetRange( 0, 255 );
-		m_pGreenCrosshairSlider->SetValue( cl_crosshair_g.GetInt() );
 		m_pGreenCrosshairSlider->AddActionSignalTarget( this );
 
 		m_pBlueCrosshairSlider = new vgui::Slider( this, "BlueCrosshairSlider" );
-		m_pBlueCrosshairSlider->SetRange( 0, 255 );
-		m_pBlueCrosshairSlider->SetValue( cl_crosshair_b.GetInt() );
 		m_pBlueCrosshairSlider->AddActionSignalTarget( this );
 
 		m_pAlphaCrosshairSlider = new vgui::Slider( this, "AlphaCrosshairSlider" );
-		m_pAlphaCrosshairSlider->SetRange( 0, 255 );
-		m_pAlphaCrosshairSlider->SetValue( cl_crosshair_a.GetInt() );
 		m_pAlphaCrosshairSlider->AddActionSignalTarget( this );
 
 		m_pSimpleSmokeCheckButton = new vgui::CheckButton( this, "SimpleSmokeCheckButton", "" );
-		m_pSimpleSmokeCheckButton->SetSelected( cl_simple_smoke.GetBool() );
 		m_pSimpleSmokeCheckButton->AddActionSignalTarget( this );
 
 		m_pSimpleFlagHUDCheckButton = new vgui::CheckButton( this, "SimpleFlagHUDCheckButton", "" );
-		m_pSimpleFlagHUDCheckButton->SetSelected( cl_flagstatusdetail.GetInt() == 1 ? true : false );
 		m_pSimpleFlagHUDCheckButton->AddActionSignalTarget( this );
 
 		m_pFlag0CrosshairCheckButton = new vgui::CheckButton( this, "Flag0CrosshairCheckButton", "" );
-		m_pFlag0CrosshairCheckButton->SetSelected( (cl_crosshair.GetInt() & 1) ? true : false );
 		m_pFlag0CrosshairCheckButton->AddActionSignalTarget( this );
 
 		m_pFlag1CrosshairCheckButton = new vgui::CheckButton( this, "Flag1CrosshairCheckButton", "" );
-		m_pFlag1CrosshairCheckButton->SetSelected( (cl_crosshair.GetInt() & 2) ? true : false );
 		m_pFlag1CrosshairCheckButton->AddActionSignalTarget( this );
 
 		m_pFlag2CrosshairCheckButton = new vgui::CheckButton( this, "Flag2CrosshairCheckButton", "" );
-		m_pFlag2CrosshairCheckButton->SetSelected( (cl_crosshair.GetInt() & 4) ? true : false );
 		m_pFlag2CrosshairCheckButton->AddActionSignalTarget( this );
 
 		m_pFlag3CrosshairCheckButton = new vgui::CheckButton( this, "Flag3CrosshairCheckButton", "" );
-		m_pFlag3CrosshairCheckButton->SetSelected( (cl_crosshair.GetInt() & 8) ? true : false );
 		m_pFlag3CrosshairCheckButton->AddActionSignalTarget( this );
 
 		m_pHitverifCheckButton = new vgui::CheckButton( this, "HitverifCheckButton", "" );
-		m_pHitverifCheckButton->SetSelected( cl_hitverif.GetBool() );
 		m_pHitverifCheckButton->AddActionSignalTarget( this );
 
 		m_pWinmusicCheckButton = new vgui::CheckButton( this, "WinmusicCheckButton", "" );
-		m_pWinmusicCheckButton->SetSelected( cl_winmusic.GetBool() );
 		m_pWinmusicCheckButton->AddActionSignalTarget( this );
+
+		//set sliders and checkboxes correctly
+		SetAdjustors();
 
 		LoadControlSettings( "resource/ui/BG2OptionsPanel.res" );
 	}
 
+	/* OnSetFocus
+		called whenever this menu is brough up. makes sure all sliders and checkboxes are valid
+	*/
+	void OnSetFocus( void )
+	{
+		//when we're visible, make sure sliders and checkboxes are set correctly
+		SetAdjustors();
+	}
+
+	/* ~CBG2OptionsPanel
+		destructor
+	*/
 	~CBG2OptionsPanel()
 	{
 	}
