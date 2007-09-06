@@ -26,6 +26,16 @@
 ConVar crosshair( "crosshair", "1", FCVAR_ARCHIVE );
 ConVar cl_observercrosshair( "cl_observercrosshair", "1", FCVAR_ARCHIVE );
 
+//BG2 - Tjoppen - cl_crosshair*
+ConVar cl_crosshair( "cl_crosshair", "14", FCVAR_ARCHIVE, "Bitmask describing how to draw the crosshair\n  1 = dynamic circular\n  2 = static three-lined\n  4 = dot(square) in the middle\n  8 = hud/crosshair.vtf" );
+ConVar cl_crosshair_scale( "cl_crosshair_scale", "1", FCVAR_ARCHIVE, "Scale of cl_crosshairstyle 1, 2 and 4" );
+
+ConVar cl_crosshair_r( "cl_crosshair_r", "197", FCVAR_ARCHIVE, "Crosshair redness. 0-255" );
+ConVar cl_crosshair_g( "cl_crosshair_g", "149", FCVAR_ARCHIVE, "Crosshair greenness. 0-255" );
+ConVar cl_crosshair_b( "cl_crosshair_b", "105", FCVAR_ARCHIVE, "Crosshair blueness. 0-255" );
+ConVar cl_crosshair_a( "cl_crosshair_a", "167", FCVAR_ARCHIVE, "Crosshair opacity(alpha). 0-255" );
+//
+
 using namespace vgui;
 
 int ScreenTransform( const Vector& point, Vector& screen );
@@ -55,16 +65,6 @@ void CHudCrosshair::ApplySchemeSettings( IScheme *scheme )
 	//m_pDefaultCrosshair = gHUD.GetIcon("crosshair_default");
 	SetPaintBackgroundEnabled( false );
 }
-
-//BG2 - Tjoppen - cl_crosshairstyle
-ConVar cl_crosshair( "cl_crosshair", "14", 0, "Bitmask describing how to draw the crosshair\n  1 = dynamic circular\n  2 = static three-lined\n  4 = dot(square) in the middle\n  8 = hud/crosshair.vtf" );
-ConVar cl_crosshair_scale( "cl_crosshair_scale", "1", 0, "Scale of cl_crosshairstyle 1, 2 and 4" );
-
-ConVar cl_crosshair_r( "cl_crosshair_r", "197", 0, "Crosshair redness. 0-255" );
-ConVar cl_crosshair_g( "cl_crosshair_g", "149", 0, "Crosshair greenness. 0-255" );
-ConVar cl_crosshair_b( "cl_crosshair_b", "105", 0, "Crosshair blueness. 0-255" );
-ConVar cl_crosshair_a( "cl_crosshair_a", "167", 0, "Crosshair opacity(alpha). 0-255" );
-//
 
 void CHudCrosshair::Paint( void )
 {

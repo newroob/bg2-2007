@@ -425,8 +425,8 @@ const char* CHudBG2::HitgroupName( int hitgroup )
 }
 
 //BG2 - Tjoppen - cl_hitverif & cl_winmusic
-ConVar	cl_hitverif( "cl_hitverif", "1", 0, "Display hit verification?" );
-ConVar	cl_winmusic( "cl_winmusic", "1", 0, "Play win music?" );
+ConVar	cl_hitverif( "cl_hitverif", "1", FCVAR_ARCHIVE, "Display hit verification?" );
+ConVar	cl_winmusic( "cl_winmusic", "1", FCVAR_ARCHIVE, "Play win music?" );
 //
 
 

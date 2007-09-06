@@ -28,109 +28,41 @@ class CBG2OptionsPanel : public vgui::Frame
 
 	//BG2 - Tjoppen - don't want any virtual crap.. everything in the class. thus the reason for not using
 	//				the MESSAGE_FUNC_PARAMS macro
-	_MessageFuncCommon( SliderMoved, "SliderMoved", 1, vgui::DATATYPE_KEYVALUES, NULL, 0, 0 );
-	_MessageFuncCommon( CheckButtonChecked, "CheckButtonChecked", 1, vgui::DATATYPE_KEYVALUES, NULL, 0, 0 );
 	_MessageFuncCommon( Command, "Command", 1, vgui::DATATYPE_KEYVALUES, NULL, 0, 0 );
 
-	/* Write_Cvar
-		writes a ConVar* to the specified FileHandle_t on the form "name\tvalue\r\n"
-	*/
-	void Write_Cvar( ConVar *cvar, FileHandle_t fh )
-	{
-		const char	*name = cvar->GetName(),
-					*value = cvar->GetString();
-
-		filesystem->Write( name, strlen(name), fh );
-		filesystem->Write( "\t", 1, fh );
-		filesystem->Write( value, strlen(value), fh );
-		filesystem->Write( "\r\n", 2, fh );
-	}
-
 	/* Command
-		a command was sent from a button. since the only button we currently have is the "OK" button, write config
-		 and pass command to the baseclass (only "close" seems to be sent, but it doesn't hurt to write config if any
-		 other are sent)
+		a command was sent from a button. if it's "close", set cvars
+		also send command to baseclass
 	*/
 	void Command( KeyValues *data )
 	{
 		const char *command = data->GetString( "command" );
 
-		FileHandle_t fh = filesystem->Open( "cfg/bg2_options.cfg", "w" );
-		if(fh)
+		if( stricmp( command, "close" ) == 0 )
 		{
-			const char *blah = "//Auto-generated config for BG2 client-side cvars. Don\'t touch (it\'ll get rewritten).\r\n";
+			//closing.. set cvars
+			cl_crosshair_r.SetValue( m_pRedCrosshairSlider->GetValue() );
+			cl_crosshair_g.SetValue( m_pGreenCrosshairSlider->GetValue() );
+			cl_crosshair_b.SetValue( m_pBlueCrosshairSlider->GetValue() );
+			cl_crosshair_a.SetValue( m_pAlphaCrosshairSlider->GetValue() );
 
-			filesystem->Write( blah, strlen(blah), fh );
+			cl_simple_smoke.SetValue( m_pSimpleSmokeCheckButton->IsSelected() );
+			cl_flagstatusdetail.SetValue( m_pSimpleFlagHUDCheckButton->IsSelected() );
 
-			Write_Cvar( &cl_crosshair, fh );
-			Write_Cvar( &cl_crosshair_r, fh );
-			Write_Cvar( &cl_crosshair_g, fh );
-			Write_Cvar( &cl_crosshair_b, fh );
-			Write_Cvar( &cl_crosshair_a, fh );
+			cl_crosshair.SetValue(	(m_pFlag0CrosshairCheckButton->IsSelected() ? 1 : 0) |
+									(m_pFlag1CrosshairCheckButton->IsSelected() ? 2 : 0) |
+									(m_pFlag2CrosshairCheckButton->IsSelected() ? 4 : 0) |
+									(m_pFlag3CrosshairCheckButton->IsSelected() ? 8 : 0) );
 
-			Write_Cvar( &cl_simple_smoke, fh );
-			Write_Cvar( &cl_flagstatusdetail, fh );
-			Write_Cvar( &cl_hitverif, fh );
-			Write_Cvar( &cl_winmusic, fh );
-
-			filesystem->Close(fh);
+			cl_hitverif.SetValue( m_pHitverifCheckButton->IsSelected() );
+			cl_winmusic.SetValue( m_pWinmusicCheckButton->IsSelected() );
 		}
 
 		BaseClass::OnCommand( command );
 	}
 
-	/* SliderMoved
-		some slider was moved. see which it was and update related cvar
-	*/
-	void SliderMoved( KeyValues *data )
-	{
-		vgui::Slider *pSender = (vgui::Slider*)data->GetPtr( "panel" );
-
-		if( !pSender )
-			return;
-
-		//determine which
-		if( pSender == m_pRedCrosshairSlider )
-			cl_crosshair_r.SetValue( data->GetInt("position") );
-		else if( pSender == m_pGreenCrosshairSlider )
-			cl_crosshair_g.SetValue( data->GetInt("position") );
-		else if( pSender == m_pBlueCrosshairSlider )
-			cl_crosshair_b.SetValue( data->GetInt("position") );
-		else if( pSender == m_pAlphaCrosshairSlider )
-			cl_crosshair_a.SetValue( data->GetInt("position") );
-	}
-
-	/* CheckButtonChecked
-		some checkbutton was checked. see which it was and update related cvar
-	*/
-	void CheckButtonChecked( KeyValues *data )
-	{
-		vgui::CheckButton *pSender = (vgui::CheckButton*)data->GetPtr( "panel" );
-
-		if( !pSender )
-			return;
-
-		if( pSender == m_pSimpleSmokeCheckButton )
-			cl_simple_smoke.SetValue( data->GetInt("state") );
-		if( pSender == m_pSimpleFlagHUDCheckButton )
-			cl_flagstatusdetail.SetValue( data->GetInt("state") ? 1 : 2 );
-		else if( pSender == m_pFlag0CrosshairCheckButton )
-			cl_crosshair.SetValue( (cl_crosshair.GetInt() & ~1) | (data->GetInt("state") ? 1 : 0) );
-		else if( pSender == m_pFlag1CrosshairCheckButton )
-			cl_crosshair.SetValue( (cl_crosshair.GetInt() & ~2) | (data->GetInt("state") ? 2 : 0) );
-		else if( pSender == m_pFlag2CrosshairCheckButton )
-			cl_crosshair.SetValue( (cl_crosshair.GetInt() & ~4) | (data->GetInt("state") ? 4 : 0) );
-		else if( pSender == m_pFlag3CrosshairCheckButton )
-			cl_crosshair.SetValue( (cl_crosshair.GetInt() & ~8) | (data->GetInt("state") ? 8 : 0) );
-		else if( pSender == m_pHitverifCheckButton )
-			cl_hitverif.SetValue( data->GetInt("state") );
-		else if( pSender == m_pWinmusicCheckButton )
-			cl_winmusic.SetValue( data->GetInt("state") );
-	}
-
 	/* SetAdjustors
 		sets the various sliders and checkboxes to whatever value they should be
-		this function is needed because this panel gets inited before bg2_options.cfg is loaded
 	*/
 	void SetAdjustors( void )
 	{
@@ -156,7 +88,6 @@ class CBG2OptionsPanel : public vgui::Frame
 
 		m_pHitverifCheckButton->SetSelected( cl_hitverif.GetBool() );
 		m_pWinmusicCheckButton->SetSelected( cl_winmusic.GetBool() );
-		
 	}
 
 	/* CBG2OptionsPanel

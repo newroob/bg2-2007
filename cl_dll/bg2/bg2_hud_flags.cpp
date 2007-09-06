@@ -48,8 +48,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar cl_flagstatus( "cl_flagstatus", "1", 0, "0 - Off, 1 - Text, 2 - Icons" );
-ConVar cl_flagstatusdetail( "cl_flagstatusdetail", "2", 0, "0 - No Details, 1 - Compact Details, 2 - Full Details" );
+ConVar cl_flagstatus( "cl_flagstatus", "1", FCVAR_ARCHIVE, "0 - Off, 1 - Text, 2 - Icons" );
+ConVar cl_flagstatusdetail( "cl_flagstatusdetail", "2", FCVAR_ARCHIVE, "0 - No Details, 1 - Compact Details, 2 - Full Details" );
 
 enum
 {

@@ -2871,7 +2871,7 @@ void CTempEnts::MuzzleFlash_357_Player( int entityIndex, int attachmentIndex )
 //==================================================
 
 //BG2 - Tjoppen - cl_simple_smoke
-ConVar cl_simple_smoke( "cl_simple_smoke", "0", 0, "Simplify smoke by having it fully opaque, but with fewer particles" );
+ConVar cl_simple_smoke( "cl_simple_smoke", "0", FCVAR_ARCHIVE, "Simplify smoke by having it fully opaque, but with fewer particles" );
 //
 
 //BG2 - Tjoppen - shared muzzleflash function(both first- and thirdperson)
