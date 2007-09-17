@@ -477,7 +477,7 @@ void CBaseHudWeaponSelection::SelectWeapon( void )
 
 		// Play the "weapon selected" sound
 		//BG2 - Tjoppen - HACKHACK
-		player->EmitSound( "BG2Player.WeaponSelected" );
+		//player->EmitSound( "BG2Player.WeaponSelected" );
 	}
 }
 
@@ -501,7 +501,7 @@ void CBaseHudWeaponSelection::CancelWeaponSelection( void )
 
 		// Play the "close weapon selection" sound
 		//BG2 - Tjoppen - HACKHACK
-		player->EmitSound( "BG2Player.WeaponSelectionClose" );
+		//player->EmitSound( "BG2Player.WeaponSelectionClose" );
 	}
 	else
 	{

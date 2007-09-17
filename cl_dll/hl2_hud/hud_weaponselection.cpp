@@ -579,7 +579,7 @@ void CHudWeaponSelection::CycleToNextWeapon( void )
 
 		// Play the "cycle to next weapon" sound
 		//BG2 - Tjoppen - HACKHACK
-		pPlayer->EmitSound( "BG2Player.WeaponSelectionMoveSlot" );
+		//pPlayer->EmitSound( "BG2Player.WeaponSelectionMoveSlot" );
 	}
 }
 
@@ -630,7 +630,7 @@ void CHudWeaponSelection::CycleToPrevWeapon( void )
 
 		// Play the "cycle to next weapon" sound
 		//BG2 - Tjoppen - HACKHACK
-		pPlayer->EmitSound( "BG2Player.WeaponSelectionMoveSlot" );
+		//pPlayer->EmitSound( "BG2Player.WeaponSelectionMoveSlot" );
 	}
 }
 
@@ -697,7 +697,7 @@ void CHudWeaponSelection::FastWeaponSwitch( int iWeaponSlot )
 	{
 		// error sound
 		//BG2 - Tjoppen - HACKHACK
-		pPlayer->EmitSound( "BG2Player.DenyWeaponSelection" );
+		//pPlayer->EmitSound( "BG2Player.DenyWeaponSelection" );
 	}
 }
 
@@ -758,5 +758,5 @@ void CHudWeaponSelection::SelectWeaponSlot( int iSlot )
 	}
 
 	//BG2 - Tjoppen - HACKHACK
-	pPlayer->EmitSound( "BG2Player.WeaponSelectionMoveSlot" );
+	//pPlayer->EmitSound( "BG2Player.WeaponSelectionMoveSlot" );
 }

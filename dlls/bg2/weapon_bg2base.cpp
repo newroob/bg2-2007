@@ -126,6 +126,9 @@ bool CBaseBG2Weapon::Deploy( void )
 	//stop reload
 	StopWeaponSound( RELOAD );
 
+	//play "draw" sound
+	WeaponSound( DEPLOY );
+
 	return BaseClass::Deploy();
 }
 

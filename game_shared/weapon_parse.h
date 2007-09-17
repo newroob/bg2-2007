@@ -39,6 +39,8 @@ typedef enum {
 	SPECIAL3,
 
 	// Add new shoot sound types here
+	//BG2 - Tjoppen - deploy sound
+	DEPLOY,
 
 	NUM_SHOOT_SOUND_TYPES,
 } WeaponSound_t;

@@ -303,10 +303,10 @@ void ClientPrecache( void )
 	//BG2 - Tjoppen - don't bother with pickup sounds. they steal bandwidth and sound HL2-ish
 	//CBaseEntity::PrecacheScriptSound( "Player.PickupWeapon" );
 	//also, prepending BG2 to the names of these scripts, since I can't find whichever file overrides and.. bah
-	CBaseEntity::PrecacheScriptSound( "BG2Player.DenyWeaponSelection" );
+	/*CBaseEntity::PrecacheScriptSound( "BG2Player.DenyWeaponSelection" );
 	CBaseEntity::PrecacheScriptSound( "BG2Player.WeaponSelected" );
 	CBaseEntity::PrecacheScriptSound( "BG2Player.WeaponSelectionClose" );
-	CBaseEntity::PrecacheScriptSound( "BG2Player.WeaponSelectionMoveSlot" );
+	CBaseEntity::PrecacheScriptSound( "BG2Player.WeaponSelectionMoveSlot" );*/
 	//
 
 	// General legacy temp ents sounds
