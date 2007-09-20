@@ -1146,9 +1146,9 @@ const char *CHL2MPRules::GetGameDescription( void )
 { 
 	//BG2 - Tjoppen - our game descriptions - putting the current version number in these might be a good idea
 	if( IsTeamplay() )
-		return "Battle Grounds 2 1.0b";
+		return "Battle Grounds 2 1.1b";
 
-	return "Battle Grounds 2 1.0b - free for all";
+	return "Battle Grounds 2 1.1b - free for all";
 	/*if ( IsTeamplay() )
 		return "Team Deathmatch"; 
 
