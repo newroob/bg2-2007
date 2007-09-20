@@ -126,8 +126,10 @@ bool CBaseBG2Weapon::Deploy( void )
 	//stop reload
 	StopWeaponSound( RELOAD );
 
-	//play "draw" sound
-	WeaponSound( DEPLOY );
+	//play "draw" sound, but only for players that are alive
+	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+	if( pOwner && pOwner->IsAlive() )
+		WeaponSound( DEPLOY );
 
 	return BaseClass::Deploy();
 }
