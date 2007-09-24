@@ -246,7 +246,10 @@ void CHL2MP_Player::Precache( void )
 
 	//assume right leg is the biggest
 	for( i = 0; i <= HITGROUP_RIGHTLEG; i++ )
-		PrecacheScriptSound( GetHitgroupPainSound(i)  );
+	{
+		PrecacheScriptSound( GetHitgroupPainSound( i, TEAM_AMERICANS ) );
+		PrecacheScriptSound( GetHitgroupPainSound( i, TEAM_BRITISH ) );
+	}
 
 	for( i = 0; i < NUM_VOICECOMMS; i++ )
 	{
@@ -2054,9 +2057,9 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 }
 
 //BG2 - Tjoppen - GetHitgroupPainSound
-const char* CHL2MP_Player::GetHitgroupPainSound( int hitgroup )
+const char* CHL2MP_Player::GetHitgroupPainSound( int hitgroup, int team )
 {
-	if( GetTeamNumber() == TEAM_AMERICANS )
+	if( team == TEAM_AMERICANS )
 	{
 		switch( hitgroup )
 		{
@@ -2071,7 +2074,7 @@ const char* CHL2MP_Player::GetHitgroupPainSound( int hitgroup )
 		case HITGROUP_RIGHTLEG	: return "BG2Player.American.pain_leg";
 		}
 	}
-	else
+	else if( team == TEAM_BRITISH )
 	{
 		switch( hitgroup )
 		{
@@ -2098,7 +2101,7 @@ int CHL2MP_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 
 	CSoundParameters params;
 	//if ( GetParametersForSound( "BG2Player.pain", params, pModelName ) == false )
-	if( GetParametersForSound( GetHitgroupPainSound(LastHitGroup()), params, pModelName ) == false )
+	if( GetParametersForSound( GetHitgroupPainSound( LastHitGroup(), GetTeamNumber() ), params, pModelName ) == false )
 		return BaseClass::OnTakeDamage( inputInfo );
 
 	Vector vecOrigin = GetAbsOrigin();

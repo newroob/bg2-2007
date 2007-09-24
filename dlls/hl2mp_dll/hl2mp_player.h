@@ -175,7 +175,7 @@ public:
 	void		RemoveSelfFromFlags( void );	//BG2 - Tjoppen - do this whenever we die, change team or disconnect or anything similar
 	int			GetLimitTeamClass( int iTeam, int iClass );
 	bool		AttemptJoin( int iTeam, int iClass, const char *pClassName );
-	const char* GetHitgroupPainSound( int hitgroup );
+	const char* GetHitgroupPainSound( int hitgroup, int team );
 	void		HandleVoicecomm( int comm );
 
 private:

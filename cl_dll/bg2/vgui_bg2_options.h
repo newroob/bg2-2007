@@ -47,7 +47,7 @@ class CBG2OptionsPanel : public vgui::Frame
 			cl_crosshair_a.SetValue( m_pAlphaCrosshairSlider->GetValue() );
 
 			cl_simple_smoke.SetValue( m_pSimpleSmokeCheckButton->IsSelected() );
-			cl_flagstatusdetail.SetValue( m_pSimpleFlagHUDCheckButton->IsSelected() );
+			cl_flagstatusdetail.SetValue( m_pSimpleFlagHUDCheckButton->IsSelected() ? "1" : "2" );
 
 			cl_crosshair.SetValue(	(m_pFlag0CrosshairCheckButton->IsSelected() ? 1 : 0) |
 									(m_pFlag1CrosshairCheckButton->IsSelected() ? 2 : 0) |
