@@ -357,7 +357,7 @@ public:
 	int						GetClientIndex()	{ return ENTINDEX( edict() ) - 1; }
 
 	// returns the player name
-	const char *			GetPlayerName() { return m_szNetname; }
+	const char *			GetPlayerName() { return m_szNetname;}
 	void					SetPlayerName( const char *name );
 
 	int						GetUserID() { return engine->GetPlayerUserId( edict() ); }

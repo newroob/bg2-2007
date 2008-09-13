@@ -19,7 +19,7 @@
 
 #include <igameevents.h>
 #include <igamesystem.h>
-
+/*
 class CPerfVisualBenchmark : public CBaseGameSystemPerFrame
 {
 	
@@ -61,5 +61,5 @@ private:
 };
 
 extern IGameSystem* PerfVisualBenchmark();
-
+*/
 #endif // PERFVISUALBENCHMARK_H

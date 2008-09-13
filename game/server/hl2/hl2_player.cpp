@@ -75,12 +75,12 @@ extern int gEvilImpulse101;
 
 ConVar sv_autojump( "sv_autojump", "0" );
 
-ConVar hl2_walkspeed( "hl2_walkspeed", "150" );
+/*ConVar hl2_walkspeed( "hl2_walkspeed", "150" );
 ConVar hl2_normspeed( "hl2_normspeed", "190" );
-ConVar hl2_sprintspeed( "hl2_sprintspeed", "320" );
+ConVar hl2_sprintspeed( "hl2_sprintspeed", "320" );*/
 
 ConVar hl2_darkness_flashlight_factor ( "hl2_darkness_flashlight_factor", "1" );
-
+/*
 #ifdef HL2MP
 	#define	HL2_WALK_SPEED 150
 	#define	HL2_NORM_SPEED 190
@@ -90,7 +90,7 @@ ConVar hl2_darkness_flashlight_factor ( "hl2_darkness_flashlight_factor", "1" );
 	#define	HL2_NORM_SPEED hl2_normspeed.GetFloat()
 	#define	HL2_SPRINT_SPEED hl2_sprintspeed.GetFloat()
 #endif
-
+*/
 ConVar player_showpredictedposition( "player_showpredictedposition", "0" );
 ConVar player_showpredictedposition_timestep( "player_showpredictedposition_timestep", "1.0" );
 
@@ -1119,8 +1119,8 @@ void CHL2_Player::Spawn(void)
 	//
 	//m_flMaxspeed = 320;
 
-	if ( !IsSuitEquipped() )
-		 StartWalking();
+	//if ( !IsSuitEquipped() )
+	//	 StartWalking();
 
 	SuitPower_SetCharge( 100 );
 
@@ -1260,7 +1260,7 @@ void CHL2_Player::EnableSprint( bool bEnable )
 
 	m_bSprintEnabled = bEnable;
 }
-*/
+
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -1277,7 +1277,7 @@ void CHL2_Player::StopWalking( void )
 	SetMaxSpeed( HL2_NORM_SPEED );
 	m_fIsWalking = false;
 }
-
+*/
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Output : Returns true on success, false on failure.

@@ -201,7 +201,7 @@ public:
 	//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed. and other stuff
 	float	m_flNextRoundRestart;
 	bool	m_bIsRestartingRound;
-	int		m_iTDMTeamThatWon;
+	int		m_iTDMTeamThatWon, m_iAmericanDmg, m_iBritishDmg; //BG2 - HairyPotter
 	bool	m_bHasDoneWinSong;
 	float	m_fNextWinSong;
 	//
@@ -214,6 +214,7 @@ private:
 	CUtlVector<EHANDLE> m_hRespawnableItemsAndWeapons;
 	float m_tmNextPeriodicThink;
 	float m_flRestartGameTime;
+	float timeleft2; //BG2 - Made global for working mp_timeleft. - HairyPotter
 	bool m_bCompleteReset;
 	bool m_bAwaitingReadyRestart;
 	bool m_bHeardAllPlayersReady;

@@ -781,7 +781,6 @@ float CGameRules::GetAmmoDamage( CBaseEntity *pAttacker, CBaseEntity *pVictim, i
 	return flDamage;
 }
 
-
 #ifndef CLIENT_DLL
 const char *CGameRules::GetChatPrefix( bool bTeamOnly, CBasePlayer *pPlayer )
 {
@@ -822,6 +821,6 @@ void CGameRules::ClientSettingsChanged( CBasePlayer *pPlayer )
 		
 		pPlayer->SetPlayerName( pszName );
 	}
-}
+} 
 
 #endif

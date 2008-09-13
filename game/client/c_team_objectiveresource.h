@@ -14,7 +14,8 @@
 #include "const.h"
 #include "c_baseentity.h"
 #include <igameresources.h>
-
+//BG2 - Don't need this. -HairyPotter
+/*
 #define TEAM_ARRAY( index, team )		(index + (team * MAX_CONTROL_POINTS))
 
 //-----------------------------------------------------------------------------
@@ -252,5 +253,5 @@ inline C_BaseTeamObjectiveResource *ObjectiveResource()
 {
 	return g_pObjectiveResource;
 }
-
+*/
 #endif // C_TEAM_OBJECTIVERESOURCE_H

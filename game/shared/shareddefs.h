@@ -112,6 +112,7 @@ public:
 #define HUD_PRINTCONSOLE	2
 #define HUD_PRINTTALK		3
 #define HUD_PRINTCENTER		4
+#define HUD_BG2CLASSCHANGE  5 //BG2 - Added for the Class Change Filter. -HairyPotter
 
 //===================================================================================================================
 // Close caption flags

@@ -11,7 +11,8 @@
 #endif
 
 #include "shareddefs.h"
-
+//BG2 - Don't need this. -HairyPotter
+/*
 #define TEAM_ARRAY( index, team )		(index + (team * MAX_CONTROL_POINTS))
 
 //-----------------------------------------------------------------------------
@@ -153,5 +154,5 @@ inline CBaseTeamObjectiveResource *ObjectiveResource()
 {
 	return g_pObjectiveResource;
 }
-
+*/
 #endif // TEAM_OBJECTIVERESOURCE_H

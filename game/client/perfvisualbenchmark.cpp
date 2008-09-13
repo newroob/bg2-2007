@@ -11,7 +11,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+/*
 #define VAR		0
 #define ON		1
 #define OFF		2
@@ -308,5 +308,5 @@ void CPerfVisualBenchmark::Print()				//  sort and print into console
 		Msg("%.0f fps - %s\n",m_RunInfo[curMax].m_flFPS, m_RunInfo[curMax].m_pDescription);
 		m_RunInfo[curMax].m_flFPS=-1;
 	}
-}
+}*/
 

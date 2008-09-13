@@ -38,7 +38,7 @@
 #ifndef _XBOX
 ConVar hud_saytext_time( "hud_saytext_time", "12", 0 );
 ConVar cl_showtextmsg( "cl_showtextmsg", "1", 0, "Enable/disable text messages printing on the screen." );
-ConVar cl_chatfilters( "cl_chatfilters", "31", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Stores the chat filter settings " );
+ConVar cl_chatfilters( "cl_chatfilters", "127", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Stores the chat filter settings " );
 
 
 Color g_ColorBlue( 153, 204, 255, 255 );
@@ -466,6 +466,8 @@ CHudChatFilterPanel::CHudChatFilterPanel( vgui::Panel *pParent, const char *pNam
 	new CHudChatFilterCheckButton( this, "publicchat_button", "Sky is blue?", CHAT_FILTER_PUBLICCHAT );
 	new CHudChatFilterCheckButton( this, "servermsg_button", "Sky is blue?", CHAT_FILTER_SERVERMSG );
 	new CHudChatFilterCheckButton( this, "teamchange_button", "Sky is blue?", CHAT_FILTER_TEAMCHANGE );
+	new CHudChatFilterCheckButton( this, "voicecomm_button", "Sky is blue?", CHAT_FILTER_VOICECOMMS ); //BG2 - Voice Comm Text Filter? -HairyPotter
+	new CHudChatFilterCheckButton( this, "classchange_button", "Sky is blue?", CHAT_FILTER_CLASSCHANGES ); //BG2 - Class Change Text Filter? -HairyPotter
 }
 
 void CHudChatFilterPanel::ApplySchemeSettings(vgui::IScheme *pScheme)
@@ -628,7 +630,6 @@ void CBaseHudChat::CreateChatLines( void )
 #ifndef _XBOX
 	m_ChatLine = new CBaseHudChatLine( this, "ChatLine1" );
 	m_ChatLine->SetVisible( false );		
-
 #endif
 }
 
@@ -830,6 +831,8 @@ void CBaseHudChat::MsgFunc_SayText2( bf_read &msg )
 //-----------------------------------------------------------------------------
 void CBaseHudChat::MsgFunc_TextMsg( bf_read &msg )
 {
+	m_iFilterFlags = cl_chatfilters.GetInt(); //LAWL
+
 	char szString[2048];
 	int msg_dest = msg.ReadByte();
 
@@ -891,6 +894,20 @@ void CBaseHudChat::MsgFunc_TextMsg( bf_read &msg )
 		Printf( CHAT_FILTER_NONE, "%s", ConvertCRtoNL( szString ) );
 		Msg( "%s", ConvertCRtoNL( szString ) );
 		break;
+
+	//BG2 - So we can filter class changes. -HairyPotter
+	case HUD_BG2CLASSCHANGE:
+		g_pVGuiLocalize->ConstructString( outputBuf, sizeof(outputBuf), szBuf[0], 4, szBuf[1], szBuf[2], szBuf[3], szBuf[4] );
+		g_pVGuiLocalize->ConvertUnicodeToANSI( outputBuf, szString, sizeof(szString) );
+		len = strlen( szString );
+		if ( len && szString[len-1] != '\n' && szString[len-1] != '\r' )
+		{
+			Q_strncat( szString, "\n", sizeof(szString), 1 );
+		}
+		Printf( CHAT_FILTER_CLASSCHANGES, "%s", ConvertCRtoNL( szString ) );
+		Msg( "%s", ConvertCRtoNL( szString ) );
+		break;
+	//
 
 	case HUD_PRINTCONSOLE:
 		g_pVGuiLocalize->ConstructString( outputBuf, sizeof(outputBuf), szBuf[0], 4, szBuf[1], szBuf[2], szBuf[3], szBuf[4] );
@@ -1328,9 +1345,10 @@ void CBaseHudChatLine::InsertAndColorizeText( wchar_t *buf, int clientIndex )
 	if ( pChat == NULL )
 		return;
 
-	wchar_t *txt = m_text;
-	int lineLen = wcslen( m_text );
-	if ( m_text[0] == COLOR_PLAYERNAME || m_text[0] == COLOR_LOCATION || m_text[0] == COLOR_NORMAL || m_text[0] == COLOR_ACHIEVEMENT )
+	//BG2 - This is all fucked up here. Thanks Valve. -HairyPotter
+	//wchar_t *txt = m_text;
+	//int lineLen = wcslen( m_text );
+	/*if ( m_text[0] == COLOR_PLAYERNAME || m_text[0] == COLOR_LOCATION || m_text[0] == COLOR_NORMAL || m_text[0] == COLOR_ACHIEVEMENT )
 	{
 		while ( txt && *txt )
 		{
@@ -1363,9 +1381,9 @@ void CBaseHudChatLine::InsertAndColorizeText( wchar_t *buf, int clientIndex )
 				++txt;
 			}
 		}
-	}
+	}*/
 
-	if ( !m_textRanges.Count() && m_iNameLength > 0 && m_text[0] == COLOR_USEOLDCOLORS )
+	if ( !m_textRanges.Count() && m_iNameLength > 0 /*&& m_text[0] == COLOR_USEOLDCOLORS*/ )
 	{
 		TextRange range;
 		range.start = 0;
@@ -1549,6 +1567,8 @@ void CBaseHudChat::LevelShutdown( void )
 //-----------------------------------------------------------------------------
 void CBaseHudChat::ChatPrintf( int iPlayerIndex, int iFilter, const char *fmt, ... )
 {
+	m_iFilterFlags = cl_chatfilters.GetInt(); //LAWL
+
 	va_list marker;
 	char msg[4096];
 
@@ -1575,23 +1595,17 @@ void CBaseHudChat::ChatPrintf( int iPlayerIndex, int iFilter, const char *fmt, .
 	// Now strip just newlines, since we want the color info for printing
 	pmsg = msg;
 	while ( *pmsg && ( *pmsg == '\n' ) )
-	{
 		pmsg++;
-	}
 
 	if ( !*pmsg )
 		return;
 
 	CBaseHudChatLine *line = (CBaseHudChatLine *)FindUnusedChatLine();
 	if ( !line )
-	{
 		line = (CBaseHudChatLine *)FindUnusedChatLine();
-	}
 
 	if ( !line )
-	{
 		return;
-	}
 
 	if ( iFilter != CHAT_FILTER_NONE )
 	{
@@ -1600,13 +1614,9 @@ void CBaseHudChat::ChatPrintf( int iPlayerIndex, int iFilter, const char *fmt, .
 	}
 
 	if ( *pmsg < 32 )
-	{
 		hudlcd->AddChatLine( pmsg + 1 );
-	}
 	else
-	{
 		hudlcd->AddChatLine( pmsg );
-	}
 
 	line->SetText( "" );
 
@@ -1651,48 +1661,11 @@ void CBaseHudChat::ChatPrintf( int iPlayerIndex, int iFilter, const char *fmt, .
 			}
 		}
 
-		//line->SetVisible( false );
-		//line->SetNameStart( iNameStart );
-		//line->SetNameLength( iNameLength );
-		//line->SetNameColor( clrNameColor );
-
-		line->InsertAndColorizeText( wbuf, iPlayerIndex );
-		/*if ( pName )
-	{
-		const char *nameInString = strstr( pmsg, pName );
-
-		if ( nameInString )
-		{
-			iNameLength = strlen( pName ) + (nameInString - pmsg);
-		}
-	}
-	else
-		line->InsertColorChange( Color( g_ColorYellow[0], g_ColorYellow[1], g_ColorYellow[2], 255 ) );
-
-	char *buf = static_cast<char *>( _alloca( strlen( pmsg ) + 1  ) );
-	wchar_t *wbuf = static_cast<wchar_t *>( _alloca( (strlen( pmsg ) + 1 ) * sizeof(wchar_t) ) );
-	if ( buf )
-	{
-		Color clrNameColor = GetClientColor( iPlayerIndex );
-
-		line->SetExpireTime();
-	
-		// draw the first x characters in the player color
-		Q_strncpy( buf, pmsg, min( iNameLength + 1, MAX_PLAYER_NAME_LENGTH+32) );
-		buf[ min( iNameLength, MAX_PLAYER_NAME_LENGTH+31) ] = 0;
-		line->InsertColorChange( Color( clrNameColor[0], clrNameColor[1], clrNameColor[2], 255 ) );
-		//line->InsertString( buf );
-		Q_strncpy( buf, pmsg + iNameLength, strlen( pmsg ));
-		buf[ strlen( pmsg + iNameLength ) ] = '\0';
-		line->InsertColorChange( Color( g_ColorYellow[0], g_ColorYellow[1], g_ColorYellow[2], 255 ) );
-		g_pVGuiLocalize->ConvertANSIToUnicode( buf, wbuf, strlen(pmsg)*sizeof(wchar_t));
-		//line->InsertString( wbuf );
-		line->InsertAndColorizeText( wbuf, iPlayerIndex );
-		line->SetVisible( true );
+		line->SetNameStart( iNameStart );
 		line->SetNameLength( iNameLength );
-		line->SetNameColor( Color( clrNameColor[0], clrNameColor[1], clrNameColor[2], 255 ) );
 
-	}*/
+		line->InsertAndColorizeText( wbuf, iPlayerIndex );
+
 	}
 }
 
@@ -1719,6 +1692,8 @@ void CBaseHudChat::FireGameEvent( IGameEvent *event )
 //BG2 - Tjoppen - VoiceComm usermessage
 void CBaseHudChat::MsgFunc_VoiceComm( bf_read &msg )
 {
+	m_iFilterFlags = cl_chatfilters.GetInt(); //LAWL
+
 	int client		= msg.ReadByte();
 	int commdata	= msg.ReadByte(),
 		comm		= commdata & 31,
@@ -1728,6 +1703,9 @@ void CBaseHudChat::MsgFunc_VoiceComm( bf_read &msg )
 
 	player_info_t sPlayerInfo;
 	engine->GetPlayerInfo( client, &sPlayerInfo );
+
+	if ( !(CHAT_FILTER_VOICECOMMS & m_iFilterFlags ) ) //BG2 - Check to see if we should actually display this test for the client. -HairyPotter
+			return;
 
 	if( comm >= 0 && comm < NUM_VOICECOMMS )
 	{
@@ -1740,15 +1718,22 @@ void CBaseHudChat::MsgFunc_VoiceComm( bf_read &msg )
 		//look up our strings
 		wchar_t *resolved = g_pVGuiLocalize->Find( searchstring ),				// "Yes"
 				*prefix = g_pVGuiLocalize->Find( "#BG2_VoiceComm_Prefix" );	// "(Command)"
-
-
-		//team color
-		Color TeamColor = GetClientColor( client );
-
+		
 		if( !resolved || !prefix  )
 			return;
 
-		//g_pVGuiLocalize->ConstructString( string1, sizeof(string1), prefix, 1, resolved );
+		//This whole thing really is a hack but I got tired of playing Valve's mind games. -HairyPotter
+		wchar_t voicecomm[512];
+		char msg[512], name[512], chprefix[512], chresolved[512];
+
+		g_pVGuiLocalize->ConvertUnicodeToANSI( resolved, chresolved, sizeof(chresolved) );
+		g_pVGuiLocalize->ConvertUnicodeToANSI( prefix, chprefix, sizeof(chprefix) );
+
+		Q_snprintf( name, 512, "%s %s", chprefix, sPlayerInfo.name);
+		Q_snprintf( msg, 512, "%s: %s", name, chresolved );
+
+		g_pVGuiLocalize->ConvertANSIToUnicode( msg, voicecomm, sizeof( voicecomm ) );
+		//
 
 		//now just use some code copied from ChatPrintf to print this in the chat
 		//this because ChatPrintf doesn't take wchar_t*
@@ -1766,17 +1751,29 @@ void CBaseHudChat::MsgFunc_VoiceComm( bf_read &msg )
 
 		line->SetExpireTime();
 
-		//abuse InsertString()'s concatenation abilities
-		line->InsertString( prefix );
-		line->InsertString( L" " );
-		line->InsertString( sPlayerInfo.name );
-		line->InsertColorChange( TeamColor );
-		line->InsertString( L": " );
-		line->InsertString( resolved );
-		line->SetVisible( false );
-		line->SetNameLength( 0 );
+		// find the player's name in the unicode string, in case there is no color markup
+		const char *pName = name;
+		int iNameStart = 0;
+		int iNameLength = 0;
 
-		//line->InsertAndColorizeText( string1, /*iPlayerIndex*/NULL );
+		if ( pName )
+		{
+			wchar_t wideName[MAX_PLAYER_NAME_LENGTH];
+			g_pVGuiLocalize->ConvertANSIToUnicode( pName, wideName, sizeof( wideName ) );
+
+			const wchar_t *nameInString = wcsstr( voicecomm, wideName );
+
+			if ( nameInString )
+			{
+				iNameStart = (nameInString - voicecomm);
+				iNameLength = wcslen( wideName );
+			}
+		}
+
+		line->SetNameStart( iNameStart );
+		line->SetNameLength( iNameLength );
+
+		line->InsertAndColorizeText( voicecomm, client );
 
 		//play a sound..
 		CLocalPlayerFilter filter;

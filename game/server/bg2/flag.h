@@ -102,8 +102,7 @@ class CFlag : public CBaseAnimating
 	void InputToggle( inputdata_t &inputData );
 
 
-	int		m_iUncap,
-			m_iTeamBonus,
+	int		m_iTeamBonus,
 			m_iTeamBonusInterval,
 			m_iPlayerBonus;
 
@@ -127,7 +126,8 @@ class CFlag : public CBaseAnimating
 	{
 		//for backward compatibility without this name defined
 		if( strlen(STRING( m_sDisabledFlagModelName )) == 0 )
-			return "models/other/flag_w.mdl";
+			//return "models/other/flag_w.mdl"; //To avoid errors for now. -HairyPotter
+			return "models/other/flag_n.mdl";
 		else
 			return STRING( m_sDisabledFlagModelName );
 	}
@@ -192,7 +192,6 @@ public:
 	int		GetAssaultTeam();
 	int		GetMinPlayers();
 	int		GetPlayers();
-	int		GetUncapturable();
 
 private:
 

@@ -61,7 +61,8 @@ ConVar mp_americanscore( "mp_americanscore", "0", FCVAR_GAMEDLL /*| FCVAR_NOTIFY
 ConVar mp_britishscore( "mp_britishscore", "0", FCVAR_GAMEDLL /*| FCVAR_NOTIFY*/ | FCVAR_CHEAT  );
 ConVar mp_autobalanceteams( "mp_autobalanceteams", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_autobalancetolerance( "mp_autobalancetolerance", "3", FCVAR_GAMEDLL | FCVAR_NOTIFY );
-ConVar mp_timeleft( "mp_timeleft", "1200", FCVAR_GAMEDLL);
+ConVar mp_timeleft( "mp_timeleft", "0", FCVAR_GAMEDLL, "Set this to the amount time you want the round to be. (In Minutes)"); //1200
+
 //BG2 - Draco - End
 //BG2 - Tjoppen - mp_winbonus
 ConVar mp_winbonus( "mp_winbonus", "200", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Amount of points awarded to team winning the round" );
@@ -75,6 +76,11 @@ extern CBaseEntity	 *g_pLastRebelSpawn;*/
 
 #define WEAPON_MAX_DISTANCE_FROM_SPAWN 64
 
+#endif
+
+#ifdef CLIENT_DLL
+	//BG2 - Name Hax go here for no reason. -HairyPotter
+	ConVar playername("playername", "0", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE );
 #endif
 
 //BG2 - Tjoppen - beautiful defines. you will see another one further down
@@ -257,6 +263,8 @@ CHL2MPRules::CHL2MPRules()
 	m_flIntermissionEndTime = 0.0f;
 	m_flGameStartTime = 0;
 
+	timeleft2 = (m_flGameStartTime + mp_timelimit.GetInt() * 60.0f); //BG2 - For working mp_timeleft. - HairyPotter
+
 	m_hRespawnableItemsAndWeapons.RemoveAll();
 
 	m_tmNextPeriodicThink = 0;
@@ -292,6 +300,8 @@ CHL2MPRules::CHL2MPRules()
 	m_fLastRespawnWave = gpGlobals->curtime;
 	m_iTDMTeamThatWon = 0;
 	m_bHasDoneWinSong = false;
+	m_iAmericanDmg = 0;
+	m_iBritishDmg = 0;
 	m_fNextWinSong = gpGlobals->curtime;
 //BG2 - Skillet
 #else
@@ -421,83 +431,12 @@ void CHL2MPRules::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 #endif
 }
 
-
 void CHL2MPRules::Think( void )
 {
 
 #ifndef CLIENT_DLL
 	
 	CGameRules::Think();
-
-	/*if ( g_fGameOver )   // someone else quit the game already
-	{
-		// check to see if we should change levels now
-		if ( m_flIntermissionEndTime < gpGlobals->curtime )
-		{
-			ChangeLevel(); // intermission is over
-		}
-
-		return;
-	}
-
-//	float flTimeLimit = mp_timelimit.GetFloat() * 60;
-	float flFragLimit = fraglimit.GetFloat();
-	
-	if ( GetMapRemainingTime() < 0 )
-	{
-		GoToIntermission();
-		return;
-	}
-
-	if ( flFragLimit )
-	{
-		if( IsTeamplay() == true )
-		{
-			CTeam *pCombine = g_Teams[TEAM_AMERICANS];
-			CTeam *pRebels = g_Teams[TEAM_BRITISH];
-
-			if ( pCombine->GetScore() >= flFragLimit || pRebels->GetScore() >= flFragLimit )
-			{
-				GoToIntermission();
-				return;
-			}
-		}
-		else
-		{
-			// check if any player is over the frag limit
-			for ( int i = 1; i <= gpGlobals->maxClients; i++ )
-			{
-				CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
-
-				if ( pPlayer && pPlayer->FragCount() >= flFragLimit )
-				{
-					GoToIntermission();
-					return;
-				}
-			}
-		}
-	}
-
-	if ( gpGlobals->curtime > m_tmNextPeriodicThink )
-	{		
-		CheckAllPlayersReady();
-		CheckRestartGame();
-		m_tmNextPeriodicThink = gpGlobals->curtime + 1.0;
-	}
-
-	if ( m_flRestartGameTime > 0.0f && m_flRestartGameTime <= gpGlobals->curtime )
-	{
-		RestartGame();
-	}
-
-	if( m_bAwaitingReadyRestart && m_bHeardAllPlayersReady )
-	{
-		UTIL_ClientPrintAll( HUD_PRINTCENTER, "All players ready. Game will restart in 5 seconds" );
-		UTIL_ClientPrintAll( HUD_PRINTCONSOLE, "All players ready. Game will restart in 5 seconds" );
-
-		m_flRestartGameTime = gpGlobals->curtime + 5;
-		m_bAwaitingReadyRestart = false;
-	}*/
 
 	CBasePoint * pPoint = (CBasePoint *)gEntList.FindEntityByClassname( NULL, "capturepoint" );
 	while (pPoint)
@@ -530,7 +469,32 @@ void CHL2MPRules::Think( void )
 				ClientPrintAll( "Draw!", true, true );
 			}
 		}
-		
+
+		/*for ( int i = 1; i <= gpGlobals->maxClients; i++ )
+		{
+			CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
+
+			if ( pPlayer && pPlayer->FragCount() >= flFragLimit )
+			{
+				GoToIntermission();
+				return;
+			}
+		}*/
+		//BG2 - Log Damages and Scores. -HairyPotter
+		for( int x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
+		{
+			CBasePlayer *pPlayer = g_Teams[TEAM_AMERICANS]->GetPlayer( x );
+			m_iAmericanDmg += pPlayer->DeathCount();
+		}
+		for( int x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
+		{
+			CBasePlayer *pPlayer = g_Teams[TEAM_BRITISH]->GetPlayer( x );
+			m_iBritishDmg += pPlayer->DeathCount();
+		}
+
+		UTIL_LogPrintf("***American Scores*** DAMAGE: %i   SCORE: %i   \n", m_iAmericanDmg, mp_americanscore.GetInt() );
+		UTIL_LogPrintf("***British Scores*** DAMAGE: %i   SCORE: %i   \n", m_iBritishDmg, mp_britishscore.GetInt() );
+
 		// check to see if we should change levels now
 		if ( (m_flIntermissionEndTime + m_fAdditionTime) < gpGlobals->curtime )
 		{
@@ -541,7 +505,7 @@ void CHL2MPRules::Think( void )
 		return;
 	}
 
-	float flTimeLimit = mp_timelimit.GetFloat() * 60;
+	float flTimeLimit = GetMapRemainingTime()/*mp_timelimit.GetFloat() * 60*/; //BG2 - Fix'd. -HairyPotter
 	float flFragLimit = fraglimit.GetFloat();
 
 	if ( flTimeLimit != 0 && gpGlobals->curtime >= flTimeLimit )
@@ -567,7 +531,11 @@ void CHL2MPRules::Think( void )
 	//=========================
 	//Time Left
 	//=========================
-	mp_timeleft.SetValue(((flTimeLimit + m_fAdditionTime) - gpGlobals->curtime));
+	if (mp_timeleft.GetFloat() > 0)
+	{
+		timeleft2 = (mp_timeleft.GetFloat() * 60.0f) + gpGlobals->curtime;
+		mp_timeleft.SetValue(0);
+	}
 
 	//=========================
 	//Score Cvars
@@ -811,6 +779,37 @@ void CHL2MPRules::Think( void )
 			}
 		}
 	}
+
+	/*for ( int i = 1; i <= gpGlobals->maxClients; i++ )
+	{
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
+
+		if ( !pPlayer )
+			return;
+
+		const char *pszCustomName = engine->GetClientConVarValue( pPlayer->entindex(), "playername" );
+
+		const char *pszOldName = pPlayer->GetPlayerName();
+
+		if ( pszCustomName != 0 && pszCustomName != pszOldName )
+		{
+			char text[256];
+			Q_snprintf( text,sizeof(text), "%s changed name to %s\n", pszOldName, pszCustomName );
+
+			UTIL_ClientPrintAll( HUD_PRINTTALK, text );
+
+			IGameEvent * event = gameeventmanager->CreateEvent( "player_changename" );
+			if ( event )
+			{
+				event->SetInt( "userid", pPlayer->GetUserID() );
+				event->SetString( "oldname", pszOldName );
+				event->SetString( "newname", pszCustomName );
+				gameeventmanager->FireEvent( event );
+			}
+		
+			pPlayer->SetPlayerName( pszCustomName );
+		}
+	}*/
 
 	ManageObjectRelocation();
 
@@ -1271,6 +1270,7 @@ void CHL2MPRules::ClientSettingsChanged( CBasePlayer *pPlayer )
 		UTIL_LogPrintf( "\"%s\" cl_cmdrate = \"%s\"\n", pHL2Player->GetPlayerName(), engine->GetClientConVarValue( pHL2Player->entindex(), "cl_cmdrate" ));
 	}
 
+
 	BaseClass::ClientSettingsChanged( pPlayer );
 #endif
 	
@@ -1307,7 +1307,6 @@ const char *CHL2MPRules::GetGameDescription( void )
 	// 
 } 
 
-
 float CHL2MPRules::GetMapRemainingTime()
 {
 	// if timelimit is disabled, return 0
@@ -1316,7 +1315,7 @@ float CHL2MPRules::GetMapRemainingTime()
 
 	// timelimit is in minutes
 
-	float timeleft = (m_flGameStartTime + mp_timelimit.GetInt() * 60.0f ) - gpGlobals->curtime;
+	float timeleft = timeleft2/*(m_flGameStartTime + mp_timelimit.GetInt() * 60.0f )*/ - gpGlobals->curtime; //BG2 - Made this global for working mp_timeleft! -HairyPotter
 
 	return timeleft;
 }
@@ -1953,7 +1952,8 @@ void CHL2MPRules::ResetFlags( void )
 		if (pFlag->HasSpawnFlags( CFlag_START_DISABLED ))
 		{
 			pFlag->m_bActive = false;
-			pFlag->SetModel( "models/other/flag_w.mdl" );
+			//pFlag->SetModel( "models/other/flag_w.mdl" );
+			pFlag->SetModel( "models/other/flag_n.mdl" ); //To avoid errors for now. -HairyPotter
 		}
 		else
 		{

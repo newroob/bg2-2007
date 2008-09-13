@@ -11,7 +11,9 @@ extern ConVar	cl_crosshair,
 				cl_crosshair_b,
 				cl_crosshair_a,
 
-				cl_simple_smoke,
+				//cl_simple_smoke,
+				cl_capturesounds,
+				cl_vcommsounds,
 
 				cl_flagstatusdetail,
 
@@ -46,7 +48,7 @@ class CBG2OptionsPanel : public vgui::Frame
 			cl_crosshair_b.SetValue( m_pBlueCrosshairSlider->GetValue() );
 			cl_crosshair_a.SetValue( m_pAlphaCrosshairSlider->GetValue() );
 
-			cl_simple_smoke.SetValue( m_pSimpleSmokeCheckButton->IsSelected() );
+			//cl_simple_smoke.SetValue( m_pSimpleSmokeCheckButton->IsSelected() );
 			cl_flagstatusdetail.SetValue( m_pSimpleFlagHUDCheckButton->IsSelected() ? "1" : "2" );
 
 			cl_crosshair.SetValue(	(m_pFlag0CrosshairCheckButton->IsSelected() ? 1 : 0) |
@@ -56,6 +58,9 @@ class CBG2OptionsPanel : public vgui::Frame
 
 			cl_hitverif.SetValue( m_pHitverifCheckButton->IsSelected() );
 			cl_winmusic.SetValue( m_pWinmusicCheckButton->IsSelected() );
+			cl_capturesounds.SetValue( m_pCaptureSoundsCheckButton->IsSelected() );
+			cl_vcommsounds.SetValue( m_pVCommSoundsCheckButton->IsSelected() );
+
 		}
 
 		BaseClass::OnCommand( command );
@@ -78,7 +83,7 @@ class CBG2OptionsPanel : public vgui::Frame
 		m_pAlphaCrosshairSlider->SetRange( 0, 255 );
 		m_pAlphaCrosshairSlider->SetValue( cl_crosshair_a.GetInt() );
 		
-		m_pSimpleSmokeCheckButton->SetSelected( cl_simple_smoke.GetBool() );
+		//m_pSimpleSmokeCheckButton->SetSelected( cl_simple_smoke.GetBool() );
 		m_pSimpleFlagHUDCheckButton->SetSelected( cl_flagstatusdetail.GetInt() == 1 ? true : false );
 		
 		m_pFlag0CrosshairCheckButton->SetSelected( (cl_crosshair.GetInt() & 1) ? true : false );
@@ -88,6 +93,8 @@ class CBG2OptionsPanel : public vgui::Frame
 
 		m_pHitverifCheckButton->SetSelected( cl_hitverif.GetBool() );
 		m_pWinmusicCheckButton->SetSelected( cl_winmusic.GetBool() );
+		m_pCaptureSoundsCheckButton->SetSelected( cl_capturesounds.GetBool() );
+		m_pVCommSoundsCheckButton->SetSelected( cl_vcommsounds.GetBool() );
 	}
 
 	/* CBG2OptionsPanel
@@ -138,6 +145,12 @@ class CBG2OptionsPanel : public vgui::Frame
 		m_pWinmusicCheckButton = new vgui::CheckButton( this, "WinmusicCheckButton", "" );
 		m_pWinmusicCheckButton->AddActionSignalTarget( this );
 
+		m_pCaptureSoundsCheckButton = new vgui::CheckButton( this, "CaptureSoundsCheckButton", "" );
+		m_pCaptureSoundsCheckButton->AddActionSignalTarget( this );
+
+		m_pVCommSoundsCheckButton = new vgui::CheckButton( this, "VCommSoundsCheckButton", "" );
+		m_pVCommSoundsCheckButton->AddActionSignalTarget( this );
+
 		//set sliders and checkboxes correctly
 		SetAdjustors();
 
@@ -174,6 +187,8 @@ class CBG2OptionsPanel : public vgui::Frame
 						*m_pFlag3CrosshairCheckButton,
 
 						*m_pHitverifCheckButton,
+						*m_pCaptureSoundsCheckButton,
+						*m_pVCommSoundsCheckButton,
 						*m_pWinmusicCheckButton;
 
 protected:

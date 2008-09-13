@@ -180,8 +180,10 @@ public:
 	void CheckSuitZoom( void );
 
 	// Walking
-	void StartWalking( void );
-	void StopWalking( void );
+	//BG2 - Don't need these. -HairyPotter
+	//void StartWalking( void );
+	//void StopWalking( void );
+	//
 	bool IsWalking( void ) { return m_fIsWalking; }
 
 	// Aiming heuristics accessors

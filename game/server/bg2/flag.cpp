@@ -425,14 +425,6 @@ int	CBasePoint::GetPlayers()
 	return m_iPlayers;
 }
 
-//=========================================================
-//CBasePoint's GetUncapturable
-//Accessor function for m_iUncapturable
-//=========================================================
-int	CBasePoint::GetUncapturable()
-{
-	return m_iUncapturable;
-}
 
 //IMPLEMENT_NETWORKCLASS_ALIASED( Flag, DT_Flag )
 
@@ -453,7 +445,6 @@ BEGIN_DATADESC( CBasePoint )
 	DEFINE_KEYFIELD( m_iMinPlayers, FIELD_INTEGER, "CapturePlayers" ),
 	//DEFINE_KEYFIELD( m_flCaptureRadius, FIELD_FLOAT, "CaptureRadius" ),
 	DEFINE_KEYFIELD( m_flCaptureTime, FIELD_FLOAT, "CaptureTime" ),
-	DEFINE_KEYFIELD( m_iUncapturable, FIELD_INTEGER, "Uncap" ),
 	DEFINE_KEYFIELD( m_iTeamCapturePoints, FIELD_INTEGER, "TeamBonus" ),
 	//DEFINE_KEYFIELD( m_iTeamBonusInterval, FIELD_INTEGER, "TeamBonusInterval" ),
 	DEFINE_KEYFIELD( m_iPlayerCapturePoints, FIELD_INTEGER, "PlayerBonus" ),
@@ -1157,7 +1148,6 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_KEYFIELD( m_iCapturePlayers, FIELD_INTEGER, "CapturePlayers" ),
 	DEFINE_KEYFIELD( m_flCaptureRadius, FIELD_FLOAT, "CaptureRadius" ),
 	DEFINE_KEYFIELD( m_flCaptureTime, FIELD_FLOAT, "CaptureTime" ),
-	DEFINE_KEYFIELD( m_iUncap, FIELD_INTEGER, "Uncap" ),
 	DEFINE_KEYFIELD( m_iTeamBonus, FIELD_INTEGER, "TeamBonus" ),
 	DEFINE_KEYFIELD( m_iTeamBonusInterval, FIELD_INTEGER, "TeamBonusInterval" ),
 	DEFINE_KEYFIELD( m_iPlayerBonus, FIELD_INTEGER, "PlayerBonus" ),

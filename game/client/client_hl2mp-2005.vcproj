@@ -1863,10 +1863,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\shared\teamplayroundbased_gamerules.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\shared\test_ehandle.cpp"
 				>
 			</File>

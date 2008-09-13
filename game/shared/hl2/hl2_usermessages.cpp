@@ -53,5 +53,6 @@ void RegisterUserMessages( void )
 	usermessages->Register( "ServerBlood", -1 );	//pos(varies), normal(varies), amount(2)
 	usermessages->Register( "WinMusic", 1 );		//byte = team ID. let client decide how to interpret
 	usermessages->Register( "CaptureSounds", -1 );	//Position of flag (varies). -HairyPotter
+	usermessages->Register( "VCommSounds", -1 ); //Position Of Player (varies. -HairyPotter
 	//
 }

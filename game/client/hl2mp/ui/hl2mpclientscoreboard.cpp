@@ -33,7 +33,8 @@ enum EScoreboardSections
 	SCORESECTION_COMBINE = 1,
 	SCORESECTION_REBELS = 2,
 	SCORESECTION_FREEFORALL = 3,
-	SCORESECTION_SPECTATOR = 4
+	SCORESECTION_SPECTATOR = 4,
+	SCORESECTION_UNASSIGNED = 4 //BG2 - Added this back in just so you can see who is in the game or not even if they haven't picked a team. -HairyPotter
 };
 
 const int NumSegments = 7;
@@ -502,6 +503,8 @@ int CHL2MPClientScoreBoardDialog::GetSectionFromTeamNumber( int teamNumber )
 		return SCORESECTION_REBELS;
 	case TEAM_SPECTATOR:
 		return SCORESECTION_SPECTATOR;
+	case TEAM_UNASSIGNED: //BG2 - Added back in so you can see all players in game, even if unassigned. -HairyPotter
+		return SCORESECTION_UNASSIGNED;
 	default:
 		return SCORESECTION_FREEFORALL;
 	}

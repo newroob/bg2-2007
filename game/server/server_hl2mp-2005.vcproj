@@ -2891,10 +2891,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\shared\teamplayroundbased_gamerules.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\shared\tempentity.h"
 				>
 			</File>

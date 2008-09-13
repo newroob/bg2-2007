@@ -12,7 +12,8 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+//BG2 - Don't need this. -HairyPotter
+/*
 #define RESOURCE_THINK_TIME		0.1
 
 //extern ConVar mp_capstyle;
@@ -332,7 +333,7 @@ void C_BaseTeamObjectiveResource::ClientThink()
 						}
 					}*/
 
-					if ( GetTeamInZone(i) == m_iCappingTeam[i] )
+					/*if ( GetTeamInZone(i) == m_iCappingTeam[i] )
 					{
 						bDeteriorateNormally = false;
 						m_flCapTimeLeft[i] -= flReduction;
@@ -382,7 +383,7 @@ void C_BaseTeamObjectiveResource::ClientThink()
 					}
 					else
 					{*/
-						m_flCapTimeLeft[i] = 0.0;
+					/*	m_flCapTimeLeft[i] = 0.0;
 					//}
 
 					m_bWarnedOnFinalCap[i] = false;
@@ -396,4 +397,4 @@ void C_BaseTeamObjectiveResource::ClientThink()
 
 
 	SetNextClientThink( gpGlobals->curtime + RESOURCE_THINK_TIME );
-}
+}*/

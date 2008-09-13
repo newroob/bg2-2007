@@ -13,7 +13,8 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+//BG2 - Don't need this. -HairyPotter
+/*
 #define CAPHUD_PARITY_BITS		6
 #define CAPHUD_PARITY_MASK		((1<<CAPHUD_PARITY_BITS)-1)
 
@@ -455,4 +456,4 @@ int CBaseTeamObjectiveResource::GetOwningTeam( int index )
 void CBaseTeamObjectiveResource::UpdateCapHudElement( void )
 {
 	m_iUpdateCapHudParity = (m_iUpdateCapHudParity + 1) & CAPHUD_PARITY_MASK;
-}
+}*/

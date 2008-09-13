@@ -70,6 +70,9 @@ public:
 	//HairyPotter
 	void MsgFunc_CaptureSounds( bf_read &msg );
 	void PlayCaptureSound ( const Vector &origin );
+	void MsgFunc_VCommSounds( bf_read &msg );
+	void PlayVCommSound ( char snd[512], int playerindex );
+
 	//
 	
 	void HideShowAll( bool visible );
@@ -100,6 +103,7 @@ DECLARE_HUDELEMENT( CHudBG2 );
 DECLARE_HUD_MESSAGE( CHudBG2, HitVerif );
 DECLARE_HUD_MESSAGE( CHudBG2, WinMusic );
 DECLARE_HUD_MESSAGE( CHudBG2, CaptureSounds ); //HairyPotter
+DECLARE_HUD_MESSAGE( CHudBG2, VCommSounds );
 
 //==============================================
 // CHudBG2's CHudFlags
@@ -197,6 +201,7 @@ void CHudBG2::Init( void )
 	HOOK_HUD_MESSAGE( CHudBG2, HitVerif );
 	HOOK_HUD_MESSAGE( CHudBG2, WinMusic );
 	HOOK_HUD_MESSAGE( CHudBG2, CaptureSounds );
+	HOOK_HUD_MESSAGE( CHudBG2, VCommSounds );
 	//BG2 - Tjoppen - serverside blood, a place to hook as good as any
 	extern void  __MsgFunc_ServerBlood( bf_read &msg );
 	HOOK_MESSAGE( ServerBlood );
@@ -430,10 +435,11 @@ const char* CHudBG2::HitgroupName( int hitgroup )
 	}
 }
 
-//BG2 - Tjoppen - cl_hitverif & cl_winmusic && capturesounds //HairyPotter
+//BG2 - Tjoppen - cl_hitverif & cl_winmusic && capturesounds & voice comm sounds //HairyPotter
 ConVar	cl_hitverif( "cl_hitverif", "1", FCVAR_ARCHIVE, "Display hit verification?" );
 ConVar	cl_winmusic( "cl_winmusic", "1", FCVAR_ARCHIVE, "Play win music?" );
 ConVar	cl_capturesounds( "cl_capturesounds", "1", FCVAR_ARCHIVE, "Play flag capture sounds?" );
+ConVar cl_vcommsounds("cl_vcommsounds", "1", FCVAR_ARCHIVE, "Allow voice comm sounds?" );
 //
 
 
@@ -529,5 +535,24 @@ void CHudBG2::PlayCaptureSound( const Vector &origin )
 {
 	CLocalPlayerFilter filter;
 	C_BaseEntity::EmitSound( filter, SOUND_FROM_WORLD, "Flag.capture", &origin );
+}
+//
+//Make voice comm sounds client side. -HairyPotter
+void CHudBG2::MsgFunc_VCommSounds( bf_read &msg ) 
+{
+	if ( !cl_vcommsounds.GetBool() )
+		return;
+
+	int client	= msg.ReadByte();
+	char snd[512];
+
+	msg.ReadString( snd, sizeof(snd) );
+
+	PlayVCommSound( snd, client );
+}
+void CHudBG2::PlayVCommSound( char snd[512], int playerindex )
+{
+	C_BasePlayer *pPlayer = UTIL_PlayerByIndex( playerindex );
+	pPlayer->EmitSound( snd );
 }
 //

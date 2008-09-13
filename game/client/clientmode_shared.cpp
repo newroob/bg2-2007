@@ -39,8 +39,7 @@
 // $Date:         $
 // $NoKeywords: $
 //=============================================================================//
-
-
+ 
 #include "cbase.h"
 #include "clientmode_shared.h"
 #include "iinput.h"

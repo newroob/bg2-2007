@@ -550,6 +550,12 @@ CBasePlayer::CBasePlayer( )
 	pl.frags = 0;
 	pl.deaths = 0;
 
+#ifdef CLIENT_DLL
+	//player_info_t sPlayerInfo;
+	//Q_memset( &sPlayerInfo, 0, sizeof(player_info_t) );
+	Q_strncpy( sPlayerInfo.name, /*playername.GetChar()*/"lawlagain" , sizeof(sPlayerInfo.name)  );
+#endif
+
 	m_szNetname[0] = '\0';
 
 	m_iHealth = 0;

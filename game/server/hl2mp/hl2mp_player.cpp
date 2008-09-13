@@ -251,32 +251,6 @@ void CHL2MP_Player::Precache( void )
 		Q_snprintf( name, sizeof name, "Voicecomms.British.Rif_%i", i+1 );
 		PrecacheScriptSound( name );
 	}
-
-	/*char msg[512];
-	
-	for( i = 0; i < VCOMM1_NUM; i++ )
-	{	
-		Q_snprintf( msg, 512, "VoicecommsA%s", pVCommScripts[i]);
-		PrecacheScriptSound( msg );
-	}
-
-	for( i = 0; i < VCOMM1_NUM; i++ )
-	{	
-		Q_snprintf( msg, 512, "VoicecommsB%s", pVCommScripts[i]);
-		PrecacheScriptSound( msg );
-	}
-	
-	for( i = VCOMM2_START; i < VCOMM2_START+VCOMM2_NUM; i++ )
-	{	
-		Q_snprintf( msg, 512, "VoicecommsA%s", pVCommScripts[i]);
-		PrecacheScriptSound( msg );
-	}
-
-	for( i = VCOMM2_START; i < VCOMM2_START+VCOMM2_NUM; i++ )
-	{
-		Q_snprintf( msg, 512, "VoicecommsB%s", pVCommScripts[i]);
-		PrecacheScriptSound( msg );
-	}*/
 }
 
 void CHL2MP_Player::GiveAllItems( void )
@@ -1470,11 +1444,11 @@ void CHL2MP_Player::ChangeTeam( int iTeam )
 }
 
 //BG2 - Tjoppen - ClientPrinttTalkAll
-void ClientPrinttTalkAll( char *str )
+void ClientPrinttTalkAll( char *str, int type )
 {
 	CBasePlayer *pPlayer = NULL;
 	while( (pPlayer = (CBasePlayer*)gEntList.FindEntityByClassname( pPlayer, "player" )) != NULL )
-		ClientPrint( pPlayer, HUD_PRINTTALK, str );
+		ClientPrint( pPlayer, type, str );
 }
 //
 
@@ -1597,12 +1571,12 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 		//BG2 - Tjoppen - TODO: usermessage this
 		ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
 		return false;
-	}
+	} 
 
 	//BG2 - Tjoppen - TODO: usermessage this
 	char str[512];
 	Q_snprintf( str, 512, "%s is going to fight as %s for the %s\n", GetPlayerName(), pClassName, iTeam == TEAM_AMERICANS ? "Americans" : "British" );
-	ClientPrinttTalkAll( str );
+	ClientPrinttTalkAll( str, HUD_BG2CLASSCHANGE  );
 
 	//The following line prevents anyone else from stealing our spot..
 	//Without this line several teamswitching/new players can pick a free class, so there can be for instance 
@@ -1673,7 +1647,18 @@ void CHL2MP_Player::HandleVoicecomm( int comm )
 		Q_snprintf( snd, sizeof snd, "Voicecomms.%s.%s_%i", pTeamString, pClassString, comm + 1 );
 
 		//play voicecomm, with attenuation
-		EmitSound( snd );
+		//EmitSound( snd );
+
+		//BG2 - Voice Commsare now Client-Side -HairyPotter
+		CRecipientFilter recpfilter;
+		recpfilter.AddAllPlayers();
+		recpfilter.MakeReliable();
+	
+		UserMessageBegin( recpfilter, "VCommSounds" );
+			WRITE_BYTE( entindex() );
+			WRITE_STRING( snd );
+		MessageEnd();
+		//
 
 		//done. possibly also tell clients to draw text and stuff if sv_voicecomm_text is true
 		m_flNextVoicecomm		= gpGlobals->curtime + 2.0f;

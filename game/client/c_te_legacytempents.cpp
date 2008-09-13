@@ -62,6 +62,9 @@ CLIENTEFFECT_REGISTER_BEGIN( PrecacheEffectMuzzleFlash )
 	CLIENTEFFECT_MATERIAL( "effects/muzzleflash2_noz" )
 	CLIENTEFFECT_MATERIAL( "effects/muzzleflash3_noz" )
 	CLIENTEFFECT_MATERIAL( "effects/muzzleflash4_noz" )
+
+	CLIENTEFFECT_MATERIAL( "particle/particle_musketsmoke" ) //BG2 - Precache the particle effect? -HairyPotter
+
 	CLIENTEFFECT_REGISTER_END()
 #endif
 
@@ -3104,7 +3107,7 @@ void CTempEnts::MuzzleFlash_357_Player( ClientEntityHandle_t hEntity, int attach
 //==================================================
 
 //BG2 - Tjoppen - cl_simple_smoke
-ConVar cl_simple_smoke( "cl_simple_smoke", "0", FCVAR_ARCHIVE, "Simplify smoke by having it fully opaque, but with fewer particles" );
+//ConVar cl_simple_smoke( "cl_simple_smoke", "0", FCVAR_ARCHIVE, "Simplify smoke by having it fully opaque, but with fewer particles" );
 //
 
 //BG2 - Tjoppen - shared muzzleflash function(both first- and thirdperson)
@@ -3225,11 +3228,11 @@ void MuzzleFlash_Pistol_Shared( ClientEntityHandle_t hEntity, int attachmentInde
 	offset = origin + forward * 8.0f;
 
 	//BG2 - Tjoppen - more smoke
-	for( int j = 0; j < (cl_simple_smoke.GetBool() ? 6 : 12); j++ )
+	for( int j = 0; j < 3/*(cl_simple_smoke.GetBool() ? 6 : 12)*/; j++ )
 	//if ( random->RandomInt( 0, 3 ) != 0 )
 	{
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
-		offset = origin + forward * (cl_simple_smoke.GetBool() ? 4.0f : 2.0f) * (float)j;
+		offset = origin + forward * /*(cl_simple_smoke.GetBool() ? 4.0f : 2.0f)*/2.0f * (float)j;
 
 		//pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( "particle/particle_musketsmoke" ), offset );
 		pParticle = (SimpleParticle *) pSimple3->AddParticle( sizeof( SimpleParticle ), pSimple3->GetPMaterial( "particle/particle_musketsmoke" ), offset );
@@ -3240,30 +3243,30 @@ void MuzzleFlash_Pistol_Shared( ClientEntityHandle_t hEntity, int attachmentInde
 		pParticle->m_flLifetime		= 0.0f;
 		//BG2 - Tjoppen - smoke lives longer
 		//pParticle->m_flDieTime		= random->RandomFloat( 0.25f, 0.5f );
-		pParticle->m_flDieTime		= random->RandomFloat( 6.0f, 10.0f );
+		pParticle->m_flDieTime		= random->RandomFloat( 7.5f, 11.5f );
 
 		//BG2 - Tjoppen - a little bit more speed to the smoke
-		pParticle->m_vecVelocity = forward * (float)(j+6) * 384.0f;
+		pParticle->m_vecVelocity = forward * (float)(j+6) * 175.0f;//384.0f;
 
 		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
 		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 
-		int color = random->RandomInt( 200, 255 );
+		int color = random->RandomInt( 215, 240 );//( 200, 255 );
 		pParticle->m_uchColor[0]	= color;
 		pParticle->m_uchColor[1]	= color;
 		pParticle->m_uchColor[2]	= color;
 
 		//BG2 - Tjoppen - denser smoke
-		if( cl_simple_smoke.GetBool() )
+		/*if( cl_simple_smoke.GetBool() )
 		{
 			pParticle->m_uchStartAlpha	= 255;
 			pParticle->m_uchEndAlpha	= 255;
 		}
 		else
-		{
-			pParticle->m_uchStartAlpha	= random->RandomInt( 150, 255 );
-			pParticle->m_uchEndAlpha	= 0;
-		}
+		{*/
+			pParticle->m_uchStartAlpha	= 255;//random->RandomInt( 225, 255 );
+			pParticle->m_uchEndAlpha	= random->RandomInt( 100, 225 );
+		//}
 
 		//BG2 - Tjoppen - larger smoke
 		pParticle->m_uchStartSize	= (float)(j+8) * 0.6f;
@@ -3310,8 +3313,8 @@ void CTempEnts::MuzzleFlash_Flashpan( ClientEntityHandle_t hEntity, int attachme
 {
 	VPROF_BUDGET( "MuzzleFlash_Flashpan", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 
-	if( cl_simple_smoke.GetBool() )
-		return;
+	//if( cl_simple_smoke.GetBool() )
+	//	return;
 
 	CSmartPtr<CBG2SmokeEmitter> pSimple;
 	//CSmartPtr<CLocalSpaceEmitter> pSimple2;
@@ -3365,7 +3368,7 @@ void CTempEnts::MuzzleFlash_Flashpan( ClientEntityHandle_t hEntity, int attachme
 
 
 	//BG2 - Tjoppen - more smoke
-	for( int j = 0; j < 4; j++ )
+	for( int j = 0; j < 1; j++ ) //4
 	//if ( random->RandomInt( 0, 3 ) != 0 )
 	{
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
@@ -3383,20 +3386,20 @@ void CTempEnts::MuzzleFlash_Flashpan( ClientEntityHandle_t hEntity, int attachme
 
 		//BG2 - Tjoppen - a little bit more speed to the smoke
 		//pParticle->m_vecVelocity = forward * random->RandomFloat( 48.0f, 64.0f );
-		pParticle->m_vecVelocity = forward * (float)(j+7) * 128.0f;
+		pParticle->m_vecVelocity = forward * (float)(j+7) * 50.0f; //128.0f
 		//pParticle->m_vecVelocity[2] += 0.25f * random->RandomFloat( 7.0f, 28.0f );
 
 		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
 		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 
-		int color = random->RandomInt( 220, 255 );
+		int color = random->RandomInt( 215, 240 );//( 220, 255 );
 		pParticle->m_uchColor[0]	= color;
 		pParticle->m_uchColor[1]	= color;
 		pParticle->m_uchColor[2]	= color;
 
 		//BG2 - Tjoppen - denser smoke
-		pParticle->m_uchStartAlpha	= random->RandomInt( 150, 255 );
-		pParticle->m_uchEndAlpha	= 0;
+		pParticle->m_uchStartAlpha	= 255;//random->RandomInt( 215, 255 ); //255
+		pParticle->m_uchEndAlpha	= random->RandomInt( 200, 255 );
 
 		//BG2 - Tjoppen - larger smoke
 		pParticle->m_uchStartSize	= (float)(j+16) * 0.24f;
@@ -3406,7 +3409,7 @@ void CTempEnts::MuzzleFlash_Flashpan( ClientEntityHandle_t hEntity, int attachme
 	}
 
 	//BG2 - Tjoppen - more smoke
-	for( int j = 0; j < 3; j++ )
+	/*for( int j = 0; j < 1; j++ ) //3
 	//if ( random->RandomInt( 0, 3 ) != 0 )
 	{
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
@@ -3430,7 +3433,7 @@ void CTempEnts::MuzzleFlash_Flashpan( ClientEntityHandle_t hEntity, int attachme
 		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
 		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 
-		int color = random->RandomInt( 220, 255 );
+		int color = random->RandomInt( 215, 240 );//( 220, 255 );
 		pParticle->m_uchColor[0]	= color;
 		pParticle->m_uchColor[1]	= color;
 		pParticle->m_uchColor[2]	= color;
@@ -3449,7 +3452,7 @@ void CTempEnts::MuzzleFlash_Flashpan( ClientEntityHandle_t hEntity, int attachme
 		pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 6.0f;
 		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
 		pParticle->m_flRollDelta	= random->RandomFloat( -2.5f, 2.5f );
-	}
+	}*/
 }
 
 void CTempEnts::RocketFlare( const Vector& pos )

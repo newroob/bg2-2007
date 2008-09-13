@@ -39,7 +39,7 @@ CLIENTEFFECT_MATERIAL( "effects/muzzleflash4" )
 CLIENTEFFECT_MATERIAL( "effects/bluemuzzle" )
 CLIENTEFFECT_MATERIAL( "effects/gunshipmuzzle" )
 CLIENTEFFECT_MATERIAL( "effects/gunshiptracer" )
-CLIENTEFFECT_MATERIAL( "effects/huntertracer" )
+//CLIENTEFFECT_MATERIAL( "effects/huntertracer" )
 CLIENTEFFECT_MATERIAL( "sprites/physcannon_bluelight2" )
 CLIENTEFFECT_MATERIAL( "effects/combinemuzzle1" )
 CLIENTEFFECT_MATERIAL( "effects/combinemuzzle2" )
@@ -936,7 +936,8 @@ void FX_StriderTracer( Vector& start, Vector& end, int velocity, bool makeWhiz )
 //			velocity - 
 //			makeWhiz - 
 //-----------------------------------------------------------------------------
-void FX_HunterTracer( Vector& start, Vector& end, int velocity, bool makeWhiz )
+//BG2 - Don't need this. -HairyPotter
+/*void FX_HunterTracer( Vector& start, Vector& end, int velocity, bool makeWhiz )
 {
 	VPROF_BUDGET( "FX_HunterTracer", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	Vector	vNear, dStart, dEnd, shotDir;
@@ -960,7 +961,7 @@ void FX_HunterTracer( Vector& start, Vector& end, int velocity, bool makeWhiz )
 	{
 		FX_TracerSound( start, end, TRACER_TYPE_STRIDER );
 	}
-}
+}*/
 
 	
 //-----------------------------------------------------------------------------
