@@ -90,6 +90,8 @@ ConVar mp_disable_firearms( "mp_disable_firearms", "0", FCVAR_NOTIFY | FCVAR_REP
 ConVar sv_show_damages("sv_show_damages", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Allow people to view enemy damages in scoreboard?");
 ConVar sv_show_enemy_names("sv_show_enemy_names", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Allow people to view enemy names in crosshair?");
 
+ConVar sv_meleestyle("sv_meleestyle", "1", FCVAR_NOTIFY | FCVAR_REPLICATED, "Use 1.1b style melee?");
+
 #ifdef CLIENT_DLL
 int m_iLastAttackType = 0, Shot = 0; //BG2 - For the hitverif. Keep it local. -HairyPotter
 #endif
@@ -172,7 +174,7 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 			return;
 
 		//do tracelines for so many seconds
-		if( sv_retracing_melee.GetBool() )
+		if( sv_retracing_melee.GetBool() && sv_meleestyle.GetBool() )
 			m_flStopAttemptingSwing = gpGlobals->curtime + SWING_ATTEMPT_TIME;
 
 		drain = Swing( ATTACK_PRIMARY, true );
@@ -500,26 +502,76 @@ int CBaseBG2Weapon::Swing( int iAttack, bool bDoEffects )
 	CTakeDamageInfo triggerInfo( GetOwner(), GetOwner(), GetDamage(iAttack), DMG_CLUB );
 
 	TraceAttackToTriggers( triggerInfo, traceHit.startpos, traceHit.endpos, vec3_origin );
-#endif
-
-	if ( traceHit.fraction == 1.0f )
+	if ( sv_meleestyle.GetBool() ) //Toggle between 1.1b melee and 0.17
 	{
-		//miss, do any waterimpact stuff
-		if( bDoEffects )
+#endif //Keep the following code with the client.dll
+		if ( traceHit.fraction == 1.0f )
+		{
+			//miss, do any waterimpact stuff
+			if( bDoEffects )
+			{
+				Vector testEnd = swingStart + forward * GetRange(iAttack);
+				ImpactWater( swingStart, testEnd );
+
+				WeaponSound( SPECIAL1 );	//miss
+			}
+		}
+		else
+		{
+			//stop attempting more swings (don't cut through masses of people or hit the same person ten times)
+			m_flStopAttemptingSwing = 0;
+
+			Hit( traceHit, iAttack );
+		}
+#ifdef GAME_DLL //
+	}
+	else //Start 0.17 melee code here...
+	{ 
+		if (GetAttackType(iAttack) == ATTACKTYPE_SLASH && GetAttackType(iAttack) == ATTACKTYPE_STAB && GetAttackType(iAttack) == ATTACKTYPE_FIREARM)
+		{
+			float bludgeonHullRadius = 1.732f * BLUDGEON_HULL_DIM;  // hull is +/- 16, so use cuberoot of 2 to determine how big the hull is from center to the corner point
+
+			swingEnd -= forward * bludgeonHullRadius;
+
+			UTIL_TraceHull( swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
+			if ( traceHit.fraction < 1.0 && traceHit.m_pEnt )
+			{
+				Vector vecToTarget = traceHit.m_pEnt->GetAbsOrigin() - swingStart;
+				VectorNormalize( vecToTarget );
+
+				float dot = vecToTarget.Dot( forward );
+
+				if ( dot < 0.70721f )
+				{
+					traceHit.fraction = 1.0f;
+				}
+			}
+		}
+		else
+		{
+			UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &traceHit );
+			if ( traceHit.fraction == 1.0f )
+			{
+				UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
+			}
+		}
+		WeaponSound( SPECIAL1 );
+
+		// -------------------------
+		//	Miss
+		// -------------------------
+		if ( traceHit.fraction == 1.0f )
 		{
 			Vector testEnd = swingStart + forward * GetRange(iAttack);
+		
 			ImpactWater( swingStart, testEnd );
-
-			WeaponSound( SPECIAL1 );	//miss
 		}
-	}
-	else
-	{
-		//stop attempting more swings (don't cut through masses of people or hit the same person ten times)
-		m_flStopAttemptingSwing = 0;
-
-		Hit( traceHit, iAttack );
-	}
+		else
+		{
+			Hit( traceHit, iAttack );
+		}
+	} //End 0.17 melee code.
+#endif
 
 	// Send the anim
 	if( bDoEffects )

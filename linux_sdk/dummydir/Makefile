@@ -21,19 +21,38 @@ GAME_DIR=/home/STEAM/orangebox
 
 # the path to your mods directory
 # set this so that 'make install' or 'make installrelease' will copy your binary over automatically.
-MOD_DIR=$(GAME_DIR)/scratchmod
+MOD_DIR=$(GAME_DIR)/SampleMod
 
-# compiler options (gcc 3.4.1 or above is required - 4.1.2+ recommended)
+# compiler options (gcc 3.4.1 will work - 4.2.2 recommended)
 CC=gcc-4.2
 CPLUS=g++-4.2
 CLINK=gcc-4.2
 CPP_LIB="/usr/lib/gcc/i486-linux-gnu/4.2.3/libstdc++.a /usr/lib/gcc/i486-linux-gnu/4.2.3/libgcc_eh.a"
 
+# GCC 4.2.2 optimization flags, if you're using anything below, don't use these!
+OPTFLAGS=-O2 -fomit-frame-pointer
+
 # put any compiler flags you want passed here
 USER_CFLAGS=
 
+# Link Libraries
+LIBFILES= \
+  $(SOURCE_DIR)/lib/linux/tier1_486.a \
+  $(SOURCE_DIR)/lib/linux/choreoobjects_486.a \
+  $(SOURCE_DIR)/lib/linux/particles_486.a \
+  $(SOURCE_DIR)/lib/linux/dmxloader_486.a \
+  tier0_i486.so \
+  vstdlib_i486.so \
+  steam_api_i486.so \
+  $(SOURCE_DIR)/lib/linux/tier3_486.a \
+  $(SOURCE_DIR)/lib/linux/tier2_486.a \
+  $(SOURCE_DIR)/lib/linux/tier1_486.a \
+  $(SOURCE_DIR)/lib/linux/mathlib_486.a \
+
+
 # link flags for your mod, make sure to include any special libraries here
-LDFLAGS="-lm -ldl $(SOURCE_DIR)/lib/linux/particles_486.a $(SOURCE_DIR)/lib/linux/dmxloader_486.a $(SOURCE_DIR)/lib/linux/mathlib_486.a tier0_i486.so vstdlib_i486.so $(SOURCE_DIR)/lib/linux/tier1_486.a $(SOURCE_DIR)/lib/linux/tier2_486.a $(SOURCE_DIR)/lib/linux/tier3_486.a $(SOURCE_DIR)/lib/linux/choreoobjects_486.a steam_api_i486.so"
+#NOTE: YES we want to include the lib files 2 times. We've run into problems with the 1-pass linker not bringing in symbols it should.
+LDFLAGS="-lm -ldl $(LIBFILES) $(LIBFILES)"
 
 # XERCES 2.6.0 or above ( http://xml.apache.org/xerces-c/ ) is used by the vcproj to makefile converter
 # it must be installed before being able to run this makefile
@@ -53,23 +72,22 @@ BUILD_DIR=.
 BUILD_OBJ_DIR=$(BUILD_DIR)/obj
 
 # the location of the source code
-#SOURCE_DIR=..
 SOURCE_DIR=../..
 
 # the CPU target for the build, must be i486 for now
 ARCH=i486
-#ARCH_CFLAGS=-mtune=i686 -march=pentium3 -mmmx -O3
-ARCH_CFLAGS=-mtune=i686 -march=pentium3 -msse -O3
+ARCH_CFLAGS=-mtune=i686 -march=i686 -mfpmath=sse -msse
 
 # -fpermissive is so gcc 3.4.x doesn't complain about some template stuff
-BASE_CFLAGS=-DVPROF_LEVEL=0 -DSWDS -D_LINUX -DLINUX -DNDEBUG -fpermissive -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
+BASE_CFLAGS=-DVPROF_LEVEL=1 -DSWDS -D_LINUX -DLINUX -DNDEBUG -fpermissive -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
+
 SHLIBEXT=so
+
 SHLIBCFLAGS=-fPIC
 SHLIBLDFLAGS=-shared -Wl,-Map,$@_map.txt -Wl
 
-#flags passed to the c compiler
-#CFLAGS="$(USER_CFLAGS) $(DEFINES) $(ARCH_CFLAGS) $(OPTIMIZER_FLAGS) $(BASE_CFLAGS) -Dsprintf=use_Q_snprintf_instead_of_sprintf -Dstrncpy=use_Q_strncpy_instead -D_snprintf=use_Q_snprintf_instead -UPROTECTED_THINGS_ENABLE"
-CFLAGS="$(USER_CFLAGS) $(DEFINES) $(ARCH_CFLAGS) $(BASE_CFLAGS) -Usprintf=use_Q_snprintf_instead_of_sprintf -Ustrncpy=use_Q_strncpy_instead -UPROTECTED_THINGS_ENABLE"
+#flags passed to the compiler
+CFLAGS="$(USER_CFLAGS) $(DEFINES) $(ARCH_CFLAGS) $(OPTFLAGS) $(BASE_CFLAGS) -Usprintf=use_Q_snprintf_instead_of_sprintf -Ustrncpy=use_Q_strncpy_instead -Ufopen=dont_use_fopen -UPROTECTED_THINGS_ENABLE"
 
 # define list passed to make for the sub makefile
 BASE_DEFINES=CC=$(CC) CPLUS=$(CPLUS) CPP_LIB=$(CPP_LIB) \
@@ -84,7 +102,7 @@ MAKE_MOD=Makefile.server
 MAKE_VCPM=Makefile.vcpm
 MAKE_PLUGIN=Makefile.plugin
 
-all: check vcpm server
+ll: check vcpm server
 
 check:
 	if [ -z "$(CC)" ]; then echo "Compiler not defined."; exit; fi

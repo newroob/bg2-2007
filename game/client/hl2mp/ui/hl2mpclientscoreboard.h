@@ -57,6 +57,8 @@ private:
 	// rounded corners
 	Color					 m_bgColor;
 	Color					 m_borderColor;
+
+	int iAmericanDmg, iBritishDmg, iSpecDmg; //BG2 - For the team damage totals. -HairyPotter
 };
 
 

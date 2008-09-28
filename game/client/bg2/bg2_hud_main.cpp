@@ -515,10 +515,20 @@ void CHudBG2::MsgFunc_WinMusic( bf_read &msg )
 
 	CLocalPlayerFilter filter;
 
-	if( team == TEAM_AMERICANS )
+	/*if( team == TEAM_AMERICANS )
 		C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "Americans.win" );
 	else if( team == TEAM_BRITISH )
-		C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "British.win" );
+		C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "British.win" );*/
+
+	switch( team ) //Switches are more efficient.
+	{
+		case TEAM_AMERICANS:
+			C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "Americans.win" );
+			break;
+		case TEAM_BRITISH:
+			C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "British.win" );
+			break;
+	}
 }
 //Make capture sounds client side. -HairyPotter
 void CHudBG2::MsgFunc_CaptureSounds( bf_read &msg ) 

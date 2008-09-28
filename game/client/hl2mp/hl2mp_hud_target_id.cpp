@@ -22,6 +22,7 @@
 
 static ConVar hud_centerid( "hud_centerid", "1" );
 static ConVar hud_showtargetid( "hud_showtargetid", "1" );
+extern ConVar sv_show_enemy_names;
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -165,10 +166,11 @@ void CTargetID::Paint()
 			}
 			else
 			{
-				//BG2 - Tjoppen - don't show enemies' names under crosshair!
-				return;
-				//
-				printFormatString = "#Playerid_diffteam";
+				if( sv_show_enemy_names.GetBool()) //BG2 - Make this optional! -HairyPotter
+				{
+					printFormatString = "#Playerid_diffteam";
+				}
+				else return;
 			}
 		
 

@@ -300,6 +300,7 @@ CHL2MPRules::CHL2MPRules()
 	m_fLastRespawnWave = gpGlobals->curtime;
 	m_iTDMTeamThatWon = 0;
 	m_bHasDoneWinSong = false;
+	m_bHasLoggedScores = false;
 	m_iAmericanDmg = 0;
 	m_iBritishDmg = 0;
 	m_fNextWinSong = gpGlobals->curtime;
@@ -480,20 +481,25 @@ void CHL2MPRules::Think( void )
 				return;
 			}
 		}*/
-		//BG2 - Log Damages and Scores. -HairyPotter
-		for( int x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
+		if ( !m_bHasLoggedScores )
 		{
-			CBasePlayer *pPlayer = g_Teams[TEAM_AMERICANS]->GetPlayer( x );
-			m_iAmericanDmg += pPlayer->DeathCount();
-		}
-		for( int x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
-		{
-			CBasePlayer *pPlayer = g_Teams[TEAM_BRITISH]->GetPlayer( x );
-			m_iBritishDmg += pPlayer->DeathCount();
-		}
+			//BG2 - Log Damages and Scores. -HairyPotter
+			for( int x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
+			{
+				CBasePlayer *pPlayer = g_Teams[TEAM_AMERICANS]->GetPlayer( x );
+				m_iAmericanDmg += pPlayer->DeathCount();
+			}
+			for( int x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
+			{
+				CBasePlayer *pPlayer = g_Teams[TEAM_BRITISH]->GetPlayer( x );
+				m_iBritishDmg += pPlayer->DeathCount();
+			}
 
-		UTIL_LogPrintf("***American Scores*** DAMAGE: %i   SCORE: %i   \n", m_iAmericanDmg, mp_americanscore.GetInt() );
-		UTIL_LogPrintf("***British Scores*** DAMAGE: %i   SCORE: %i   \n", m_iBritishDmg, mp_britishscore.GetInt() );
+			UTIL_LogPrintf("***American Scores*** DAMAGE: %i   SCORE: %i   \n", m_iAmericanDmg, mp_americanscore.GetInt() );
+			UTIL_LogPrintf("***British Scores*** DAMAGE: %i   SCORE: %i   \n", m_iBritishDmg, mp_britishscore.GetInt() );
+
+			m_bHasLoggedScores = true; //Don't do it again.
+		}
 
 		// check to see if we should change levels now
 		if ( (m_flIntermissionEndTime + m_fAdditionTime) < gpGlobals->curtime )
@@ -533,7 +539,7 @@ void CHL2MPRules::Think( void )
 	//=========================
 	if (mp_timeleft.GetFloat() > 0)
 	{
-		timeleft2 = (mp_timeleft.GetFloat() * 60.0f) + gpGlobals->curtime;
+		timeleft2 = (m_flGameStartTime + mp_timeleft.GetFloat() * 60.0f) + gpGlobals->curtime;
 		mp_timeleft.SetValue(0);
 	}
 

@@ -140,7 +140,7 @@
 			IntermediateDirectory=".\Release_hl2mp"
 			ConfigurationType="2"
 			CharacterSet="2"
-			WholeProgramOptimization="0"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -169,7 +169,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				WholeProgramOptimization="false"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..\..\common,..\..\public,..\..\public\tier0,..\..\public\tier1,.\,..\..\game\shared,..\..\utils\common,..\..\game\shared\hl2,.\hl2,.\hl2mp,..\..\game\shared\hl2mp"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;GAME_DLL;VECTOR;PROTECTED_THINGS_ENABLE;fopen=dont_use_fopen;sprintf=use_Q_snprintf_instead_of_sprintf;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;HL2MP;HL2_DLL"
 				StringPooling="true"
@@ -229,7 +229,7 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="0"
+				LinkTimeCodeGeneration="1"
 				BaseAddress=" "
 				TurnOffAssemblyGeneration="true"
 				TargetMachine="1"
@@ -2847,10 +2847,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\shared\hl2\survival_gamerules.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\shared\takedamageinfo.cpp"
 				>
 			</File>
@@ -3708,6 +3704,30 @@
 				<File
 					RelativePath=".\bg2\bullet.h"
 					>
+				</File>
+				<File
+					RelativePath=".\bg2\ctfflag.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\bg2\ctfflag.h"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\bg2\flag.cpp"

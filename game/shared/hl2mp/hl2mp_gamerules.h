@@ -202,7 +202,7 @@ public:
 	float	m_flNextRoundRestart;
 	bool	m_bIsRestartingRound;
 	int		m_iTDMTeamThatWon, m_iAmericanDmg, m_iBritishDmg; //BG2 - HairyPotter
-	bool	m_bHasDoneWinSong;
+	bool	m_bHasDoneWinSong, m_bHasLoggedScores;
 	float	m_fNextWinSong;
 	//
 	//CNetworkVar( int, m_iWaveTime );

@@ -542,6 +542,8 @@ void CHL2MP_Player::Spawn(void)
 	RemoveEffects( EF_NODRAW );
 
 	StopObserverMode();
+
+	UpdateWaterState(); //BG2 - This fixes the ammo respawn bug if player dies underwater. -HairyPotter
 	
 	GiveDefaultItems();
 
@@ -1091,7 +1093,14 @@ bool CHL2MP_Player::WantsLagCompensationOnEntity( const CBasePlayer *pPlayer, co
 {
 	// No need to lag compensate at all if we're not attacking in this command and
 	// we haven't attacked recently.
-	if ( !( pCmd->buttons & IN_ATTACK ) && (pCmd->command_number - m_iLastWeaponFireUsercmd > 5) )
+	//BG2 - Tjoppen - MELEE FIX! I've never been so relieved! So relieved - and ANGRY!
+	//if ( !( pCmd->buttons & IN_ATTACK ) && (pCmd->command_number - m_iLastWeaponFireUsercmd > 5) )
+	//if ( !( pCmd->buttons & IN_ATTACK ) && !( pCmd->buttons & IN_ATTACK2 ) && (pCmd->command_number - m_iLastWeaponFireUsercmd > 5) )
+
+	if( (!( pCmd->buttons & IN_ATTACK ) || !sv_unlag_lmb.GetBool()) &&	//button not pressed or shouldn't be unlagged
+		(!( pCmd->buttons & IN_ATTACK2) || !sv_unlag_rmb.GetBool()) &&	//-"-
+		(pCmd->command_number - m_iLastWeaponFireUsercmd > 10) )		//unlag a bit longer
+	//
 		return false;
 
 	// If this entity hasn't been transmitted to us and acked, then don't bother lag compensating it.

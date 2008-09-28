@@ -27,6 +27,7 @@ using namespace vgui;
 
 #define TEAM_MAXCOUNT			5
 
+extern ConVar sv_show_damages;
 // id's of sections used in the scoreboard
 enum EScoreboardSections
 {
@@ -364,6 +365,34 @@ void CHL2MPClientScoreBoardDialog::UpdateTeamInfo()
 		}
 	}
 
+	//BG2 - Get the total team damage points. -HairyPotter
+	iAmericanDmg = 0;
+	iBritishDmg = 0;
+	iSpecDmg = 0;
+
+	for ( int j = 1; j <= gpGlobals->maxClients; j++ )
+	{	
+		C_BasePlayer *pPlayer = UTIL_PlayerByIndex( j );
+		if ( pPlayer )
+		{
+			switch ( pPlayer->GetTeamNumber() )
+			{
+			case TEAM_AMERICANS:
+				iAmericanDmg += g_PR->GetDeaths( j );
+				break;
+			case TEAM_BRITISH:
+				iBritishDmg += g_PR->GetDeaths( j );
+				break;
+			case TEAM_SPECTATOR:
+				iSpecDmg += g_PR->GetDeaths( j );
+			break;
+			}
+		}
+	}
+	//
+
+	//Msg(" American Damage = %i / British Damage = %i \n", iAmericanDmg, iBritishDmg );
+
 	// update the team sections in the scoreboard
 	for ( int i = TEAM_SPECTATOR; i < TEAM_MAXCOUNT; i++ )
 	{
@@ -416,6 +445,20 @@ void CHL2MPClientScoreBoardDialog::UpdateTeamInfo()
 				}
 
 				// update stats
+				wchar_t deaths[8];
+				switch( i )
+				{
+					case TEAM_AMERICANS:	
+						swprintf(deaths, L"%d", iAmericanDmg);
+						break;
+					case TEAM_BRITISH:	
+						swprintf(deaths, L"%d", iBritishDmg);
+						break;
+					case TEAM_SPECTATOR:	
+						swprintf(deaths, L"%d", iSpecDmg);
+						break;
+				}
+				m_pPlayerList->ModifyColumn(sectionID, "deaths", deaths);
 				wchar_t val[6];
 				swprintf(val, L"%d", team->Get_Score());
 				m_pPlayerList->ModifyColumn(sectionID, "frags", val);
@@ -521,10 +564,17 @@ bool CHL2MPClientScoreBoardDialog::GetPlayerScoreInfo(int playerIndex, KeyValues
 	kv->SetString("name", g_PR->GetPlayerName(playerIndex) );
 	//BG2 - Tjoppen - hide non-local player damage
 	//kv->SetInt("deaths", g_PR->GetDeaths( playerIndex ));
-	if( playerIndex == C_BasePlayer::GetLocalPlayer()->entindex() )
-		kv->SetInt("deaths", g_PR->GetDeaths( playerIndex ) );
+	if ( sv_show_damages.GetBool() )
+	{
+		kv->SetInt("deaths", g_PR->GetDeaths( playerIndex ));
+	}
 	else
-		kv->SetString("deaths", "" );
+	{
+		if( playerIndex == C_BasePlayer::GetLocalPlayer()->entindex() )
+			kv->SetInt("deaths", g_PR->GetDeaths( playerIndex ) );
+		else
+			kv->SetString("deaths", "" );
+	}
 	//
 	kv->SetInt("frags", g_PR->GetPlayerScore( playerIndex ));
 	//BG2 - Tjoppen - dead column
