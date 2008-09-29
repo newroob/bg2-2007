@@ -259,6 +259,8 @@ public:
 	float m_fHolsterTime;
 	//
 
+	char *w_strDeploySound; //HACKHACK for Deploy sound. -HairyPotter
+
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
 
