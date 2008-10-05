@@ -21,7 +21,9 @@ void CServerGameClients::GetPlayerLimits( int& minplayers, int& maxplayers, int 
 	minplayers = defaultMaxPlayers = 2; 
 	//BG2 - Tjoppen - more players!
 	//maxplayers = 16;
-	maxplayers = 32;
+	//maxplayers = 32;
+	//Yet more players. For those who wants to gamble on +32 player servers. -HairyPotter
+	maxplayers = 64;
 }
 
 // -------------------------------------------------------------------------------------------- //

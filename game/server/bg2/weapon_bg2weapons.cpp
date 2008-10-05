@@ -80,7 +80,6 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
-	w_strDeploySound = "Weapon_Brownbess.Deploy";
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
@@ -130,7 +129,6 @@ DECLARE_BG2_WEAPON( charleville )
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
-	w_strDeploySound = "Weapon_Charleville.Deploy";
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
@@ -181,7 +179,6 @@ DECLARE_BG2_WEAPON( jaeger )
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
-	w_strDeploySound = "Weapon_Jaeger.Deploy";
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
@@ -221,7 +218,6 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
-	w_strDeploySound = "Weapon_Frontiersman.Deploy";
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
@@ -258,7 +254,6 @@ DECLARE_BG2_WEAPON( pistol_a )
 	m_bDontAutoreload	= true;
 
 	m_fHolsterTime = 0.50f;
-	w_strDeploySound = "Weapon_Pistol_A.Deploy";
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
@@ -295,7 +290,6 @@ DECLARE_BG2_WEAPON( pistol_b )
 	m_bDontAutoreload	= true;
 
 	m_fHolsterTime = 0.50f;
-	w_strDeploySound = "Weapon_Pistol_B.Deploy";
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
@@ -332,7 +326,6 @@ DECLARE_BG2_WEAPON( sabre_a )
 	m_bDontAutoreload	= true;
 
 	m_fHolsterTime = 0.50f;
-	w_strDeploySound = "Weapon_Sabre.Deploy";
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
@@ -363,7 +356,6 @@ DECLARE_BG2_WEAPON( sabre_b )
 	m_bDontAutoreload	= true;
 
 	m_fHolsterTime = 0.50f;
-	w_strDeploySound = "Weapon_Sabre.Deploy";
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
@@ -394,7 +386,6 @@ DECLARE_BG2_WEAPON( knife )
 	m_bDontAutoreload	= true;
 
 	m_fHolsterTime = 0.75f;
-	w_strDeploySound = "Weapon_Knife.Deploy";
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
@@ -425,7 +416,6 @@ DECLARE_BG2_WEAPON( hirschf )
 	m_bDontAutoreload	= true;
 
 	m_fHolsterTime = 0.75f;
-	w_strDeploySound = "Weapon_Sabre.Deploy";
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;

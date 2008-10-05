@@ -190,7 +190,8 @@ void CHudDeathNotice::Paint()
 		}
 		else
 		{
-			float scale = ( (float)ScreenHeight() / 480.0f );	//scale based on 640x480
+			//float scale = ( (float)ScreenHeight() / 480.0f );	//scale based on 640x480
+			float scale = ( (float)ScreenHeight() / 864.0f );	//BG2 - Fixed large scale death icons. Scale based on 1154x864. -HairyPotter
 			iconWide = (int)( scale * (float)icon->Width() );
 			iconTall = (int)( scale * (float)icon->Height() );
 		}

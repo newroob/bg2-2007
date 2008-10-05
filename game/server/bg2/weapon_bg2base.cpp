@@ -135,13 +135,10 @@ bool CBaseBG2Weapon::Deploy( void )
 	//stop reload
 	StopWeaponSound( RELOAD );
 
-#ifdef CLIENT_DLL //HACKHACK for 1.2b - HairyPotter
 	//play "draw" sound, but only for players that are alive
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 	if( pOwner && pOwner->IsAlive() )
-		//WeaponSound( DEPLOY ); ?Uhm.. why won't this work? HACKHACK For 1.2b -HairyPotter
-		EmitSound( w_strDeploySound );
-#endif
+		WeaponSound( DEPLOY );
 
 	return BaseClass::Deploy();
 }

@@ -35,6 +35,7 @@
 #include "c_te_effect_dispatch.h"
 //BG2 - Tjoppen - #includes
 #include "bg2/bg2smokeemitter.h"
+#include "materialsystem\imaterialsystem.h"
 //
 
 // NOTE: Always include this last!
@@ -3273,6 +3274,7 @@ void MuzzleFlash_Pistol_Shared( ClientEntityHandle_t hEntity, int attachmentInde
 		pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 25.0f;
 		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
 		pParticle->m_flRollDelta	= random->RandomFloat( -2.5f, 2.5f );
+
 	}
 }
 

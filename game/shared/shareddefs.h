@@ -157,7 +157,7 @@ public:
 #if defined( CSTRIKE_DLL )
 	#define MAX_PLAYERS				64  // Absolute max players supported
 #else
-	#define MAX_PLAYERS				32  // Absolute max players supported
+	#define MAX_PLAYERS				64  // Absolute max players supported //BG2 - Upped this from 32. -HairyPotter
 #endif
 
 #define MAX_PLACE_NAME_LENGTH		18
