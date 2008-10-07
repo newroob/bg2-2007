@@ -3228,7 +3228,7 @@ void MuzzleFlash_Pistol_Shared( ClientEntityHandle_t hEntity, int attachmentInde
 	// Smoke
 	offset = origin + forward * 8.0f;
 
-	//BG2 - Tjoppen - more smoke
+	//BG2 - Tjoppen - more smoke // Less amoke. -HairyPotter
 	for( int j = 0; j < 3/*(cl_simple_smoke.GetBool() ? 6 : 12)*/; j++ )
 	//if ( random->RandomInt( 0, 3 ) != 0 )
 	{
@@ -3247,15 +3247,23 @@ void MuzzleFlash_Pistol_Shared( ClientEntityHandle_t hEntity, int attachmentInde
 		pParticle->m_flDieTime		= random->RandomFloat( 7.5f, 11.5f );
 
 		//BG2 - Tjoppen - a little bit more speed to the smoke
-		pParticle->m_vecVelocity = forward * (float)(j+6) * 175.0f;//384.0f;
+		pParticle->m_vecVelocity = forward * (float)(j+6) * 225.0f;//384.0f;
 
 		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
 		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 
-		int color = random->RandomInt( 215, 240 );//( 200, 255 );
-		pParticle->m_uchColor[0]	= color;
-		pParticle->m_uchColor[1]	= color;
-		pParticle->m_uchColor[2]	= color;
+		//Find area ambient light color and use it to tint smoke
+		Vector	worldLight = WorldGetLightForPoint( origin, false );	
+
+		int color = random->RandomInt( 215, 255 );//( 200, 255 );
+		float finalcolor = worldLight[0] * color + 30;
+		if ( finalcolor > 205 )
+			finalcolor = 205;
+		if ( finalcolor < 130 )
+			finalcolor = 130;
+		pParticle->m_uchColor[0]	= finalcolor;
+		pParticle->m_uchColor[1]	= finalcolor;
+		pParticle->m_uchColor[2]	= finalcolor;
 
 		//BG2 - Tjoppen - denser smoke
 		/*if( cl_simple_smoke.GetBool() )
@@ -3266,7 +3274,7 @@ void MuzzleFlash_Pistol_Shared( ClientEntityHandle_t hEntity, int attachmentInde
 		else
 		{*/
 			pParticle->m_uchStartAlpha	= 255;//random->RandomInt( 225, 255 );
-			pParticle->m_uchEndAlpha	= random->RandomInt( 100, 225 );
+			pParticle->m_uchEndAlpha	= random->RandomInt( 150, 255 );
 		//}
 
 		//BG2 - Tjoppen - larger smoke
@@ -3394,10 +3402,18 @@ void CTempEnts::MuzzleFlash_Flashpan( ClientEntityHandle_t hEntity, int attachme
 		//BG2 - Tjoppen - also add speed to smoke, or else we can run up to it which doesn't make sense
 		pParticle->m_vecVelocity += ownervelocity * 0.25f;	//don't move too fast relative the player or it'll look stupid
 
-		int color = random->RandomInt( 215, 240 );//( 220, 255 );
-		pParticle->m_uchColor[0]	= color;
-		pParticle->m_uchColor[1]	= color;
-		pParticle->m_uchColor[2]	= color;
+		//Find area ambient light color and use it to tint smoke
+		Vector	worldLight = WorldGetLightForPoint( origin, false );	
+
+		int color = random->RandomInt( 215, 255 );//( 200, 255 );
+		float finalcolor = worldLight[0] * color + 30;
+		if ( finalcolor > 205 )
+			finalcolor = 205;
+		if ( finalcolor < 130 )
+			finalcolor = 130;
+		pParticle->m_uchColor[0]	= finalcolor;
+		pParticle->m_uchColor[1]	= finalcolor;
+		pParticle->m_uchColor[2]	= finalcolor;
 
 		//BG2 - Tjoppen - denser smoke
 		pParticle->m_uchStartAlpha	= 255;//random->RandomInt( 215, 255 ); //255

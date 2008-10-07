@@ -21,7 +21,7 @@
 #define PLAYER_HINT_DISTANCE_SQ	(PLAYER_HINT_DISTANCE*PLAYER_HINT_DISTANCE)
 
 static ConVar hud_centerid( "hud_centerid", "1" );
-static ConVar hud_showtargetid( "hud_showtargetid", "1" );
+static ConVar hud_showtargetid( "hud_showtargetid", "1", FCVAR_ARCHIVE );
 extern ConVar sv_show_enemy_names;
 
 //-----------------------------------------------------------------------------
@@ -159,18 +159,21 @@ void CTargetID::Paint()
 			bShowPlayerName = true;
 			g_pVGuiLocalize->ConvertANSIToUnicode( pPlayer->GetPlayerName(),  wszPlayerName, sizeof(wszPlayerName) );
 			
-			if ( HL2MPRules()->IsTeamplay() == true && pPlayer->InSameTeam(pLocalPlayer) )
+			if ( hud_showtargetid.GetBool() ) //BG2 - Add option to disable name displays entirely. -HairyPotter
 			{
-				printFormatString = "#Playerid_sameteam";
-				bShowHealth = true;
-			}
-			else
-			{
-				if( sv_show_enemy_names.GetBool()) //BG2 - Make this optional! -HairyPotter
+				if ( HL2MPRules()->IsTeamplay() == true && pPlayer->InSameTeam(pLocalPlayer) )
 				{
-					printFormatString = "#Playerid_diffteam";
+					printFormatString = "#Playerid_sameteam";
+					bShowHealth = true;
 				}
-				else return;
+				else
+				{
+					if( sv_show_enemy_names.GetBool()) //BG2 - Make this optional! -HairyPotter
+					{
+						printFormatString = "#Playerid_diffteam";
+					}
+					else return;
+				}
 			}
 		
 
