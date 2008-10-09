@@ -1296,6 +1296,14 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 
 		return;
 	}
+	//BG2 - Tjoppen - ACT_RANGE_ATTACK2
+	else if ( idealActivity == ACT_RANGE_ATTACK2 )
+	{
+		RestartGesture( Weapon_TranslateActivity( idealActivity ) );
+		Weapon_SetActivity( Weapon_TranslateActivity( ACT_RANGE_ATTACK2 ), 0 );
+		return;
+	}
+	//
 	else if ( idealActivity == ACT_HL2MP_GESTURE_RELOAD )
 	{
 		RestartGesture( Weapon_TranslateActivity( idealActivity ) );
