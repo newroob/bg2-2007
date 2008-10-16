@@ -43,7 +43,7 @@
 #endif // _LINUX
 
 #include <malloc.h>
-#include <new.h>
+#include <new> //.h This extremely simple tweak allows for GCC 4.3 compiles for people who care to experiment. -HairyPotter
 
 
 // need this for memset

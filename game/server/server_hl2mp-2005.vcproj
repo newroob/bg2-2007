@@ -3870,13 +3870,6 @@
 					<File
 						RelativePath=".\sdk\sdk_bot_temp.cpp"
 						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\sdk\sdk_bot_temp.h"

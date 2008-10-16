@@ -53,6 +53,8 @@ static ConVar cl_defaultweapon( "cl_defaultweapon", "weapon_physcannon", FCVAR_U
 
 void SpawnBlood (Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
 
+extern player_info_t sPlayerInfo;
+
 C_HL2MP_Player::C_HL2MP_Player() : m_PlayerAnimState( this ), m_iv_angEyeAngles( "C_HL2MP_Player::m_iv_angEyeAngles" )
 {
 	m_iIDEntIndex = 0;
@@ -229,7 +231,6 @@ void C_HL2MP_Player::UpdateLookAt( void )
 	m_flCurrentHeadPitch = AngleNormalize( m_flCurrentHeadPitch );
 	SetPoseParameter( m_headPitchPoseParam, m_flCurrentHeadPitch );
 }
-
 void C_HL2MP_Player::ClientThink( void )
 {
 	bool bFoundViewTarget = false;

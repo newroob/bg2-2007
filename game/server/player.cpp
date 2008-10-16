@@ -553,7 +553,6 @@ CBasePlayer::CBasePlayer( )
 #ifdef CLIENT_DLL
 	//player_info_t sPlayerInfo;
 	//Q_memset( &sPlayerInfo, 0, sizeof(player_info_t) );
-	Q_strncpy( sPlayerInfo.name, /*playername.GetChar()*/"lawlagain" , sizeof(sPlayerInfo.name)  );
 #endif
 
 	m_szNetname[0] = '\0';

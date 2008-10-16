@@ -78,11 +78,6 @@ extern CBaseEntity	 *g_pLastRebelSpawn;*/
 
 #endif
 
-#ifdef CLIENT_DLL
-	//BG2 - Name Hax go here for no reason. -HairyPotter
-	ConVar playername("playername", "0", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE );
-#endif
-
 //BG2 - Tjoppen - beautiful defines. you will see another one further down
 #ifdef CLIENT_DLL
 #define CVAR_FLAGS	(FCVAR_REPLICATED | FCVAR_NOTIFY)
@@ -786,36 +781,6 @@ void CHL2MPRules::Think( void )
 		}
 	}
 
-	/*for ( int i = 1; i <= gpGlobals->maxClients; i++ )
-	{
-		CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
-
-		if ( !pPlayer )
-			return;
-
-		const char *pszCustomName = engine->GetClientConVarValue( pPlayer->entindex(), "playername" );
-
-		const char *pszOldName = pPlayer->GetPlayerName();
-
-		if ( pszCustomName != 0 && pszCustomName != pszOldName )
-		{
-			char text[256];
-			Q_snprintf( text,sizeof(text), "%s changed name to %s\n", pszOldName, pszCustomName );
-
-			UTIL_ClientPrintAll( HUD_PRINTTALK, text );
-
-			IGameEvent * event = gameeventmanager->CreateEvent( "player_changename" );
-			if ( event )
-			{
-				event->SetInt( "userid", pPlayer->GetUserID() );
-				event->SetString( "oldname", pszOldName );
-				event->SetString( "newname", pszCustomName );
-				gameeventmanager->FireEvent( event );
-			}
-		
-			pPlayer->SetPlayerName( pszCustomName );
-		}
-	}*/
 
 	ManageObjectRelocation();
 
@@ -1331,7 +1296,7 @@ float CHL2MPRules::GetMapRemainingTime()
 //-----------------------------------------------------------------------------
 void CHL2MPRules::Precache( void )
 {
-	//CBaseEntity::PrecacheScriptSound( "AlyxEmp.Charge" ); //BG2 Not in scripts, removing entirely. -HairyPotter
+	//CBaseEntity::PrecacheScriptSound( "AlyxEmp.Charge" ); //BG2 - Not in scripts, removing entirely. -HairyPotter
 }
 
 bool CHL2MPRules::ShouldCollide( int collisionGroup0, int collisionGroup1 )
