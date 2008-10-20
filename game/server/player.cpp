@@ -2190,11 +2190,14 @@ void CBasePlayer::PlayerDeathThink(void)
 	{
 		// go to dead camera. 
 		StartObserverMode( m_iObserverLastMode );
+		//Msg("This happens.");
 	}
 	else if( g_pGameRules->IsMultiplayer() && !IsObserver() )
 	{
 		//look at the bastard that killed us
-		StartObserverMode( OBS_MODE_DEATHCAM );
+		//StartObserverMode( OBS_MODE_DEATHCAM );
+		StartObserverMode( m_iObserverLastMode ); //BG2 - Just default to roaming ffs. - HairyPotter
+		//Msg("Nope, this happens now.");
 	}
 	//
 	
@@ -2514,7 +2517,7 @@ void CBasePlayer::ValidateCurrentObserverTarget( void )
 		else
 		{
 			// couldn't find new target, switch to temporary mode
-			if ( mp_forcecamera.GetInt() == OBS_ALLOW_ALL )
+			if ( mp_forcecamera.GetInt() == OBS_ALLOW_ALL ) // OBS_ALLOW_ALL = 0, just for reference. -HairyPotter
 			{
 				// let player roam around
 				ForceObserverMode( OBS_MODE_ROAMING );

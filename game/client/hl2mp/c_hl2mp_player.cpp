@@ -92,7 +92,7 @@ void C_HL2MP_Player::UpdateIDTarget()
 	// Clear old target and find a new one
 	m_iIDEntIndex = 0;
 
-	// don't show IDs in chase spec mode
+	// don't show IDs in chase spec mode //BG2 - Hmmm.. -HairyPotter
 	if ( GetObserverMode() == OBS_MODE_CHASE || 
 		 GetObserverMode() == OBS_MODE_DEATHCAM )
 		 return;
@@ -141,7 +141,9 @@ void C_HL2MP_Player::TraceAttack( const CTakeDamageInfo &info, const Vector &vec
 
 		if ( blood != DONT_BLEED )
 		{
-			SpawnBlood( vecOrigin, vecDir, blood, flDistance );// a little surface blood.
+			//BG2 - Tjoppen - serverside blood
+			//SpawnBlood( vecOrigin, vecDir, blood, flDistance );// a little surface blood.
+			//
 			TraceBleed( flDistance, vecDir, ptr, info.GetDamageType() );
 		}
 	}
