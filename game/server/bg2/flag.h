@@ -104,50 +104,74 @@ class CFlag : public CBaseAnimating
 
 	int		m_iTeamBonus,
 			m_iTeamBonusInterval,
-			m_iPlayerBonus;
+			m_iPlayerBonus,
+			m_iAmericanFlagSkin,
+			m_iBritishFlagSkin,
+			m_iNeutralFlagSkin,
+			m_iDisabledFlagSkin;
 
 	float	m_flNextTeamBonus;
 
-	string_t	m_sNeutralFlagModelName,
+	string_t	m_sNeutralFlagModelName, //BG2 - These strings exist only for backwards compatibility and serve no other purpose. -HairyPotter
 				m_sDisabledFlagModelName,
 				m_sBritishFlagModelName,
-				m_sAmericanFlagModelName;
+				m_sAmericanFlagModelName; //
 
-	const char* GetNeutralModelName()
+	int GetNeutralSkin()
 	{
 		//for backward compatibility without this name defined
-		if( strlen(STRING( m_sNeutralFlagModelName )) == 0 )
-			return "models/other/flag_n.mdl";
-		else
-			return STRING( m_sNeutralFlagModelName );
+		if( strlen(STRING( m_sNeutralFlagModelName )) != 0 )
+			return 2;
+		else if ( m_iNeutralFlagSkin != NULL )
+			return m_iNeutralFlagSkin;
+		else 
+		{
+			Msg("Something's wrong with the flags. Needs to be recompiled.\n");
+			return 2;
+		}
 	}
 
-	const char* GetDisabledModelName()
+	int GetDisabledSkin()
 	{
 		//for backward compatibility without this name defined
-		if( strlen(STRING( m_sDisabledFlagModelName )) == 0 )
+		if( strlen(STRING( m_sDisabledFlagModelName )) != 0 )
 			//return "models/other/flag_w.mdl"; //To avoid errors for now. -HairyPotter
-			return "models/other/flag_n.mdl";
-		else
-			return STRING( m_sDisabledFlagModelName );
+			return 2;
+		else if ( m_iDisabledFlagSkin != NULL )
+			return m_iDisabledFlagSkin;
+		else 
+		{
+			Msg("Something's wrong with the flags. Needs to be recompiled.\n");
+			return 2;
+		}
 	}
 
-	const char* GetBritishModelName()
+	int GetBritishSkin()
 	{
 		//for backward compatibility without this name defined
-		if( strlen(STRING( m_sBritishFlagModelName )) == 0 )
-			return "models/other/flag_b.mdl";
-		else
-			return STRING( m_sBritishFlagModelName );
+		if( strlen(STRING( m_sBritishFlagModelName )) != 0 )
+			return 1;
+		else if ( m_iBritishFlagSkin != NULL )
+			return m_iBritishFlagSkin;
+		else 
+		{
+			Msg("Something's wrong with the flags. Needs to be recompiled.\n");
+			return 2;
+		}
 	}
 
-	const char* GetAmericanModelName()
+	int GetAmericanSkin()
 	{
 		//for backward compatibility without this name defined
-		if( strlen(STRING( m_sAmericanFlagModelName )) == 0 )
-			return "models/other/flag_a.mdl";
-		else
-			return STRING( m_sAmericanFlagModelName );
+		if( strlen(STRING( m_sAmericanFlagModelName )) != 0 )
+			return 0;
+		else if ( m_iAmericanFlagSkin != NULL )
+			return m_iAmericanFlagSkin;
+		else 
+		{
+			Msg("Something's wrong with the flags. Needs to be recompiled.\n");
+			return 2;
+		}
 	}
 
 	CNetworkVar( float,	m_flCaptureTime );	//.. and for how long?

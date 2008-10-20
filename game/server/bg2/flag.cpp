@@ -102,7 +102,7 @@ void CBasePoint::Spawn( void )
     // We push things out of our way
     SetMoveType( MOVETYPE_NONE );
     // Use our brushmodel
-    SetModel( STRING( GetModelName() ) );
+    SetModel( /*STRING( GetModelName() )*/"models/other/flag.mdl" ); //I know, shouldn't be static. Just do this for compat reasons.
 	//m_hPlayers.Purge();
 	//m_iTeam = TEAM_UNASSIGNED;
 	//m_iCaptured = 0;
@@ -503,7 +503,7 @@ void CFlag::InputEnable( inputdata_t &inputData )
 	m_bActive = true;
 	ChangeTeam( TEAM_UNASSIGNED );
 	m_iLastTeam = TEAM_UNASSIGNED;
-	SetModel( GetNeutralModelName() );
+	m_nSkin = GetNeutralSkin();
 	m_OnEnable.FireOutput( inputData.pActivator, this );
 	Think(); // think immediately and restart the thinking cycle
 }
@@ -529,7 +529,7 @@ void CFlag::InputDisable( inputdata_t &inputData )
 	}
 	ChangeTeam( TEAM_UNASSIGNED );
 	m_iLastTeam = TEAM_UNASSIGNED;
-	SetModel( GetDisabledModelName() );
+	m_nSkin = GetDisabledSkin();
 	m_OnDisable.FireOutput( inputData.pActivator, this );
 	//CFlagHandler::Update();
 }
@@ -545,10 +545,12 @@ void CFlag::Spawn( void )
 {
 	Precache( );
 
+	SetModel( "models/other/flag.mdl" ); //Always first.
+
 	if (HasSpawnFlags( CFlag_START_DISABLED ))
 	{
 		m_bActive = false;
-		SetModel( GetDisabledModelName() );
+		m_nSkin = GetDisabledSkin();
 	}
 	else
 	{
@@ -559,14 +561,6 @@ void CFlag::Spawn( void )
 	m_iRequestingCappers = TEAM_UNASSIGNED;
 	m_iLastTeam = TEAM_UNASSIGNED;
 
-	/*int m_nIdealSequence = SelectWeightedSequence( ACT_VM_IDLE );
-	//SetActivity( ACT_VM_IDLE );
-	SetSequence( m_nIdealSequence );	
-	//SendViewModelAnim( m_nIdealSequence );
-	//SetIdealActivity( ACT_VM_IDLE );
-	//SetTouch(&CFlag::MyTouch);*/
-	//SetSequence(0);
-	
 	BaseClass::Spawn( );
 
 	// BG2 - This is all for finding the animation for the flag model. -HairyPotter
@@ -590,10 +584,7 @@ void CFlag::Spawn( void )
 }
 void CFlag::Precache( void )
 {
-	PrecacheModel( GetNeutralModelName() );
-	PrecacheModel( GetAmericanModelName() );
-	PrecacheModel( GetBritishModelName() );
-	PrecacheModel( GetDisabledModelName() );  // BG2 - SaintGreg - flag when disabled
+	PrecacheModel( "models/other/flag.mdl" );
 
 	PrecacheScriptSound( "Flag.capture" );
 }
@@ -1042,22 +1033,22 @@ void CFlag::ChangeTeam( int iTeamNum )
 	switch( iTeamNum )
 	{
 	case TEAM_AMERICANS:
-		SetModel( GetAmericanModelName() );
+		m_nSkin = GetAmericanSkin();
 		break;
 	case TEAM_BRITISH:
-		SetModel( GetBritishModelName() );
+		m_nSkin = GetBritishSkin();
 		break;
 	default:
 		switch( m_iForTeam )
 		{
 			case 1://amer
-				SetModel( GetBritishModelName() );
+				m_nSkin = GetBritishSkin();
 				break;
 			case 2://brit
-				SetModel( GetAmericanModelName() );
+				m_nSkin = GetAmericanSkin();
 				break;
 			default:
-				SetModel( GetNeutralModelName() );
+				m_nSkin = GetNeutralSkin();
 				break;
 		}
 		break;
@@ -1156,10 +1147,14 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_KEYFIELD( m_iHUDSlot, FIELD_INTEGER, "HUDSlot" ),
 	DEFINE_KEYFIELD( m_bNotUncappable, FIELD_BOOLEAN, "NotUncappable" ),
 	DEFINE_KEYFIELD( m_bUncapOnDeath, FIELD_BOOLEAN, "UncapOnDeath" ),
-	DEFINE_KEYFIELD( m_sNeutralFlagModelName, FIELD_STRING, "NeutralFlagModelName" ),
+	DEFINE_KEYFIELD( m_sNeutralFlagModelName, FIELD_STRING, "NeutralFlagModelName" ), //These strings are only here for compat reasons. -HairyPotter
 	DEFINE_KEYFIELD( m_sDisabledFlagModelName, FIELD_STRING, "DisabledFlagModelName" ),
 	DEFINE_KEYFIELD( m_sBritishFlagModelName, FIELD_STRING, "BritishFlagModelName" ),
-	DEFINE_KEYFIELD( m_sAmericanFlagModelName, FIELD_STRING, "AmericanFlagModelName" ),
+	DEFINE_KEYFIELD( m_sAmericanFlagModelName, FIELD_STRING, "AmericanFlagModelName" ), //
+	DEFINE_KEYFIELD( m_iNeutralFlagSkin, FIELD_INTEGER, "NeutralFlagSkin" ), //New skin values.
+	DEFINE_KEYFIELD( m_iDisabledFlagSkin, FIELD_INTEGER, "DisabledFlagSkin" ),
+	DEFINE_KEYFIELD( m_iBritishFlagSkin, FIELD_INTEGER, "BritishFlagSkin" ),
+	DEFINE_KEYFIELD( m_iAmericanFlagSkin, FIELD_INTEGER, "AmericanFlagSkin" ), //
 
 #ifndef CLIENT_DLL
 	DEFINE_THINKFUNC( Think ),
