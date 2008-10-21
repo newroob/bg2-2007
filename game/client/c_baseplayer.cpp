@@ -497,11 +497,11 @@ void C_BasePlayer::SetObserverTarget( EHANDLE hObserverTarget )
 		// has a chance to become non-NULL even if it currently resolves to NULL.
 		m_hObserverTarget.Init( hObserverTarget.GetEntryIndex(), hObserverTarget.GetSerialNumber() );
 
-		IGameEvent *event = gameeventmanager->CreateEvent( "spec_target_updated" );
+		/*IGameEvent *event = gameeventmanager->CreateEvent( "spec_target_updated" );
 		if ( event )
 		{
 			gameeventmanager->FireEventClientSide( event );
-		}
+		}*/
 
 		if ( IsLocalPlayer() )
 		{

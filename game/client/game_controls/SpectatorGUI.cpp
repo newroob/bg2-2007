@@ -212,7 +212,7 @@ void CSpectatorMenu::OnCommand( const char *command )
 
 void CSpectatorMenu::FireGameEvent( IGameEvent * event )
 {
-	const char *pEventName = event->GetName();
+	/*const char *pEventName = event->GetName();
 
  	if ( Q_strcmp( "spec_target_updated", pEventName ) == 0 )
 	{
@@ -244,7 +244,7 @@ void CSpectatorMenu::FireGameEvent( IGameEvent * event )
 				}
 			}
 		}
-	}
+	}*/
 }
 
 //-----------------------------------------------------------------------------

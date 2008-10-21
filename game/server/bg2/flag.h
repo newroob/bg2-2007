@@ -120,58 +120,37 @@ class CFlag : public CBaseAnimating
 	int GetNeutralSkin()
 	{
 		//for backward compatibility without this name defined
-		if( strlen(STRING( m_sNeutralFlagModelName )) != 0 )
+        if( strlen(STRING(m_sNeutralFlagModelName)) != 0 || m_iNeutralFlagSkin == NULL)
 			return 2;
-		else if ( m_iNeutralFlagSkin != NULL )
-			return m_iNeutralFlagSkin;
-		else 
-		{
-			Msg("Something's wrong with the flags. Needs to be recompiled.\n");
-			return 2;
-		}
+
+        return m_iNeutralFlagSkin;
 	}
 
 	int GetDisabledSkin()
 	{
 		//for backward compatibility without this name defined
-		if( strlen(STRING( m_sDisabledFlagModelName )) != 0 )
-			//return "models/other/flag_w.mdl"; //To avoid errors for now. -HairyPotter
+		if( strlen(STRING(m_sDisabledFlagModelName)) != 0 || m_iDisabledFlagSkin == NULL)
 			return 2;
-		else if ( m_iDisabledFlagSkin != NULL )
-			return m_iDisabledFlagSkin;
-		else 
-		{
-			Msg("Something's wrong with the flags. Needs to be recompiled.\n");
-			return 2;
-		}
+
+        return m_iDisabledFlagSkin;
 	}
 
 	int GetBritishSkin()
 	{
 		//for backward compatibility without this name defined
-		if( strlen(STRING( m_sBritishFlagModelName )) != 0 )
+		if( strlen(STRING(m_sBritishFlagModelName)) != 0 || m_iBritishFlagSkin == NULL)
 			return 1;
-		else if ( m_iBritishFlagSkin != NULL )
-			return m_iBritishFlagSkin;
-		else 
-		{
-			Msg("Something's wrong with the flags. Needs to be recompiled.\n");
-			return 2;
-		}
+
+        return m_iBritishFlagSkin;
 	}
 
 	int GetAmericanSkin()
 	{
 		//for backward compatibility without this name defined
-		if( strlen(STRING( m_sAmericanFlagModelName )) != 0 )
+		if( strlen(STRING(m_sAmericanFlagModelName)) != 0 || m_iAmericanFlagSkin == NULL)
 			return 0;
-		else if ( m_iAmericanFlagSkin != NULL )
-			return m_iAmericanFlagSkin;
-		else 
-		{
-			Msg("Something's wrong with the flags. Needs to be recompiled.\n");
-			return 2;
-		}
+
+        return m_iAmericanFlagSkin;
 	}
 
 	CNetworkVar( float,	m_flCaptureTime );	//.. and for how long?
