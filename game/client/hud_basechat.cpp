@@ -1729,8 +1729,8 @@ void CBaseHudChat::MsgFunc_VoiceComm( bf_read &msg )
 		g_pVGuiLocalize->ConvertUnicodeToANSI( resolved, chresolved, sizeof(chresolved) );
 		g_pVGuiLocalize->ConvertUnicodeToANSI( prefix, chprefix, sizeof(chprefix) );
 
-		Q_snprintf( name, 512, "%s %s", chprefix, sPlayerInfo.name);
-		Q_snprintf( msg, 512, "%s: %s", name, chresolved );
+		Q_snprintf( name, 512, "%s %s", chprefix, sPlayerInfo.name); //(command): Playername
+		Q_snprintf( msg, 512, "%s: %s", name, chresolved );//(command): Playername: "Retreat!"
 
 		g_pVGuiLocalize->ConvertANSIToUnicode( msg, voicecomm, sizeof( voicecomm ) );
 		//
