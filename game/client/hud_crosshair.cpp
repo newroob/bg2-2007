@@ -46,7 +46,7 @@ CHudCrosshair::CHudCrosshair( const char *pElementName ) :
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
 
-	m_pCrosshair = 0;
+	//m_pCrosshair = 0;
 
 	m_clrCrosshair = Color( 0, 0, 0, 0 );
 
@@ -59,7 +59,10 @@ void CHudCrosshair::ApplySchemeSettings( IScheme *scheme )
 {
 	BaseClass::ApplySchemeSettings( scheme );
 
-	m_pDefaultCrosshair = gHUD.GetIcon("crosshair_default");
+	//BG2 - Commented -HairyPotter
+	m_pCrosshair = gHUD.GetIcon( "hud_crosshair" );
+	//m_pDefaultCrosshair = gHUD.GetIcon("crosshair_default");
+	//
 	SetPaintBackgroundEnabled( false );
 
     SetSize( ScreenWidth(), ScreenHeight() );
@@ -92,7 +95,7 @@ bool CHudCrosshair::ShouldDraw( void )
 	*/
 
 	// draw a crosshair only if alive or spectating in eye
-	if ( IsX360() )
+	/*if ( IsX360() ) //BG2 - Why bother? -HairyPotter
 	{
 		bNeedsDraw = m_pCrosshair && 
 			!engine->IsDrawingLoadingImage() &&
@@ -104,7 +107,7 @@ bool CHudCrosshair::ShouldDraw( void )
 			( pPlayer->IsAlive() ||	( pPlayer->GetObserverMode() == OBS_MODE_IN_EYE ) || ( cl_observercrosshair.GetBool() && pPlayer->GetObserverMode() == OBS_MODE_ROAMING ) );
 	}
 	else
-	{
+	{*/
 		bNeedsDraw = m_pCrosshair && 
 			crosshair.GetInt() &&
 			!engine->IsDrawingLoadingImage() &&
@@ -114,7 +117,7 @@ bool CHudCrosshair::ShouldDraw( void )
 			( pPlayer->entindex() == render->GetViewEntity() ) &&
 			!pPlayer->IsInVGuiInputMode() &&
 			( pPlayer->IsAlive() ||	( pPlayer->GetObserverMode() == OBS_MODE_IN_EYE ) || ( cl_observercrosshair.GetBool() && pPlayer->GetObserverMode() == OBS_MODE_ROAMING ) );
-	}
+	//}
 
 	return ( bNeedsDraw && CHudElement::ShouldDraw() );
 }
@@ -389,7 +392,7 @@ void CHudCrosshair::SetCrosshairAngle( const QAngle& angle )
 //-----------------------------------------------------------------------------
 void CHudCrosshair::SetCrosshair( CHudTexture *texture, Color& clr )
 {
-	m_pCrosshair = texture; //BG2 - Commented -HairyPotter
+	//m_pCrosshair = texture; //BG2 - Commented -HairyPotter
 	m_clrCrosshair = clr;
 }
 

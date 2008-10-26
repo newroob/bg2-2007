@@ -27,7 +27,7 @@ ConVar friendlyfire(
 	"mp_friendlyfire",
 	"0",
 #ifdef TF_DLL
-	FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DEVELOPMENTONLY
+	FCVAR_REPLICATED | FCVAR_NOTIFY  
 #else
 	FCVAR_REPLICATED | FCVAR_NOTIFY
 #endif

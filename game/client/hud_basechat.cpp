@@ -1758,7 +1758,7 @@ void CBaseHudChat::MsgFunc_VoiceComm( bf_read &msg )
 
 		if ( pName )
 		{
-			wchar_t wideName[MAX_PLAYER_NAME_LENGTH];
+			wchar_t wideName[48]; //Used to be MAX_PLAYER_NAME_LENGTH (32), but forgot to compensate for the "(Command)" Characters -HairyPotter
 			g_pVGuiLocalize->ConvertANSIToUnicode( pName, wideName, sizeof( wideName ) );
 
 			const wchar_t *nameInString = wcsstr( voicecomm, wideName );

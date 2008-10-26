@@ -140,7 +140,7 @@
 			IntermediateDirectory=".\Release_hl2mp"
 			ConfigurationType="2"
 			CharacterSet="2"
-			WholeProgramOptimization="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -164,12 +164,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
+				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				WholeProgramOptimization="true"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\common,..\..\public,..\..\public\tier0,..\..\public\tier1,.\,..\..\game\shared,..\..\utils\common,..\..\game\shared\hl2,.\hl2,.\hl2mp,..\..\game\shared\hl2mp"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;GAME_DLL;VECTOR;PROTECTED_THINGS_ENABLE;fopen=dont_use_fopen;sprintf=use_Q_snprintf_instead_of_sprintf;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;HL2MP;HL2_DLL"
 				StringPooling="true"
@@ -183,6 +183,7 @@
 				FloatingPointModel="2"
 				ForceConformanceInForLoopScope="true"
 				RuntimeTypeInfo="true"
+				OpenMP="false"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="cbase.h"
 				AssemblerListingLocation="$(IntDir)/"
@@ -229,7 +230,7 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="1"
+				LinkTimeCodeGeneration="0"
 				BaseAddress=" "
 				TurnOffAssemblyGeneration="true"
 				TargetMachine="1"
@@ -3710,6 +3711,7 @@
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
+						ExcludedFromBuild="true"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3728,6 +3730,14 @@
 				<File
 					RelativePath=".\bg2\ctfflag.h"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32"
 						ExcludedFromBuild="true"

@@ -141,7 +141,7 @@
 			IntermediateDirectory=".\Release_hl2mp"
 			ConfigurationType="2"
 			CharacterSet="2"
-			WholeProgramOptimization="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -165,12 +165,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
+				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				WholeProgramOptimization="true"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories=".\;..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;..\..\vgui2\include;..\..\vgui2\controls;..\..\game\shared;.\game_controls;hl2mp\UI,.\hl2mp,..\..\game\shared\hl2mp,.\hl2,.\hl2\elements,..\..\game\shared\hl2"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NO_STRING_T;CLIENT_DLL;VECTOR;PROTECTED_THINGS_ENABLE;fopen=dont_use_fopen;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;ENABLE_HTMLWINDOW;HL2MP;HL2_CLIENT_DLL"
 				StringPooling="true"
@@ -183,6 +183,7 @@
 				FloatingPointModel="2"
 				ForceConformanceInForLoopScope="true"
 				RuntimeTypeInfo="true"
+				OpenMP="false"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="cbase.h"
 				PrecompiledHeaderFile="$(IntDir)/client.pch"
@@ -231,10 +232,11 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="1"
+				LinkTimeCodeGeneration="0"
 				BaseAddress=" "
 				TurnOffAssemblyGeneration="true"
 				TargetMachine="1"
+				Profile="false"
 				CLRThreadAttribute="0"
 				ErrorReporting="1"
 			/>

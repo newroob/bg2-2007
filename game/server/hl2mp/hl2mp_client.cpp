@@ -193,12 +193,6 @@ void respawn( CBaseEntity *pEdict, bool fCopyCorpse )
 		//if ( gpGlobals->curtime > pPlayer->GetDeathTime() + DEATH_ANIMATION_TIME )
 		//BG2 - Tjoppen - assume this function only gets called if we're allowed to respawn/spawn
 
-		if( !pPlayer->CheckSpawnPoints() )
-		{
-			//calling CheckSpawnPoints() all the time is very CPU taxing.. do it less often
-			pPlayer->SetNextThink( gpGlobals->curtime + random->RandomFloat( 1.0f, 5.0f ) );
-		}
-
 		// respawn player
 		pPlayer->Spawn();
 	}

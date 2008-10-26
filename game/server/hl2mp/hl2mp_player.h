@@ -76,7 +76,6 @@ public:
 	virtual void DeathSound( const CTakeDamageInfo &info );
 	virtual CBaseEntity* EntSelectSpawnPoint( void );
 	//BG2 - Tjoppen - virtuals in CHL2MP_Player
-	virtual bool			CheckSpawnPoints( void );
 	virtual bool			MayRespawn( void );
 	//
 

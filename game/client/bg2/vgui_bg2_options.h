@@ -13,6 +13,7 @@ extern ConVar	cl_crosshair,
 
 				//cl_simple_smoke,
 				cl_capturesounds,
+				hud_showtargetid,
 				cl_vcommsounds,
 
 				cl_flagstatusdetail,
@@ -60,6 +61,7 @@ class CBG2OptionsPanel : public vgui::Frame
 			cl_winmusic.SetValue( m_pWinmusicCheckButton->IsSelected() );
 			cl_capturesounds.SetValue( m_pCaptureSoundsCheckButton->IsSelected() );
 			cl_vcommsounds.SetValue( m_pVCommSoundsCheckButton->IsSelected() );
+			hud_showtargetid.SetValue( m_pShowNamesCheckButton->IsSelected() );
 
 		}
 
@@ -95,6 +97,7 @@ class CBG2OptionsPanel : public vgui::Frame
 		m_pWinmusicCheckButton->SetSelected( cl_winmusic.GetBool() );
 		m_pCaptureSoundsCheckButton->SetSelected( cl_capturesounds.GetBool() );
 		m_pVCommSoundsCheckButton->SetSelected( cl_vcommsounds.GetBool() );
+		m_pShowNamesCheckButton->SetSelected( hud_showtargetid.GetBool() );
 	}
 
 	/* CBG2OptionsPanel
@@ -151,6 +154,9 @@ class CBG2OptionsPanel : public vgui::Frame
 		m_pVCommSoundsCheckButton = new vgui::CheckButton( this, "VCommSoundsCheckButton", "" );
 		m_pVCommSoundsCheckButton->AddActionSignalTarget( this );
 
+		m_pShowNamesCheckButton = new vgui::CheckButton( this, "ShowNamesCheckButton", "" );
+		m_pShowNamesCheckButton->AddActionSignalTarget( this );
+
 		//set sliders and checkboxes correctly
 		SetAdjustors();
 
@@ -189,6 +195,7 @@ class CBG2OptionsPanel : public vgui::Frame
 						*m_pHitverifCheckButton,
 						*m_pCaptureSoundsCheckButton,
 						*m_pVCommSoundsCheckButton,
+						*m_pShowNamesCheckButton,
 						*m_pWinmusicCheckButton;
 
 protected:

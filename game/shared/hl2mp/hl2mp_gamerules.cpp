@@ -1706,8 +1706,6 @@ void CHL2MPRules::RespawnAll()
 	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
 		return;
 
-	bool spawn = true;	//set to false if we ran out of spawn points
-
 	int x;
 	for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
 	{
@@ -1716,18 +1714,7 @@ void CHL2MPRules::RespawnAll()
 		if( !pPlayer )
 			break;
 
-		//check if we've run out of spawn points. if we alread have, we can skip this step
-		if( spawn && !pPlayer->CheckSpawnPoints() )
-			spawn = false;
-
-		if( spawn )
-			pPlayer->Spawn();
-		else if( pPlayer->IsAlive() )
-		{
-			//if there's no spawn points and the player isn't dead - just kill 'em!
-			pPlayer->TakeDamage( CTakeDamageInfo( GetContainingEntity(INDEXENT(0)), GetContainingEntity(INDEXENT(0)), 300, DMG_GENERIC ) );
-			pPlayer->SetNextThink( gpGlobals->curtime + 3.0f );	//don't respawn in a while
-		}
+		pPlayer->Spawn();
 
 		//BG2 - Tjoppen - remove ragdoll - remember to change this to remove multiple ones if we decide to enable more corpses
 		if( pPlayer->m_hRagdoll )
@@ -1737,8 +1724,6 @@ void CHL2MPRules::RespawnAll()
 		}
 	}
 
-	spawn = true;	//reset for other team
-
 	for( x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
 	{
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
@@ -1746,18 +1731,7 @@ void CHL2MPRules::RespawnAll()
 		if( !pPlayer )
 			break;
 
-		//check if we've run out of spawn points. if we alread have, we can skip this step
-		if( spawn && !pPlayer->CheckSpawnPoints() )
-			spawn = false;
-
-		if( spawn )
-			pPlayer->Spawn();
-		else if( pPlayer->IsAlive() )
-		{
-			//if there's no spawn points and the player isn't dead - just kill 'em!
-			pPlayer->TakeDamage( CTakeDamageInfo( GetContainingEntity(INDEXENT(0)), GetContainingEntity(INDEXENT(0)), 300, DMG_GENERIC ) );
-			pPlayer->SetNextThink( gpGlobals->curtime + 3.0f );	//don't respawn in a while
-		}
+		pPlayer->Spawn();
 
 		//BG2 - Tjoppen - remove ragdoll - remember to change this to remove multiple ones if we decide to enable more corpses
 		if( pPlayer->m_hRagdoll )
@@ -1837,10 +1811,7 @@ void CHL2MPRules::RespawnWave()
 		if( pPlayer->IsAlive() )
 			continue;
 
-		if( pPlayer->CheckSpawnPoints() )
-			pPlayer->Spawn();
-		else
-			break;
+		pPlayer->Spawn();
 	}
 
 	for( int x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
@@ -1853,35 +1824,8 @@ void CHL2MPRules::RespawnWave()
 		if( pPlayer->IsAlive() )
 			continue;
 
-		if( pPlayer->CheckSpawnPoints() )
-			pPlayer->Spawn();
-		else
-			break;
+		pPlayer->Spawn();
 	}
-
-	/*for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
-	{
-		CBasePlayer *pPlayer = g_Teams[TEAM_AMERICANS]->GetPlayer( x );
-		if( !pPlayer->IsAlive() )
-		{
-			if( !pPlayer->CheckSpawnPoints() )
-				break;
-
-			pPlayer->Spawn();
-		}
-	}
-
-	for( x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
-	{
-		CBasePlayer *pPlayer = g_Teams[TEAM_BRITISH]->GetPlayer( x );
-		if( !pPlayer->IsAlive() )
-		{
-			if( !pPlayer->CheckSpawnPoints() )
-				break;
-
-			pPlayer->Spawn();
-		}
-	}*/
 }
 
 /*void CFlagHandler::PlayCaptureSound( void )

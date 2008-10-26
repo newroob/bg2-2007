@@ -235,7 +235,7 @@ void CHudVoiceStatus::Paint()
 	for( i = m_SpeakingList.Head(); i != m_SpeakingList.InvalidIndex(); i = m_SpeakingList.Next(i) )
 	{
 		int playerIndex = m_SpeakingList.Element(i);
-		bool bIsAlive = g_PR->IsAlive( playerIndex );
+		//bool bIsAlive = g_PR->IsAlive( playerIndex ); //Bg2 - Commented. -HairyPotter
 
 		Color c = g_PR->GetTeamColor( g_PR ? g_PR->GetTeam(playerIndex) : TEAM_UNASSIGNED );
 
@@ -284,7 +284,7 @@ void CHudVoiceStatus::Paint()
 	
 		int iDeathIconWidth = 0;
 
-		if ( bIsAlive == false && m_iDeadImageID != -1 )
+		/*if ( bIsAlive == false && m_iDeadImageID != -1 ) //BG2 - Just causes problems in BG2, not needed. -HairyPotter
 		{
 			Vertex_t vert[4];	
 			float uv1 = 0.0f;
@@ -303,7 +303,7 @@ void CHudVoiceStatus::Paint()
 			surface()->DrawTexturedPolygon( 4, vert );
 
 			iDeathIconWidth = icon_wide;
-		}
+		}*/
 
 		// Draw the voice icon
 		m_pVoiceIcon->DrawSelf( xpos + icon_xpos + iDeathIconWidth, ypos + icon_ypos, icon_wide, icon_tall, m_clrIcon );
