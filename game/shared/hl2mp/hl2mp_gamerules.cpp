@@ -532,11 +532,7 @@ void CHL2MPRules::Think( void )
 	//=========================
 	//Time Left
 	//=========================
-	if (mp_timeleft.GetFloat() > 0)
-	{
-		timeleft2 = (m_flGameStartTime + mp_timeleft.GetFloat() * 60.0f) + gpGlobals->curtime;
-		mp_timeleft.SetValue(0);
-	}
+	mp_timeleft.SetValue(((flTimeLimit + m_fAdditionTime) - gpGlobals->curtime));
 
 	//=========================
 	//Score Cvars
@@ -1286,7 +1282,7 @@ float CHL2MPRules::GetMapRemainingTime()
 
 	// timelimit is in minutes
 
-	float timeleft = timeleft2/*(m_flGameStartTime + mp_timelimit.GetInt() * 60.0f )*/ - gpGlobals->curtime; //BG2 - Made this global for working mp_timeleft! -HairyPotter
+	float timeleft = (m_flGameStartTime + mp_timelimit.GetInt() * 60.0f );
 
 	return timeleft;
 }

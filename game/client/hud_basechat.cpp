@@ -38,7 +38,7 @@
 #ifndef _XBOX
 ConVar hud_saytext_time( "hud_saytext_time", "12", 0 );
 ConVar cl_showtextmsg( "cl_showtextmsg", "1", 0, "Enable/disable text messages printing on the screen." );
-ConVar cl_chatfilters( "cl_chatfilters", "127", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, "Stores the chat filter settings " );
+ConVar cl_chatfilters( "cl_chatfilters", "127", FCVAR_ARCHIVE, "Stores the chat filter settings " );
 
 
 Color g_ColorBlue( 153, 204, 255, 255 );

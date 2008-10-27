@@ -938,12 +938,12 @@ void CFlagTriggerBG2::StartTouch(CBaseEntity *pOther)
 	if ( !pOther->IsPlayer() ) //Ask yourself, would anything else be able to capture a flag?
 		return;
 
-	BaseClass::StartTouch( pOther );
+	//BaseClass::StartTouch( pOther );
 	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
 	CFlag *FlagEnt = dynamic_cast< CFlag* >( GetParent() );
 
-	//if( !pPlayer->IsAlive() )	//dead players don't cap
-	//	return;
+	if( !pPlayer->IsAlive() )	//dead players don't cap
+		return;
 
 	switch( pPlayer->GetTeamNumber() ) //Let's do most of the sorting work here rather than bunching the teams together.
 	{
@@ -973,7 +973,7 @@ void CFlagTriggerBG2::EndTouch(CBaseEntity *pOther)
 	if ( !pOther->IsPlayer() ) //Ask yourself, would anything else be able to capture a flag? Should bullets be able to capture?
 		return;
 
-	BaseClass::EndTouch( pOther );
+	//BaseClass::EndTouch( pOther );
 	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
 	CFlag *FlagEnt = dynamic_cast< CFlag* >( GetParent() );
 

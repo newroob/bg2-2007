@@ -336,7 +336,7 @@ void CalculateBulletDamageForce( CTakeDamageInfo *info, int iBulletType, const V
 	vecForce *= phys_pushscale.GetFloat();
 	vecForce *= flScale;
 	info->SetDamageForce( vecForce );
-	Assert(vecForce!=vec3_origin);
+	//Assert(vecForce!=vec3_origin); //Commented. -HairyPotter
 }
 
 //-----------------------------------------------------------------------------

@@ -591,7 +591,7 @@ void CWorld::Precache( void )
 	roomtype.SetValue( 0 );
 
 	// Set up game rules
-	Assert( !g_pGameRules );
+	//Assert( !g_pGameRules ); //Commented. -HairyPotter
 	if (g_pGameRules)
 	{
 		delete g_pGameRules;

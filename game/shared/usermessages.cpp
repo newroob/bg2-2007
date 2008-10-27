@@ -151,7 +151,7 @@ bool CUserMessages::DispatchUserMessage( int msg_type, bf_read &msg_data )
 	if ( msg_type < 0 || msg_type >= (int)m_UserMessages.Count() )
 	{
 		DevMsg( "CUserMessages::DispatchUserMessage:  Bogus msg type %i (max == %i)\n", msg_type, m_UserMessages.Count() );
-		Assert( 0 );
+		//Assert( 0 ); //  Commented - HairyPotter
 		return false;
 	}
 
@@ -160,14 +160,14 @@ bool CUserMessages::DispatchUserMessage( int msg_type, bf_read &msg_data )
 	if ( !entry )
 	{
 		DevMsg( "CUserMessages::DispatchUserMessage:  Missing client entry for msg type %i\n", msg_type );
-		Assert( 0 );
+		//Assert( 0 ); //  Commented - HairyPotter
 		return false;
 	}
 
 	if ( entry->clienthooks.Count() == 0 )
 	{
 		DevMsg( "CUserMessages::DispatchUserMessage:  missing client hook for %s\n", GetUserMessageName(msg_type) );
-		Assert( 0 );
+		//Assert( 0 ); //  Commented - HairyPotter
 		return false;
 	}
 

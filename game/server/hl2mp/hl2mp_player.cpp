@@ -2665,7 +2665,7 @@ void CHL2MP_Player::State_PreThink_OBSERVER_MODE()
 {
 	// Make sure nobody has changed any of our state.
 	//	Assert( GetMoveType() == MOVETYPE_FLY );
-	Assert( m_takedamage == DAMAGE_NO );
+	//Assert( m_takedamage == DAMAGE_NO ); //Commented - HairyPotter
 	Assert( IsSolidFlagSet( FSOLID_NOT_SOLID ) );
 	//	Assert( IsEffectActive( EF_NODRAW ) );
 

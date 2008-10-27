@@ -262,13 +262,13 @@ bool ReadWeaponDataFromFileForSlot( IFileSystem* filesystem, const char *szWeapo
 {
 	if ( !phandle )
 	{
-		Assert( 0 );
+		//Assert( 0 ); //Commented. -HairyPotter
 		return false;
 	}
 	
 	*phandle = FindWeaponInfoSlot( szWeaponName );
 	FileWeaponInfo_t *pFileInfo = GetFileWeaponInfoFromHandle( *phandle );
-	Assert( pFileInfo );
+	//Assert( pFileInfo ); //Commented. -HairyPotter
 
 	if ( pFileInfo->bParsedScript )
 		return true;

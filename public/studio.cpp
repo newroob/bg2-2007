@@ -917,7 +917,7 @@ int CStudioHdr::GetNumSeq( void ) const
 
 mstudioseqdesc_t &CStudioHdr::pSeqdesc( int i ) const
 {
-	Assert( i >= 0 && i < GetNumSeq() );
+	//Assert( i >= 0 && i < GetNumSeq() ); //Commented. -HairyPotter
 	if ( i < 0 || i >= GetNumSeq() )
 	{
 		// Avoid reading random memory.

@@ -671,8 +671,8 @@ void CFlag::Think( void )
 		for ( int i = 1; i <= m_vTriggerAmericanPlayers.Count(); i++ ) 
 		{
 			pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
-			//if ( !pPlayer )
-			//	continue;
+			if ( !pPlayer )
+				continue;
 
 			if ( pPlayer->GetTeamNumber() != TEAM_AMERICANS)
 				m_vTriggerAmericanPlayers.FindAndRemove( pPlayer );
@@ -680,8 +680,8 @@ void CFlag::Think( void )
 		for ( int i = 1; i <= m_vTriggerBritishPlayers.Count(); i++ )
 		{
 			pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
-			//if ( !pPlayer )
-				//continue;
+			if ( !pPlayer )
+				continue;
 	
 			if ( pPlayer->GetTeamNumber() != TEAM_BRITISH)
 				m_vTriggerBritishPlayers.FindAndRemove( pPlayer );
