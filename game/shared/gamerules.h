@@ -260,7 +260,7 @@ public:
 	virtual bool FPlayerCanRespawn( CBasePlayer *pPlayer ) = 0;// is this player allowed to respawn now?
 	virtual float FlPlayerSpawnTime( CBasePlayer *pPlayer ) = 0;// When in the future will this player be able to spawn?
 	virtual CBaseEntity *GetPlayerSpawnSpot( CBasePlayer *pPlayer );// Place this player on their spawnspot and face them the proper direction.
-	virtual bool IsSpawnPointValid( CBaseEntity *pSpot, CBasePlayer *pPlayer );
+	//virtual bool IsSpawnPointValid( CBaseEntity *pSpot, CBasePlayer *pPlayer ); //BG2 - Don't need this anymore. -HairyPotter
 
 	virtual bool AllowAutoTargetCrosshair( void ) { return TRUE; };
 	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );  // handles the user commands;  returns TRUE if command handled properly

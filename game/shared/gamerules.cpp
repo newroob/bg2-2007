@@ -190,7 +190,7 @@ CBaseEntity *CGameRules::GetPlayerSpawnSpot( CBasePlayer *pPlayer )
 }
 
 // checks if the spot is clear of players
-bool CGameRules::IsSpawnPointValid( CBaseEntity *pSpot, CBasePlayer *pPlayer  )
+/*bool CGameRules::IsSpawnPointValid( CBaseEntity *pSpot, CBasePlayer *pPlayer  )
 {
 	CBaseEntity *ent = NULL;
 
@@ -212,7 +212,7 @@ bool CGameRules::IsSpawnPointValid( CBaseEntity *pSpot, CBasePlayer *pPlayer  )
 	}
 
 	return true;
-}
+}*/
 
 //=========================================================
 //=========================================================

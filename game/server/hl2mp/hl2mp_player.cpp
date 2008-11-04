@@ -72,8 +72,10 @@ BEGIN_DATADESC( CSpawnPoint )
 END_DATADESC()
 //
 
-LINK_ENTITY_TO_CLASS( info_player_combine, CSpawnPoint );
-LINK_ENTITY_TO_CLASS( info_player_rebel, CSpawnPoint );
+//BG2 - These are useless now. -HairyPotter
+//LINK_ENTITY_TO_CLASS( info_player_combine, CSpawnPoint );
+//LINK_ENTITY_TO_CLASS( info_player_rebel, CSpawnPoint );
+//
 //BG2 - Tjoppen - info_player_american/british
 LINK_ENTITY_TO_CLASS( info_player_american, CSpawnPoint );
 LINK_ENTITY_TO_CLASS( info_player_british, CSpawnPoint );
@@ -117,23 +119,6 @@ const char *g_ppszRandomCitizenModels[] =
 	"models/player/british/jager/jager.mdl",
 	"models/player/british/medium_b/medium_b.mdl",
 	"models/player/british/light_b/light_b.mdl",
-	/*"models/heavy_b/heavy_b.mdl",
-	"models/medium_b/medium_b.mdl",*/
-	/*"models/humans/group03/male_01.mdl",
-	"models/humans/group03/male_02.mdl",
-	"models/humans/group03/female_01.mdl",
-	"models/humans/group03/male_03.mdl",
-	"models/humans/group03/female_02.mdl",
-	"models/humans/group03/male_04.mdl",
-	"models/humans/group03/female_03.mdl",
-	"models/humans/group03/male_05.mdl",
-	"models/humans/group03/female_04.mdl",
-	"models/humans/group03/male_06.mdl",
-	"models/humans/group03/female_06.mdl",
-	"models/humans/group03/male_07.mdl",
-	"models/humans/group03/female_07.mdl",
-	"models/humans/group03/male_08.mdl",
-	"models/humans/group03/male_09.mdl",*/
 };
 
 const char *g_ppszRandomCombineModels[] =
@@ -142,12 +127,6 @@ const char *g_ppszRandomCombineModels[] =
 	"models/player/american/heavy_a/heavy_a.mdl",
 	"models/player/american/medium_a/medium_a.mdl",
 	"models/player/american/light_a/light_a.mdl",
-	/*"models/humans/light_a/light_a.mdl",
-	"models/humans/medium_a/medium_a.mdl",*/
-	/*"models/combine_soldier.mdl",
-	"models/combine_soldier_prisonguard.mdl",
-	"models/combine_super_soldier.mdl",
-	"models/police.mdl",*/
 };
 
 
@@ -2309,93 +2288,6 @@ ReturnSpot:
 
 	return pSpot;
 } */
-/*
-CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
-{
-	if( GetTeamNumber() <= TEAM_SPECTATOR )
-		return NULL;	//BG2 - Tjoppen - spectators/unassigned don't spawn..
-
-	CUtlVector<CBaseEntity*> spawns;
-
-	//get a non-empty vector of spawns..
-	if ( HL2MPRules()->IsTeamplay() )
-	{
-		if ( GetTeamNumber() == TEAM_AMERICANS )
-		{
-			CUtlVector<CBaseEntity*> temp;
-			gEntList.FindAllEntitiesByClassname( "info_player_american", temp );
-			if( temp.Size() == 0 )
-			{
-				CUtlVector<CBaseEntity*> temp;
-				gEntList.FindAllEntitiesByClassname( "info_player_american", temp );
-				if( temp.Size() == 0 )
-					return NULL;
-				else
-					spawns = temp;
-			}
-			else
-				spawns = temp;
-		}
-		else if ( GetTeamNumber() == TEAM_BRITISH )
-		{
-			CUtlVector<CBaseEntity*> temp;
-			gEntList.FindAllEntitiesByClassname( "info_player_british", temp );
-			if( temp.Size() == 0 )
-			{
-				CUtlVector<CBaseEntity*> temp;
-				gEntList.FindAllEntitiesByClassname( "info_player_british", temp );
-				if( temp.Size() == 0 )
-					return NULL;
-				else
-					spawns = temp;
-			}
-			else
-				spawns = temp;
-		}
-		else
-			return NULL;
-	}
-	else
-	{
-		//maintain backward compatibility with HL2DM
-		CUtlVector<CBaseEntity*> temp;
-		gEntList.FindAllEntitiesByClassname( "info_player_deathmatch", temp );
-		if( temp.Size() == 0 )
-			return NULL;
-		else
-			spawns = temp;
-	}
-
-	//pick a random spot to start attempting spawn at
-	int start = random->RandomInt( 0, spawns.Size() - 1 );
-	
-	for( int i = start;;)
-	{
-		CBaseEntity *pSpot = spawns[i];
-		CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
-
-		//check that:
-		// we don't have NULLs
-		// spawn must be enabled
-		// it must be valid(noone blocking)
-		// it mustn't be at origin(invalid according to original HL2 code)
-		if( pSpot && pSpawn &&
-			pSpawn->IsEnabled() &&
-			g_pGameRules->IsSpawnPointValid( pSpot, this ) &&
-			pSpot->GetLocalOrigin() != vec3_origin )
-		{
-			return pSpot;	//all is fine. return
-		}
-
-		//loop around
-		i++;
-		if( i >= spawns.Size() )
-			i = 0;
-		else if( i == start )
-			return NULL;	//back at start, didn't find anything
-	}
-}
-*/
 CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 {
 	if( GetTeamNumber() <= TEAM_SPECTATOR )
@@ -2409,9 +2301,10 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 	//BG2 - Rewrote all of the stuff below. -HairyPotter
 	if ( GetTeamNumber() == TEAM_AMERICANS )
 	{
-		while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_american" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ))
+		while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_american" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
 		{
-			if ( pSpot )
+			CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
+			if ( pSpot && pSpawn->IsEnabled() )
 			{
 				CBaseEntity *ent = NULL;
 				bool IsTaken = false;
@@ -2437,7 +2330,8 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 	{
 		while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_british" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
 		{
-			if ( pSpot )
+			CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
+			if ( pSpot && pSpawn->IsEnabled() )
 			{
 				CBaseEntity *ent = NULL;
 				bool IsTaken = false;
