@@ -1066,7 +1066,7 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 {
 	// have suit diagnose the problem - ie: report damage type
 	int bitsDamage = inputInfo.GetDamageType();
-	int ffound = true;
+	//int ffound = true;
 	int fmajor;
 	int fcritical;
 	int fTookDamage;
@@ -1254,7 +1254,8 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	m_bitsDamageType |= bitsDamage; // Save this so we can report it to the client
 	m_bitsHUDDamage = -1;  // make sure the damage bits get resent
 
-	while (fTookDamage && (!ftrivial || g_pGameRules->Damage_IsTimeBased( bitsDamage ) ) && ffound && bitsDamage)
+	//BG2 - Don't Need this. -HairyPotter
+	/*while (fTookDamage && (!ftrivial || g_pGameRules->Damage_IsTimeBased( bitsDamage ) ) && ffound && bitsDamage)
 	{
 		ffound = false;
 
@@ -1345,7 +1346,7 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 			bitsDamage &= ~DMG_SHOCK;
 			ffound = true;
 		}
-	}
+	}*/
 
 	//float flPunch = -2;
 
@@ -1362,7 +1363,8 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	m_Local.m_vecPunchAngle.x = -2;
 	//
 
-	if (fTookDamage && !ftrivial && fmajor && flHealthPrev >= 75) 
+	//BG2 - Don't Need this. -HairyPotter
+	/*if (fTookDamage && !ftrivial && fmajor && flHealthPrev >= 75) 
 	{
 		// first time we take major damage...
 		// turn automedic on if not on
@@ -1384,7 +1386,7 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		// give critical health warnings
 		if (!random->RandomInt(0,3) && flHealthPrev < 50)
 			SetSuitUpdate("!HEV_DMG7", false, SUIT_NEXT_IN_5MIN); //seek medical attention
-	}
+	}*/
 
 	// if we're taking time based damage, warn about its continuing effects
 	if (fTookDamage && g_pGameRules->Damage_IsTimeBased( info.GetDamageType() ) && flHealthPrev < 75)
@@ -2978,11 +2980,12 @@ void CBasePlayer::AddPoints( int score, bool bAllowNegativeScore )
 
 void CBasePlayer::AddPointsToTeam( int score, bool bAllowNegativeScore )
 {
-	if ( GetTeam() )
+	//BG2 - NIFTY: Doesn't need to be here.
+	/*if ( GetTeam() )
 	{
 		//BG2 - Tjoppen - only score by winnings rounds..
 		//GetTeam()->AddScore( score );
-	}
+	}*/
 }
 
 //-----------------------------------------------------------------------------
@@ -4098,7 +4101,8 @@ Things powered by the battery
 
 void CBasePlayer::UpdateGeigerCounter( void )
 {
-	byte range;
+	//BG2 - NIFTY: No geiger counters in the 1770-ish
+	/*byte range;
 
 	// delay per update ie: don't flood net with these msgs
 	if (gpGlobals->curtime < m_flgeigerDelay)
@@ -4130,7 +4134,7 @@ void CBasePlayer::UpdateGeigerCounter( void )
 	if (!random->RandomInt(0,3))
 	{
 		m_flgeigerRange = 1000;
-	}
+	}*/
 }
 
 /*
@@ -4146,7 +4150,8 @@ Play suit update if it's time
 
 void CBasePlayer::CheckSuitUpdate()
 {
-	int i;
+	//BG2 - NIFTY: we don't need the suit
+	/*int i;
 	int isentence = 0;
 	int isearch = m_iSuitPlayNext;
 	
@@ -4196,7 +4201,7 @@ void CBasePlayer::CheckSuitUpdate()
 		else
 			// queue is empty, don't check 
 			m_flSuitUpdate = 0;
-	}
+	}*/
 }
  
 // add sentence to suit playlist queue. if fgroup is true, then
@@ -4207,16 +4212,17 @@ void CBasePlayer::CheckSuitUpdate()
 
 void CBasePlayer::SetSuitUpdate(char *name, int fgroup, int iNoRepeatTime)
 {
-	int i;
-	int isentence;
-	int iempty = -1;
+	//int i;
+	//int isentence;
+	//int iempty = -1;
 	
 	//BG2 - Tjoppen - no suit updates
 	return;
 	//
 	
+	//BG2 - Don't need this. -HairyPotter
 	// Ignore suit updates if no suit
-	if ( !IsSuitEquipped() )
+	/*if ( !IsSuitEquipped() )
 		return;
 
 	if ( g_pGameRules->IsMultiplayer() )
@@ -4297,7 +4303,7 @@ void CBasePlayer::SetSuitUpdate(char *name, int fgroup, int iNoRepeatTime)
 			m_flSuitUpdate = gpGlobals->curtime + SUITFIRSTUPDATETIME;
 		else 
 			m_flSuitUpdate = gpGlobals->curtime + SUITUPDATETIME; 
-	}
+	}*/
 
 }
 
@@ -6013,7 +6019,8 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 	case 101:
 		gEvilImpulse101 = true;
 
-		EquipSuit();
+		//BG2 - NIFTY: Do we really need the suit for impulse 101?
+		//EquipSuit();
 
 		// Give the player everything!
 		/*GiveAmmo( 255,	"Pistol");

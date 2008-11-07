@@ -404,12 +404,6 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 			UTIL_Remove( this );
 		}
 	}
-
-	if ( g_pGameRules->IsMultiplayer() )
-	{
-//		SetThink( &CBullet::ExplodeThink );
-//		SetNextThink( gpGlobals->curtime + 0.1f );
-	}
 }
 
 //-----------------------------------------------------------------------------

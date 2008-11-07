@@ -668,23 +668,29 @@ void CFlag::Think( void )
 	{
 		//Gotta use these to keep people from exploiting TEAM_SPECTATOR on trigger caps. -HairyPotter
 		CBasePlayer *pPlayer = NULL;
-		for ( int i = 1; i <= m_vTriggerAmericanPlayers.Count(); i++ ) 
+		if ( m_vTriggerAmericanPlayers.Count() > 0 )
 		{
-			pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
-			if ( !pPlayer )
-				continue;
+			for ( int i = 1; i <= m_vTriggerAmericanPlayers.Count(); i++ ) 
+			{
+				pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
+				if ( !pPlayer )
+					continue;
 
-			if ( pPlayer->GetTeamNumber() != TEAM_AMERICANS)
-				m_vTriggerAmericanPlayers.FindAndRemove( pPlayer );
+				if ( pPlayer->GetTeamNumber() != TEAM_AMERICANS)
+					m_vTriggerAmericanPlayers.FindAndRemove( pPlayer );
+			}
 		}
-		for ( int i = 1; i <= m_vTriggerBritishPlayers.Count(); i++ )
+		if ( m_vTriggerBritishPlayers.Count() > 0 )
 		{
-			pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
-			if ( !pPlayer )
-				continue;
+			for ( int i = 1; i <= m_vTriggerBritishPlayers.Count(); i++ )
+			{
+				pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
+				if ( !pPlayer )
+					continue;
 	
-			if ( pPlayer->GetTeamNumber() != TEAM_BRITISH)
-				m_vTriggerBritishPlayers.FindAndRemove( pPlayer );
+				if ( pPlayer->GetTeamNumber() != TEAM_BRITISH)
+					m_vTriggerBritishPlayers.FindAndRemove( pPlayer );
+			}
 		}
 		//
 	}
@@ -737,8 +743,12 @@ void CFlag::ThinkUncapped( void )
 	}
 	else //The trigger is talking to this flag.
 	{
-		americans = m_vTriggerAmericanPlayers.Count();
-		british = m_vTriggerBritishPlayers.Count();
+		americans = 0;
+		british = 0;
+		if ( m_vTriggerAmericanPlayers.Count() > 0 )
+			americans = m_vTriggerAmericanPlayers.Count();
+		if ( m_vTriggerBritishPlayers.Count() > 0 )
+			british = m_vTriggerBritishPlayers.Count();
 	} //
 
 	//char *msg = NULL;
@@ -972,41 +982,55 @@ void CFlag::ThinkCapped( void )
 	} 
 	else //The trigger is talking to this flag.
 	{
+
+		friendlies = 0,
+		enemies = 0;
+
 		switch( GetTeamNumber() )
 		{
 			case TEAM_AMERICANS:
-				for ( int i = 1; i <= m_vTriggerAmericanPlayers.Count(); i++ )
+				if ( m_vTriggerAmericanPlayers.Count() > 0 )
 				{
-					pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
-					//if ( !pPlayer )
-					//	continue;
-					
-					if( m_vOverloadingPlayers.Find( pPlayer ) == -1 )
+					for ( int i = 1; i <= m_vTriggerAmericanPlayers.Count(); i++ )
 					{
-						//friendly player that's not on the list. add
-						//BG2 - Tjoppen - TODO: add some sort of bonus for overloading?
-						m_vOverloadingPlayers.AddToHead( pPlayer );
+						pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
+						//if ( !pPlayer )
+						//	continue;
+					
+						if( m_vOverloadingPlayers.Find( pPlayer ) == -1 )
+						{
+							//friendly player that's not on the list. add
+							//BG2 - Tjoppen - TODO: add some sort of bonus for overloading?
+							m_vOverloadingPlayers.AddToHead( pPlayer );
+						}
 					}
+					friendlies = m_vTriggerAmericanPlayers.Count();
 				}
-				friendlies = m_vTriggerAmericanPlayers.Count();
-				enemies = m_vTriggerBritishPlayers.Count();
+				if ( m_vTriggerBritishPlayers.Count() > 0 )
+					enemies = m_vTriggerBritishPlayers.Count();
+
 				break;
 			case TEAM_BRITISH:
-				for ( int i = 1; i <= m_vTriggerBritishPlayers.Count(); i++ )
+				if ( m_vTriggerBritishPlayers.Count() > 0 )
 				{
-					pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
-					//if ( !pPlayer )
-					//	continue;
-
-					if( m_vOverloadingPlayers.Find( pPlayer ) == -1 )
+					for ( int i = 1; i <= m_vTriggerBritishPlayers.Count(); i++ )
 					{
-						//friendly player that's not on the list. add
-						//BG2 - Tjoppen - TODO: add some sort of bonus for overloading?
-						m_vOverloadingPlayers.AddToHead( pPlayer );
+						pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
+						//if ( !pPlayer )
+						//	continue;
+
+						if( m_vOverloadingPlayers.Find( pPlayer ) == -1 )
+						{
+							//friendly player that's not on the list. add
+							//BG2 - Tjoppen - TODO: add some sort of bonus for overloading?
+							m_vOverloadingPlayers.AddToHead( pPlayer );
+						}
 					}
+					friendlies = m_vTriggerBritishPlayers.Count();
 				}
-				friendlies = m_vTriggerBritishPlayers.Count();
-				enemies = m_vTriggerAmericanPlayers.Count();
+				if ( m_vTriggerAmericanPlayers.Count() > 0 )
+					enemies = m_vTriggerAmericanPlayers.Count();
+
 				break;
 		}
 	}//
