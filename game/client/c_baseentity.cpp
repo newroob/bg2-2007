@@ -5869,11 +5869,12 @@ C_AI_BaseNPC *C_BaseEntity::MyNPCPointer( void )
 //-----------------------------------------------------------------------------
 void C_BaseEntity::RemoveRecipientsIfNotCloseCaptioning( C_RecipientFilter& filter )
 {
-	extern ConVar closecaption;
-	if ( !closecaption.GetBool() )
-	{
+	//BG2 - Closed Captions removed. -HairyPotter
+	//extern ConVar closecaption;
+	//if ( !closecaption.GetBool() )
+	//{
 		filter.Reset();
-	}
+	//}
 }
 
 //-----------------------------------------------------------------------------

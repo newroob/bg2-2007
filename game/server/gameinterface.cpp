@@ -1830,12 +1830,6 @@ void UpdateChapterRestrictions( const char *mapname )
 		{
 			// ok we're at a higher chapter, unlock
 			sv_unlockedchapters.SetValue( nNewChapter );
-
-			// HACK: Call up through a better function than this? 7/23/07 - jdw
-			if ( IsX360() )
-			{
-				engine->ServerCommand( "host_writeconfig\n" );
-			}
 		}
 
 		g_nCurrentChapterIndex = nNewChapter;

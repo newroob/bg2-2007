@@ -1936,11 +1936,12 @@ void CHLClient::EmitSentenceCloseCaption( char const *tokenstream )
 	if ( !closecaption.GetBool() )
 		return;
 
-	CHudCloseCaption *hudCloseCaption = GET_HUDELEMENT( CHudCloseCaption );
+	//BG2 - Don't need closed caption stuff. -HairyPotter
+	/*CHudCloseCaption *hudCloseCaption = GET_HUDELEMENT( CHudCloseCaption );
 	if ( hudCloseCaption )
 	{
 		hudCloseCaption->ProcessSentenceCaptionStream( tokenstream );
-	}
+	}*/
 }
 
 
@@ -1951,11 +1952,12 @@ void CHLClient::EmitCloseCaption( char const *captionname, float duration )
 	if ( !closecaption.GetBool() )
 		return;
 
-	CHudCloseCaption *hudCloseCaption = GET_HUDELEMENT( CHudCloseCaption );
+	//BG2 - Don't need closed caption stuff. -HairyPotter
+	/*CHudCloseCaption *hudCloseCaption = GET_HUDELEMENT( CHudCloseCaption );
 	if ( hudCloseCaption )
 	{
 		hudCloseCaption->ProcessCaption( captionname, duration );
-	}
+	}*/
 }
 
 CStandardRecvProxies* CHLClient::GetStandardRecvProxies()

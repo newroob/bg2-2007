@@ -209,7 +209,7 @@ public:
 	virtual void		Event_KilledOther( CBaseEntity *pVictim, const CTakeDamageInfo &info );
 
 	virtual void		GetAutoaimVector( autoaim_params_t &params );
-	bool				ShouldKeepLockedAutoaimTarget( EHANDLE hLockedTarget );
+	//bool				ShouldKeepLockedAutoaimTarget( EHANDLE hLockedTarget ); //BG2 - Don't need this. -HairyPotter
 
 	void				SetLocatorTargetEntity( CBaseEntity *pEntity ) { m_hLocatorTargetEntity.Set( pEntity ); }
 

@@ -258,8 +258,6 @@ CHL2MPRules::CHL2MPRules()
 	m_flIntermissionEndTime = 0.0f;
 	m_flGameStartTime = 0;
 
-	timeleft2 = (m_flGameStartTime + mp_timelimit.GetInt() * 60.0f); //BG2 - For working mp_timeleft. - HairyPotter
-
 	m_hRespawnableItemsAndWeapons.RemoveAll();
 
 	m_tmNextPeriodicThink = 0;
@@ -434,12 +432,6 @@ void CHL2MPRules::Think( void )
 	
 	CGameRules::Think();
 
-	CBasePoint * pPoint = (CBasePoint *)gEntList.FindEntityByClassname( NULL, "capturepoint" );
-	while (pPoint)
-	{
-		pPoint->Think();
-		pPoint = (CBasePoint *)gEntList.FindEntityByClassname( pPoint, "capturepoint" );
-	}
 	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
 	CTeam *pBritish = g_Teams[TEAM_BRITISH];
 	void ClientPrintAll( char *str, bool printfordeadplayers, bool forcenextclientprintall );

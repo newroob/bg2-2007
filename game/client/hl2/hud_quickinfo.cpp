@@ -304,12 +304,6 @@ void CHUDQuickInfo::Paint()
 	xCenter	= ScreenWidth() / 2;
 	yCenter = ( ScreenHeight() - m_icon_lb->Height() ) / 2;
 
-	if( IsX360() )
-	{
-		// Because the fixed reticle draws on half-texels, this rather unsightly hack really helps
-		// center the appearance of the quickinfo on 360 displays.
-		xCenter += 1;
-	}
 
 	if ( !hud_quickinfo.GetInt() )
 		return;

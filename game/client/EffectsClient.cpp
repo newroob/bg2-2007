@@ -168,13 +168,14 @@ void CEffectsClient::MuzzleFlash( const Vector &vecOrigin, const QAngle &vecAngl
 			FX_MuzzleEffect( vecOrigin, vecAngles, flScale, INVALID_EHANDLE_INDEX );
 			break;
 
-		case MUZZLEFLASH_TYPE_GUNSHIP:
+		//BG2 - Don't need it. -HairyPotter
+		/*case MUZZLEFLASH_TYPE_GUNSHIP:
 			FX_GunshipMuzzleEffect( vecOrigin, vecAngles, flScale, INVALID_EHANDLE_INDEX );
 			break;
 
 		case MUZZLEFLASH_TYPE_STRIDER:
 			FX_StriderMuzzleEffect( vecOrigin, vecAngles, flScale, INVALID_EHANDLE_INDEX );
-			break;
+			break;*/
 		
 		default:
 			Msg("No case for Muzzleflash type: %d\n", iType );

@@ -115,11 +115,6 @@ void CFPSPanel::ComputeSize( void )
 
 	int x = wide - FPS_PANEL_WIDTH;
 	int y = 0;
-	if ( IsX360() )
-	{
-		x -= XBOX_MINBORDERSAFE * wide;
-		y += XBOX_MINBORDERSAFE * tall;
-	}
 	SetPos( x, y );
 	SetSize( FPS_PANEL_WIDTH, 4 * vgui::surface()->GetFontTall( m_hFont ) + 8 );
 }
@@ -411,11 +406,6 @@ CBlockingFileIOPanel::CBlockingFileIOPanel( vgui::VPANEL parent ) : BaseClass( N
 
 	int x = 2;
 	int y = 100;
-	if ( IsX360() )
-	{
-		x += XBOX_MAXBORDERSAFE * wide;
-		y += XBOX_MAXBORDERSAFE * tall;
-	}
 	SetPos( x, y );
 
 	SetSize( IO_PANEL_WIDTH, 140 );

@@ -25,7 +25,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+/*
 #define CC_INSET		12
 
 extern ISoundEmitterSystemBase *soundemitterbase;
@@ -2311,7 +2311,7 @@ void CHudCloseCaption::ClearAsyncWork()
 
 extern void Hack_FixEscapeChars( char *str );
 
-void CHudCloseCaption::ProcessCaptionDirect( const char *tokenname, float duration, bool fromplayer /* = false */ )
+void CHudCloseCaption::ProcessCaptionDirect( const char *tokenname, float duration, bool fromplayer /* = false *//* )
 {
 	m_bVisibleDueToDirect = true;
 
@@ -2336,7 +2336,7 @@ void CHudCloseCaption::PlayRandomCaption()
 	m_AsyncWork.AddToTail( async );
 }
 
-bool CHudCloseCaption::AddAsyncWork( const char *tokenstream, bool bIsStream, float duration, bool fromplayer, bool direct /* = false */ )
+bool CHudCloseCaption::AddAsyncWork( const char *tokenstream, bool bIsStream, float duration, bool fromplayer, bool direct /* = false */ /*)
 {
 	bool bret = true;
 
@@ -2432,11 +2432,11 @@ void CHudCloseCaption::_ProcessSentenceCaptionStream( int wordCount, const char 
 {
 	if ( wcslen( caption_full ) > 0 )
 	{
-		Process( caption_full, ( wordCount + 1 ) * 0.75f, tokenstream, false /*never from player!*/ );
+		Process( caption_full, ( wordCount + 1 ) * 0.75f, tokenstream, false /*never from player!*/ /*);
 	}
 }
 
-bool CHudCloseCaption::ProcessCaption( const char *tokenname, float duration, bool fromplayer /* = false */, bool direct /* = false */ )
+bool CHudCloseCaption::ProcessCaption( const char *tokenname, float duration, bool fromplayer /* = false *//*, bool direct /* = false *//* )
 {
 	return AddAsyncWork( tokenname, false, duration, fromplayer, direct );
 }
@@ -2910,4 +2910,4 @@ void CHudCloseCaption::FindSound( char const *pchANSI )
 
 		delete[] block;
 	}
-}
+}*/

@@ -355,51 +355,6 @@ public:
 		FindSceneFile( NULL, "randomAlert", true );
 #endif
 
-#if defined( TF_CLIENT_DLL )
-		// HACK TO ALL TF TO HAVE PER CLASS OVERRIDES
-		char const *pTFClasses[] = 
-		{
-			"scout",
-			"sniper",
-			"soldier",
-			"demo",
-			"medic",
-			"heavy",
-			"pyro",
-			"spy",
-			"engineer",
-		};
-
-		char fn[ MAX_PATH ];
-		for ( int i = 0; i < ARRAYSIZE( pTFClasses ); ++i )
-		{
-			Q_snprintf( fn, sizeof( fn ), "player/%s/phonemes/phonemes", pTFClasses[i] );
-			FindSceneFile( NULL, fn, true );
-			Q_snprintf( fn, sizeof( fn ), "player/%s/phonemes/phonemes_weak", pTFClasses[i] );
-			FindSceneFile( NULL, fn, true );
-			Q_snprintf( fn, sizeof( fn ), "player/%s/phonemes/phonemes_strong", pTFClasses[i] );
-			FindSceneFile( NULL, fn, true );
-
-			if ( !IsX360() )
-			{
-				Q_snprintf( fn, sizeof( fn ), "player/hwm/%s/phonemes/phonemes", pTFClasses[i] );
-				FindSceneFile( NULL, fn, true );
-				Q_snprintf( fn, sizeof( fn ), "player/hwm/%s/phonemes/phonemes_weak", pTFClasses[i] );
-				FindSceneFile( NULL, fn, true );
-				Q_snprintf( fn, sizeof( fn ), "player/hwm/%s/phonemes/phonemes_strong", pTFClasses[i] );
-				FindSceneFile( NULL, fn, true );
-			}
-
-			Q_snprintf( fn, sizeof( fn ), "player/%s/emotion/emotion", pTFClasses[i] );
-			FindSceneFile( NULL, fn, true );
-			if ( !IsX360() )
-			{
-				Q_snprintf( fn, sizeof( fn ), "player/hwm/%s/emotion/emotion", pTFClasses[i] );
-				FindSceneFile( NULL, fn, true );
-			}
-		}
-#endif
-
 		return true;
 	}
 
@@ -475,41 +430,6 @@ public:
 		pfile->buffer = buffer;
 		// Add to list
 		m_FileList.AddToTail( pfile );
-
-		// Swap the entire file
-		if ( IsX360() )
-		{
-			CByteswap swap;
-			swap.ActivateByteSwapping( true );
-			byte *pData = (byte*)buffer;
-			flexsettinghdr_t *pHdr = (flexsettinghdr_t*)pData;
-			swap.SwapFieldsToTargetEndian( pHdr );
-
-			// Flex Settings
-			flexsetting_t *pFlexSetting = (flexsetting_t*)((byte*)pHdr + pHdr->flexsettingindex);
-			for ( int i = 0; i < pHdr->numflexsettings; ++i, ++pFlexSetting )
-			{
-				swap.SwapFieldsToTargetEndian( pFlexSetting );
-				
-				flexweight_t *pWeight = (flexweight_t*)(((byte*)pFlexSetting) + pFlexSetting->settingindex );
-				for ( int j = 0; j < pFlexSetting->numsettings; ++j, ++pWeight )
-				{
-					swap.SwapFieldsToTargetEndian( pWeight );
-				}
-			}
-
-			// indexes
-			pData = (byte*)pHdr + pHdr->indexindex;
-			swap.SwapBufferToTargetEndian( (int*)pData, (int*)pData, pHdr->numindexes );
-
-			// keymappings
-			pData  = (byte*)pHdr + pHdr->keymappingindex;
-			swap.SwapBufferToTargetEndian( (int*)pData, (int*)pData, pHdr->numkeys );
-
-			// keyname indices
-			pData = (byte*)pHdr + pHdr->keynameindex;
-			swap.SwapBufferToTargetEndian( (int*)pData, (int*)pData, pHdr->numkeys );
-		}
 
 		// Fill in translation table
 		EnsureTranslations( instance, ( const flexsettinghdr_t * )pfile->buffer );

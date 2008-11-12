@@ -19,7 +19,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+/*
 #define SF_SUIT_SHORTLOGON		0x0001
 
 class CItemSuit : public CItem
@@ -55,4 +55,4 @@ public:
 	}
 };
 
-LINK_ENTITY_TO_CLASS(item_suit, CItemSuit);
+LINK_ENTITY_TO_CLASS(item_suit, CItemSuit);*/

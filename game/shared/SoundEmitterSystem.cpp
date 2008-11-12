@@ -661,11 +661,12 @@ public:
 			MessageEnd();
 #else
 			// Direct dispatch
-			CHudCloseCaption *cchud = GET_HUDELEMENT( CHudCloseCaption );
+			//BG2 - Don't need closed caption stuff. -HairyPotter
+			/*CHudCloseCaption *cchud = GET_HUDELEMENT( CHudCloseCaption );
 			if ( cchud )
 			{
 				cchud->ProcessCaption( lowercase, duration, fromplayer );
-			}
+			}*/
 #endif
 		}
 	}

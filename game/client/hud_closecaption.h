@@ -16,7 +16,7 @@
 #include "captioncompiler.h"
 #include "tier1/UtlSortVector.h"
 #include "tier1/UtlSymbol.h"
-
+/*
 class CSentence;
 class C_BaseFlex;
 class CCloseCaptionItem;
@@ -213,5 +213,5 @@ private:
 	bool		m_bPaintDebugInfo;
 	CUtlSymbol	m_CurrentLanguage;
 };
-
+*/
 #endif // HUD_CLOSECAPTION_H

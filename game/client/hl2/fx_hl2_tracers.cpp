@@ -33,6 +33,8 @@ CLIENTEFFECT_REGISTER_END()
 //-----------------------------------------------------------------------------
 // Purpose: Gunship's Tracer
 //-----------------------------------------------------------------------------
+//BG2 - Don't need this. -HairyPotter
+/*
 void GunshipTracerCallback( const CEffectData &data )
 {
 	float flVelocity = data.m_flScale;
@@ -59,8 +61,8 @@ DECLARE_CLIENT_EFFECT( "StriderTracer", StriderTracerCallback );
 //-----------------------------------------------------------------------------
 // Purpose: Hunter's Tracer
 //-----------------------------------------------------------------------------
-//BG2 - Don't need this. -HairyPotter
-/*void HunterTracerCallback( const CEffectData &data )
+
+void HunterTracerCallback( const CEffectData &data )
 {
 	float flVelocity = data.m_flScale;
 	bool bWhiz = (data.m_fFlags & TRACER_FLAG_WHIZ);
@@ -617,7 +619,8 @@ DECLARE_CLIENT_EFFECT( "ChopperMuzzleFlash", ChopperMuzzleFlashCallback );
 //-----------------------------------------------------------------------------
 // Gunship muzzle flashes
 //-----------------------------------------------------------------------------
-void MuzzleFlash_Gunship( ClientEntityHandle_t hEntity, int attachmentIndex )
+//BG2 - Don't need all this. -HairyPotter
+/*void MuzzleFlash_Gunship( ClientEntityHandle_t hEntity, int attachmentIndex )
 {
 	VPROF_BUDGET( "MuzzleFlash_Gunship", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 
@@ -713,4 +716,4 @@ void HunterMuzzleFlashCallback( const CEffectData &data )
 	MuzzleFlash_Hunter( data.m_hEntity, data.m_nAttachmentIndex );
 }
 
-DECLARE_CLIENT_EFFECT( "HunterMuzzleFlash", HunterMuzzleFlashCallback );
+DECLARE_CLIENT_EFFECT( "HunterMuzzleFlash", HunterMuzzleFlashCallback );*/

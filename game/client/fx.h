@@ -43,9 +43,11 @@ void FX_RicochetSound( const Vector& pos );
 void FX_AntlionImpact( const Vector &pos, trace_t *tr );
 void FX_DebrisFlecks( const Vector& origin, trace_t *trace, char materialType, int iScale, bool bNoFlecks = false );
 void FX_Tracer( Vector& start, Vector& end, int velocity, bool makeWhiz = true );
-void FX_GunshipTracer( Vector& start, Vector& end, int velocity, bool makeWhiz = true );
-void FX_StriderTracer( Vector& start, Vector& end, int velocity, bool makeWhiz = true );
-//void FX_HunterTracer( Vector& start, Vector& end, int velocity, bool makeWhiz = true ); //BG2 - Don't need this. -HairyPotter
+//BG2 - Don't need these. -HairyPotter
+//void FX_GunshipTracer( Vector& start, Vector& end, int velocity, bool makeWhiz = true );
+//void FX_StriderTracer( Vector& start, Vector& end, int velocity, bool makeWhiz = true );
+//void FX_HunterTracer( Vector& start, Vector& end, int velocity, bool makeWhiz = true );
+//
 void FX_PlayerTracer( Vector& start, Vector& end );
 void FX_BulletPass( Vector& start, Vector& end );
 void FX_MetalSpark( const Vector &position, const Vector &direction, const Vector &surfaceNormal, int iScale = 1 );
@@ -62,8 +64,10 @@ void FX_ConcussiveExplosion( Vector& origin, Vector& normal );
 void FX_DustImpact( const Vector &origin, trace_t *tr, int iScale );
 void FX_MuzzleEffect( const Vector &origin, const QAngle &angles, float scale, ClientEntityHandle_t hEntity, unsigned char *pFlashColor = NULL, bool bOneFrame = false );
 void FX_MuzzleEffectAttached( float scale, ClientEntityHandle_t hEntity, int attachmentIndex, unsigned char *pFlashColor = NULL, bool bOneFrame = false  );
-void FX_StriderMuzzleEffect( const Vector &origin, const QAngle &angles, float scale, ClientEntityHandle_t hEntity, unsigned char *pFlashColor = NULL );
-void FX_GunshipMuzzleEffect( const Vector &origin, const QAngle &angles, float scale, ClientEntityHandle_t hEntity, unsigned char *pFlashColor = NULL );
+//BG2 - Don't need these. -HairyPotter
+//void FX_StriderMuzzleEffect( const Vector &origin, const QAngle &angles, float scale, ClientEntityHandle_t hEntity, unsigned char *pFlashColor = NULL );
+//void FX_GunshipMuzzleEffect( const Vector &origin, const QAngle &angles, float scale, ClientEntityHandle_t hEntity, unsigned char *pFlashColor = NULL );
+//
 CSmartPtr<CSimpleEmitter> FX_Smoke( const Vector &origin, const Vector &velocity, float scale, int numParticles, float flDietime, unsigned char *pColor, int iAlpha, const char *pMaterial, float flRoll, float flRollDelta );
 void FX_Smoke( const Vector &origin, const QAngle &angles, float scale, int numParticles, unsigned char *pColor = NULL, int iAlpha = -1 );
 void FX_Dust( const Vector &vecOrigin, const Vector &vecDirection, float flSize, float flSpeed );

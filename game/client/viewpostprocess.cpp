@@ -884,19 +884,6 @@ void CLuminanceHistogramSystem::UpdateLuminanceRanges( void )
 void CLuminanceHistogramSystem::DisplayHistogram( void )
 {
 	bool bDrawTextThisFrame = true;
-	if ( IsX360() )
-	{
-		static float s_flLastTimeUpdate = 0.0f;
-		if ( int( gpGlobals->curtime ) - int( s_flLastTimeUpdate ) >= 2 )
-		{
-			s_flLastTimeUpdate = gpGlobals->curtime;
-			bDrawTextThisFrame = true;
-		}
-		else
-		{
-			bDrawTextThisFrame = false;
-		}
-	}
 
 	CMatRenderContextPtr pRenderContext( materials );
 	pRenderContext->PushRenderTargetAndViewport();
@@ -989,10 +976,6 @@ void CLuminanceHistogramSystem::DisplayHistogram( void )
 	}
 
 	int xpStart = dest_width - nTotalGraphPixelsWide - 10;
-	if ( IsX360() )
-	{
-		xpStart -= 50;
-	}
 
 	int xp = xpStart;
 	for ( int l=0; l<nNumRanges; l++ )
@@ -1062,10 +1045,6 @@ void CLuminanceHistogramSystem::DisplayHistogram( void )
 
 		float flBarWidth = 600.0f;
 		float flBarStart = dest_width - flBarWidth - 10.0f;
-		if ( IsX360() )
-		{
-			flBarStart -= 50;
-		}
 
 		pRenderContext->Viewport( flBarStart, 4 + HISTOGRAM_BAR_SIZE - 4 + 75, flBarWidth, 4 );
 		pRenderContext->ClearColor3ub( 200, 200, 200 );
@@ -1082,9 +1061,6 @@ void CLuminanceHistogramSystem::DisplayHistogram( void )
 
 		if ( bDrawTextThisFrame == true )
 		{
-			if ( IsX360() )
-				engine->Con_NPrintf( 26, "Min: %.2f  Max: %.2f", flAutoExposureMin, flAutoExposureMax );
-			else
 				engine->Con_NPrintf( 26, "%.2f                                                                                       %.2f                                                                                           %.2f", flAutoExposureMin, ( flAutoExposureMax + flAutoExposureMin ) / 2.0f, flAutoExposureMax );
 		}
 	}
@@ -1478,20 +1454,12 @@ static void Generate8BitBloomTexture( IMatRenderContext *pRenderContext, float f
 												0, 0, nSrcWidth-2, nSrcHeight-2,
 												nSrcWidth, nSrcHeight );
 
-	if ( IsX360() )
-	{
-		pRenderContext->CopyRenderTargetToTextureEx( dest_rt0, 0, NULL, NULL );
-	}
 
 	// guassian blur x rt0 to rt1
 	SetRenderTargetAndViewPort( dest_rt1 );
 	pRenderContext->DrawScreenSpaceRectangle(	xblur_mat, 0, 0, nSrcWidth/4, nSrcHeight/4,
 												0, 0, nSrcWidth/4-1, nSrcHeight/4-1,
 												nSrcWidth/4, nSrcHeight/4 );
-	if ( IsX360() )
-	{
-		pRenderContext->CopyRenderTargetToTextureEx( dest_rt1, 0, NULL, NULL );
-	}
 
 	// GR - gaussian blur y rt1 to rt0
 	SetRenderTargetAndViewPort( dest_rt0 );
@@ -1500,10 +1468,6 @@ static void Generate8BitBloomTexture( IMatRenderContext *pRenderContext, float f
 	pRenderContext->DrawScreenSpaceRectangle(	yblur_mat, 0, 0, nSrcWidth / 4, nSrcHeight / 4,
 												0, 0, nSrcWidth / 4 - 1, nSrcHeight / 4 - 1,
 												nSrcWidth / 4, nSrcHeight / 4 );
-	if ( IsX360() )
-	{
-		pRenderContext->CopyRenderTargetToTextureEx( dest_rt0, 0, NULL, NULL );
-	}
 
 	pRenderContext->PopRenderTargetAndViewport();
 }
@@ -1534,20 +1498,6 @@ static void DoPreBloomTonemapping( IMatRenderContext *pRenderContext, int nX, in
 			if ( mat_debug_autoexposure.GetInt() || mat_show_histogram.GetInt() )
 			{
 				bool bDrawTextThisFrame = true;
-
-				if ( IsX360() )
-				{
-					static float s_flLastTimeUpdate = 0.0f;
-					if ( int( gpGlobals->curtime ) - int( s_flLastTimeUpdate ) >= 2 )
-					{
-						s_flLastTimeUpdate = gpGlobals->curtime;
-						bDrawTextThisFrame = true;
-					}
-					else
-					{
-						bDrawTextThisFrame = false;
-					}
-				}
 
 				if ( bDrawTextThisFrame == true )
 				{
@@ -1644,23 +1594,7 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 			// Set software-AA on by default for 360
 			if ( mat_software_aa_strength.GetFloat() == -1.0f )
 			{
-				if ( IsX360() )
-				{
-					mat_software_aa_strength.SetValue( 1.0f );
-					if ( g_pMaterialSystem->GetCurrentConfigForVideoCard().m_VideoMode.m_Height > 480 )
-					{
-						mat_software_aa_quality.SetValue( 0 );
-					}
-					else
-					{
-						// For standard-def, we have fewer pixels so we can afford 'high quality' mode (5->9 taps/pixel)
-						mat_software_aa_quality.SetValue( 1 );
-					}
-				}
-				else
-				{
-					mat_software_aa_strength.SetValue( 0.0f );
-				}
+				mat_software_aa_strength.SetValue( 0.0f );
 			}
 
 			// Same trick for setting up the vgui aa strength

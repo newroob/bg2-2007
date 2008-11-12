@@ -273,10 +273,6 @@ void CAI_NetworkManager::SaveNetworkGraph( void )
 		buf.PutFloat( pNode->GetYaw() );
 		buf.Put( pNode->m_flVOffset, sizeof( pNode->m_flVOffset ) );
 		buf.PutChar( pNode->GetType() );
-		if ( IsX360() )
-		{
-			buf.SeekPut( CUtlBuffer::SEEK_CURRENT, 3 );
-		}
 		buf.PutUnsignedShort( pNode->m_eNodeInfo );
 		buf.PutShort( pNode->GetZone() );
 
@@ -587,10 +583,6 @@ void CAI_NetworkManager::LoadNetworkGraph( void )
 
 		buf.Get( new_node->m_flVOffset, sizeof(new_node->m_flVOffset) );
 		new_node->m_eNodeType = (NodeType_e)buf.GetChar();
-		if ( IsX360() )
-		{
-			buf.SeekGet( CUtlBuffer::SEEK_CURRENT, 3 );
-		}
 
 		new_node->m_eNodeInfo = buf.GetUnsignedShort();
 		new_node->m_zone = buf.GetShort();

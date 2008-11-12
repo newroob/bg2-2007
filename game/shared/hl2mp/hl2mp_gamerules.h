@@ -214,7 +214,6 @@ private:
 	CUtlVector<EHANDLE> m_hRespawnableItemsAndWeapons;
 	float m_tmNextPeriodicThink;
 	float m_flRestartGameTime;
-	float timeleft2; //BG2 - Made global for working mp_timeleft. - HairyPotter
 	bool m_bCompleteReset;
 	bool m_bAwaitingReadyRestart;
 	bool m_bHeardAllPlayersReady;

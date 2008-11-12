@@ -1063,22 +1063,7 @@ void UTIL_BoundToWorldSize( Vector *pVecPos )
 //-----------------------------------------------------------------------------
 bool UTIL_GetMapLoadCountFileName( const char *pszFilePrependName, char *pszBuffer, int iBuflen )
 {
-	if ( IsX360() )
-	{
-#ifdef _X360
-		if ( XBX_GetStorageDeviceId() == XBX_INVALID_STORAGE_ID || XBX_GetStorageDeviceId() == XBX_STORAGE_DECLINED )
-			return false;
-#endif
-	}
-
-	if ( IsX360() )
-	{
-		Q_snprintf( pszBuffer, iBuflen, "cfg:/%s", pszFilePrependName );
-	}
-	else
-	{
-		Q_snprintf( pszBuffer, iBuflen, "media/%s", pszFilePrependName );
-	}
+	Q_snprintf( pszBuffer, iBuflen, "media/%s", pszFilePrependName );
 
 	return true;
 }
@@ -1132,13 +1117,6 @@ void UTIL_IncrementMapKey( const char *pszCustomKey )
 		g_pFullFileSystem->WriteFile( szFilename, "MOD", buf );
 
 		kvMapLoadFile->deleteThis();
-	}
-
-	if ( IsX360() )
-	{
-#ifdef _X360
-		xboxsystem->FinishContainerWrites();
-#endif
 	}
 }
 
