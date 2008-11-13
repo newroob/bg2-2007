@@ -622,9 +622,9 @@ void C_SceneEntity::DispatchStartSpeak( CChoreoScene *scene, C_BaseFlex *actor, 
 				CRC32_ProcessBuffer( &tokenCRC, lowercase, Q_strlen( lowercase ) );
 				CRC32_Final( &tokenCRC );
 
-				float endtime = event->GetLastSlaveEndTime();
-				float durationShort = event->GetDuration();
-				float durationLong = endtime - event->GetStartTime();
+				//float endtime = event->GetLastSlaveEndTime();
+				//float durationShort = event->GetDuration();
+				//float durationLong = endtime - event->GetStartTime();
 				//float duration = max( durationShort, durationLong );
 
 				//BG2 - Don't need closed caption stuff. -HairyPotter

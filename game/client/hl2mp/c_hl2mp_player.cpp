@@ -337,7 +337,7 @@ void C_HL2MP_Player::PreThink( void )
 
 	BaseClass::PreThink();
 
-	HandleSpeedChanges(); //BG2 - Testing. -HairyPotter
+	HandleSpeedChanges();
 
 	if ( m_HL2Local.m_flSuitPower <= 0.0f )
 	{
@@ -614,7 +614,7 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 	//int buttonsChanged = m_afButtonPressed | m_afButtonReleased;
 	//BG2 - Tjoppen - walk/run speeds
 	//float scale = 0.5f + 0.5f * expf( -0.01f * (float)(100 - GetHealth()) );
-	/*float scale = expf( -0.01f * (float)(100 - m_iStamina) );
+	float scale = expf( -0.01f * (float)(100 - m_iStamina) );
 
 	if( GetActiveWeapon() && GetActiveWeapon()->m_bInReload )
 		scale *= 0.5f;
@@ -641,7 +641,7 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 	if( m_nButtons & IN_WALK )
 		SetMaxSpeed( iSpeed2 * scale );
 	else
-		SetMaxSpeed( iSpeed * scale );*/
+		SetMaxSpeed( iSpeed * scale );
 }
 
 //-----------------------------------------------------------------------------
