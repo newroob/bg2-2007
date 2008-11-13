@@ -472,72 +472,13 @@ void CHL2_Player::RemoveSuit( void )
 
 	m_HL2Local.m_bDisplayReticle = false;
 }
-
-/*void CHL2_Player::HandleSpeedChanges( void )
-{
-	int buttonsChanged = m_afButtonPressed | m_afButtonReleased;
-
-	bool bCanSprint = CanSprint();
-	bool bIsSprinting = IsSprinting();
-	bool bWantSprint = ( bCanSprint && IsSuitEquipped() && (m_nButtons & IN_SPEED) );
-	if ( bIsSprinting != bWantSprint && (buttonsChanged & IN_SPEED) )
-	{
-		// If someone wants to sprint, make sure they've pressed the button to do so. We want to prevent the
-		// case where a player can hold down the sprint key and burn tiny bursts of sprint as the suit recharges
-		// We want a full debounce of the key to resume sprinting after the suit is completely drained
-		if ( bWantSprint )
-		{
-			if ( sv_stickysprint.GetBool() )
-			{
-				StartAutoSprint();
-			}
-			else
-			{
-				StartSprinting();
-			}
-		}
-		else
-		{
-			if ( !sv_stickysprint.GetBool() )
-			{
-				StopSprinting();
-			}
-			// Reset key, so it will be activated post whatever is suppressing it.
-			m_nButtons &= ~IN_SPEED;
-		}
-	}
-
-	bool bIsWalking = IsWalking();
-	// have suit, pressing button, not sprinting or ducking
-	bool bWantWalking;
-	
-	if( IsSuitEquipped() )
-	{
-		bWantWalking = (m_nButtons & IN_WALK) && !IsSprinting() && !(m_nButtons & IN_DUCK);
-	}
-	else
-	{
-		bWantWalking = true;
-	}
-	
-	if( bIsWalking != bWantWalking )
-	{
-		if ( bWantWalking )
-		{
-			StartWalking();
-		}
-		else
-		{
-			StopWalking();
-		}
-	}
-}*/
-
 //-----------------------------------------------------------------------------
 // This happens when we powerdown from the mega physcannon to the regular one
 //-----------------------------------------------------------------------------
-void CHL2_Player::HandleArmorReduction( void )
+//BG2 - Don't need armor. -HairyPotter
+/*void CHL2_Player::HandleArmorReduction( void )
 {
+	//BG2 - Don't need armor. -HairyPotter
 	if ( m_flArmorReductionTime < gpGlobals->curtime )
 		return;
 
@@ -549,7 +490,7 @@ void CHL2_Player::HandleArmorReduction( void )
 	int iArmor = Lerp( flPercent, m_iArmorReductionFrom, 0 );
 
 	SetArmorValue( iArmor );
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Purpose: Allow pre-frame adjustments on the player
@@ -639,40 +580,9 @@ void CHL2_Player::PreThink(void)
 	}
 
 	VPROF_SCOPE_BEGIN( "CHL2_Player::PreThink-Speed" );
-	//HandleSpeedChanges();
 #ifdef HL2_EPISODIC
 	HandleArmorReduction();
 #endif
-
-	/*if( sv_stickysprint.GetBool() && m_bIsAutoSprinting )
-	{
-		// If we're ducked and not in the air
-		if( IsDucked() && GetGroundEntity() != NULL )
-		{
-			StopSprinting();
-		}
-		// Stop sprinting if the player lets off the stick for a moment.
-		else if( GetStickDist() == 0.0f )
-		{
-			if( gpGlobals->curtime > m_fAutoSprintMinTime )
-			{
-				StopSprinting();
-			}
-		}
-		else
-		{
-			// Stop sprinting one half second after the player stops inputting with the move stick.
-			m_fAutoSprintMinTime = gpGlobals->curtime + 0.5f;
-		}
-	}
-	else if ( IsSprinting() )
-	{
-		// Disable sprint while ducked unless we're in the air (jumping)
-		if ( IsDucked() && ( GetGroundEntity() != NULL ) )
-		{
-			StopSprinting();
-		}
-	}*/
 
 	VPROF_SCOPE_END();
 
@@ -1968,7 +1878,8 @@ ConVar	sk_battery( "sk_battery","0" );
 
 bool CHL2_Player::ApplyBattery( float powerMultiplier )
 {
-	const float MAX_NORMAL_BATTERY = 100;
+	//BG2 - Don't need armor or battery. -HairyPotter
+	/*const float MAX_NORMAL_BATTERY = 100;
 	if ((ArmorValue() < MAX_NORMAL_BATTERY) && IsSuitEquipped())
 	{
 		int pct;
@@ -1999,7 +1910,7 @@ bool CHL2_Player::ApplyBattery( float powerMultiplier )
 		//UTIL_EmitSoundSuit(edict(), szcharge);
 		//SetSuitUpdate(szcharge, FALSE, SUIT_NEXT_IN_30SEC);
 		return true;		
-	}
+	}*/
 	return false;
 }
 

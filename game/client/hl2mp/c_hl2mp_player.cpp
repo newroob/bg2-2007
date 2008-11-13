@@ -337,7 +337,7 @@ void C_HL2MP_Player::PreThink( void )
 
 	BaseClass::PreThink();
 
-	HandleSpeedChanges();
+	HandleSpeedChanges(); //BG2 - Testing. -HairyPotter
 
 	if ( m_HL2Local.m_flSuitPower <= 0.0f )
 	{
@@ -610,10 +610,11 @@ void C_HL2MP_Player::StopSprinting( void )
 
 void C_HL2MP_Player::HandleSpeedChanges( void )
 {
+	//BG2 - Testing. -HairyPotter
 	//int buttonsChanged = m_afButtonPressed | m_afButtonReleased;
 	//BG2 - Tjoppen - walk/run speeds
 	//float scale = 0.5f + 0.5f * expf( -0.01f * (float)(100 - GetHealth()) );
-	float scale = expf( -0.01f * (float)(100 - m_iStamina) );
+	/*float scale = expf( -0.01f * (float)(100 - m_iStamina) );
 
 	if( GetActiveWeapon() && GetActiveWeapon()->m_bInReload )
 		scale *= 0.5f;
@@ -628,25 +629,8 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 			iSpeed2 = 120;
 			break;
 		case CLASS_OFFICER:
-			/*switch (m_iOfficerLevel)
-			{
-				case 1:*/
-					iSpeed = 220;
-					iSpeed2 = 140;
-					/*break;
-				case 2:
-					iSpeed = 205;
-					iSpeed2 = 145;
-					break;
-				case 3:
-					iSpeed = 210;
-					iSpeed2 = 150;
-					break;
-				case 4:
-					iSpeed = 215;
-					iSpeed2 = 155;
-					break;
-			}*/
+			iSpeed = 220;
+			iSpeed2 = 140;
 			break;
 		case CLASS_SNIPER:
 			iSpeed = 200;
@@ -657,7 +641,7 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 	if( m_nButtons & IN_WALK )
 		SetMaxSpeed( iSpeed2 * scale );
 	else
-		SetMaxSpeed( iSpeed * scale );
+		SetMaxSpeed( iSpeed * scale );*/
 }
 
 //-----------------------------------------------------------------------------

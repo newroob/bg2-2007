@@ -185,7 +185,7 @@ public:
 	virtual int			GetFragCount();
 	virtual int			GetDeathCount();
 	virtual bool		IsConnected();
-	virtual int			GetArmorValue();
+	//virtual int			GetArmorValue(); //BG2 - Don't need armor. -HairyPotter
 
 	virtual bool IsHLTV();
 	virtual bool IsPlayer();
@@ -634,7 +634,7 @@ public:
 	bool	IsConnected() const		{ return m_iConnected != PlayerDisconnected; }
 	bool	IsDisconnecting() const	{ return m_iConnected == PlayerDisconnecting; }
 	bool	IsSuitEquipped() const	{ return m_Local.m_bWearingSuit; }
-	int		ArmorValue() const		{ return m_ArmorValue; }
+	//int		ArmorValue() const		{ return m_ArmorValue; } //BG2 - Don't need armor. -HairyPotter
 	bool	HUDNeedsRestart() const { return m_fInitHUD; }
 	float	MaxSpeed() const		{ return m_flMaxspeed; }
 	Activity GetActivity( ) const	{ return m_Activity; }
@@ -662,8 +662,8 @@ public:
 	void	ResetDeathCount();
 	void	IncrementDeathCount( int nCount );
 
-	void	SetArmorValue( int value );
-	void	IncrementArmorValue( int nCount, int nMaxValue = -1 );
+	//void	SetArmorValue( int value ); //BG2 - Don't need armor. -HairyPotter
+	//void	IncrementArmorValue( int nCount, int nMaxValue = -1 );
 
 	void	SetConnected( PlayerConnectedState iConnected ) { m_iConnected = iConnected; }
 	virtual void EquipSuit( bool bPlayEffects = true );
@@ -968,7 +968,7 @@ private:
 
 	// from edict_t
 	// CBasePlayer doesn't send this but CCSPlayer does.
-	CNetworkVarForDerived( int, m_ArmorValue );
+	//CNetworkVarForDerived( int, m_ArmorValue ); //BG2 - Don't need armor. -HairyPotter
 	float					m_AirFinished;
 	float					m_PainFinished;
 

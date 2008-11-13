@@ -270,7 +270,7 @@ void CRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 		EmitSound( filter, entindex(), "SuitRecharge.ChargingLoop" );
 	}
 
-	CBasePlayer *pl = (CBasePlayer *) m_hActivator.Get();
+	//CBasePlayer *pl = (CBasePlayer *) m_hActivator.Get();
 
 	// charge the player
 	int nMaxArmor = 100;
@@ -287,11 +287,12 @@ void CRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 		}
 	}
 
-	if (pl->ArmorValue() < nMaxArmor)
+	//BG2 - Don't need armor. -HairyPotter
+	/*if (pl->ArmorValue() < nMaxArmor)
 	{
 		UpdateJuice( m_iJuice - nIncrementArmor );
 		pl->IncrementArmorValue( nIncrementArmor, nMaxArmor );
-	}
+	}*/
 
 	// Send the output.
 	float flRemaining = m_iJuice / MaxJuice();
@@ -668,7 +669,7 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 	}
 
 	// If we're over our limit, debounce our keys
-	if ( pPlayer->ArmorValue() >= nMaxArmor)
+	/*if ( pPlayer->ArmorValue() >= nMaxArmor)
 	{
 		// Citadel charger must also be at max health
 		if ( !HasSpawnFlags(SF_CITADEL_RECHARGER) || ( HasSpawnFlags( SF_CITADEL_RECHARGER ) && pActivator->GetHealth() >= pActivator->GetMaxHealth() ) )
@@ -680,7 +681,7 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 			EmitSound( "SuitRecharge.Deny" );
 			return;
 		}
-	}
+	}*/
 
 	// This is bumped out if used within the time period
 	SetNextThink( gpGlobals->curtime + CHARGE_RATE );
@@ -709,11 +710,11 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 	}
 
 	// Give armor if we need it
-	if ( pPlayer->ArmorValue() < nMaxArmor )
+	/*if ( pPlayer->ArmorValue() < nMaxArmor )
 	{
 		UpdateJuice( m_iJuice - nIncrementArmor );
 		pPlayer->IncrementArmorValue( nIncrementArmor, nMaxArmor );
-	}
+	}*/
 
 	// Send the output.
 	float flRemaining = m_iJuice / MaxJuice();

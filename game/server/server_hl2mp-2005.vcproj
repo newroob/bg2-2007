@@ -3375,14 +3375,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\hl2\combine_mine.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\combine_mine.h"
-					>
-				</File>
-				<File
 					RelativePath=".\hl2\energy_wave.h"
 					>
 				</File>
@@ -3484,34 +3476,6 @@
 				</File>
 				<File
 					RelativePath=".\hl2\info_teleporter_countdown.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\item_ammo.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\item_battery.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\item_dynamic_resupply.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\item_dynamic_resupply.h"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\item_healthkit.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\item_itemcrate.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\item_suit.cpp"
 					>
 				</File>
 				<File

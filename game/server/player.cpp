@@ -70,10 +70,6 @@
 #include "player_resource.h"
 //
 
-#ifdef HL2_DLL
-#include "combine_mine.h"
-//#include "weapon_physcannon.h"
-#endif
 
 ConVar autoaim_max_dist( "autoaim_max_dist", "2160" ); // 2160 = 180 feet
 ConVar autoaim_max_deflect( "autoaim_max_deflect", "0.99" );
@@ -156,11 +152,13 @@ extern void AddMultiDamage( const CTakeDamageInfo &info, CBaseEntity *pEntity );
 //#define MAX_SAFE_FALL_UNITS			( PLAYER_MAX_SAFE_FALL_DIST * 12 )
 
 // player damage adjusters
+/* //BG2 - These are useless now. -HairyPotter
 ConVar	sk_player_head( "sk_player_head","2" );
 ConVar	sk_player_chest( "sk_player_chest","1" );
 ConVar	sk_player_stomach( "sk_player_stomach","1" );
 ConVar	sk_player_arm( "sk_player_arm","1" );
 ConVar	sk_player_leg( "sk_player_leg","1" );
+*/
 //BG2 - Tjoppen - hitgroup modifiers. these are taken from BG 1.0F
 const double HIT_HEAD_DMG = 3.4;
 const double HIT_CHEST_DMG = 1.85;
@@ -346,7 +344,7 @@ BEGIN_DATADESC( CBasePlayer )
 
 	//DEFINE_FIELD( m_iConnected, FIELD_INTEGER ),
 	// from edict_t
-	DEFINE_FIELD( m_ArmorValue, FIELD_INTEGER ),
+	//DEFINE_FIELD( m_ArmorValue, FIELD_INTEGER ), //BG2 - Don't need armor. -HairyPotter
 	DEFINE_FIELD( m_DmgOrigin, FIELD_VECTOR ),
 	DEFINE_FIELD( m_DmgTake, FIELD_FLOAT ),
 	DEFINE_FIELD( m_DmgSave, FIELD_FLOAT ),
@@ -1085,12 +1083,6 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 			return 0;
 	}
 
- 	/*if ( IsInCommentaryMode() )
-	{
-		if( !ShouldTakeDamageInCommentaryMode( info ) )
-			return 0;
-	}*/
-
 	if ( GetFlags() & FL_GODMODE )
 		return 0;
 
@@ -1163,7 +1155,8 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	m_lastDamageAmount = info.GetDamage();
 
 	// Armor. 
-	if (m_ArmorValue && !(info.GetDamageType() & (DMG_FALL | DMG_DROWN | DMG_POISON | DMG_RADIATION)) )// armor doesn't protect against fall or drown damage!
+	//BG2 - Don't need armor. -HairyPotter
+	/*if (m_ArmorValue && !(info.GetDamageType() & (DMG_FALL | DMG_DROWN | DMG_POISON | DMG_RADIATION)) )// armor doesn't protect against fall or drown damage!
 	{
 		float flNew = info.GetDamage() * flRatio;
 
@@ -1195,7 +1188,7 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		}
 		
 		info.SetDamage( flNew );
-	}
+	}*/
 
 	// this cast to INT is critical!!! If a player ends up with 0.5 health, the engine will get that
 	// as an int (zero) and think the player is dead! (this will incite a clientside screentilt, etc)
@@ -2868,9 +2861,9 @@ bool CBasePlayer::CanPickupObject( CBaseEntity *pObject, float massLimit, float 
 	if ( checkEnable )
 	{
 		// Allowing picking up of bouncebombs.
-		CBounceBomb *pBomb = dynamic_cast<CBounceBomb*>(pObject);
+		/*CBounceBomb *pBomb = dynamic_cast<CBounceBomb*>(pObject);
 		if( pBomb )
-			return true;
+			return true;*/
 
 		// Allow pickup of phys props that are motion enabled on player pickup
 		CPhysicsProp *pProp = dynamic_cast<CPhysicsProp*>(pObject);
@@ -4794,7 +4787,8 @@ void CBasePlayer::Spawn( void )
 	SetSimulatedEveryTick( true );
 	SetAnimatedEveryTick( true );
 
-	m_ArmorValue		= SpawnArmorValue();
+	//BG2 - Don't need armor. -HairyPotter
+	//m_ArmorValue		= SpawnArmorValue();
 	SetBlocksLOS( false );
 	m_iMaxHealth		= m_iHealth;
 
@@ -5132,12 +5126,12 @@ void CBasePlayer::OnRestore( void )
 {
 	Q_strncpy( m_szTeamName, pTeamName, TEAM_NAME_LENGTH );
 } */
-
-void CBasePlayer::SetArmorValue( int value )
+//BG2 - Don't need armor. -HairyPotter
+/*void CBasePlayer::SetArmorValue( int value )
 {
 	m_ArmorValue = value;
-}
-
+}*/
+/*
 void CBasePlayer::IncrementArmorValue( int nCount, int nMaxValue )
 { 
 	m_ArmorValue += nCount;
@@ -5146,7 +5140,7 @@ void CBasePlayer::IncrementArmorValue( int nCount, int nMaxValue )
 		if (m_ArmorValue > nMaxValue)
 			m_ArmorValue = nMaxValue;
 	}
-}
+}*/
 
 // used by the physics gun and game physics... is there a better interface?
 void CBasePlayer::SetPhysicsFlag( int nFlag, bool bSet )
@@ -6635,7 +6629,7 @@ void CBasePlayer::UpdateClientData( void )
 		world->SetDisplayTitle( false );
 	}
 
-	if (m_ArmorValue != m_iClientBattery)
+	/*if (m_ArmorValue != m_iClientBattery)
 	{
 		m_iClientBattery = m_ArmorValue;
 
@@ -6646,7 +6640,7 @@ void CBasePlayer::UpdateClientData( void )
 				WRITE_SHORT( (int)m_ArmorValue);
 			MessageEnd();
 		}
-	}
+	}*/
 
 #if 0 // BYE BYE!!
 	// Update Flashlight
@@ -8396,10 +8390,10 @@ void CBasePlayer::InputSetHealth( inputdata_t &inputdata )
 	else if ( iNewHealth < GetHealth() )
 	{
 		// Strip off and restore armor so that it doesn't absorb any of this damage.
-		int armor = m_ArmorValue;
-		m_ArmorValue = 0;
+		//int armor = m_ArmorValue;
+		//m_ArmorValue = 0;
 		TakeDamage( CTakeDamageInfo( this, this, iDelta, DMG_GENERIC ) );
-		m_ArmorValue = armor;
+		//m_ArmorValue = armor;
 	}
 }
 
@@ -8677,12 +8671,12 @@ bool CPlayerInfo::IsConnected()
 	Assert( m_pParent );
 	return m_pParent->IsConnected(); 
 }
-
-int	CPlayerInfo::GetArmorValue() 
+//BG2 - Don't need armor. -HairyPotter
+/*int	CPlayerInfo::GetArmorValue() 
 { 
 	Assert( m_pParent );
 	return m_pParent->ArmorValue(); 
-}
+}*/
 
 bool CPlayerInfo::IsHLTV() 
 { 

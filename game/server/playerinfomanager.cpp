@@ -39,7 +39,7 @@ namespace
 		// returns if this player slot is actually valid
 		virtual bool IsConnected() = 0;
 		// returns the armor/health of the player (exact meaning is mod dependent)
-		virtual int	GetArmorValue() = 0;
+		//virtual int	GetArmorValue() = 0; //BG2 - Don't need armor. -HairyPotter
 	};
 	
 	abstract_class IPlayerInfoManager_V1

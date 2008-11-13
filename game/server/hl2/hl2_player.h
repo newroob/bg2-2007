@@ -263,7 +263,6 @@ public:
 	void  HandleAdmireGlovesAnimation( void );
 	void  StartAdmireGlovesAnimation( void );
 	
-	//void  HandleSpeedChanges( void );
 
 	void SetControlClass( Class_T controlClass ) { m_nControlClass = controlClass; }
 	
@@ -271,10 +270,11 @@ public:
 	void StopWaterDeathSounds( void );
 
 	bool IsWeaponLowered( void ) { return m_HL2Local.m_bWeaponLowered; }
-	void HandleArmorReduction( void );
+	//BG2 - Don't need armor. -HairyPotter
+	/*void HandleArmorReduction( void );
 	void StartArmorReduction( void ) { m_flArmorReductionTime = gpGlobals->curtime + ARMOR_DECAY_TIME; 
 									   m_iArmorReductionFrom = ArmorValue(); 
-									 }
+									 }*/
 
 	void MissedAR2AltFire();
 
