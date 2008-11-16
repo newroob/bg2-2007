@@ -475,13 +475,13 @@ void CFlag::Capture( int iTeam )
 	//iTeam is either americans or british
 	//this function handles a lot of the capture related stuff
 
-	//EmitSound( "Flag.capture" );
 	CRecipientFilter recpfilter;
 	recpfilter.AddAllPlayers();
 	recpfilter.MakeReliable();
 	
 	UserMessageBegin( recpfilter, "CaptureSounds" );
 		WRITE_VEC3COORD( GetAbsOrigin() );
+		WRITE_STRING( "Flag.capture" );
 	MessageEnd();
 
 	g_Teams[iTeam]->AddScore( m_iTeamBonus );

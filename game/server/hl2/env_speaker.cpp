@@ -28,7 +28,7 @@
 #define SF_SPEAKER_START_SILENT		1
 #define SF_SPEAKER_EVERYWHERE		2
 
-extern ISaveRestoreOps *responseSystemSaveRestoreOps;
+//extern ISaveRestoreOps *responseSystemSaveRestoreOps;
 #include "saverestore.h"
 
 LINK_ENTITY_TO_CLASS( env_speaker, CSpeaker );
@@ -91,10 +91,10 @@ void CSpeaker::Precache( void )
 		SetNextThink( gpGlobals->curtime + random->RandomFloat(5.0, 15.0) );
 	}
 
-	if ( !m_pInstancedResponseSystem )
+	/*if ( !m_pInstancedResponseSystem )
 	{
 		m_pInstancedResponseSystem = PrecacheCustomResponseSystem( STRING( m_iszRuleScriptFile ) );
-	}
+	}*/
 }
 
 //-----------------------------------------------------------------------------
@@ -113,8 +113,8 @@ int	CSpeaker::Save( ISave &save )
 		{
 			save.StartBlock( "InstancedResponseSystem" );
 			{
-				SaveRestoreFieldInfo_t fieldInfo = { &m_pInstancedResponseSystem, 0, NULL };
-				responseSystemSaveRestoreOps->Save( fieldInfo, &save );
+				//SaveRestoreFieldInfo_t fieldInfo = { &m_pInstancedResponseSystem, 0, NULL };
+				//responseSystemSaveRestoreOps->Save( fieldInfo, &save );
 			}
 			save.EndBlock();
 		}
@@ -137,7 +137,7 @@ int	CSpeaker::Restore( IRestore &restore )
 		{
 			char szResponseSystemBlockName[SIZE_BLOCK_NAME_BUF];
 			restore.StartBlock( szResponseSystemBlockName );
-			if ( !Q_stricmp( szResponseSystemBlockName, "InstancedResponseSystem" ) )
+			/*if ( !Q_stricmp( szResponseSystemBlockName, "InstancedResponseSystem" ) )
 			{
 				if ( !m_pInstancedResponseSystem )
 				{
@@ -153,7 +153,7 @@ int	CSpeaker::Restore( IRestore &restore )
 						responseSystemSaveRestoreOps->Restore( fieldInfo, &restore );
 					}
 				}
-			}
+			}*/
 			restore.EndBlock();
 		}
 	}

@@ -12,7 +12,7 @@
 #include "igamemovement.h"
 #include "soundenvelope.h"
 #include "in_buttons.h"
-#include "npc_vehicledriver.h"
+//#include "npc_vehicledriver.h"
 #include "physics_saverestore.h"
 #include "saverestore_utlvector.h"
 #include "func_break.h"
@@ -25,7 +25,7 @@
 #define SF_PROP_VEHICLE_ALWAYSTHINK		0x00000001
 
 ConVar g_debug_vehiclebase( "g_debug_vehiclebase", "0", FCVAR_CHEAT );
-extern ConVar g_debug_vehicledriver;
+//extern ConVar g_debug_vehicledriver;
 
 // CFourWheelServerVehicle
 BEGIN_SIMPLE_DATADESC_( CFourWheelServerVehicle, CBaseServerVehicle )
@@ -565,8 +565,8 @@ void CPropVehicleDriveable::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, 
 //-----------------------------------------------------------------------------
 CBaseEntity *CPropVehicleDriveable::GetDriver( void ) 
 { 
-	if ( m_hNPCDriver ) 
-		return m_hNPCDriver; 
+	//if ( m_hNPCDriver ) 
+		//return m_hNPCDriver; 
 
 	return m_hPlayer; 
 }
@@ -1045,12 +1045,12 @@ bool CPropVehicleDriveable::NPC_CanExitVehicle( CAI_BaseNPC *pPassenger, bool bC
 bool CPropVehicleDriveable::NPC_AddPassenger( CAI_BaseNPC *pPassenger, string_t strRoleName, int nSeatID )
 {
 	// Must be allowed to enter
-	if ( NPC_CanEnterVehicle( pPassenger, true /*FIXME*/ ) == false )
-		return false;
+	//if ( NPC_CanEnterVehicle( pPassenger, true /*FIXME*/ ) == false )
+	//	return false;
 
-	IServerVehicle *pVehicleServer = GetServerVehicle();
+	/*IServerVehicle *pVehicleServer = GetServerVehicle();
 	if ( pVehicleServer != NULL )
-		return pVehicleServer->NPC_AddPassenger( pPassenger, strRoleName, nSeatID );
+		return pVehicleServer->NPC_AddPassenger( pPassenger, strRoleName, nSeatID );*/
 
 	return true;
 }
@@ -1063,12 +1063,12 @@ bool CPropVehicleDriveable::NPC_AddPassenger( CAI_BaseNPC *pPassenger, string_t 
 bool CPropVehicleDriveable::NPC_RemovePassenger( CAI_BaseNPC *pPassenger )
 {
 	// Must be allowed to exit
-	if ( NPC_CanExitVehicle( pPassenger, true /*FIXME*/ ) == false )
-		return false;
+	//if ( NPC_CanExitVehicle( pPassenger, true /*FIXME*/ ) == false )
+	//	return false;
 
-	IServerVehicle *pVehicleServer = GetServerVehicle();
+	/*IServerVehicle *pVehicleServer = GetServerVehicle();
 	if ( pVehicleServer != NULL )
-		return pVehicleServer->NPC_RemovePassenger( pPassenger );
+		return pVehicleServer->NPC_RemovePassenger( pPassenger );*/
 
 	return true;
 }
@@ -1241,7 +1241,7 @@ bool CFourWheelServerVehicle::IsPassengerExiting( void )
 //-----------------------------------------------------------------------------
 void CFourWheelServerVehicle::NPC_SetDriver( CNPC_VehicleDriver *pDriver )
 {
-	if ( pDriver )
+	/*if ( pDriver )
 	{
 		m_nNPCButtons = 0;
 		GetFourWheelVehicle()->m_hNPCDriver = pDriver;
@@ -1260,7 +1260,7 @@ void CFourWheelServerVehicle::NPC_SetDriver( CNPC_VehicleDriver *pDriver )
 		GetFourWheelVehicle()->StopEngine();
 		GetFourWheelVehicle()->SetOwnerEntity( NULL );
 		SetVehicleVolume( 0.5 );
-	}
+	}*/
 }
 
 //-----------------------------------------------------------------------------
@@ -1270,7 +1270,7 @@ void CFourWheelServerVehicle::NPC_DriveVehicle( void )
 {
 
 #ifdef HL2_DLL
-	if ( g_debug_vehicledriver.GetInt() )
+	/*if ( g_debug_vehicledriver.GetInt() )
 	{
 		if ( m_nNPCButtons )
 		{
@@ -1297,7 +1297,7 @@ void CFourWheelServerVehicle::NPC_DriveVehicle( void )
 				NDebugOverlay::Box( GetFourWheelVehicle()->GetAbsOrigin(), -Vector(20,20,20), Vector(20,20,20), 0,255,0, true, 0.1 );
 			}
 		}
-	}
+	}*/
 #endif
 
 	int buttonsChanged = m_nPrevNPCButtons ^ m_nNPCButtons;

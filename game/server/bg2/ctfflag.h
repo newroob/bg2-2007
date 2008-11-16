@@ -1,5 +1,5 @@
 //HairyPotter - FOR CTF MODE!!
-/*
+
 class CtfFlag : public CBaseAnimating
 {
 	DECLARE_CLASS( CtfFlag, CBaseAnimating );
@@ -9,8 +9,9 @@ class CtfFlag : public CBaseAnimating
 	COutputEvent m_OnDropped;
 	COutputEvent m_OnReturned;
 
-	void InputResetFlag( inputdata_t &inputData );
+	void InputReset( inputdata_t &inputData );
 
+public:
 	int		m_iForTeam,
 			m_iTeamBonus,
 			iTeam,
@@ -21,10 +22,19 @@ class CtfFlag : public CBaseAnimating
 
 	char CTFMsg[512];
 
-	float	m_flPickupRadius, m_fFlagReturn;
+	Vector FlagOrigin;    
+	QAngle FlagAngle;	  
+	CBasePlayer *pCapturer;
 
-public:
+	bool m_bFlagIsDropped, m_bFlagIsCarried;   
 
+	float	m_flPickupRadius, m_fReturnTime, fReturnTime;
+
+
+	char *cFlagName;	
+
+	void PlaySound( Vector origin, int sound );
+	void ResetFlag();
 	void Spawn( void );
 	void Precache( void );
 	static void PrintAlert( char *Msg );
@@ -33,4 +43,3 @@ public:
 	void Think( void );
 };
 //END CTF FLAG
-*/

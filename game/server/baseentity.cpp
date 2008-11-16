@@ -6306,11 +6306,6 @@ void CBaseEntity::DispatchResponse( const char *conceptName )
 
 	// Now that we have a criteria set, ask for a suitable response
 	AI_Response result;
-	bool found = rs->FindBestResponse( set, result );
-	if ( !found )
-	{
-		return;
-	}
 
 	// Handle the response here...
 	char response[ 256 ];

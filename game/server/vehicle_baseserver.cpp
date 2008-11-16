@@ -7,7 +7,7 @@
 #include "cbase.h"
 #include "vcollide_parse.h"
 #include "vehicle_base.h"
-#include "npc_vehicledriver.h"
+//#include "npc_vehicledriver.h"
 #include "in_buttons.h"
 #include "engine/IEngineSound.h"
 #include "soundenvelope.h"

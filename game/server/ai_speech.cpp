@@ -246,20 +246,6 @@ CAI_Expresser::~CAI_Expresser()
 //-----------------------------------------------------------------------------
 void CAI_Expresser::TestAllResponses()
 {
-	IResponseSystem *pResponseSystem = GetOuter()->GetResponseSystem();
-	if ( pResponseSystem )
-	{
-		CUtlVector<AI_Response *> responses;
-		pResponseSystem->GetAllResponses( &responses );
-		for ( int i = 0; i < responses.Count(); i++ )
-		{
-			char response[ 256 ];
-			responses[i]->GetResponse( response, sizeof( response ) );
-
-			Msg( "Response: %s\n", response );
-			SpeakDispatchResponse( "", responses[i] );
-		}
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -321,7 +307,7 @@ AI_Response *CAI_Expresser::SpeakFindResponse( AIConcept_t concept, const char *
 	// Now that we have a criteria set, ask for a suitable response
 	AI_Response *result = new AI_Response;
 	Assert( result && "new AI_Response: Returned a NULL AI_Response!" );
-	bool found = rs->FindBestResponse( set, *result, this );
+	/*bool found = rs->FindBestResponse( set, *result, this );
 
 	if ( rr_debugresponses.GetInt() == 3 )
 	{
@@ -371,7 +357,7 @@ AI_Response *CAI_Expresser::SpeakFindResponse( AIConcept_t concept, const char *
 	{
 		delete result;
 		return NULL;
-	}
+	}*/
 
 	return result;
 }

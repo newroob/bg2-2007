@@ -14,6 +14,7 @@
 #include "ammodef.h"
 #include "team.h"
 #include "../bg2/flag.h"
+#include "../bg2/ctfflag.h"
 //
 
 //-----------------------------------------------------------------------------
@@ -992,4 +993,106 @@ void CFlagTriggerBG2::EndTouch(CBaseEntity *pOther)
 			}
 			break;
 	}
+}
+//-----------------------------------------------------------------------------
+// CTF Capture Trigger - HairyPotter - My crowning achievement thus far.
+//-----------------------------------------------------------------------------
+class CTriggerCTFCapture : public CTriggerMultiple
+{
+	DECLARE_CLASS( CTriggerCTFCapture, CTriggerMultiple );
+	DECLARE_DATADESC();
+
+public:
+	void StartTouch(CBaseEntity *pOther);
+	void EndTouch(CBaseEntity *pOther);
+
+private:
+	int m_iAffectedTeam, iTeam, m_iTeamBonus, m_iPlayerBonus, m_iSound;
+
+	COutputEvent m_OnFlagCaptured;
+};
+
+
+//-----------------------------------------------------------------------------
+// Keyfields
+//-----------------------------------------------------------------------------
+LINK_ENTITY_TO_CLASS( trigger_ctf_capturepoint, CTriggerCTFCapture );
+
+BEGIN_DATADESC( CTriggerCTFCapture )
+	DEFINE_KEYFIELD( m_iAffectedTeam,  FIELD_INTEGER, "TeamCapture" ),
+	DEFINE_KEYFIELD( m_iTeamBonus, FIELD_INTEGER, "TeamBonus" ),
+	DEFINE_KEYFIELD( m_iPlayerBonus, FIELD_INTEGER, "PlayerBonus" ),
+	DEFINE_KEYFIELD( m_iSound, FIELD_SOUNDNAME, "CaptureSound" ),
+
+	DEFINE_OUTPUT( m_OnFlagCaptured, "OnFlagCaptured" ),
+END_DATADESC()
+
+
+//-----------------------------------------------------------------------------
+// Can the player be set as the parent?
+//-----------------------------------------------------------------------------
+void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
+{
+	//if ( PassesTriggerFilters(pOther) == false )
+	//	return;
+	if ( !pOther->IsPlayer() ) //Nothing else should trigger this.
+		return;
+
+	//Defines
+	//Yeah, all this is needed. If an entity has a parent, you have to go through the parent to get to the entity. Figures.
+	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther );
+	CtfFlag *pFlag = dynamic_cast< CtfFlag* >( pPlayer->CtfFlag );
+
+	if ( !pFlag ) //Player doesn't have a flag. Just die.
+		return;
+
+	int TeamNumber = pPlayer->GetTeamNumber();//pFlag->m_iForTeam;//
+	//
+	//For team affected by the trigger.
+	switch( m_iAffectedTeam )
+	{
+		case 0:
+			iTeam = TeamNumber;
+			break;
+		case 1:
+			iTeam = TEAM_BRITISH;
+			break;
+		case 2:
+			iTeam = TEAM_AMERICANS;
+			break;
+	}
+
+	if ( TeamNumber != iTeam ) //Isn't for this team. Die.
+		return;
+	//
+
+	if ( pFlag->m_bFlagIsCarried && pPlayer->IsAlive() )
+	{
+
+		pFlag->PlaySound( GetAbsOrigin(), m_iSound ); //Play the capture sound.
+
+		pFlag->ResetFlag();
+
+		g_Teams[TeamNumber]->AddScore( m_iTeamBonus ); //Adds the team score bonus.
+		pPlayer->IncrementFragCount( m_iPlayerBonus ); //Give the player the points.
+		pFlag->m_bFlagIsCarried = false;
+		//pPlayer->iSpeed = pPlayer->iSpeed + sv_ctf_flagweight.GetFloat();
+
+		char Msg[512];
+		Q_snprintf( Msg, 512, "%s Has Captured The %s Flag!", pPlayer->GetPlayerName(), pFlag->cFlagName );
+		pFlag->PrintAlert( Msg );
+
+		m_OnFlagCaptured.FireOutput( this, this ); //Fire the OnFlagCaptured output, set it last just in case.
+
+	}
+
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Called when an entity stops touching us.
+// Input  : pOther - The entity that was touching us.
+//-----------------------------------------------------------------------------
+void CTriggerCTFCapture::EndTouch(CBaseEntity *pOther)
+{
+	//BaseClass::EndTouch( pOther );	Just do nothing. Doesn't matter.
 }

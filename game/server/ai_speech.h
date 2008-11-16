@@ -352,9 +352,7 @@ inline void CAI_ExpresserHost<BASE_NPC>::ModifyOrAppendCriteria( AI_CriteriaSet&
 template <class BASE_NPC>
 inline IResponseSystem *CAI_ExpresserHost<BASE_NPC>::GetResponseSystem()
 {
-	extern IResponseSystem *g_pResponseSystem;
-	// Expressive NPC's use the general response system
-	return g_pResponseSystem;
+	return NULL;
 }
 
 //-----------------------------------------------------------------------------

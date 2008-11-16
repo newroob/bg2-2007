@@ -69,7 +69,7 @@ public:
 	void MsgFunc_WinMusic( bf_read &msg );
 	//HairyPotter
 	void MsgFunc_CaptureSounds( bf_read &msg );
-	void PlayCaptureSound ( const Vector &origin );
+	void PlayCaptureSound ( const Vector &origin, char sound[255] );
 	void MsgFunc_VCommSounds( bf_read &msg );
 	void PlayVCommSound ( char snd[512], int playerindex );
 
@@ -537,14 +537,16 @@ void CHudBG2::MsgFunc_CaptureSounds( bf_read &msg )
 		return;
 
 	Vector pos;
+	char sound[255];
 
 	msg.ReadBitVec3Coord( pos );
-	PlayCaptureSound( pos );
+	msg.ReadString( sound, sizeof(sound) );
+	PlayCaptureSound( pos, sound );
 }
-void CHudBG2::PlayCaptureSound( const Vector &origin )
+void CHudBG2::PlayCaptureSound( const Vector &origin, char sound[255] )
 {
 	CLocalPlayerFilter filter;
-	C_BaseEntity::EmitSound( filter, SOUND_FROM_WORLD, "Flag.capture", &origin );
+	C_BaseEntity::EmitSound( filter, SOUND_FROM_WORLD, sound, &origin );
 }
 //
 //Make voice comm sounds client side. -HairyPotter

@@ -2076,10 +2076,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\npc_vehicledriver.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\shared\obstacle_pushaway.cpp"
 				>
 			</File>
@@ -3379,27 +3375,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\hl2\env_headcrabcanister.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\hl2\env_headcrabcanister_shared.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\hl2\env_headcrabcanister_shared.h"
-					>
-				</File>
-				<File
 					RelativePath=".\hl2\env_speaker.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\hl2\env_starfield.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\func_recharge.cpp"
 					>
 				</File>
 				<File
@@ -3499,10 +3479,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\hl2\prop_thumper.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\hl2\rotorwash.cpp"
 					>
 				</File>
@@ -3528,18 +3504,6 @@
 				</File>
 				<File
 					RelativePath=".\hl2\vehicle_apc.h"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\vehicle_crane.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\vehicle_crane.h"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\vehicle_prisoner_pod.cpp"
 					>
 				</File>
 				<File
@@ -3684,10 +3648,10 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32"
-						ExcludedFromBuild="true"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
 				</File>
@@ -3704,7 +3668,6 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32"
-						ExcludedFromBuild="true"
 						>
 						<Tool
 							Name="VCCustomBuildTool"
@@ -4392,10 +4355,6 @@
 			</File>
 			<File
 				RelativePath="..\..\public\networkvar.h"
-				>
-			</File>
-			<File
-				RelativePath=".\npc_vehicledriver.h"
 				>
 			</File>
 			<File

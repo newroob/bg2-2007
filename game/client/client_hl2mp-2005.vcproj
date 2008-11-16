@@ -2438,10 +2438,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\hl2\c_env_headcrabcanister.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\hl2\c_env_starfield.cpp"
 					>
 				</File>
@@ -2498,22 +2494,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\hl2\c_vehicle_cannon.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\c_vehicle_crane.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\c_vehicle_crane.h"
-					>
-				</File>
-				<File
-					RelativePath=".\hl2\c_vehicle_prisoner_pod.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\hl2\c_weapon__stubs_hl2.cpp"
 					>
 				</File>
@@ -2523,14 +2503,6 @@
 				</File>
 				<File
 					RelativePath="..\shared\hl2\citadel_effects_shared.h"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\hl2\env_headcrabcanister_shared.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\shared\hl2\env_headcrabcanister_shared.h"
 					>
 				</File>
 				<File

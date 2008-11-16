@@ -319,10 +319,11 @@ void CRagdollProp::InitRagdollAnimation()
 //-----------------------------------------------------------------------------
 IResponseSystem *CRagdollProp::GetResponseSystem()
 {
-	extern IResponseSystem *g_pResponseSystem;
+	//extern IResponseSystem *g_pResponseSystem;
 
 	// Just use the general NPC response system; we often come from NPCs after all
-	return g_pResponseSystem;
+	//return g_pResponseSystem;
+	return NULL;
 }
 
 
