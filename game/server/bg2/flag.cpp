@@ -134,7 +134,6 @@ void CFlag::InputDisable( inputdata_t &inputData )
 	m_iLastTeam = TEAM_UNASSIGNED;
 	m_nSkin = GetDisabledSkin();
 	m_OnDisable.FireOutput( inputData.pActivator, this );
-	//CFlagHandler::Update();
 }
 void CFlag::InputToggle( inputdata_t &inputData )
 {
@@ -209,11 +208,29 @@ void CFlag::Think( void )
 
 	*/
 
+
+	extern ConVar mp_respawnstyle;
+	if ( mp_respawnstyle.GetInt() == 2 )
+	{
+		m_bActive = false;
+		ChangeTeam( TEAM_UNASSIGNED );
+		m_iLastTeam = TEAM_UNASSIGNED;
+		AddEffects( EF_NODRAW );
+		SetNextThink( gpGlobals->curtime + 1.25f ); //No need to think soo much. 
+		return;
+	}
+
 	//For the flag animation. Yes, It's a sort of hack, but the frame can only be advanced on a think.. Animation is 8 FPS, so must think 8 times a second. -HairyPotter
 	//SetNextThink( gpGlobals->curtime + 0.5f );
 	SetNextThink( gpGlobals->curtime + 0.125f );
 	StudioFrameAdvance();
 	//
+
+	if ( IsEffectActive( EF_NODRAW ) && !m_bActive )
+	{
+		m_bActive = true;
+		RemoveEffects( EF_NODRAW );
+	}
 
 	if (!m_bActive)	// if inactive, stop the thinking cycle
 		return;

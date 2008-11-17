@@ -17,6 +17,15 @@ void CtfFlag::Spawn( void )
 {
 	Precache( );
 	SetModel( "models/other/flag.mdl" ); //Always first.
+
+	m_bActive = true;
+
+	if (HasSpawnFlags( CtfFlag_START_DISABLED ))
+	{
+		m_bActive = false;
+		AddEffects( EF_NODRAW );
+	}
+
 	BaseClass::Spawn( );
 	//cFlagName = m_strName;
 	iTeam = m_iForTeam;
@@ -66,7 +75,14 @@ void CtfFlag::Precache( void )
 }
 void CtfFlag::Think( void )
 {
+	if ( !m_bActive ) //If it isn't active, just die here.
+	{
+		SetNextThink( gpGlobals->curtime + 1.0f ); //Think Less
+		return;
+	}
+
 	SetNextThink( gpGlobals->curtime + 0.125f );
+
 	StudioFrameAdvance(); //For the flag animation. -HairyPotter
 
 	if ( GetParent() ) //Is a player holding the flag??
@@ -164,6 +180,8 @@ void CtfFlag::PlaySound( Vector origin, int sound )
 		WRITE_STRING( SoundFile );
 	MessageEnd();
 }
+
+//Inputs Below ------------------------------------------------------------
 void CtfFlag::InputReset( inputdata_t &inputData )
 {
 	if (GetAbsOrigin() == FlagOrigin)
@@ -173,6 +191,36 @@ void CtfFlag::InputReset( inputdata_t &inputData )
 
 	ReturnFlag();
 }
+void CtfFlag::InputEnable( inputdata_t &inputData )
+{
+	if ( GetParent() )
+		m_bFlagIsCarried = false;
+
+	RemoveEffects( EF_NODRAW );
+	m_bActive = true;
+	m_OnEnable.FireOutput( inputData.pActivator, this );
+
+	ReturnFlag();
+}
+void CtfFlag::InputDisable( inputdata_t &inputData )
+{
+	if ( GetParent() ) //Just in case you disable the flag when someone has it.
+		m_bFlagIsCarried = false;
+
+	AddEffects( EF_NODRAW );
+	m_bActive = false;
+	m_OnDisable.FireOutput( inputData.pActivator, this );
+
+	ReturnFlag();
+}
+void CtfFlag::InputToggle( inputdata_t &inputData )
+{
+	if (m_bActive)
+		InputDisable( inputData );
+	else
+		InputEnable( inputData );
+}
+//-------------------------------------------------------------------------
 BEGIN_DATADESC( CtfFlag )
 
 	DEFINE_KEYFIELD( m_flPickupRadius, FIELD_FLOAT, "PickupRadius" ),
@@ -189,8 +237,13 @@ BEGIN_DATADESC( CtfFlag )
 	DEFINE_OUTPUT( m_OnDropped, "OnDropped" ),
 	DEFINE_OUTPUT( m_OnPickedUp, "OnPickedUp" ),
 	DEFINE_OUTPUT( m_OnReturned, "OnReturned" ),
+	DEFINE_OUTPUT( m_OnEnable, "OnEnabled" ),
+	DEFINE_OUTPUT( m_OnDisable, "OnDisabled" ),
 
+	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "Reset", InputReset ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "Toggle", InputToggle ),
 
 END_DATADESC()
 

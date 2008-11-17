@@ -1,5 +1,7 @@
 //HairyPotter - FOR CTF MODE!!
 
+const int CtfFlag_START_DISABLED = 1;		// spawnflag definition
+
 class CtfFlag : public CBaseAnimating
 {
 	DECLARE_CLASS( CtfFlag, CBaseAnimating );
@@ -8,8 +10,13 @@ class CtfFlag : public CBaseAnimating
 	COutputEvent m_OnPickedUp;
 	COutputEvent m_OnDropped;
 	COutputEvent m_OnReturned;
+	COutputEvent m_OnEnable;
+	COutputEvent m_OnDisable;
 
 	void InputReset( inputdata_t &inputData );
+	void InputEnable( inputdata_t &inputData );
+	void InputDisable( inputdata_t &inputData );
+	void InputToggle( inputdata_t &inputData );
 
 public:
 	int		m_iForTeam,
@@ -26,7 +33,7 @@ public:
 	QAngle FlagAngle;	  
 	CBasePlayer *pCapturer;
 
-	bool m_bFlagIsDropped, m_bFlagIsCarried;   
+	bool m_bFlagIsDropped, m_bFlagIsCarried, m_bActive;   
 
 	float	m_flPickupRadius, m_fReturnTime, fReturnTime;
 

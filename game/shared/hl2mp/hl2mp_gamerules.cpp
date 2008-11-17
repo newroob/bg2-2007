@@ -1855,13 +1855,11 @@ void CHL2MPRules::ResetFlags( void )
 		if (pFlag->HasSpawnFlags( CFlag_START_DISABLED ))
 		{
 			pFlag->m_bActive = false;
-			//pFlag->SetModel( "models/other/flag_w.mdl" );
-			pFlag->SetModel( "models/other/flag_n.mdl" ); //To avoid errors for now. -HairyPotter
+			pFlag->m_nSkin = 2;
 		}
 		else
 		{
 			pFlag->m_bActive = true;
-			//SetModel( "models/other/flag_n.mdl" );
 		}
 #endif // CLIENT_DLL
 	}
