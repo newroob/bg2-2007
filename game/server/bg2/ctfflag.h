@@ -18,7 +18,6 @@ class CtfFlag : public CBaseAnimating
 	void InputDisable( inputdata_t &inputData );
 	void InputToggle( inputdata_t &inputData );
 
-public:
 	int		m_iForTeam,
 			m_iTeamBonus,
 			iTeam,
@@ -27,18 +26,18 @@ public:
 			m_iReturnSound,
 			m_iPickupSound;
 
+	float	m_flPickupRadius, m_fReturnTime, fReturnTime;
+
 	char CTFMsg[512];
 
-	Vector FlagOrigin;    
-	QAngle FlagAngle;	  
-	CBasePlayer *pCapturer;
+public:
 
 	bool m_bFlagIsDropped, m_bFlagIsCarried, m_bActive;   
 
-	float	m_flPickupRadius, m_fReturnTime, fReturnTime;
-
-
 	char *cFlagName;	
+
+	Vector FlagOrigin;    
+	QAngle FlagAngle;
 
 	void PlaySound( Vector origin, int sound );
 	void ResetFlag();

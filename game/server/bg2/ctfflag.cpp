@@ -95,7 +95,7 @@ void CtfFlag::Think( void )
 			m_bFlagIsCarried = false;
 			m_bFlagIsDropped = true;
 			fReturnTime = gpGlobals->curtime + m_fReturnTime;
-			Q_snprintf( CTFMsg, 512, "%s Has Dropped The %s!", pPlayer->GetPlayerName(), cFlagName );
+			Q_snprintf( CTFMsg, 512, "%s Has Dropped The %s Flag!", pPlayer->GetPlayerName(), cFlagName );
 			PrintAlert( CTFMsg );
 			PlaySound( GetAbsOrigin(), m_iDropSound );
 			m_OnDropped.FireOutput( this, this ); //Fire the OnDropped output.
@@ -149,7 +149,7 @@ void CtfFlag::PrintAlert( char *Msg )
 			break;
 
 	}*/
-	UTIL_ClientPrintAll( HUD_PRINTCENTER, Msg );
+	UTIL_ClientPrintAll( HUD_PRINTTALK, Msg );
 }
 void CtfFlag::ReturnFlag( void )
 {

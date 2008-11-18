@@ -1035,6 +1035,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 {
 	//if ( PassesTriggerFilters(pOther) == false )
 	//	return;
+
 	if ( !pOther->IsPlayer() ) //Nothing else should trigger this.
 		return;
 
@@ -1046,7 +1047,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 	if ( !pFlag ) //Player doesn't have a flag. Just die.
 		return;
 
-	int TeamNumber = pPlayer->GetTeamNumber();//pFlag->m_iForTeam;//
+	int TeamNumber = pPlayer->GetTeamNumber();
 	//
 	//For team affected by the trigger.
 	switch( m_iAffectedTeam )
@@ -1071,7 +1072,10 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 
 		pFlag->PlaySound( GetAbsOrigin(), m_iSound ); //Play the capture sound.
 
-		pFlag->ResetFlag();
+		//pFlag->ResetFlag();
+		SetAbsOrigin( pFlag->FlagOrigin );
+		SetAbsAngles( pFlag->FlagAngle );
+		SetParent ( NULL );
 
 		g_Teams[TeamNumber]->AddScore( m_iTeamBonus ); //Adds the team score bonus.
 		pPlayer->IncrementFragCount( m_iPlayerBonus ); //Give the player the points.
@@ -1084,6 +1088,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 
 		m_OnFlagCaptured.FireOutput( this, this ); //Fire the OnFlagCaptured output, set it last just in case.
 
+		pPlayer->CtfFlag = NULL;
 	}
 
 }

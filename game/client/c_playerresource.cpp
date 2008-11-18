@@ -126,11 +126,12 @@ void C_PlayerResource::ClientThink()
 //-----------------------------------------------------------------------------
 const char *C_PlayerResource::GetPlayerName( int iIndex )
 {
-	if ( iIndex < 1 || iIndex > MAX_PLAYERS )
+	//BG2 - Commented. I don't even see how this could happen.
+	/*if ( iIndex < 1 || iIndex > MAX_PLAYERS )
 	{
 		Assert( false );
 		return "ERRORNAME";
-	}
+	}*/
 	
 	if ( !IsConnected( iIndex ) )
 		return PLAYER_UNCONNECTED_NAME;

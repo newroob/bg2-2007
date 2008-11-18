@@ -1974,15 +1974,6 @@ bool CHL2_Player::IsIlluminatedByFlashlight( CBaseEntity *pEntity, float *flRetu
 	if( !FlashlightIsOn() )
 		return false;
 
-	if( pEntity->Classify() == CLASS_BARNACLE && pEntity->GetEnemy() == this )
-	{
-		// As long as my flashlight is on, the barnacle that's pulling me in is considered illuminated.
-		// This is because players often shine their flashlights at Alyx when they are in a barnacle's 
-		// grasp, and wonder why Alyx isn't helping. Alyx isn't helping because the light isn't pointed
-		// at the barnacle. This will allow Alyx to see the barnacle no matter which way the light is pointed.
-		return true;
-	}
-
 	// Within 50 feet?
  	float flDistSqr = GetAbsOrigin().DistToSqr(pEntity->GetAbsOrigin());
 	if( flDistSqr > FLASHLIGHT_RANGE )
