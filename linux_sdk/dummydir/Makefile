@@ -21,13 +21,13 @@ GAME_DIR=/home/STEAM/orangebox
 
 # the path to your mods directory
 # set this so that 'make install' or 'make installrelease' will copy your binary over automatically.
-MOD_DIR=$(GAME_DIR)/SampleMod
+MOD_DIR=$(GAME_DIR)/bg2-svn
 
-# compiler options (gcc 3.4.1 will work - 4.2.2 recommended)
-CC=gcc-4.2
-CPLUS=g++-4.2
-CLINK=gcc-4.2
-CPP_LIB="/usr/lib/gcc/i486-linux-gnu/4.2.3/libstdc++.a /usr/lib/gcc/i486-linux-gnu/4.2.3/libgcc_eh.a"
+# compiler options (GCC 3.4.6 recommended. GCC 4.2 will work, but it has problems. - HairyPotter)
+CC=gcc-3.4
+CPLUS=g++-3.4
+CLINK=gcc-3.4
+CPP_LIB="/usr/lib/gcc/i486-linux-gnu/3.4.6/libstdc++.a /usr/lib/gcc/i486-linux-gnu/3.4.6/libgcc_eh.a"
 
 # GCC 4.2.2 optimization flags, if you're using anything below, don't use these!
 OPTFLAGS=-O2 -fomit-frame-pointer
