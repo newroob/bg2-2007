@@ -12,6 +12,7 @@
 
 ConVar sv_ctf_flagweight ("sv_ctf_flagweight", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL, "How much speed does carrying this flag drain?");
 ConVar sv_ctf_returnstyle ("sv_ctf_returnstyle", "1", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Which way is a flag returned?");
+ConVar sv_flagalerts ("sv_flagalerts", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Print out flag notifications to hud?");
 
 void CtfFlag::Spawn( void )
 {
@@ -72,6 +73,7 @@ void CtfFlag::Spawn( void )
 void CtfFlag::Precache( void )
 {
 	PrecacheModel( "models/other/flag.mdl" );
+	PrecacheModel( "models/other/flag_nopole.mdl" );
 }
 void CtfFlag::Think( void )
 {
@@ -90,13 +92,13 @@ void CtfFlag::Think( void )
 		if ( !GetParent()->IsAlive() ) //Did the player die while holding the flag? Otherwise just do nothing.
 		{
 			CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( GetParent() );
+			SetModel( "models/other/flag.mdl" );
 			SetParent( NULL );
-			SetAbsOrigin( GetAbsOrigin() - Vector( 0,0,60 ) ); //HACKHACK: Bring the flag down to it's original height.
+			SetAbsOrigin( GetAbsOrigin() - Vector( 0,0,25 ) ); //HACKHACK: Bring the flag down to it's original height.
 			m_bFlagIsCarried = false;
 			m_bFlagIsDropped = true;
 			fReturnTime = gpGlobals->curtime + m_fReturnTime;
-			Q_snprintf( CTFMsg, 512, "%s Has Dropped The %s Flag!", pPlayer->GetPlayerName(), cFlagName );
-			PrintAlert( CTFMsg );
+			PrintAlert( "%s Has Dropped The %s Flag!", pPlayer->GetPlayerName(), cFlagName );
 			PlaySound( GetAbsOrigin(), m_iDropSound );
 			m_OnDropped.FireOutput( this, this ); //Fire the OnDropped output.
 		}
@@ -123,47 +125,64 @@ void CtfFlag::Think( void )
 
 			//Assuming you've passed all the checks, you deserve to pick up the flag. So run the code below.
 			pPlayer->CtfFlag = this;	//So the capture trigger will know which flag is being captured.
-			SetAbsOrigin( pPlayer->GetAbsOrigin() + Vector( 0,0,60 ) );	//Keeps the flag out of the player's FOV, also raises it so it doesn't look like it's stuck in the player's grill.
+			SetModel( "models/other/flag_nopole.mdl" );
+			SetAbsOrigin( pPlayer->GetAbsOrigin() + Vector( 0,0,25 ) );	//Keeps the flag out of the player's FOV, also raises it so it doesn't look like it's stuck in the player's grill.
+			SetAbsAngles( pPlayer->GetAbsAngles() + QAngle( 0,180,0 ) ); // Make sure the flag is flying with the player model, not with it.
 			SetParent( pPlayer );	//Attach the entity to the player.
-			//pPlayer->iSpeed = pPlayer->iSpeed - sv_ctf_flagweight.GetInt(); //For the player speed difference.
+			//For the player speed difference.
+			switch( pPlayer->m_iClass )
+			{
+				case CLASS_INFANTRY:
+					pPlayer->iSpeed = pPlayer->iSpeed - m_iFlagWeight; 
+					break;
+				case CLASS_OFFICER:
+					pPlayer->iSpeed = pPlayer->iSpeed - (m_iFlagWeight * 1.6);
+					break;
+				case CLASS_SNIPER:
+					pPlayer->iSpeed = pPlayer->iSpeed - (m_iFlagWeight * 1.2);
+					break;
+			}
+			//
 			m_bFlagIsCarried = true;
 			m_bFlagIsDropped = false;
-			Q_snprintf( CTFMsg, 512, "%s Has Taken The %s Flag!", pPlayer->GetPlayerName(), cFlagName );
-			PrintAlert( CTFMsg );
+			PrintAlert( "%s Has Taken The %s Flag!", pPlayer->GetPlayerName(), cFlagName );
 			PlaySound( GetAbsOrigin(), m_iPickupSound );
 			m_OnPickedUp.FireOutput( this, this ); //Fire the OnPickedUp output.
 		}
 	}
 }
 
-void CtfFlag::PrintAlert( char *Msg )
+void CtfFlag::PrintAlert( char *Msg, const char * PlayerName, char * FlagName )
 {
-	/*extern ConVar sv_flagalerts;
+	if ( PlayerName == NULL )
+		Q_snprintf( CTFMsg, 512, Msg, FlagName );
+	else 
+		Q_snprintf( CTFMsg, 512, Msg, PlayerName, FlagName );
+
 	switch( sv_flagalerts.GetInt() )
 	{
 		case 1:
-			UTIL_ClientPrintAll( HUD_PRINTCENTER, Msg );
+			UTIL_ClientPrintAll( HUD_PRINTCENTER, CTFMsg );
 			break;
 		case 2:
-			UTIL_ClientPrintAll( HUD_PRINTTALK, Msg );
+			UTIL_ClientPrintAll( HUD_PRINTTALK, CTFMsg );
 			break;
-
-	}*/
-	UTIL_ClientPrintAll( HUD_PRINTTALK, Msg );
+	}
 }
 void CtfFlag::ReturnFlag( void )
 {
 	PlaySound( GetAbsOrigin(), m_iReturnSound );
-	m_bFlagIsDropped = false;
-	Q_snprintf( CTFMsg, 512, "The %s Flag Has Returned!", cFlagName );
-	PrintAlert( CTFMsg );
+	PrintAlert( "The %s Flag Has Returned!", NULL, cFlagName );
 	ResetFlag();
 	m_OnReturned.FireOutput( this, this ); //Fire the OnReturned output.
 }
 void CtfFlag::ResetFlag()
 {
+	SetModel( "models/other/flag.mdl" );
 	SetAbsOrigin( FlagOrigin );
 	SetAbsAngles( FlagAngle );
+	m_bFlagIsDropped = false;
+	m_bFlagIsCarried = false;
 	SetParent ( NULL );
 }
 void CtfFlag::PlaySound( Vector origin, int sound )
@@ -186,8 +205,6 @@ void CtfFlag::InputReset( inputdata_t &inputData )
 {
 	if (GetAbsOrigin() == FlagOrigin)
 		return;
-	if ( GetParent() )
-		m_bFlagIsCarried = false;
 
 	ReturnFlag();
 }
@@ -225,9 +242,9 @@ BEGIN_DATADESC( CtfFlag )
 
 	DEFINE_KEYFIELD( m_flPickupRadius, FIELD_FLOAT, "PickupRadius" ),
 	DEFINE_KEYFIELD( m_iForTeam, FIELD_INTEGER, "ForTeam" ),
+	DEFINE_KEYFIELD( m_iFlagWeight, FIELD_INTEGER, "FlagWeight" ),
 	DEFINE_KEYFIELD( m_fReturnTime, FIELD_FLOAT, "ReturnTime" ),
 	DEFINE_KEYFIELD( m_iPickupSound, FIELD_SOUNDNAME, "PickupSound" ),
-	//DEFINE_KEYFIELD( m_iWeight, FIELD_SOUNDNAME, "Weight" ), //Could be used to slow the player down when carrying?
 	DEFINE_KEYFIELD( m_iDropSound, FIELD_SOUNDNAME, "DropSound" ),
 	DEFINE_KEYFIELD( m_iReturnSound, FIELD_SOUNDNAME, "ReturnSound" ),
 	//DEFINE_KEYFIELD( m_strName,	FIELD_STRING,	"Name" ), //I don't know... I guess if you wanted to call it something other than British/American flag?

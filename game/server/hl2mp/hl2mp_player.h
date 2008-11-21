@@ -177,7 +177,6 @@ public:
 
 private:
 	//int		m_iClass;			//BG2 - Tjoppen - class system
-	CNetworkVar( int, m_iClass );
 	int		m_iNextClass;		//BG2 - Tjoppen - which class will we become on our next respawn?
 	float	m_flNextVoicecomm,	//BG2 - Tjoppen - voice comms
 			m_flNextGlobalVoicecomm;	//BG2 - Tjoppen - only battlecries for now

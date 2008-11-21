@@ -30,20 +30,20 @@ class CtfFlag : public CBaseAnimating
 
 	char CTFMsg[512];
 
+	Vector FlagOrigin;    
+	QAngle FlagAngle;
+
 public:
 
 	bool m_bFlagIsDropped, m_bFlagIsCarried, m_bActive;   
-
-	char *cFlagName;	
-
-	Vector FlagOrigin;    
-	QAngle FlagAngle;
+	char *cFlagName;
+	int m_iFlagWeight;
 
 	void PlaySound( Vector origin, int sound );
 	void ResetFlag();
 	void Spawn( void );
 	void Precache( void );
-	static void PrintAlert( char *Msg );
+	void PrintAlert( char *Msg, const char * PlayerName, char * FlagName );
 	void ReturnFlag( void );
 	void PlaySound( int iSound );
 	void Think( void );

@@ -555,6 +555,24 @@ void CHL2MP_Player::Spawn(void)
 
 	SetPlayerUnderwater(false);
 
+	//BG2 - Put the speed handler into spawn so flag weight works. -HairyPotter
+	switch (m_iClass)
+	{
+		case CLASS_INFANTRY:
+			iSpeed = 190;
+			iSpeed2 = 120;
+			break;
+		case CLASS_OFFICER:
+			iSpeed = 220;
+			iSpeed2 = 140;
+			break;
+		case CLASS_SNIPER:
+			iSpeed = 200;
+			iSpeed2 = 130;
+			break;
+	}
+	//
+
 	m_bReady = false;
 }
 
@@ -901,25 +919,6 @@ void CHL2MP_Player::HandleSpeedChanges( void )
 	
 	if( GetActiveWeapon() && GetActiveWeapon()->m_bInReload )
 		scale *= 0.5f;
-
-	int iSpeed = 190;
-	int iSpeed2 = 150;
-
-	switch (m_iClass)
-	{
-		case CLASS_INFANTRY:
-			iSpeed = 190;
-			iSpeed2 = 120;
-			break;
-		case CLASS_OFFICER:
-			iSpeed = 220;
-			iSpeed2 = 140;
-			break;
-		case CLASS_SNIPER:
-			iSpeed = 200;
-			iSpeed2 = 130;
-			break;
-	}
 
 	if( m_nButtons & IN_WALK )
 		SetMaxSpeed( iSpeed2 * scale );

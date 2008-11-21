@@ -1072,19 +1072,27 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 
 		pFlag->PlaySound( GetAbsOrigin(), m_iSound ); //Play the capture sound.
 
-		//pFlag->ResetFlag();
-		SetAbsOrigin( pFlag->FlagOrigin );
-		SetAbsAngles( pFlag->FlagAngle );
-		SetParent ( NULL );
+		pFlag->ResetFlag();
 
 		g_Teams[TeamNumber]->AddScore( m_iTeamBonus ); //Adds the team score bonus.
 		pPlayer->IncrementFragCount( m_iPlayerBonus ); //Give the player the points.
-		pFlag->m_bFlagIsCarried = false;
-		//pPlayer->iSpeed = pPlayer->iSpeed + sv_ctf_flagweight.GetFloat();
 
-		char Msg[512];
-		Q_snprintf( Msg, 512, "%s Has Captured The %s Flag!", pPlayer->GetPlayerName(), pFlag->cFlagName );
-		pFlag->PrintAlert( Msg );
+		//For the player speed difference.
+		switch( pPlayer->m_iClass )
+		{
+			case CLASS_INFANTRY:
+				pPlayer->iSpeed = pPlayer->iSpeed - pFlag->m_iFlagWeight; 
+				break;
+			case CLASS_OFFICER:
+				pPlayer->iSpeed = pPlayer->iSpeed - (pFlag->m_iFlagWeight * 1.6);
+				break;
+			case CLASS_SNIPER:
+				pPlayer->iSpeed = pPlayer->iSpeed - (pFlag->m_iFlagWeight * 1.2);
+				break;
+		}
+		//
+
+		pFlag->PrintAlert( "%s Has Captured The %s Flag!", pPlayer->GetPlayerName(), pFlag->cFlagName );
 
 		m_OnFlagCaptured.FireOutput( this, this ); //Fire the OnFlagCaptured output, set it last just in case.
 

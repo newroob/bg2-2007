@@ -20,7 +20,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-/* //HairyPotter - Side note, I think this would be interesting for the BG2 hintbox.
+//HairyPotter - Side note, I think this would be interesting for the BG2 hintbox.
 //-----------------------------------------------------------------------------
 // Purpose: Displays hints across the center of the screen
 //-----------------------------------------------------------------------------
@@ -763,4 +763,4 @@ void CHudHintKeyDisplay::MsgFunc_KeyHintText( bf_read &msg )
 		// it's being cleared, hide the panel
 		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "KeyHintMessageHide" ); 
 	}
-}*/
+}
