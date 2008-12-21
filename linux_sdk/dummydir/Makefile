@@ -16,21 +16,21 @@ MOD_PROJ=../../game/server/server_hl2mp-2005.vcproj
 MOD_CONFIG="Server(HL2MP)_ReleaseWin32"
 
 # the directory the base binaries (tier0_i486.so, etc) are located
-# this should point to your orange box subfolder of where you have srcds installed.
-GAME_DIR=/home/STEAM/orangebox
+GAME_DIR=../../../linux-deps/libs/
 
 # the path to your mods directory
 # set this so that 'make install' or 'make installrelease' will copy your binary over automatically.
 MOD_DIR=$(GAME_DIR)/bg2-svn
 
-# compiler options (GCC 3.4.6 recommended. GCC 4.2 will work, but it has problems. - HairyPotter)
+# compiler options (gcc 3.4.6 recommended, 4.2 will compile, but CTF will not work right - HairyPotter)
 CC=gcc-3.4
 CPLUS=g++-3.4
 CLINK=gcc-3.4
 CPP_LIB="/usr/lib/gcc/i486-linux-gnu/3.4.6/libstdc++.a /usr/lib/gcc/i486-linux-gnu/3.4.6/libgcc_eh.a"
 
 # GCC 4.2.2 optimization flags, if you're using anything below, don't use these!
-OPTFLAGS=-O2 -fomit-frame-pointer
+OPTFLAGS= -O2 -fomit-frame-pointer
+#Omitting the frame pointer makes debugging impossible, but frees a register and reduces binary size. A complete win for speed. -HairyPotter
 
 # put any compiler flags you want passed here
 USER_CFLAGS=
@@ -52,7 +52,7 @@ LIBFILES= \
 
 # link flags for your mod, make sure to include any special libraries here
 #NOTE: YES we want to include the lib files 2 times. We've run into problems with the 1-pass linker not bringing in symbols it should.
-LDFLAGS="-lm -ldl $(LIBFILES) $(LIBFILES)"
+LDFLAGS="-lm -ldl $(LIBFILES) $(LIBFILES) -s"
 
 # XERCES 2.6.0 or above ( http://xml.apache.org/xerces-c/ ) is used by the vcproj to makefile converter
 # it must be installed before being able to run this makefile
@@ -76,7 +76,8 @@ SOURCE_DIR=../..
 
 # the CPU target for the build, must be i486 for now
 ARCH=i486
-ARCH_CFLAGS=-mtune=i686 -march=i686 -mfpmath=sse -msse
+ARCH_CFLAGS=-mtune=i686 -march=i686 -mfpmath=sse -mmmx -msse -pipe
+#What modern CPU doesn't have SSE or MMX? Besides.. you need those instructions to run SRCDS anyway. -HairyPotter
 
 # -fpermissive is so gcc 3.4.x doesn't complain about some template stuff
 BASE_CFLAGS=-DVPROF_LEVEL=1 -DSWDS -D_LINUX -DLINUX -DNDEBUG -fpermissive -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
@@ -113,13 +114,13 @@ vcpm:
 	$(MAKE) -f $(MAKE_VCPM) $(BASE_DEFINES)
 
 server: vcpm
-	if [ ! -f "tier0_i486.so" ]; then ln -s $(GAME_DIR)/bin/tier0_i486.so .; fi
-	if [ ! -f "vstdlib_i486.so" ]; then ln -s $(GAME_DIR)/bin/vstdlib_i486.so .; fi
-	if [ ! -f "steam_api_i486.so" ]; then ln -s $(GAME_DIR)/bin/steam_api_i486.so .; fi
+	if [ ! -f "tier0_i486.so" ]; then ln -s $(GAME_DIR)tier0_i486.so .; fi
+	if [ ! -f "vstdlib_i486.so" ]; then ln -s $(GAME_DIR)vstdlib_i486.so .; fi
+	if [ ! -f "steam_api_i486.so" ]; then ln -s $(GAME_DIR)steam_api_i486.so .; fi
 # When running over samba we need to copy the files because symlinking isn't possible.
-#	cp -f $(GAME_DIR)/bin/tier0_i486.so .
-#	cp -f $(GAME_DIR)/bin/vstdlib_i486.so .
-#	cp -f $(GAME_DIR)/bin/steam_api_i486.so .
+#	cp -f $(GAME_DIR)tier0_i486.so .
+#	cp -f $(GAME_DIR)vstdlib_i486.so .
+#	cp -f $(GAME_DIR)steam_api_i486.so .
 
 	./vcpm $(MOD_PROJ)
 	$(MAKE) -f $(MAKE_MOD) $(BASE_DEFINES)
