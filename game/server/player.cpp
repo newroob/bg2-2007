@@ -799,12 +799,6 @@ void CBasePlayer::DeathSound( const CTakeDamageInfo &info )
 	{
 		EmitSound( "Player.Death" );
 	}*/
-
-	// play one of the suit death alarms
-	if ( IsSuitEquipped() )
-	{
-		UTIL_EmitGroupnameSuit(edict(), "HEV_DEAD");
-	}
 }
 
 // override takehealth
@@ -864,6 +858,12 @@ void CBasePlayer::DrawDebugGeometryOverlays(void)
 //=========================================================
 void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr )
 {
+
+	//BG2 - Spawned just a while ago, make them invincible. Also die here. - HairyPotter
+	if ( gpGlobals->curtime < m_fLastRespawn )
+		return;
+	//
+
 	if ( m_takedamage )
 	{
 		CTakeDamageInfo info = inputInfo;
@@ -1074,6 +1074,11 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	float flHealthPrev = m_iHealth;
 
 	CTakeDamageInfo info = inputInfo;
+
+	//BG2 - Spawned just a while ago, make them invincible. - HairyPotter
+	if ( gpGlobals->curtime < m_fLastRespawn )
+		return 0;
+	//
 
 	IServerVehicle *pVehicle = GetVehicle();
 	if ( pVehicle )
@@ -2339,7 +2344,7 @@ bool CBasePlayer::SetObserverMode(int mode )
 	if ( mode < OBS_MODE_NONE || mode >= NUM_OBSERVER_MODES )
 		return false;
 
-	iSpeed = 220;
+	iSpeed = 240; //BG2 - Put this here so specs can move after HandleSpeedChanges() tweaks. -HairyPotter
 
 	// check mp_forcecamera settings for dead players
 	if ( mode > OBS_MODE_FIXED && GetTeamNumber() > TEAM_SPECTATOR )
@@ -6017,34 +6022,6 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		//BG2 - NIFTY: Do we really need the suit for impulse 101?
 		//EquipSuit();
 
-		// Give the player everything!
-		/*GiveAmmo( 255,	"Pistol");
-		GiveAmmo( 255,	"AR2");
-		GiveAmmo( 5,	"AR2AltFire");
-		GiveAmmo( 255,	"SMG1");
-		GiveAmmo( 255,	"Buckshot");
-		GiveAmmo( 3,	"smg1_grenade");
-		GiveAmmo( 3,	"rpg_round");
-		GiveAmmo( 5,	"grenade");
-		GiveAmmo( 32,	"357" );
-		GiveAmmo( 16,	"XBowBolt" );
-#ifdef HL2_EPISODIC
-		GiveAmmo( 5,	"Hopwire" );
-#endif		
-		GiveNamedItem( "weapon_smg1" );
-		GiveNamedItem( "weapon_frag" );
-		GiveNamedItem( "weapon_crowbar" );
-		GiveNamedItem( "weapon_pistol" );
-		GiveNamedItem( "weapon_ar2" );
-		GiveNamedItem( "weapon_shotgun" );
-		GiveNamedItem( "weapon_physcannon" );
-		GiveNamedItem( "weapon_bugbait" );
-		GiveNamedItem( "weapon_rpg" );
-		GiveNamedItem( "weapon_357" );
-		GiveNamedItem( "weapon_crossbow" );
-#ifdef HL2_EPISODIC
-		// GiveNamedItem( "weapon_magnade" );
-#endif*/
 		if ( GetHealth() < 100 )
 		{
 			TakeHealth( 25, DMG_GENERIC );
@@ -8294,12 +8271,10 @@ bool CBasePlayer::IsFakeClient() const
 
 void CBasePlayer::EquipSuit( bool bPlayEffects )
 { 
-	m_Local.m_bWearingSuit = true; 
 }
 
 void CBasePlayer::RemoveSuit( void )
 {
-	m_Local.m_bWearingSuit = false;
 }
 
 //-----------------------------------------------------------------------------

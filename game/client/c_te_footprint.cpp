@@ -96,7 +96,7 @@ void C_TEFootprintDecal::PostDataUpdate( DataUpdateType_t updateType )
 	}
 }
 
-void TE_FootprintDecal( IRecipientFilter& filter, float delay, const Vector *origin, const Vector* right, 
+void TE_FootprintDecal( IRecipientFilter& filter, float delay, const Vector *origin, const Vector *right, 
 	int entity, int index, unsigned char materialType )
 {
 	if ( r_decals.GetInt() )

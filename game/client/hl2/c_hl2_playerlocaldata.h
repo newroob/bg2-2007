@@ -32,19 +32,7 @@ public:
 	float	m_flSuitPower;
 	bool	m_bZooming;
 	int		m_bitsActiveDevices;
-	int		m_iSquadMemberCount;
-	int		m_iSquadMedicCount;
-	bool	m_fSquadInFollowMode;
 	bool	m_bWeaponLowered;
-	EHANDLE m_hAutoAimTarget;
-	Vector	m_vecAutoAimPoint;
-	bool	m_bDisplayReticle;
-	bool	m_bStickyAutoAim;
-	bool	m_bAutoAimTarget;
-#ifdef HL2_EPISODIC
-	float	m_flFlashBattery;
-	Vector	m_vecLocatorOrigin;
-#endif
 
 	// Ladder related data
 	EHANDLE			m_hLadder;

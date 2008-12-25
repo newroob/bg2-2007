@@ -35,20 +35,39 @@ void CtfFlag::Spawn( void )
 	{
 		case 0:
 			m_nSkin = 2;
-			cFlagName = "Neutral";
+			//cFlagName = "Neutral";
 			iTeam = NULL;
 			break;
 		case 1: //British Flag
 			m_nSkin = 0;
-			cFlagName = "American"; //This is just for the capture text. (Capped American Flag!)
+			//cFlagName = "American"; //This is just for the capture text. (Capped American Flag!)
 			iTeam = TEAM_BRITISH; 
 			break;
 		case 2: //American Flag
 			m_nSkin = 1;
-			cFlagName = "British"; //This is just for the capture text. (Capped British Flag!)
+			//cFlagName = "British"; //This is just for the capture text. (Capped British Flag!)
 			iTeam = TEAM_AMERICANS; //This is opposite land.
 			break;
 	}
+
+	if ( m_strName == NULL )
+	{
+		switch( iTeam )
+		{
+		case NULL:
+			cFlagName = "Neutral";
+			break;
+		case TEAM_BRITISH: //British Flag
+			cFlagName = "American"; //This is just for the capture text. (Capped American Flag!)
+			break;
+		case TEAM_AMERICANS: //American Flag
+			cFlagName = "British"; //This is just for the capture text. (Capped British Flag!)
+			break;
+
+		}
+	}
+	else
+		cFlagName = m_strName; //This is for custom flag names if one has been set. I dunno.. call it a nifty feature? More options for mappers.
 
 	FlagOrigin = GetAbsOrigin();
 	FlagAngle = GetAbsAngles();
@@ -80,7 +99,7 @@ void CtfFlag::Think( void )
 	if ( !m_bActive ) //If it isn't active, just die here.
 	{
 		SetNextThink( gpGlobals->curtime + 1.0f ); //Think Less
-		return;
+		return; //Die here.
 	}
 
 	SetNextThink( gpGlobals->curtime + 0.125f );
@@ -127,7 +146,7 @@ void CtfFlag::Think( void )
 			pPlayer->CtfFlag = this;	//So the capture trigger will know which flag is being captured.
 			SetModel( "models/other/flag_nopole.mdl" );
 			SetAbsOrigin( pPlayer->GetAbsOrigin() + Vector( 0,0,25 ) );	//Keeps the flag out of the player's FOV, also raises it so it doesn't look like it's stuck in the player's grill.
-			SetAbsAngles( pPlayer->GetAbsAngles() + QAngle( 0,180,0 ) ); // Make sure the flag is flying with the player model, not with it.
+			SetAbsAngles( pPlayer->GetAbsAngles() + QAngle( 0,180,0 ) ); // Make sure the flag is flying with the player model, not against it.
 			SetParent( pPlayer );	//Attach the entity to the player.
 			//For the player speed difference.
 			switch( pPlayer->m_iClass )
@@ -247,7 +266,7 @@ BEGIN_DATADESC( CtfFlag )
 	DEFINE_KEYFIELD( m_iPickupSound, FIELD_SOUNDNAME, "PickupSound" ),
 	DEFINE_KEYFIELD( m_iDropSound, FIELD_SOUNDNAME, "DropSound" ),
 	DEFINE_KEYFIELD( m_iReturnSound, FIELD_SOUNDNAME, "ReturnSound" ),
-	//DEFINE_KEYFIELD( m_strName,	FIELD_STRING,	"Name" ), //I don't know... I guess if you wanted to call it something other than British/American flag?
+	DEFINE_KEYFIELD( m_strName,	FIELD_STRING,	"Name" ), //I don't know... I guess if you wanted to call it something other than British/American flag?
 
 	DEFINE_THINKFUNC( Think ),
 

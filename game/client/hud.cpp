@@ -818,11 +818,7 @@ void CHud::RemoveHudElement( CHudElement *pHudElement )
 //-----------------------------------------------------------------------------
 float CHud::GetSensitivity( void )
 {
-#ifndef _X360
 	return m_flMouseSensitivity;
-#else
-	return 1.0f;
-#endif
 }
 
 float CHud::GetFOVSensitivityAdjust()
@@ -856,10 +852,6 @@ bool CHud::IsHidden( int iHudFlags )
 
 	// Local player dead?
 	if ( ( iHudFlags & HIDEHUD_PLAYERDEAD ) && ( pPlayer->GetHealth() <= 0 ) )
-		return true;
-
-	// Need the HEV suit ( HL2 )
-	if ( ( iHudFlags & HIDEHUD_NEEDSUIT ) && ( !pPlayer->IsSuitEquipped() ) )
 		return true;
 
 	return ( ( iHudFlags & iHideHud ) != 0);

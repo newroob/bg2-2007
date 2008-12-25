@@ -130,9 +130,10 @@ void CFlag::InputDisable( inputdata_t &inputData )
 		m_OnBritishLosePoint.FireOutput( this, this );
 		m_OnLosePoint.FireOutput( this, this );
 	}
-	ChangeTeam( TEAM_UNASSIGNED );
-	m_iLastTeam = TEAM_UNASSIGNED;
-	m_nSkin = GetDisabledSkin();
+	//Going invisible anyway. The skin will be reset when enabled.
+	//ChangeTeam( TEAM_UNASSIGNED );
+	//m_iLastTeam = TEAM_UNASSIGNED;
+	//m_nSkin = GetDisabledSkin(); 
 	m_OnDisable.FireOutput( inputData.pActivator, this );
 }
 void CFlag::InputToggle( inputdata_t &inputData )
@@ -210,14 +211,13 @@ void CFlag::Think( void )
 
 
 	extern ConVar mp_respawnstyle;
-	if ( mp_respawnstyle.GetInt() == 2 )
+	if ( !m_bActive || mp_respawnstyle.GetInt() == 2 )
 	{
-		m_bActive = false;
 		ChangeTeam( TEAM_UNASSIGNED );
 		m_iLastTeam = TEAM_UNASSIGNED;
 		AddEffects( EF_NODRAW );
 		SetNextThink( gpGlobals->curtime + 1.25f ); //No need to think soo much. 
-		return;
+		return; //Die here
 	}
 
 	//For the flag animation. Yes, It's a sort of hack, but the frame can only be advanced on a think.. Animation is 8 FPS, so must think 8 times a second. -HairyPotter
@@ -226,14 +226,9 @@ void CFlag::Think( void )
 	StudioFrameAdvance();
 	//
 
-	if ( IsEffectActive( EF_NODRAW ) && !m_bActive )
-	{
-		m_bActive = true;
+	if ( IsEffectActive( EF_NODRAW ) ) //If you've come this far into the code you're definately not disabled, just make sure you're visible.
 		RemoveEffects( EF_NODRAW );
-	}
 
-	if (!m_bActive)	// if inactive, stop the thinking cycle
-		return;
 
 	//award any time bonii
 	switch( GetTeamNumber() )
@@ -288,8 +283,8 @@ void CFlag::Think( void )
 	{
 		//Gotta use these to keep people from exploiting TEAM_SPECTATOR on trigger caps. -HairyPotter
 		CBasePlayer *pPlayer = NULL;
-		if ( m_vTriggerAmericanPlayers.Count() > 0 )
-		{
+		//if ( m_vTriggerAmericanPlayers.Count() > 0 )
+		//{
 			for ( int i = 1; i <= m_vTriggerAmericanPlayers.Count(); i++ ) 
 			{
 				pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
@@ -299,9 +294,9 @@ void CFlag::Think( void )
 				if ( pPlayer->GetTeamNumber() != TEAM_AMERICANS)
 					m_vTriggerAmericanPlayers.FindAndRemove( pPlayer );
 			}
-		}
-		if ( m_vTriggerBritishPlayers.Count() > 0 )
-		{
+		//}
+		//if ( m_vTriggerBritishPlayers.Count() > 0 )
+		//{
 			for ( int i = 1; i <= m_vTriggerBritishPlayers.Count(); i++ )
 			{
 				pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
@@ -311,7 +306,7 @@ void CFlag::Think( void )
 				if ( pPlayer->GetTeamNumber() != TEAM_BRITISH)
 					m_vTriggerBritishPlayers.FindAndRemove( pPlayer );
 			}
-		}
+		//}
 		//
 	}
 
@@ -365,9 +360,9 @@ void CFlag::ThinkUncapped( void )
 	{
 		americans = 0;
 		british = 0;
-		if ( m_vTriggerAmericanPlayers.Count() > 0 )
+		//if ( m_vTriggerAmericanPlayers.Count() > 0 )
 			americans = m_vTriggerAmericanPlayers.Count();
-		if ( m_vTriggerBritishPlayers.Count() > 0 )
+		//if ( m_vTriggerBritishPlayers.Count() > 0 )
 			british = m_vTriggerBritishPlayers.Count();
 	} //
 
@@ -390,7 +385,7 @@ void CFlag::ThinkUncapped( void )
 
 		if( americans > 0 && GetTeamNumber() != TEAM_AMERICANS )
 		{
-			m_iRequestingCappers = /*TEAM_AMERICANS*/ AmericanTeam; //FIXME: Linux bitches about this, don't ask me why. -HairyPotter
+			m_iRequestingCappers = AmericanTeam; //FIXME: Linux bitches about this, don't ask me why. -HairyPotter
 			m_iNearbyPlayers = americans;
 
 			if (americans >= min( m_iCapturePlayers, g_Teams[TEAM_AMERICANS]->GetNumPlayers() ) )
@@ -402,7 +397,7 @@ void CFlag::ThinkUncapped( void )
 					//Msg( "americans are capturing a flag(\"%s\")\n", STRING( m_sFlagName.Get() ) );
 					//Q_snprintf( msg2, 512, "The americans are capturing a flag(%s)", STRING( m_sFlagName.Get() ) );
 					//msg = msg2;
-					m_iLastTeam = /*TEAM_AMERICANS*/ AmericanTeam; //FIXME: Linux bitches about this, don't ask me why. -HairyPotter
+					m_iLastTeam = AmericanTeam; //FIXME: Linux bitches about this, don't ask me why. -HairyPotter
 					m_flNextCapture = gpGlobals->curtime + m_flCaptureTime;
 
 					m_OnAmericanStartCapture.FireOutput( this, this );
@@ -418,6 +413,11 @@ void CFlag::ThinkUncapped( void )
 					Capture( TEAM_AMERICANS );
 				}
 			}
+			else //This simply prevents he one man cap exploit. Sure there may still be an american nearby, but if it's under required amount; why continue the cap?
+			{
+				m_iLastTeam = TEAM_UNASSIGNED;
+				m_flNextCapture = 0;
+			} //
 		}
 		else if( british > 0 && GetTeamNumber() != TEAM_BRITISH )
 		{
@@ -450,6 +450,11 @@ void CFlag::ThinkUncapped( void )
 					Capture( TEAM_BRITISH );
 				}
 			}
+			else //This simply prevents he one man cap exploit. Sure there may still be a brit nearby, but if it's under required amount; why continue the cap?
+			{
+				m_iLastTeam = TEAM_UNASSIGNED;
+				m_flNextCapture = 0;
+			} //
 		}
 	}
 	else
@@ -507,18 +512,21 @@ void CFlag::Capture( int iTeam )
 	//award capping players some points and put them on the overload list
 	m_vOverloadingPlayers.RemoveAll();
 
-	CHL2MP_Player *pPlayer = NULL;
-	while( (pPlayer = dynamic_cast<CHL2MP_Player*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
+	if ( !m_bIsParent )
 	{
-		if( !pPlayer->IsAlive() )	//dead players don't cap
-			continue;
-
-		if( pPlayer->GetTeamNumber() == iTeam )
+		CHL2MP_Player *pPlayer = NULL;
+		while( (pPlayer = dynamic_cast<CHL2MP_Player*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
 		{
-			pPlayer->IncrementFragCount(m_iPlayerBonus);
-			//BG2 - Tjoppen - rewards put on hold
-			//pPlayer->IncreaseReward(1);
-			m_vOverloadingPlayers.AddToHead( pPlayer );
+			if( !pPlayer->IsAlive() )	//dead players don't cap
+				continue;
+
+			if( pPlayer->GetTeamNumber() == iTeam )
+			{
+				pPlayer->IncrementFragCount(m_iPlayerBonus);
+				//BG2 - Tjoppen - rewards put on hold
+				//pPlayer->IncreaseReward(1);
+				m_vOverloadingPlayers.AddToHead( pPlayer );
+			}
 		}
 	}
 	m_iLastTeam = TEAM_UNASSIGNED;

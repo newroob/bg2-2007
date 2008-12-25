@@ -248,6 +248,10 @@ public:
 	CNetworkVar( int, m_iClass );
 	//
 
+	//BG2 - Used to prevent spawn kills. -HairyPotter
+	float m_fLastRespawn;
+	//
+
 	virtual void			SetModel( const char *szModelName );
 	void					SetBodyPitch( float flPitch );
 
@@ -638,7 +642,6 @@ public:
 	int		DeathCount() const		{ return m_iDeaths;}
 	bool	IsConnected() const		{ return m_iConnected != PlayerDisconnected; }
 	bool	IsDisconnecting() const	{ return m_iConnected == PlayerDisconnecting; }
-	bool	IsSuitEquipped() const	{ return m_Local.m_bWearingSuit; }
 	//int		ArmorValue() const		{ return m_ArmorValue; } //BG2 - Don't need armor. -HairyPotter
 	bool	HUDNeedsRestart() const { return m_fInitHUD; }
 	float	MaxSpeed() const		{ return m_flMaxspeed; }

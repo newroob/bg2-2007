@@ -83,7 +83,7 @@ void TE_ShatterSurface( IRecipientFilter& filter, float delay, KeyValues *pKeyVa
 void TE_GlowSprite( IRecipientFilter& filter, float delay,
 	const Vector* pos, int modelindex, float life, float size, int brightness );
 void TE_GlowSprite( IRecipientFilter& filter, float delay, KeyValues *pKeyValues );
-void TE_FootprintDecal( IRecipientFilter& filter, float delay, const Vector* origin, const Vector* right, 
+void TE_FootprintDecal( IRecipientFilter& filter, float delay, const Vector *origin, const Vector *right, 
 	int entity, int index, unsigned char materialType );
 void TE_Fizz( IRecipientFilter& filter, float delay,
 	const C_BaseEntity *ed, int modelindex, int density, int current );
@@ -360,7 +360,7 @@ public:
 			TE_GlowSprite( filter, delay, pos, modelindex, life, size, brightness );
 		}
 	}
-	virtual void FootprintDecal( IRecipientFilter& filter, float delay, const Vector* origin, const Vector* right, 
+	virtual void FootprintDecal( IRecipientFilter& filter, float delay, const Vector *origin, const Vector *right, 
 		int entity, int index, unsigned char materialType )
 	{
 		if ( !SuppressTE( filter ) )

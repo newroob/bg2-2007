@@ -362,12 +362,6 @@ void CHudDamageIndicator::MsgFunc_Damage( bf_read &msg )
 		highDamage = DAMAGE_HIGH;
 	}
 
-	// if we have no suit, all damage is high
-	if ( !pPlayer->IsSuitEquipped() )
-	{
-		highDamage = DAMAGE_HIGH;
-	}
-
 	if ( damageTaken > 0 || armor > 0 )
 	{
 		// see which quandrant the effect is in

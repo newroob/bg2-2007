@@ -677,7 +677,7 @@ bool CMultiplayRules::Init()
 		{
 			// if a player dies in a deathmatch game and the killer is a client, award the killer some points
 			//BG2 - Draco
-			if (mp_respawnstyle.GetInt() == 2)
+			if (mp_respawnstyle.GetInt() >= 2)
 			{
 			    pScorer->IncrementFragCount( 1 );
 			}

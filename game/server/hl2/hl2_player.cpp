@@ -214,7 +214,8 @@ public:
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-void CC_ToggleZoom( void )
+//BG2 - Remove zoom command. -HairyPotter
+/*void CC_ToggleZoom( void )
 {
 	CBasePlayer* pPlayer = UTIL_GetCommandClient();
 
@@ -229,7 +230,8 @@ void CC_ToggleZoom( void )
 	}
 }
 
-static ConCommand toggle_zoom("toggle_zoom", CC_ToggleZoom, "Toggles zoom display" );
+static ConCommand toggle_zoom("toggle_zoom", CC_ToggleZoom, "Toggles zoom display" );*/
+//
 
 // ConVar cl_forwardspeed( "cl_forwardspeed", "400", FCVAR_CHEAT ); // Links us to the client's version
 ConVar xc_crouch_range( "xc_crouch_range", "0.85", FCVAR_ARCHIVE, "Percentarge [1..0] of joystick range to allow ducking within" );	// Only 1/2 of the range is used
@@ -457,8 +459,6 @@ void CHL2_Player::EquipSuit( bool bPlayEffects )
 {
 	MDLCACHE_CRITICAL_SECTION();
 	BaseClass::EquipSuit();
-	
-	m_HL2Local.m_bDisplayReticle = true;
 
 	if ( bPlayEffects == true ) //Stop those gloves. -HairyPotter
 	{
@@ -469,8 +469,6 @@ void CHL2_Player::EquipSuit( bool bPlayEffects )
 void CHL2_Player::RemoveSuit( void )
 {
 	BaseClass::RemoveSuit();
-
-	m_HL2Local.m_bDisplayReticle = false;
 }
 //-----------------------------------------------------------------------------
 // This happens when we powerdown from the mega physcannon to the regular one
@@ -1411,42 +1409,6 @@ void CHL2_Player::CommanderUpdate()
 {
 	CAI_BaseNPC *pCommandRepresentative = GetSquadCommandRepresentative();
 	bool bFollowMode = false;
-	if ( pCommandRepresentative )
-	{
-		bFollowMode = ( pCommandRepresentative->GetCommandGoal() == vec3_invalid );
-
-		// set the variables for network transmission (to show on the hud)
-		m_HL2Local.m_iSquadMemberCount = GetNumSquadCommandables();
-		m_HL2Local.m_iSquadMedicCount = GetNumSquadCommandableMedics();
-		m_HL2Local.m_fSquadInFollowMode = bFollowMode;
-
-		// debugging code for displaying extra squad indicators
-		/*
-		char *pszMoving = "";
-		AISquadIter_t iter;
-		for ( CAI_BaseNPC *pAllyNpc = m_pPlayerAISquad->GetFirstMember(&iter); pAllyNpc; pAllyNpc = m_pPlayerAISquad->GetNextMember(&iter) )
-		{
-			if ( pAllyNpc->IsCommandMoving() )
-			{
-				pszMoving = "<-";
-				break;
-			}
-		}
-
-		NDebugOverlay::ScreenText(
-			0.932, 0.919, 
-			CFmtStr( "%d|%c%s", GetNumSquadCommandables(), ( bFollowMode ) ? 'F' : 'S', pszMoving ),
-			255, 128, 0, 128,
-			0 );
-		*/
-
-	}
-	else
-	{
-		m_HL2Local.m_iSquadMemberCount = 0;
-		m_HL2Local.m_iSquadMedicCount = 0;
-		m_HL2Local.m_fSquadInFollowMode = true;
-	}
 
 	if ( m_QueuedCommand != CC_NONE && ( m_QueuedCommand == CC_FOLLOW || gpGlobals->realtime - m_RealTimeLastSquadCommand >= player_squad_double_tap_time.GetFloat() ) )
 	{
@@ -1812,7 +1774,7 @@ bool CHL2_Player::SuitPower_AddDevice( const CSuitPowerDevice &device )
 	if( m_HL2Local.m_bitsActiveDevices & device.GetDeviceID() )
 		return false;
 
-	if( !IsSuitEquipped() )
+	//if( !IsSuitEquipped() )
 		return false;
 
 	m_HL2Local.m_bitsActiveDevices |= device.GetDeviceID();
@@ -1829,7 +1791,7 @@ bool CHL2_Player::SuitPower_RemoveDevice( const CSuitPowerDevice &device )
 	if( ! (m_HL2Local.m_bitsActiveDevices & device.GetDeviceID()) )
 		return false;
 
-	if( !IsSuitEquipped() )
+	//if( !IsSuitEquipped() )
 		return false;
 
 	// Take a little bit of suit power when you disable a device. If the device is shutting off
@@ -1934,10 +1896,6 @@ void CHL2_Player::FlashlightTurnOn( void )
 		if( !SuitPower_AddDevice( SuitDeviceFlashlight ) )
 			return;
 	}
-#ifdef HL2_DLL
-	if( !IsSuitEquipped() )
-		return;
-#endif
 
 	AddEffects( EF_DIMLIGHT );
 	EmitSound( "HL2Player.FlashLightOn" );
@@ -2868,15 +2826,10 @@ void CHL2_Player::UpdateWeaponPosture( void )
 		params.m_fScale = AUTOAIM_SCALE_DEFAULT;
 		params.m_fMaxDist = autoaim_max_dist.GetFloat();
 		GetAutoaimVector( params );
-		m_HL2Local.m_hAutoAimTarget.Set( params.m_hAutoAimEntity );
-		m_HL2Local.m_vecAutoAimPoint.Set( params.m_vecAutoAimPoint );
-		m_HL2Local.m_bAutoAimTarget = ( params.m_bAutoAimAssisting || params.m_bOnTargetNatural );
+		//m_HL2Local.m_hAutoAimTarget.Set( params.m_hAutoAimEntity );
+		//m_HL2Local.m_vecAutoAimPoint.Set( params.m_vecAutoAimPoint );
+		//m_HL2Local.m_bAutoAimTarget = ( params.m_bAutoAimAssisting || params.m_bOnTargetNatural ); //Testing - HairyPotter
 		return;
-	}
-	else
-	{
-		// Make sure there's no residual autoaim target if the user changes the xbox_aiming convar on the fly.
-		m_HL2Local.m_hAutoAimTarget.Set(NULL);
 	}
 }
 

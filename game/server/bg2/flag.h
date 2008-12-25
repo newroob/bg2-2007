@@ -78,7 +78,6 @@ class CFlag : public CBaseAnimating
 	CNetworkVar( bool, m_bNotUncappable );	//is flag non-uncappable?
 	CNetworkVar( bool, m_bUncapOnDeath );	//does this flag uncap if all overloaders die?
 
-#ifndef CLIENT_DLL
 	//BG2 - SaintGreg - Output functions similar to BG's
 	COutputEvent m_OnAmericanStartCapture;
 	COutputEvent m_OnBritishStartCapture;
@@ -94,7 +93,6 @@ class CFlag : public CBaseAnimating
 	COutputEvent m_OnLosePoint;
 	COutputEvent m_OnEnable;
 	COutputEvent m_OnDisable;
-#endif // CLIENT_DLL
 
 	bool IsActive( void );
 	void InputEnable( inputdata_t &inputData );

@@ -406,7 +406,7 @@ void CHudBG2::HideShowAll( bool visible )
 	m_pLabelAmmo->SetVisible(visible);
 	//m_pLabelBGVersion->SetVisible(false);	// BP: not used yet as its not subtle enough, m_pLabelBGVersion->SetVisible(ShouldDraw());
 	m_pLabelDamageVerificator->SetVisible(visible && m_flExpireTime > gpGlobals->curtime);
-	m_pLabelLMS->SetVisible( visible && mp_respawnstyle.GetInt() == 2 && cl_draw_lms_indicator.GetBool() );
+	m_pLabelLMS->SetVisible( visible && mp_respawnstyle.GetInt() >= 2 && cl_draw_lms_indicator.GetBool() );
 }
 
 const char* CHudBG2::HitgroupName( int hitgroup )

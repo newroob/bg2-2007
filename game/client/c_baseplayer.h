@@ -163,9 +163,6 @@ public:
 	void			EyeVectors( Vector *pForward, Vector *pRight = NULL, Vector *pUp = NULL );
 	void			CacheVehicleView( void );	// Calculate and cache the position of the player in the vehicle
 
-
-	bool			IsSuitEquipped( void ) { return m_Local.m_bWearingSuit; };
-
 	// Team handlers
 	virtual void	TeamChange( int iNewTeam );
 

@@ -69,7 +69,7 @@ CHL2MPClientScoreBoardDialog::~CHL2MPClientScoreBoardDialog()
 //-----------------------------------------------------------------------------
 void CHL2MPClientScoreBoardDialog::PaintBackground()
 {
-	m_pPlayerList->SetBgColor( Color(0, 0, 0, 0) );
+	m_pPlayerList->SetBgColor( Color(0,0,0,0) );
 	m_pPlayerList->SetBorder(NULL);
 
 	int x1, x2, y1, y2;
@@ -490,14 +490,12 @@ void CHL2MPClientScoreBoardDialog::AddHeader()
 	HFont hFallbackFont = scheme()->GetIScheme( GetScheme() )->GetFont( "DefaultVerySmallFallBack", false );
 	m_pPlayerList->AddColumnToSection(0, "name", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_NAME_WIDTH ), hFallbackFont );
 	m_pPlayerList->AddColumnToSection(0, "class", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_CLASS_WIDTH ) );
-	m_pPlayerList->AddColumnToSection(0, "frags", "#PlayerScore", 0 | SectionedListPanel::COLUMN_RIGHT, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_SCORE_WIDTH ) );
+	m_pPlayerList->AddColumnToSection(0, "frags", "#PlayerScore", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_SCORE_WIDTH ) );
 	//BG2 - Tjoppen - Where is #PlayerDeath defined? HACKHACK for now..
 	//m_pPlayerList->AddColumnToSection(0, "deaths", "#PlayerDeath", 0 | SectionedListPanel::COLUMN_RIGHT, scheme()->GetProportionalScaledValue( CSTRIKE_DEATH_WIDTH ) );
-	m_pPlayerList->AddColumnToSection(0, "deaths", "Damage", 0 | SectionedListPanel::COLUMN_RIGHT, scheme()->GetProportionalScaledValue( CSTRIKE_DEATH_WIDTH ) );
+	m_pPlayerList->AddColumnToSection(0, "deaths", "Damage", 0, scheme()->GetProportionalScaledValue( CSTRIKE_DEATH_WIDTH ) );
 	//
-	m_pPlayerList->AddColumnToSection(0, "ping", "#PlayerPing", 0 | SectionedListPanel::COLUMN_RIGHT, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_PING_WIDTH ) );
-//	m_pPlayerList->AddColumnToSection(0, "voice", "#PlayerVoice", SectionedListPanel::COLUMN_IMAGE | SectionedListPanel::HEADER_TEXT| SectionedListPanel::COLUMN_CENTER, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_VOICE_WIDTH ) );
-//	m_pPlayerList->AddColumnToSection(0, "tracker", "#PlayerTracker", SectionedListPanel::COLUMN_IMAGE | SectionedListPanel::HEADER_TEXT, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_FRIENDS_WIDTH ) );
+	m_pPlayerList->AddColumnToSection(0, "ping", "#PlayerPing", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_PING_WIDTH ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -515,9 +513,9 @@ void CHL2MPClientScoreBoardDialog::AddSection(int teamType, int teamNumber)
 		// setup the columns
 		m_pPlayerList->AddColumnToSection(sectionID, "name", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_NAME_WIDTH ), hFallbackFont );
 		m_pPlayerList->AddColumnToSection(sectionID, "class", "" , 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_CLASS_WIDTH ) );
-		m_pPlayerList->AddColumnToSection(sectionID, "frags", "", SectionedListPanel::COLUMN_RIGHT, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_SCORE_WIDTH ) );
-		m_pPlayerList->AddColumnToSection(sectionID, "deaths", "", SectionedListPanel::COLUMN_RIGHT, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_DEATH_WIDTH ) );
-		m_pPlayerList->AddColumnToSection(sectionID, "ping", "", SectionedListPanel::COLUMN_RIGHT, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_PING_WIDTH ) );
+		m_pPlayerList->AddColumnToSection(sectionID, "frags", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_SCORE_WIDTH ) );
+		m_pPlayerList->AddColumnToSection(sectionID, "deaths", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_DEATH_WIDTH ) );
+		m_pPlayerList->AddColumnToSection(sectionID, "ping", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_PING_WIDTH ) );
 
 		// set the section to have the team color
 		if ( teamNumber )

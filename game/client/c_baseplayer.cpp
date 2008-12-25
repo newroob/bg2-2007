@@ -134,7 +134,7 @@ BEGIN_RECV_TABLE_NOBASE( CPlayerLocalData, DT_Local )
 */
 //
 	RecvPropInt		(RECVINFO(m_bDrawViewmodel)),
-	RecvPropInt		(RECVINFO(m_bWearingSuit)),
+	//RecvPropInt		(RECVINFO(m_bWearingSuit)), //Testing - HairyPotter
 	RecvPropBool	(RECVINFO(m_bPoisoned)),
 	RecvPropFloat	(RECVINFO(m_flStepSize)),
 	RecvPropInt		(RECVINFO(m_bAllowAutoMovement)),
@@ -287,7 +287,6 @@ BEGIN_PREDICTION_DATA_NO_BASE( CPlayerLocalData )
 */
 //
 	DEFINE_PRED_FIELD( m_bDrawViewmodel, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
-	DEFINE_PRED_FIELD( m_bWearingSuit, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_bPoisoned, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_bAllowAutoMovement, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 

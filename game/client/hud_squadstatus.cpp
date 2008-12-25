@@ -111,12 +111,6 @@ bool CHudSquadStatus::ShouldDraw( void )
 	C_BaseHLPlayer *pPlayer = (C_BaseHLPlayer *)C_BasePlayer::GetLocalPlayer();
 	if ( !pPlayer )
 		return false;
-
-	bNeedsDraw = ( pPlayer->m_HL2Local.m_iSquadMemberCount > 0 ||
-					( pPlayer->m_HL2Local.m_iSquadMemberCount != m_iSquadMembers ) || 
-					( pPlayer->m_HL2Local.m_fSquadInFollowMode != m_bSquadMembersFollowing ) ||
-					( m_iSquadMembers > 0 ) ||
-					( m_LastMemberColor[3] > 0 ) );
 		
 	return ( bNeedsDraw && CHudElement::ShouldDraw() );
 }
@@ -130,68 +124,6 @@ void CHudSquadStatus::OnThink( void )
 	if ( !pPlayer )
 		return;
 
-	int squadMembers = pPlayer->m_HL2Local.m_iSquadMemberCount;
-	bool following = pPlayer->m_HL2Local.m_fSquadInFollowMode;
-	m_iSquadMedics = pPlayer->m_HL2Local.m_iSquadMedicCount;
-
-	// Only update if we've changed vars
-	if ( squadMembers == m_iSquadMembers && following == m_bSquadMembersFollowing )
-		return;
-
-	// update status display
-	if ( squadMembers > 0)
-	{
-		// we have squad members, show the display
-		g_pClientMode->GetViewportAnimationController()->RunAnimationCommand( this, "alpha", 255.0f, 0.0f, 0.4f, AnimationController::INTERPOLATOR_LINEAR);
-	}
-	else
-	{
-		// no squad members, hide the display
-		g_pClientMode->GetViewportAnimationController()->RunAnimationCommand( this, "alpha", 0.0f, 0.0f, 0.4f, AnimationController::INTERPOLATOR_LINEAR);
-	}
-
-	if ( squadMembers > m_iSquadMembers )
-	{
-		// someone is added
-		// reset the last icon color and animate
-		m_LastMemberColor = m_SquadIconColor;
-		m_LastMemberColor[3] = 0;
-		m_bSquadMemberAdded = true;
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "SquadMemberAdded" ); 
-	}
-	else if ( squadMembers < m_iSquadMembers )
-	{
-		// someone has left
-		// reset the last icon color and animate
-		m_LastMemberColor = m_SquadIconColor;
-		m_bSquadMemberAdded = false;
-		if (m_bSquadMemberJustDied)
-		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "SquadMemberDied" ); 
-			m_bSquadMemberJustDied = false;
-		}
-		else
-		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "SquadMemberLeft" ); 
-		}
-	}
-
-	if ( following != m_bSquadMembersFollowing )
-	{
-		if ( following )
-		{
-			// flash the squad area to indicate they are following
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "SquadMembersFollowing" );
-		}
-		else
-		{
-			// flash the crosshair to indicate the targeted order is in effect
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "SquadMembersStationed" );
-		}
-	}
-
-	m_iSquadMembers = squadMembers;
-	m_bSquadMembersFollowing = following;
 }
 
 //-----------------------------------------------------------------------------

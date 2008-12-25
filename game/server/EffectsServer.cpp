@@ -182,7 +182,6 @@ void CEffectsServer::Ricochet( const Vector &position, const Vector &direction )
 	}
 }
 
-
 //-----------------------------------------------------------------------------
 // FIXME: Should these methods remain in this interface? Or go in some 
 // other client-server neutral interface?

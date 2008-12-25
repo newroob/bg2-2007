@@ -44,6 +44,7 @@ extern ConVar mp_autobalancetolerance;
 ConVar sv_voicecomm_text( "sv_voicecomm_text", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Show voicecomm text on clients?" );
 ConVar sv_unlag_lmb( "sv_unlag_lmb", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Do unlagging for left mouse button (primary attack)?" );
 ConVar sv_unlag_rmb( "sv_unlag_rmb", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Do unlagging for right mouse button (primary attack)?" );
+ConVar sv_saferespawntime( "sv_saferespawntime", "2.5f", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Amount of time after respawn when player is immune to damage. (In Seconds)");
 //
 
 int g_iLastCitizenModel = 0;
@@ -234,38 +235,7 @@ void CHL2MP_Player::Precache( void )
 
 void CHL2MP_Player::GiveAllItems( void )
 {
-	EquipSuit();
-
-	/*CBasePlayer::GiveAmmo( 255,	"Pistol");
-	CBasePlayer::GiveAmmo( 255,	"AR2" );
-	CBasePlayer::GiveAmmo( 5,	"AR2AltFire" );
-	CBasePlayer::GiveAmmo( 255,	"SMG1");
-	CBasePlayer::GiveAmmo( 1,	"smg1_grenade");
-	CBasePlayer::GiveAmmo( 255,	"Buckshot");*/
 	CBasePlayer::GiveAmmo( 32,	"357" );
-	/*CBasePlayer::GiveAmmo( 3,	"rpg_round");
-
-	CBasePlayer::GiveAmmo( 1,	"grenade" );
-	CBasePlayer::GiveAmmo( 2,	"slam" );
-
-	GiveNamedItem( "weapon_crowbar" );
-	GiveNamedItem( "weapon_stunstick" );
-	GiveNamedItem( "weapon_pistol" );
-	GiveNamedItem( "weapon_357" );
-
-	GiveNamedItem( "weapon_smg1" );
-	GiveNamedItem( "weapon_ar2" );
-	
-	GiveNamedItem( "weapon_shotgun" );
-	GiveNamedItem( "weapon_frag" );
-	
-	GiveNamedItem( "weapon_crossbow" );
-	
-	GiveNamedItem( "weapon_rpg" );
-
-	GiveNamedItem( "weapon_slam" );
-
-	GiveNamedItem( "weapon_physcannon" );*/
 	
 	//BG2 - Tjoppen - impulse 101
 	//GiveNamedItem( "weapon_revolutionnaire" );
@@ -283,7 +253,7 @@ void CHL2MP_Player::GiveAllItems( void )
 
 void CHL2MP_Player::GiveDefaultItems( void )
 {
-	EquipSuit();
+	//EquipSuit();
 
 	//BG2 - Tjoppen - default equipment - also strip old equipment
 	/*RemoveAllAmmo();
@@ -555,7 +525,7 @@ void CHL2MP_Player::Spawn(void)
 
 	SetPlayerUnderwater(false);
 
-	//BG2 - Put the speed handler into spawn so flag weight works. -HairyPotter
+	//BG2 - Put the speed handler into spawn so flag weight works, among other things. -HairyPotter
 	switch (m_iClass)
 	{
 		case CLASS_INFANTRY:
@@ -574,6 +544,7 @@ void CHL2MP_Player::Spawn(void)
 	//
 
 	m_bReady = false;
+	m_fLastRespawn = gpGlobals->curtime + sv_saferespawntime.GetFloat();
 }
 
 void CHL2MP_Player::PickupObject( CBaseEntity *pObject, bool bLimitMassAndSize )
@@ -1491,7 +1462,12 @@ bool CHL2MP_Player::MayRespawn( void )
 	case 1:
 		//waves - we're not allowed to respawn by ourselves. the gamerules decide for us
 		return false;
+		break;
 	case 2:
+		//rounds - we're not allowed to respawn by ourselves. the gamerules decide for us
+		return false;
+		break;
+	case 3:
 		//rounds - we're not allowed to respawn by ourselves. the gamerules decide for us
 		return false;
 		break;

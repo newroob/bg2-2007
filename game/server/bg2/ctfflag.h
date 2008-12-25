@@ -28,7 +28,7 @@ class CtfFlag : public CBaseAnimating
 
 	float	m_flPickupRadius, m_fReturnTime, fReturnTime;
 
-	char CTFMsg[512];
+	char CTFMsg[512], *m_strName;
 
 	Vector FlagOrigin;    
 	QAngle FlagAngle;

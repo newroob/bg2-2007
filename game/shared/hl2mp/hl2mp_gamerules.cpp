@@ -619,7 +619,7 @@ void CHL2MPRules::Think( void )
 	//=========================
 	//Round systems
 	//=========================
-	if( mp_respawnstyle.GetInt() == 2 )//if line battle all at once spawn style - Draco
+	if( mp_respawnstyle.GetInt() >= 2 )//if line battle all at once spawn style - Draco
 	{
 		/*if (mp_respawntime.GetInt() == 0)
 		{
