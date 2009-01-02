@@ -12,6 +12,8 @@
 	So 5 Americans - 3 British attackers = (2 * timelimit) Or a ratio: 15 Americans / 5 British = ( 3 * timelimit ) In the end
 	it'll all require playtesting.
 	Actually now that I think about it, a ratio makes much more sense. Wtf was I thinking? 
+	On the bright side. If this can work as one trigger rather than a trigger talking to an ent, that should save alot of 
+	confusion on my end.
 */
 
 #include "cbase.h"
@@ -44,16 +46,12 @@ void CKoth::InputEnable( inputdata_t &inputData )
 	ChangeTeam( TEAM_UNASSIGNED );
 	m_iLastTeam = TEAM_UNASSIGNED;
 	m_OnEnable.FireOutput( inputData.pActivator, this );
-	Think(); // think immediately and restart the thinking cycle
+	//Think(); // think immediately and restart the thinking cycle
 }
 void CKoth::InputDisable( inputdata_t &inputData )
 {
 	if( !m_bActive )
 		return;
-
-	//char msg[512];
-	//Q_snprintf( msg, 512, "flag(%s) has been disabled", STRING( GetEntityName() ) );
-	//ClientPrintAll( msg, true, true ); // saying whether it is enabled or not is important, so force
 
 	m_bActive = false;
 	if( GetTeamNumber() == TEAM_AMERICANS )
@@ -93,13 +91,10 @@ void CKoth::Spawn( void )
 	m_iRequestingCappers = TEAM_UNASSIGNED;
 	m_iLastTeam = TEAM_UNASSIGNED;
 
-	//BaseClass::Spawn( );
+	Msg("Lawl Spawned \n");
 
-
-	SetThink( &CKoth::Think );
-	SetNextThink( gpGlobals->curtime );
+	BaseClass::Spawn( );
 }
-
 void CKoth::Think( void )
 {
 	if (!m_bActive)	// if inactive, stop the thinking cycle
@@ -110,13 +105,15 @@ void CKoth::Think( void )
 
 	SetNextThink( gpGlobals->curtime + 0.25f );
 
+	Msg(" %i american(s)and %i british are touching the trigger. \n", m_vTriggerAmericanPlayers.Count(), m_vTriggerBritishPlayers.Count() );
+
 	//award any time bonii
 	switch( GetTeamNumber() )
 	{
 		case TEAM_AMERICANS:
 			if (m_iTeamBonusInterval != 0)
 			{
-				if ((m_flNextTeamBonus <= gpGlobals->curtime) && (m_iForTeam != 1))
+				if ((m_flNextTeamBonus <= gpGlobals->curtime) )
 				{
 					g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
 					m_flNextTeamBonus += m_iTeamBonusInterval;
@@ -126,7 +123,7 @@ void CKoth::Think( void )
 		case TEAM_BRITISH:
 			if (m_iTeamBonusInterval != 0)
 			{
-				if ((m_flNextTeamBonus <= gpGlobals->curtime) && (m_iForTeam != 2))
+				if ((m_flNextTeamBonus <= gpGlobals->curtime) )
 				{
 					g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
 					m_flNextTeamBonus += m_iTeamBonusInterval;
@@ -134,29 +131,7 @@ void CKoth::Think( void )
 			}
 			break;
 		default:
-			switch (m_iForTeam)
-			{
-				case 1://amer
-					if (m_iTeamBonusInterval != 0)
-					{
-						if (m_flNextTeamBonus <= gpGlobals->curtime)
-						{
-							g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
-							m_flNextTeamBonus += m_iTeamBonusInterval;
-						}
-					}
-					break;
-				case 2://brit
-					if (m_iTeamBonusInterval != 0)
-					{
-						if (m_flNextTeamBonus <= gpGlobals->curtime)
-						{
-							g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
-							m_flNextTeamBonus += m_iTeamBonusInterval;
-						}
-					}
-					break;
-			}
+			break;
 	}
 
 	//safeguard against the possibility that m_flNextTeamBonus is somehow out of bounds after above check
@@ -177,15 +152,13 @@ void CKoth::ThinkUncapped( void )
 	americans = 0;
 	british = 0;
 
-	//char *msg = NULL;
+	americans = m_vTriggerAmericanPlayers.Count();
+	british = m_vTriggerBritishPlayers.Count();
 
-	//default number in flag indicator
-	m_iNearbyPlayers = m_vOverloadingPlayers.Count();
+	//char *msg = NULL;
 
 	if( americans + british > 0 && (americans <= 0 || british <= 0) )
 	{
-		//Msg( "\namericans = %i  british = %i\n", americans, british );
-
 		//only americans or british at the flag
 		//if we don't already own it, and we've been here for at least three seconds - capture
 
@@ -213,6 +186,7 @@ void CKoth::ThinkUncapped( void )
 				else if( gpGlobals->curtime >= m_flNextCapture )
 				{
 					Capture( TEAM_AMERICANS );
+					Msg("Americans captured the point! \n");
 				}
 			}
 			else //This simply prevents he one man cap exploit. Sure there may still be an american nearby, but if it's under required amount; why continue the cap?
@@ -241,6 +215,7 @@ void CKoth::ThinkUncapped( void )
 				else if( gpGlobals->curtime >= m_flNextCapture )
 				{
 					Capture( TEAM_BRITISH );
+					Msg("British captured the point! \n");
 				}
 			}
 			else //This simply prevents he one man cap exploit. Sure there may still be a brit nearby, but if it's under required amount; why continue the cap?
@@ -294,12 +269,8 @@ void CKoth::Capture( int iTeam )
 	g_Teams[iTeam]->AddScore( m_iTeamBonus );
 	m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
 
-	//award capping players some points and put them on the overload list
-	m_vOverloadingPlayers.RemoveAll();
-
 	m_iLastTeam = TEAM_UNASSIGNED;
 	m_iRequestingCappers = TEAM_UNASSIGNED;
-	m_iNearbyPlayers = m_vOverloadingPlayers.Count();
 
 	// before we change team, if they stole the point, fire the output
 	if (GetTeamNumber() != iTeam)
@@ -351,48 +322,92 @@ void CKoth::ChangeTeam( int iTeamNum )
 
 	BaseClass::ChangeTeam( iTeamNum );
 }
+void CKoth::StartTouch(CBaseEntity *pOther)
+{
+	//BaseClass::StartTouch( pOther );
+
+	//Defines
+	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
+
+	if ( !m_bActive ) //Trigger is inactive?
+		return;		  //Die here.
+
+	if ( !pOther->IsPlayer() ) //Ask yourself, would anything else be able to take the point? Should bullets be able to capture?
+		return;
+
+	if( !pPlayer->IsAlive() )	//dead players don't trigger
+		return;
+
+	switch( pPlayer->GetTeamNumber() ) //Let's do most of the sorting work here rather than bunching the teams together.
+	{
+		case TEAM_AMERICANS:
+				m_vTriggerAmericanPlayers.AddToTail( pPlayer ); //Add this player to the american player list.
+			break;
+		case TEAM_BRITISH:
+				m_vTriggerBritishPlayers.AddToTail( pPlayer ); //Add this player to the british player list.
+			break;
+	}
+
+	Msg("Touched and thinking. \n");
+
+	SetThink( &CKoth::Think ); //We've got at least one player on the trigger now. Go ahead and think.
+	SetNextThink( gpGlobals->curtime );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Called when an entity stops touching us.
+// Input  : pOther - The entity that was touching us.
+//-----------------------------------------------------------------------------
+void CKoth::EndTouch(CBaseEntity *pOther)
+{
+	//Defines
+	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
+
+	if ( !m_bActive ) //Trigger is inactive?
+		return;		  //Die here.
+
+	if ( !pOther->IsPlayer() ) //Ask yourself, would anything else be able to capture a flag? Should bullets be able to capture?
+		return;
+
+	//BaseClass::EndTouch( pOther );
+
+	switch( pPlayer->GetTeamNumber() ) //Let's do most of the sorting work here rather than bunching the teams together.
+	{
+		case TEAM_AMERICANS:
+				m_vTriggerAmericanPlayers.FindAndRemove( pPlayer ); //Remove this player from the american player list.
+			break;
+		case TEAM_BRITISH:
+				m_vTriggerBritishPlayers.FindAndRemove( pPlayer ); //Remove this player from the british player list.
+			break;
+	}
+
+	if( m_vTriggerBritishPlayers.Count() +  m_vTriggerAmericanPlayers.Count() < 1 ) //Nobody Home, just stop thinking entirely. (Save CPU?)
+	{
+		SetThink(NULL);
+		SetNextThink( TICK_NEVER_THINK );
+	}
+
+}
 
 int CKoth::UpdateTransmitState()
 {
 	return SetTransmitState( FL_EDICT_ALWAYS );
 }
-/*
-IMPLEMENT_NETWORKCLASS_ALIASED( Koth, DT_Flag )
 
-int SendProxyArrayLength_IsOverloading( const void *pStruct, int objectID )
-{
-	//BG2 - Tjoppen - TODO: only send as many bits as there are players connected?
-	return gpGlobals->maxClients;
-}
+IMPLEMENT_NETWORKCLASS_ALIASED( Koth, DT_Koth )
 
-BEGIN_NETWORK_TABLE( CKoth, DT_Flag )
+BEGIN_NETWORK_TABLE( CKoth, DT_Koth )
 	SendPropInt( SENDINFO( m_iLastTeam ), Q_log2(NUM_TEAMS), SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO( m_iRequestingCappers ), Q_log2(NUM_TEAMS), SPROP_UNSIGNED ),
 	SendPropFloat( SENDINFO( m_flNextCapture ) ),
 	SendPropInt( SENDINFO( m_iCapturePlayers ), Q_log2(MAX_PLAYERS), SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO( m_iNearbyPlayers ), Q_log2(MAX_PLAYERS), SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO( m_iForTeam ), 2, SPROP_UNSIGNED ),
 	SendPropFloat( SENDINFO( m_flCaptureTime ) ),
-	SendPropStringT( SENDINFO( m_sFlagName ) ),
+	SendPropStringT( SENDINFO( m_sTriggerName ) ),
 	SendPropInt( SENDINFO( m_iHUDSlot ), 5 ),	//15 slots.. 0 = sequential tile, -1 = hidden(don't draw)
-	SendPropBool( SENDINFO( m_bActive ) ),
-	SendPropBool( SENDINFO( m_bNotUncappable ) ),
-	SendPropBool( SENDINFO( m_bUncapOnDeath ) ),
 	
-	//each bit corresponds to player #id overloading current flag or not
-	//BG2 - Tjoppen - TODO: is there a way to set a specific bit depending on who the recipient is?
-	//						At the moment bandwidth usage for this is O(N²) instead of O(N) for N clients.
-	//						I'd like to send to each client only one bit indicating if that client is
-	//						overloading the current flag or not, instead of sending a bitmask of all client's
-	//						overload state to all clients.. The current method reveals too much information
-	//						for any would-be cheater on the opposing team. Or perhaps it's just good because
-	//						we can figure out the names of the people overloading the flag and print them.
-	//						This depends on gameplay stuff - do we want/need everyone knowing which flags
-	//						everyone else is overloading? Perhaps.
-	//BG2 - Tjoppen - TODO: implement this on client, with drawing in hud etc.
 
 END_NETWORK_TABLE()
-*/
+
 BEGIN_PREDICTION_DATA( CKoth )
 END_PREDICTION_DATA()
 
@@ -403,9 +418,8 @@ BEGIN_DATADESC( CKoth )
 	DEFINE_KEYFIELD( m_iTeamBonus, FIELD_INTEGER, "TeamBonus" ),
 	DEFINE_KEYFIELD( m_iTeamBonusInterval, FIELD_INTEGER, "TeamBonusInterval" ),
 	DEFINE_KEYFIELD( m_iPlayerBonus, FIELD_INTEGER, "PlayerBonus" ),
-	DEFINE_KEYFIELD( m_iForTeam, FIELD_INTEGER, "ForTeam" ),
 	DEFINE_KEYFIELD( m_sTriggerName, FIELD_STRING, "Name" ),
-	DEFINE_THINKFUNC( Think ),
+	DEFINE_FUNCTION( Think ),
 
 	//BG2 - SaintGreg - dynamic flags
 	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),

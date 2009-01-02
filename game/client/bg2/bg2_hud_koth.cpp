@@ -1,34 +1,5 @@
 /*
-	The Battle Grounds 2 - A Source modification
-	Copyright (C) 2005, The Battle Grounds 2 Team and Contributors
-
-	The Battle Grounds 2 free software; you can redistribute it and/or
-	modify it under the terms of the GNU Lesser General Public
-	License as published by the Free Software Foundation; either
-	version 2.1 of the License, or (at your option) any later version.
-
-	The Battle Grounds 2 is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	Lesser General Public License for more details.
-
-	You should have received a copy of the GNU Lesser General Public
-	License along with this library; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-	Contact information:
-		Tomas "Tjoppen" Härdin		tjoppen@gamedev.se
-
-	You may also contact the (future) team via the Battle Grounds website and/or forum at:
-		www.bgmod.com
-
-	 Note that because of the sheer volume of files in the Source SDK this
-	notice cannot be put in all of them, but merely the ones that have any
-	changes from the original SDK.
-	 In order to facilitate easy searching, all changes are and must be
-	commented on the following form:
-
-	//BG2 - <name of contributer>[ - <small description>]
+	This is the hud interface for King of the Hill mode.
 */
 #include "cbase.h"
 #include "hudelement.h"
@@ -42,14 +13,14 @@
 #include <KeyValues.h>
 #include "c_baseplayer.h"
 #include "c_team.h"
-#include "c_flag.h"
+#include "c_koth.h"
 
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar cl_flagstatus( "cl_flagstatus", "1", FCVAR_ARCHIVE, "0 - Off, 1 - Text, 2 - Icons" );
-ConVar cl_flagstatusdetail( "cl_flagstatusdetail", "2", FCVAR_ARCHIVE, "0 - No Details, 1 - Compact Details, 2 - Full Details" );
+extern ConVar cl_flagstatusdetail,
+cl_flagstatus;
 
 enum
 {
@@ -65,11 +36,11 @@ enum
 // CHudFlags
 // Displays flag status
 //==============================================
-class CHudFlags : public CHudElement, public vgui::Panel
+class CHudKoth : public CHudElement, public vgui::Panel
 {
-	DECLARE_CLASS_SIMPLE( CHudFlags, vgui::Panel );
+	DECLARE_CLASS_SIMPLE( CHudKoth, vgui::Panel );
 public:
-	CHudFlags( const char *pElementName );
+	CHudKoth( const char *pElementName );
 	void Init( void );
 	void VidInit( void );
 	virtual bool ShouldDraw( void );
@@ -87,29 +58,24 @@ private:
 
 	CPanelAnimationVar( vgui::HFont, m_hTextFont, "TextFont", "HudNumbersTimer" ); 
 
-
 	CHudTexture		*m_pIconBlank,
 					*m_pIconRed,
 					*m_pIconBlue;
 
 	vgui::Label * m_pLabelFlag[MAX_FLAGS]; 
 	
-	//flag myflags[MAX_FLAGS];
-	
-	//int iNumFlags;
 };
 
 using namespace vgui;
 
-DECLARE_HUDELEMENT( CHudFlags );
-//DECLARE_HUD_MESSAGE( CHudFlags, flagstatus );
+DECLARE_HUDELEMENT( CHudKoth );
 
 //==============================================
 // CHudFlags's CHudFlags
 // Constructor
 //==============================================
-CHudFlags::CHudFlags( const char *pElementName ) :
-	CHudElement( pElementName ), BaseClass( NULL, "HudFlags" )
+CHudKoth::CHudKoth( const char *pElementName ) :
+	CHudElement( pElementName ), BaseClass( NULL, "HudKoth" )
 {
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
@@ -137,7 +103,7 @@ CHudFlags::CHudFlags( const char *pElementName ) :
 // CHudFlags's ApplySchemeSettings
 // applies the schemes
 //==============================================
-void CHudFlags::ApplySchemeSettings( IScheme *scheme )
+void CHudKoth::ApplySchemeSettings( IScheme *scheme )
 {
 	BaseClass::ApplySchemeSettings( scheme );
 	vgui::HFont font = scheme->GetFont( "DracoLucidaRawks" );
@@ -152,7 +118,7 @@ void CHudFlags::ApplySchemeSettings( IScheme *scheme )
 // CHudFlags's Init
 // Inits any vars needed
 //==============================================
-void CHudFlags::Init( void )
+void CHudKoth::Init( void )
 {	
 }
 
@@ -160,8 +126,9 @@ void CHudFlags::Init( void )
 // CHudFlags's VidInit
 // Inits any textures needed
 //==============================================
-void CHudFlags::VidInit( void )
+void CHudKoth::VidInit( void )
 {
+
 	m_pIconBlank	= gHUD.GetIcon( "hud_flagicon_blank" );
 	m_pIconRed		= gHUD.GetIcon( "hud_flagicon_red" );
 	m_pIconBlue		= gHUD.GetIcon( "hud_flagicon_blue" );
@@ -171,7 +138,7 @@ void CHudFlags::VidInit( void )
 // CHudFlags's ShouldDraw
 // whether the panel should be drawing
 //==============================================
-bool CHudFlags::ShouldDraw( void )
+bool CHudKoth::ShouldDraw( void )
 {
 	return CHudElement::ShouldDraw();
 }
@@ -180,7 +147,7 @@ bool CHudFlags::ShouldDraw( void )
 // CHudFlags's Paint
 // errr... paints the panel
 //==============================================
-void CHudFlags::Paint()
+void CHudKoth::Paint()
 {
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 
@@ -224,119 +191,53 @@ void CHudFlags::Paint()
 
 			float iTimeToCap = g_Flags[i]->m_flNextCapture - gpGlobals->curtime;
 
-			const char *pOLString = NULL;	//describes overload status - "Overloaded", "Not overloaded", empty string of not applicable
+			//flag can be taken by any team
+			Q_snprintf( text, sizeof(text), "%s", g_Flags[i]->m_sTriggerName);
 
-			//empty string if..
-			if( g_Flags[i]->GetTeamNumber() == TEAM_UNASSIGNED ||				//flag not held by any team
-					g_Flags[i]->m_bNotUncappable ||								//flag can't be uncapped
-					!g_Flags[i]->m_bUncapOnDeath ||								//flag doesn't uncap when overloaders die
-					g_Flags[i]->GetTeamNumber() != pPlayer->GetTeamNumber() )	//flag held by other team
+			switch (cl_flagstatusdetail.GetInt())
 			{
-				pOLString = "";
-			}
-			else if( g_Flags[i]->m_pOverloading[pPlayer->GetClientIndex()] )
-			{
-				//player has overloading this flag
-				if( cl_flagstatusdetail.GetInt() <= 1 )
-					pOLString = "- OL:ed";
-				else
-					pOLString = "- Overloaded";
-				
-			}
-			else
-			{
-				//player has not overloaded this flag yet
-				if( cl_flagstatusdetail.GetInt() <= 1 )
-					pOLString = "- Not OL:ed";
-				else
-					pOLString = "- Not overloaded";
-			}
-
-			//team specific flag?
-			switch( g_Flags[i]->m_iForTeam )
-			{
-				case 0:
-					//flag can be taken by any team
-					Q_snprintf( text, sizeof(text), "%s", g_Flags[i]->m_sFlagName);
-
-					switch (cl_flagstatusdetail.GetInt())
+				case 0: // No Details
+					if( iTimeToCap > 0.1f )
 					{
-						case 0: // No Details
-							if( iTimeToCap > 0.1f )
-							{
-								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), "- %i", (int)iTimeToCap);
-								strcat(	text, text_add);
-							}
-							break;
-						case 1: // Compact Details
-							if( iTimeToCap > 0 )
-							{
-								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i - %i", g_Flags[i]->m_iNearbyPlayers, 
-									g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
-
-								strcat(	text, text_add);
-							}
-							else
-							{
-								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i %s", g_Flags[i]->m_iNearbyPlayers, 
-									g_Flags[i]->m_iCapturePlayers, pOLString );
-
-								strcat(	text, text_add);
-							}
-							break;
-						case 2: // Full Details
-							if( iTimeToCap > 0 )
-							{
-								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players - Time %i", 
-									g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
-
-								strcat(	text, text_add);
-							}
-							else
-							{
-								char text_add[128];
-								Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players %s", 
-									g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, pOLString );
-
-								strcat(	text, text_add);
-							}
-							break;
+						char text_add[128];
+						Q_snprintf( text_add, sizeof(text_add), "- %i", (int)iTimeToCap);
+						strcat(	text, text_add);
 					}
 					break;
-
-				case 1:
-					//flag can only be taken by the americans
+				case 1: // Compact Details
 					if( iTimeToCap > 0 )
 					{
-						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players - Time %i", 
-							g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, 
-							(int)iTimeToCap );
+						char text_add[128];
+						Q_snprintf( text_add, sizeof(text_add), " - %i/%i - %i", g_Flags[i]->m_iNearbyPlayers, 
+							g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+
+						strcat(	text, text_add);
 					}
 					else
 					{
-						Q_snprintf( text, sizeof(text), "%s - American Only Target - %i/%i Players %s", 
-							g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers,
-							pOLString );
+						char text_add[128];
+						Q_snprintf( text_add, sizeof(text_add), " - %i/%i", g_Flags[i]->m_iNearbyPlayers, 
+							g_Flags[i]->m_iCapturePlayers );
+
+						strcat(	text, text_add);
 					}
 					break;
-
-				case 2:
-					//flag can only be taken by the british
+				case 2: // Full Details
 					if( iTimeToCap > 0 )
 					{
-						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players - Time %i", 
-							g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, 
-							(int)iTimeToCap );
+						char text_add[128];
+						Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players - Time %i", 
+							g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, (int)iTimeToCap );
+
+						strcat(	text, text_add);
 					}
 					else
 					{
-						Q_snprintf( text, sizeof(text), "%s - British Only Target - %i/%i Players %s", 
-							g_Flags[i]->m_sFlagName, g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers, 
-							pOLString );
+						char text_add[128];
+						Q_snprintf( text_add, sizeof(text_add), " - %i/%i Players", 
+							g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers );
+
+						strcat(	text, text_add);
 					}
 					break;
 			}
@@ -346,12 +247,6 @@ void CHudFlags::Paint()
 			float g = 0;
 			float b = 0;
 
-			/*if( !g_Flags[i]->m_bActive ) //Tweaked. See flag.cpp in server project. -HairyPotter
-			{
-				//BG2 - Tjoppen - inactive flags simply have grey text for now
-				r = g = b = 96;
-			}
-			else*/
 				switch( g_Flags[i]->m_iLastTeam )
 				{
 					case TEAM_AMERICANS:
@@ -383,7 +278,7 @@ void CHudFlags::Paint()
 								g = 16;
 								b = 16;
 								break;
-							case TEAM_UNASSIGNED:
+							/*case TEAM_UNASSIGNED:
 								switch (g_Flags[i]->m_iRequestingCappers)
 								{
 									case TEAM_BRITISH:
@@ -422,7 +317,7 @@ void CHudFlags::Paint()
 										}
 										break;
 								}
-								break;
+								break;*/
 						}
 						break;
 				}
@@ -561,7 +456,7 @@ void CHudFlags::Paint()
 							g = 16;
 							b = 16;
 							break;
-						case TEAM_UNASSIGNED:
+						/*case TEAM_UNASSIGNED:
 							switch (g_Flags[i]->m_iRequestingCappers)
 							{
 								case TEAM_BRITISH:
@@ -600,7 +495,7 @@ void CHudFlags::Paint()
 									}
 									break;
 							}
-							break;
+							break;*/
 					}
 					break;
 			}

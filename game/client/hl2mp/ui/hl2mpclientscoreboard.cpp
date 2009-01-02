@@ -28,15 +28,8 @@ using namespace vgui;
 #define TEAM_MAXCOUNT			5
 
 extern ConVar sv_show_damages;
+ConVar cl_scoreboard("cl_scoreboard", "2", FCVAR_CLIENTDLL, "Scoreboard setting for BG2. 1 = Old Scoreboard, 2 = New Scoreboard.");
 // id's of sections used in the scoreboard
-enum EScoreboardSections
-{
-	SCORESECTION_COMBINE = 1,
-	SCORESECTION_REBELS = 2,
-	SCORESECTION_FREEFORALL = 3,
-	SCORESECTION_SPECTATOR = 4,
-	SCORESECTION_UNASSIGNED = 4 //BG2 - Added this back in just so you can see who is in the game or not even if they haven't picked a team. -HairyPotter
-};
 
 const int NumSegments = 7;
 static int coord[NumSegments+1] = {
@@ -67,16 +60,21 @@ CHL2MPClientScoreBoardDialog::~CHL2MPClientScoreBoardDialog()
 //-----------------------------------------------------------------------------
 // Purpose: Paint background for rounded corners
 //-----------------------------------------------------------------------------
+bool m_bNeedsUpdate;
 void CHL2MPClientScoreBoardDialog::PaintBackground()
 {
 	m_pPlayerList->SetBgColor( Color(0,0,0,0) );
+	m_pBritishPlayerList->SetBgColor( Color(0,0,0,0) );
+
 	m_pPlayerList->SetBorder(NULL);
+	m_pBritishPlayerList->SetBorder(NULL);
 
 	int x1, x2, y1, y2;
 	surface()->DrawSetColor(m_bgColor);
 	surface()->DrawSetTextColor(m_bgColor);
 
 	int wide, tall;
+
 	GetSize( wide, tall );
 
 	int i;
@@ -329,7 +327,10 @@ void CHL2MPClientScoreBoardDialog::ApplySchemeSettings( vgui::IScheme *pScheme )
 void CHL2MPClientScoreBoardDialog::InitScoreboardSections()
 {
 	m_pPlayerList->SetBgColor( Color(0, 0, 0, 0) );
+	m_pBritishPlayerList->SetBgColor( Color(0, 0, 0, 0) );
+
 	m_pPlayerList->SetBorder(NULL);
+	m_pBritishPlayerList->SetBorder(NULL);
 
 	// fill out the structure of the scoreboard
 	AddHeader();
@@ -391,8 +392,6 @@ void CHL2MPClientScoreBoardDialog::UpdateTeamInfo()
 	}
 	//
 
-	//Msg(" American Damage = %i / British Damage = %i \n", iAmericanDmg, iBritishDmg );
-
 	// update the team sections in the scoreboard
 	for ( int i = TEAM_SPECTATOR; i < TEAM_MAXCOUNT; i++ )
 	{
@@ -403,7 +402,7 @@ void CHL2MPClientScoreBoardDialog::UpdateTeamInfo()
 		if ( team )
 		{
 			sectionID = GetSectionFromTeamNumber( i );
-	
+
 			// update team name
 			wchar_t name[64];
 			wchar_t string1[1024];
@@ -446,6 +445,9 @@ void CHL2MPClientScoreBoardDialog::UpdateTeamInfo()
 
 				// update stats
 				wchar_t deaths[8];
+				wchar_t val[6];
+				swprintf(val, L"%d", team->Get_Score());
+
 				switch( i )
 				{
 					case TEAM_AMERICANS:	
@@ -458,23 +460,58 @@ void CHL2MPClientScoreBoardDialog::UpdateTeamInfo()
 						swprintf(deaths, L"%d", iSpecDmg);
 						break;
 				}
-				m_pPlayerList->ModifyColumn(sectionID, "deaths", deaths);
-				wchar_t val[6];
-				swprintf(val, L"%d", team->Get_Score());
-				m_pPlayerList->ModifyColumn(sectionID, "frags", val);
-				if (team->Get_Ping() < 1)
-				{
-					m_pPlayerList->ModifyColumn(sectionID, "ping", L"");
-				}
-				else
-				{
-					swprintf(val, L"%d", team->Get_Ping());
-					m_pPlayerList->ModifyColumn(sectionID, "ping", val);
-				}
 
+				if ( cl_scoreboard.GetInt() == 1 ) //Old scoreboard.
+				{
+					m_pPlayerList->ModifyColumn(sectionID, "deaths", deaths);
+					m_pPlayerList->ModifyColumn(sectionID, "frags", val);
+					if (team->Get_Ping() < 1)
+					{
+						m_pPlayerList->ModifyColumn(sectionID, "ping", L"");
+					}
+					else
+					{
+						swprintf(val, L"%d", team->Get_Ping());
+						m_pPlayerList->ModifyColumn(sectionID, "ping", val);
+					}
+					m_pPlayerList->ModifyColumn(sectionID, "name", string1);
+				}
+				else //New Scoreboard.
+				{
+					switch( i )
+					{
+						case TEAM_BRITISH:	//British is always "sectionID" 1 in new scoreboard, because the british team has their own section.
+							//swprintf(deaths, L"%d", iBritishDmg);
+							m_pBritishPlayerList->ModifyColumn(1, "deaths", deaths);
+							m_pBritishPlayerList->ModifyColumn(1, "frags", val);
+							if (team->Get_Ping() < 1)
+							{
+								m_pBritishPlayerList->ModifyColumn(1, "ping", L"");
+							}
+							else
+							{
+								swprintf(val, L"%d", team->Get_Ping());
+								m_pBritishPlayerList->ModifyColumn(1, "ping", val);
+							}
+							m_pBritishPlayerList->ModifyColumn(1, "name", string1);
+							break;
+						default: //If it's not British just stick everything in the "default" (American) section.
+							m_pPlayerList->ModifyColumn(sectionID, "deaths", deaths);
+							m_pPlayerList->ModifyColumn(sectionID, "frags", val);
+							if (team->Get_Ping() < 1)
+							{
+								m_pPlayerList->ModifyColumn(sectionID, "ping", L"");
+							}
+							else
+							{
+								swprintf(val, L"%d", team->Get_Ping());
+								m_pPlayerList->ModifyColumn(sectionID, "ping", val);
+							}
+							m_pPlayerList->ModifyColumn(sectionID, "name", string1);
+							break;
+					}
+				}
 			}
-		
-			m_pPlayerList->ModifyColumn(sectionID, "name", string1);
 		}
 	}
 }
@@ -484,18 +521,49 @@ void CHL2MPClientScoreBoardDialog::UpdateTeamInfo()
 //-----------------------------------------------------------------------------
 void CHL2MPClientScoreBoardDialog::AddHeader()
 {
+	HFont hFallbackFont = scheme()->GetIScheme( GetScheme() )->GetFont( "DefaultVerySmallFallBack", false );
+
+	//BG2 - Set up the second section here. -HairyPotter
+	switch ( cl_scoreboard.GetInt() )
+	{
+		case 1: //Old Scoreboard.
+			NAME_WIDTH = 220, //Modded for BG2. -HairyPotter
+			CLASS_WIDTH = 56,
+			SCORE_WIDTH = 40,
+			DEATH_WIDTH = 46,
+			PING_WIDTH = 46;
+			break;
+
+		default: //If not 1, we'll activate new scoreboard.
+			NAME_WIDTH = 145, //BG2 - Modded for new scoreboard. -HairyPotter
+			CLASS_WIDTH = 35,
+			SCORE_WIDTH = 32,
+			DEATH_WIDTH = 35,
+			PING_WIDTH = 30;
+
+			//Since we're using the new scoreboard, set up the british section next to the default (american) section.
+			m_pBritishPlayerList->AddSection(0, "");
+			m_pBritishPlayerList->SetSectionAlwaysVisible(0);
+			m_pBritishPlayerList->AddColumnToSection(0, "name", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), NAME_WIDTH ), hFallbackFont );
+			m_pBritishPlayerList->AddColumnToSection(0, "class", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CLASS_WIDTH ) );
+			m_pBritishPlayerList->AddColumnToSection(0, "frags", "#PlayerScore", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), SCORE_WIDTH ) );
+			m_pBritishPlayerList->AddColumnToSection(0, "deaths", "Damage", 0, scheme()->GetProportionalScaledValue( DEATH_WIDTH ) );
+			m_pBritishPlayerList->AddColumnToSection(0, "ping", "#PlayerPing", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), PING_WIDTH ) );
+			break;
+	}
+	//
+
 	// add the top header
 	m_pPlayerList->AddSection(0, "");
 	m_pPlayerList->SetSectionAlwaysVisible(0);
-	HFont hFallbackFont = scheme()->GetIScheme( GetScheme() )->GetFont( "DefaultVerySmallFallBack", false );
-	m_pPlayerList->AddColumnToSection(0, "name", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_NAME_WIDTH ), hFallbackFont );
-	m_pPlayerList->AddColumnToSection(0, "class", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_CLASS_WIDTH ) );
-	m_pPlayerList->AddColumnToSection(0, "frags", "#PlayerScore", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_SCORE_WIDTH ) );
+	m_pPlayerList->AddColumnToSection(0, "name", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), NAME_WIDTH ), hFallbackFont );
+	m_pPlayerList->AddColumnToSection(0, "class", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CLASS_WIDTH ) );
+	m_pPlayerList->AddColumnToSection(0, "frags", "#PlayerScore", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), SCORE_WIDTH ) );
 	//BG2 - Tjoppen - Where is #PlayerDeath defined? HACKHACK for now..
 	//m_pPlayerList->AddColumnToSection(0, "deaths", "#PlayerDeath", 0 | SectionedListPanel::COLUMN_RIGHT, scheme()->GetProportionalScaledValue( CSTRIKE_DEATH_WIDTH ) );
-	m_pPlayerList->AddColumnToSection(0, "deaths", "Damage", 0, scheme()->GetProportionalScaledValue( CSTRIKE_DEATH_WIDTH ) );
+	m_pPlayerList->AddColumnToSection(0, "deaths", "Damage", 0, scheme()->GetProportionalScaledValue( DEATH_WIDTH ) );
 	//
-	m_pPlayerList->AddColumnToSection(0, "ping", "#PlayerPing", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_PING_WIDTH ) );
+	m_pPlayerList->AddColumnToSection(0, "ping", "#PlayerPing", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), PING_WIDTH ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -506,31 +574,44 @@ void CHL2MPClientScoreBoardDialog::AddSection(int teamType, int teamNumber)
 	HFont hFallbackFont = scheme()->GetIScheme( GetScheme() )->GetFont( "DefaultVerySmallFallBack", false );
 
 	int sectionID = GetSectionFromTeamNumber( teamNumber );
-	if ( teamType == TYPE_TEAM )
+	if ( teamNumber != TEAM_BRITISH || cl_scoreboard.GetInt() == 1 ) //BG2 - We go by team numbers now, unless we're using the old scoreboard. -HairyPotter
 	{
- 		m_pPlayerList->AddSection(sectionID, "", StaticPlayerSortFunc);
-
+		m_pPlayerList->AddSection(sectionID, "", StaticPlayerSortFunc);
 		// setup the columns
-		m_pPlayerList->AddColumnToSection(sectionID, "name", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_NAME_WIDTH ), hFallbackFont );
-		m_pPlayerList->AddColumnToSection(sectionID, "class", "" , 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_CLASS_WIDTH ) );
-		m_pPlayerList->AddColumnToSection(sectionID, "frags", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_SCORE_WIDTH ) );
-		m_pPlayerList->AddColumnToSection(sectionID, "deaths", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_DEATH_WIDTH ) );
-		m_pPlayerList->AddColumnToSection(sectionID, "ping", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_PING_WIDTH ) );
+		m_pPlayerList->AddColumnToSection(sectionID, "name", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), NAME_WIDTH ), hFallbackFont );
+		m_pPlayerList->AddColumnToSection(sectionID, "class", "" , 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CLASS_WIDTH ) );
+		m_pPlayerList->AddColumnToSection(sectionID, "frags", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), SCORE_WIDTH ) );
+		m_pPlayerList->AddColumnToSection(sectionID, "deaths", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), DEATH_WIDTH ) );
+		m_pPlayerList->AddColumnToSection(sectionID, "ping", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), PING_WIDTH ) );
+
+		// set the section to have the team color
+
+		if ( teamNumber != TEAM_SPECTATOR || TEAM_UNASSIGNED )
+		{
+			if ( GameResources() )
+				m_pPlayerList->SetSectionFgColor(sectionID,  GameResources()->GetTeamColor(teamNumber));
+
+			m_pPlayerList->SetSectionAlwaysVisible(sectionID);
+		}
+	}
+	else if ( teamNumber == TEAM_BRITISH  )
+	{
+		m_pBritishPlayerList->AddSection(1, "", StaticPlayerSortFunc);
+		// setup the columns
+		m_pBritishPlayerList->AddColumnToSection(1, "name", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), NAME_WIDTH ), hFallbackFont );
+		m_pBritishPlayerList->AddColumnToSection(1, "class", "" , 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CLASS_WIDTH ) );
+		m_pBritishPlayerList->AddColumnToSection(1, "frags", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), SCORE_WIDTH ) );
+		m_pBritishPlayerList->AddColumnToSection(1, "deaths", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), DEATH_WIDTH ) );
+		m_pBritishPlayerList->AddColumnToSection(1, "ping", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), PING_WIDTH ) );
 
 		// set the section to have the team color
 		if ( teamNumber )
 		{
 			if ( GameResources() )
-				m_pPlayerList->SetSectionFgColor(sectionID,  GameResources()->GetTeamColor(teamNumber));
+				m_pBritishPlayerList->SetSectionFgColor(1,  GameResources()->GetTeamColor(teamNumber));
 		}
 
-		m_pPlayerList->SetSectionAlwaysVisible(sectionID);
-	}
-	else if ( teamType == TYPE_SPECTATORS )
-	{
-		m_pPlayerList->AddSection(sectionID, "");
-		m_pPlayerList->AddColumnToSection(sectionID, "name", "#Spectators", 0, scheme()->GetProportionalScaledValueEx( GetScheme(), CSTRIKE_NAME_WIDTH ), hFallbackFont );
-		m_pPlayerList->AddColumnToSection(sectionID, "class", "" , 0, scheme()->GetProportionalScaledValueEx( GetScheme(), 100 ) );
+		m_pBritishPlayerList->SetSectionAlwaysVisible(1);
 	}
 }
 
@@ -539,17 +620,17 @@ int CHL2MPClientScoreBoardDialog::GetSectionFromTeamNumber( int teamNumber )
 	switch ( teamNumber )
 	{
 	case TEAM_AMERICANS:
-		return SCORESECTION_COMBINE;
+		return 1;
 	case TEAM_BRITISH:
-		return SCORESECTION_REBELS;
+		return 2;
 	case TEAM_SPECTATOR:
-		return SCORESECTION_SPECTATOR;
+		return 3;
 	case TEAM_UNASSIGNED: //BG2 - Added back in so you can see all players in game, even if unassigned. -HairyPotter
-		return SCORESECTION_UNASSIGNED;
+		return 3;
 	default:
-		return SCORESECTION_FREEFORALL;
+		return 3;
 	}
-	return SCORESECTION_FREEFORALL;
+	return 3;
 }
 
 //-----------------------------------------------------------------------------
@@ -601,8 +682,6 @@ bool CHL2MPClientScoreBoardDialog::GetPlayerScoreInfo(int playerIndex, KeyValues
 }
 
 enum {
-	/*MAX_PLAYERS_PER_TEAM = 16,
-	MAX_SCOREBOARD_PLAYERS = 32*/
 	//BG2 - Increased for maxplayer increase. -HairyPotter
 	MAX_PLAYERS_PER_TEAM = 32,
 	MAX_SCOREBOARD_PLAYERS = 64
@@ -675,24 +754,41 @@ void CHL2MPClientScoreBoardDialog::UpdatePlayerInfo()
 			int itemID = FindItemIDForPlayerIndex( i );
   			int sectionID = GetSectionFromTeamNumber( g_PR->GetTeam( i ) );
 						
-			if (itemID == -1)
+			if ( cl_scoreboard.GetInt() != 1 ) //New Scoreboard
 			{
-				// add a new row
-				itemID = m_pPlayerList->AddItem( sectionID, playerData );
+				switch ( g_PR->GetTeam( i ) )
+				{
+					case TEAM_BRITISH: //British SectionID is always 1, because british have their own section.
+						if (itemID == -1)
+							itemID = m_pBritishPlayerList->AddItem( 1, playerData );
+						else
+							m_pBritishPlayerList->ModifyItem( itemID, 1, playerData );
+
+						// set the row color based on the players team
+						m_pBritishPlayerList->SetItemFgColor( itemID, g_PR->GetTeamColor( TEAM_BRITISH ) );
+						break;
+					default: //If not british, put into the "default" (American) section.
+						if (itemID == -1)
+							itemID = m_pPlayerList->AddItem( sectionID, playerData );
+						else
+							m_pPlayerList->ModifyItem( itemID, sectionID, playerData );
+
+						// set the row color based on the players team
+						m_pPlayerList->SetItemFgColor( itemID, g_PR->GetTeamColor( g_PR->GetTeam( i ) ) );
+						break;
+
+				}
 			}
-			else
+			else //Old Scoreboard.
 			{
-				// modify the current row
-				m_pPlayerList->ModifyItem( itemID, sectionID, playerData );
+				if (itemID == -1)
+					itemID = m_pPlayerList->AddItem( sectionID, playerData );
+				else
+					m_pPlayerList->ModifyItem( itemID, sectionID, playerData );
+
+				m_pPlayerList->SetItemFgColor( itemID, g_PR->GetTeamColor( g_PR->GetTeam( i ) ) );
 			}
 
-			if ( i == pPlayer->entindex() )
-			{
-				selectedRow = itemID;	// this is the local player, hilight this row
-			}
-
-			// set the row color based on the players team
-			m_pPlayerList->SetItemFgColor( itemID, g_PR->GetTeamColor( g_PR->GetTeam( i ) ) );
 
 			playerData->deleteThis();
 		}
@@ -702,7 +798,20 @@ void CHL2MPClientScoreBoardDialog::UpdatePlayerInfo()
 			int itemID = FindItemIDForPlayerIndex( i );
 			if (itemID != -1)
 			{
-				m_pPlayerList->RemoveItem(itemID);
+				if ( cl_scoreboard.GetInt() == 1 )
+					m_pPlayerList->RemoveItem(itemID);
+				else
+				{
+					switch ( g_PR->GetTeam( i ) )
+					{
+						case TEAM_BRITISH:
+							m_pBritishPlayerList->RemoveItem(itemID);
+							break;
+						default:
+							m_pPlayerList->RemoveItem(itemID);
+							break;
+					}
+				}
 			}
 		}
 	}
@@ -710,6 +819,7 @@ void CHL2MPClientScoreBoardDialog::UpdatePlayerInfo()
 	if ( selectedRow != -1 )
 	{
 		m_pPlayerList->SetSelectedItem(selectedRow);
+		m_pBritishPlayerList->SetSelectedItem(selectedRow);
 	}
 
 	

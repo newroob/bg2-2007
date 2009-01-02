@@ -52,7 +52,8 @@ class CFlag : public CBaseAnimating
 	DECLARE_DATADESC();
 
 	//BG2 - Used with the flag triggers. -HairyPotter
-	bool m_bIsParent;										//Helps the flag remember it's place... as a parent.
+	bool m_bIsParent,										//Helps the flag remember it's place... as a parent.
+		 m_bActive;											//Is it active? And yes, this replaces the networked version.
 	CUtlVector<CBasePlayer*>	m_vTriggerBritishPlayers,	//British players who have stepped into the trigger
 								m_vTriggerAmericanPlayers;	//American players who have stepped into the trigger
 	int americans,
@@ -72,7 +73,7 @@ class CFlag : public CBaseAnimating
 
 	CNetworkVar( int, m_iHUDSlot );		//in which slot is the icon for this flag?
 
-	CNetworkVar( bool, m_bActive );		//BG2 - Tjoppen - adding SaintGreg's flag stuff from way back as a placeholder
+	//CNetworkVar( bool, m_bActive );		//BG2 - Tjoppen - adding SaintGreg's flag stuff from way back as a placeholder
 										//				  until the new flag code is done.
 
 	CNetworkVar( bool, m_bNotUncappable );	//is flag non-uncappable?
@@ -106,7 +107,8 @@ class CFlag : public CBaseAnimating
 			m_iAmericanFlagSkin,
 			m_iBritishFlagSkin,
 			m_iNeutralFlagSkin,
-			m_iDisabledFlagSkin;
+			m_iDisabledFlagSkin,
+			m_iSavedHUDSlot;     //This is for the flag enable/disable addon. The original Hud Slot value is stored here.
 
 	float	m_flNextTeamBonus;
 

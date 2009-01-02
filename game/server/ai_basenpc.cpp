@@ -2718,19 +2718,6 @@ void CAI_BaseNPC::MaintainLookTargets ( float flInterval )
 		}
 	}
 
-#if 0
-	// --------------------------------------------------------
-	// First check if I've been assigned to look at an entity
-	// --------------------------------------------------------
-	CBaseEntity *lookTarget = EyeLookTarget();
-	if (lookTarget && ValidEyeTarget(lookTarget->EyePosition()))
-	{
-		SetHeadDirection(lookTarget->EyePosition(),flInterval);
-		SetViewtarget( lookTarget->EyePosition() );
-		return;
-	}
-#endif
-
 	// --------------------------------------------------------
 	// If I'm moving, look at my target position
 	// --------------------------------------------------------

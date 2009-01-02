@@ -944,7 +944,7 @@ void CBaseGameStats::SetDXLevelStatistic( int iDXLevel )
 void CBaseGameStats::SetHL2UnlockedChapterStatistic( void )
 {
 	// Now grab the hl2/cfg/config.cfg and suss out the sv_unlockedchapters cvar to estimate how far they got in HL2
-	char const *relative = "cfg/config.cfg";
+	/*char const *relative = "cfg/config.cfg"; //BG2 - Don't need this. - HairyPotter
 	char fullpath[ 512 ];
 	char gamedir[256];
 	engine->GetGameDir( gamedir, 256 );
@@ -981,7 +981,7 @@ void CBaseGameStats::SetHL2UnlockedChapterStatistic( void )
 			// free
 			delete [] configBuffer;
 		}
-	}	
+	}	*/
 }
 
 static void CC_ResetGameStats( const CCommand &args )

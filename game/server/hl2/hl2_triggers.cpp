@@ -916,7 +916,6 @@ void CFlagTriggerBG2::Spawn( void )
 	//We want to get the parent setting out of the way, let's connect it and be done with it. Also have the flag notice this.
 	if ( !GetParent() )
 	{
-		SetParent( m_strParentName, this );
 		CFlag *FlagEnt = dynamic_cast< CFlag* >( gEntList.FindEntityByName( NULL, m_strParentName ) );
 		if ( !FlagEnt )	//Check to see if this is even a flag. Return and remove if false, don't take the whole server down from one error.
 		{
@@ -924,6 +923,7 @@ void CFlagTriggerBG2::Spawn( void )
 			UTIL_Remove(this);
 			return;
 		}
+		SetParent( m_strParentName, this ); //Assuming we passed the test, go ahead and set the parent.
 		FlagEnt->m_bIsParent = true; //Go ahead and let the flag know it's a parent to this trigger. 
 	}
 	//
@@ -936,12 +936,18 @@ void CFlagTriggerBG2::StartTouch(CBaseEntity *pOther)
 {
 	//if ( PassesTriggerFilters(pOther) == false )
 	//	return;
+
+	//Defines.
+	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
+	CFlag *FlagEnt = dynamic_cast< CFlag* >( GetParent() );
+
+	if ( !FlagEnt->m_bActive ) //Flag is inactive?
+		return;				   //Die here.
+
 	if ( !pOther->IsPlayer() ) //Ask yourself, would anything else be able to capture a flag?
 		return;
 
 	//BaseClass::StartTouch( pOther );
-	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
-	CFlag *FlagEnt = dynamic_cast< CFlag* >( GetParent() );
 
 	if( !pPlayer->IsAlive() )	//dead players don't cap
 		return;
@@ -969,14 +975,17 @@ void CFlagTriggerBG2::StartTouch(CBaseEntity *pOther)
 //-----------------------------------------------------------------------------
 void CFlagTriggerBG2::EndTouch(CBaseEntity *pOther)
 {
-	//if ( PassesTriggerFilters(pOther) == false )
-	//	return;
+	//Defines
+	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
+	CFlag *FlagEnt = dynamic_cast< CFlag* >( GetParent() );
+
+	if ( !FlagEnt->m_bActive ) //Flag is inactive?
+		return;				   //Die here.
+
 	if ( !pOther->IsPlayer() ) //Ask yourself, would anything else be able to capture a flag? Should bullets be able to capture?
 		return;
 
 	//BaseClass::EndTouch( pOther );
-	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
-	CFlag *FlagEnt = dynamic_cast< CFlag* >( GetParent() );
 
 	switch( pPlayer->GetTeamNumber() ) //Let's do most of the sorting work here rather than bunching the teams together.
 	{
@@ -1096,7 +1105,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 
 		m_OnFlagCaptured.FireOutput( this, this ); //Fire the OnFlagCaptured output, set it last just in case.
 
-		pPlayer->CtfFlag = NULL;
+		pPlayer->CtfFlag = NULL; //Player no longer has the flag.
 	}
 
 }

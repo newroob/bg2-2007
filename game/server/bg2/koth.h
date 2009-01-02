@@ -9,11 +9,11 @@ void ClientPrintAll( char *str, bool printfordeadplayers = false, bool forcenext
 class CKoth : public CTriggerMultiple
 {
 	DECLARE_CLASS( CKoth, CTriggerMultiple );
-	//DECLARE_NETWORKCLASS(); 
+	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
 	DECLARE_DATADESC();
 
-	//BG2 - Used with the flag triggers. -HairyPotter
+	//BG2 - Used with the koth trigger. -HairyPotter
 	bool m_bIsParent;										//Helps the flag remember it's place... as a parent.
 	CUtlVector<CBasePlayer*>	m_vTriggerBritishPlayers,	//British players who have stepped into the trigger
 								m_vTriggerAmericanPlayers;	//American players who have stepped into the trigger
@@ -23,25 +23,20 @@ class CKoth : public CTriggerMultiple
 	enemies;
 	//
 
-	/*CNetworkVar( int, m_iLastTeam );		//which team is near this flag?
-	CNetworkVar( int, m_iRequestingCappers); //yeah, extra int, im too drunk to think of a better way :o
+	CNetworkVar( int, m_iLastTeam );		//which team is near this flag?
+	//CNetworkVar( int, m_iRequestingCappers); //yeah, extra int, im too drunk to think of a better way :o
 	CNetworkVar( float, m_flNextCapture );
 
 	CNetworkVar( int, m_iCapturePlayers );	//how many player must be nearby to capture this flag?
 	CNetworkVar( int, m_iNearbyPlayers );	//how many players ARE nearby to capture this flag?
 											// alternatively: how overloaded is this flag
-	CNetworkVar( int, m_iForTeam );
 
 	CNetworkVar( int, m_iHUDSlot );		//in which slot is the icon for this flag?
 
-	CNetworkVar( bool, m_bActive );		//BG2 - Tjoppen - adding SaintGreg's flag stuff from way back as a placeholder
-										//				  until the new flag code is done.*/
-
 	bool m_bActive;
 
-	int m_iForTeam, m_iNearbyPlayers, m_iRequestingCappers, m_iLastTeam, m_iCapturePlayers;
+	int m_iRequestingCappers;
 
-	float m_flNextCapture;
 
 	//BG2 - SaintGreg - Output functions similar to BG's
 	COutputEvent m_OnAmericanStartCapture;
@@ -76,7 +71,6 @@ class CKoth : public CTriggerMultiple
 	CNetworkVar( string_t, m_sTriggerName );
 
 public:
-	CUtlVector<CBasePlayer*>	m_vOverloadingPlayers;	//nearby or overloading players
 	/*
 	some notes on the list:
 	- when a player dies, remove from list
@@ -89,6 +83,8 @@ public:
 	void Think( void );
 	void ThinkUncapped( void );
 	void ThinkCapped( void );
+	void StartTouch(CBaseEntity *pOther);
+	void EndTouch(CBaseEntity *pOther);
 	void Capture( int iTeam );	//let iTeam have this flag now..
 	void ChangeTeam( int iTeamNum );
 	virtual int UpdateTransmitState();

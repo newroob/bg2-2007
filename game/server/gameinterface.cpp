@@ -1747,9 +1747,6 @@ void CServerGameDLL::LoadMessageOfTheDay()
 #endif
 }
 
-// keeps track of which chapters the user has unlocked
-ConVar sv_unlockedchapters( "sv_unlockedchapters", "1", FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX );
-
 //-----------------------------------------------------------------------------
 // Purpose: Updates which chapters are unlocked
 //-----------------------------------------------------------------------------
@@ -1820,16 +1817,6 @@ void UpdateChapterRestrictions( const char *mapname )
 			{
 				nNewChapter++;
 			}
-		}
-
-		// ok we have the string, see if it's newer
-		const char *unlockedChapter = sv_unlockedchapters.GetString();
-		int nUnlockedChapter = atoi( unlockedChapter );
-
-		if ( nUnlockedChapter < nNewChapter )
-		{
-			// ok we're at a higher chapter, unlock
-			sv_unlockedchapters.SetValue( nNewChapter );
 		}
 
 		g_nCurrentChapterIndex = nNewChapter;

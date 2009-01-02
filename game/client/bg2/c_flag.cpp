@@ -54,7 +54,7 @@ IMPLEMENT_CLIENTCLASS_DT( C_Flag, DT_Flag, CFlag )
 	RecvPropFloat( RECVINFO( m_flCaptureTime ) ),
 	RecvPropString( RECVINFO( m_sFlagName ) ),		
 	RecvPropInt( RECVINFO( m_iHUDSlot ) ),			
-	RecvPropBool( RECVINFO( m_bActive ) ),
+	//RecvPropBool( RECVINFO( m_bActive ) ), //Tweaked. See flag.cpp in the server project. -HairyPotter
 	RecvPropBool( RECVINFO( m_bNotUncappable ) ),
 	RecvPropBool( RECVINFO( m_bUncapOnDeath ) ),
 

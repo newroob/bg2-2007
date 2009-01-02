@@ -49,7 +49,6 @@ END_PREDICTION_DATA()
 #define	HL2_SPRINT_SPEED 320
 
 static ConVar cl_playermodel( "cl_playermodel", "none", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Default Player Model");
-static ConVar cl_defaultweapon( "cl_defaultweapon", "weapon_physcannon", FCVAR_USERINFO | FCVAR_ARCHIVE, "Default Spawn Weapon");
 
 void SpawnBlood (Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
 
@@ -185,8 +184,9 @@ CStudioHdr *C_HL2MP_Player::OnNewModel( void )
  */
 void C_HL2MP_Player::UpdateLookAt( void )
 {
-	// head yaw
-	if (m_headYawPoseParam < 0 || m_headPitchPoseParam < 0)
+	//BG2 - This will disable the head turning on the models when another player gets near them. -HairyPotter
+	// head yaw 
+	/*if (m_headYawPoseParam < 0 || m_headPitchPoseParam < 0)
 		return;
 
 	// orient eyes
@@ -231,11 +231,12 @@ void C_HL2MP_Player::UpdateLookAt( void )
 	
 	m_flCurrentHeadPitch = ApproachAngle( desired, m_flCurrentHeadPitch, 130 * gpGlobals->frametime );
 	m_flCurrentHeadPitch = AngleNormalize( m_flCurrentHeadPitch );
-	SetPoseParameter( m_headPitchPoseParam, m_flCurrentHeadPitch );
+	SetPoseParameter( m_headPitchPoseParam, m_flCurrentHeadPitch );*/
 }
 void C_HL2MP_Player::ClientThink( void )
 {
-	bool bFoundViewTarget = false;
+	//BG2 - This will disable the head turning on the models when another player gets near them. -HairyPotter
+	/*bool bFoundViewTarget = false;
 	
 	Vector vForward;
 	AngleVectors( GetLocalAngles(), &vForward );
@@ -243,7 +244,7 @@ void C_HL2MP_Player::ClientThink( void )
 	for( int iClient = 1; iClient <= gpGlobals->maxClients; ++iClient )
 	{
 		CBaseEntity *pEnt = UTIL_PlayerByIndex( iClient );
-		if(!pEnt || !pEnt->IsPlayer())
+		if(!pEnt || !pEnt->IsPlayer() )
 			continue;
 
 		if ( pEnt->entindex() == entindex() )
@@ -270,7 +271,7 @@ void C_HL2MP_Player::ClientThink( void )
 	if ( bFoundViewTarget == false )
 	{
 		m_vLookAtTarget = GetAbsOrigin() + vForward * 512;
-	}
+	}*/
 
 	UpdateIDTarget();
 }

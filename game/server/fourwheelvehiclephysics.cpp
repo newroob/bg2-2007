@@ -35,10 +35,6 @@
 
 ConVar r_vehicleBrakeRate( "r_vehicleBrakeRate", "1.5", FCVAR_CHEAT );
 
-ConVar xbox_throttlebias("xbox_throttlebias", "100", FCVAR_ARCHIVE );
-ConVar xbox_throttlespoof("xbox_throttlespoof", "200", FCVAR_ARCHIVE );
-ConVar xbox_autothrottle("xbox_autothrottle", "1", FCVAR_ARCHIVE );
-ConVar xbox_steering_deadzone( "xbox_steering_deadzone", "0.0" );
 
 // remaps an angular variable to a 3 band function:
 // 0 <= t < start :		f(t) = 0
@@ -1022,8 +1018,7 @@ void CFourWheelVehiclePhysics::SteeringTurnAnalog( float carSpeed, const vehicle
 {
 
 	// OLD Code
-#if 0
-	float flSteeringRate = STEERING_BASE_RATE;
+	float flSteeringRate = 200;
 
 	float factor = clamp( fabs( sidemove ) / STICK_EXTENTS, 0.0f, 1.0f );
 
@@ -1032,20 +1027,6 @@ void CFourWheelVehiclePhysics::SteeringTurnAnalog( float carSpeed, const vehicle
 	flSteeringRate *= gpGlobals->frametime;
 
 	SetSteering( sidemove < 0.0f ? -1 : 1, flSteeringRate );
-#else
-	// This is tested with gamepads with analog sticks.  It gives full analog control allowing the player to hold shallow turns.
-	float steering = ( sidemove / STICK_EXTENTS );
-
-	float flSign = ( steering > 0 ) ? 1.0f : -1.0f;
-	float flSteerAdj = RemapValClamped( fabs( steering ), xbox_steering_deadzone.GetFloat(), 1.0f, 0.0f, 1.0f );
-
-	float flSteeringRate = RemapValClamped( carSpeed, vehicleData.steering.speedSlow, vehicleData.steering.speedFast, 
-		vehicleData.steering.steeringRateSlow, vehicleData.steering.steeringRateFast );
-	flSteeringRate *= vehicleData.steering.throttleSteeringRestRateFactor;
-
-	m_controls.bAnalogSteering = true;
-	SetSteering( flSign * flSteerAdj, flSteeringRate * gpGlobals->frametime );
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1072,17 +1053,6 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 	}
 	float carSpeed = fabs(INS2MPH(carState.speed));
 
-	// If going forward and turning hard, keep the throttle applied.
-	if( xbox_autothrottle.GetBool() && cmd->forwardmove > 0.0f )
-	{
-		if( carSpeed > GetMaxSpeed() * 0.75 )
-		{
-			if( fabs(cmd->sidemove) > cmd->forwardmove )
-			{
-				cmd->forwardmove = STICK_EXTENTS;
-			}
-		}
-	}
 
 	//Msg("F: %4.1f \tS: %4.1f!\tSTEER: %3.1f\n", cmd->forwardmove, cmd->sidemove, carState.steeringAngle);
 	// If changing direction, use default "return to zero" speed to more quickly transition.
@@ -1120,7 +1090,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 	//-------------------------------------------------------------------------
 	CBaseEntity *pDriver = m_pOuterServerVehicle->GetDriver();
 	CBasePlayer *pPlayerDriver;
-	float flBiasThreshold = xbox_throttlebias.GetFloat();
+	float flBiasThreshold = 100;
 
 	if( pDriver && pDriver->IsPlayer() )
 	{
@@ -1141,7 +1111,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 				// to keep the car moving in the direction the player probably expects.
 				if( cmd->forwardmove < flBiasThreshold )
 				{
-					cmd->forwardmove = -xbox_throttlespoof.GetFloat();
+					cmd->forwardmove = -200;
 				}
 				else
 				{
@@ -1161,7 +1131,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 				// Inverse of above logic
 				if( cmd->forwardmove > -flBiasThreshold )
 				{
-					cmd->forwardmove = xbox_throttlespoof.GetFloat();
+					cmd->forwardmove = 200;
 				}
 				else
 				{

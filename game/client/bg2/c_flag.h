@@ -58,7 +58,7 @@ public:
 	char	m_sFlagName[256];
 
 	int		m_iHUDSlot;		//in which slot is the icon for this flag?
-	bool	m_bActive;
+	//bool	m_bActive; //Tweaked. See flag.cpp in the server project. -HairyPotter
 	
 	bool	m_bNotUncappable,
 			m_bUncapOnDeath;

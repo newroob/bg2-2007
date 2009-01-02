@@ -505,18 +505,6 @@ void CHL2_Player::PreThink(void)
 		NDebugOverlay::Line( GetAbsOrigin(), predPos, 0, 255, 0, 0, 0.01f );
 	}
 
-#ifdef HL2_EPISODIC
-	if( m_hLocatorTargetEntity != NULL )
-	{
-		// Keep track of the entity here, the client will pick up the rest of the work
-		m_HL2Local.m_vecLocatorOrigin = m_hLocatorTargetEntity->WorldSpaceCenter();
-	}
-	else
-	{
-		m_HL2Local.m_vecLocatorOrigin = vec3_invalid; // This tells the client we have no locator target.
-	}
-#endif//HL2_EPISODIC
-
 	// Riding a vehicle?
 	if ( IsInAVehicle() )	
 	{
@@ -524,11 +512,6 @@ void CHL2_Player::PreThink(void)
 		// make sure we update the client, check for timed damage and update suit even if we are in a vehicle
 		UpdateClientData();		
 		CheckTimeBasedDamage();
-
-		// Allow the suit to recharge when in the vehicle.
-		SuitPower_Update();
-		CheckSuitUpdate();
-		CheckSuitZoom();
 
 		WaterMove();	
 		return;
@@ -606,9 +589,9 @@ void CHL2_Player::PreThink(void)
 	VPROF_SCOPE_END();
 
 	// Operate suit accessories and manage power consumption/charge
-	VPROF_SCOPE_BEGIN( "CHL2_Player::PreThink-SuitPower_Update" );
+	/*VPROF_SCOPE_BEGIN( "CHL2_Player::PreThink-SuitPower_Update" );
 	SuitPower_Update();
-	VPROF_SCOPE_END();
+	VPROF_SCOPE_END();*/
 
 	// checks if new client data (for HUD and view control) needs to be sent to the client
 	VPROF_SCOPE_BEGIN( "CHL2_Player::PreThink-UpdateClientData" );
@@ -1011,18 +994,13 @@ void CHL2_Player::Spawn(void)
 	//if ( !IsSuitEquipped() )
 	//	 StartWalking();
 
-	SuitPower_SetCharge( 100 );
+	//SuitPower_SetCharge( 100 ); //BG2 - Nah. -HairyPotter
 
 	m_Local.m_iHideHUD |= HIDEHUD_CHAT;
 
 	m_pPlayerAISquad = g_AI_SquadManager.FindCreateSquad(AllocPooledString(PLAYER_SQUADNAME));
 
 	//InitSprinting();
-
-	// Setup our flashlight values
-#ifdef HL2_EPISODIC
-	m_HL2Local.m_flFlashBattery = 100.0f;
-#endif 
 
 	GetPlayerProxy();
 
@@ -1644,7 +1622,7 @@ void CHL2_Player::SetupVisibility( CBaseEntity *pViewEntity, unsigned char *pvs,
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CHL2_Player::SuitPower_Update( void )
+/*void CHL2_Player::SuitPower_Update( void )
 {
 	if( SuitPower_ShouldRecharge() )
 	{
@@ -1693,7 +1671,7 @@ void CHL2_Player::SuitPower_Update( void )
 #endif
 				}
 			}*/
-		}
+		/*}
 
 		if ( Flashlight_UseLegacyVersion() )
 		{
@@ -1833,7 +1811,7 @@ bool CHL2_Player::SuitPower_ShouldRecharge( void )
 
 	return true;
 }
-
+*/
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //ConVar	sk_battery( "sk_battery","0" );			
@@ -1891,11 +1869,12 @@ void CHL2_Player::FlashlightTurnOn( void )
 	if( m_bFlashlightDisabled )
 		return;
 
-	if ( Flashlight_UseLegacyVersion() )
+	//BG2 - Nah. -HairyPotter
+	/*if ( Flashlight_UseLegacyVersion() )
 	{
 		if( !SuitPower_AddDevice( SuitDeviceFlashlight ) )
 			return;
-	}
+	}*/
 
 	AddEffects( EF_DIMLIGHT );
 	EmitSound( "HL2Player.FlashLightOn" );
@@ -1910,11 +1889,12 @@ void CHL2_Player::FlashlightTurnOn( void )
 //-----------------------------------------------------------------------------
 void CHL2_Player::FlashlightTurnOff( void )
 {
-	if ( Flashlight_UseLegacyVersion() )
+	//BG2 - Nah. -HairyPotter
+	/*if ( Flashlight_UseLegacyVersion() )
 	{
 		if( !SuitPower_RemoveDevice( SuitDeviceFlashlight ) )
 			return;
-	}
+	}*/
 
 	RemoveEffects( EF_DIMLIGHT );
 	EmitSound( "HL2Player.FlashLightOff" );
@@ -2003,14 +1983,15 @@ void CHL2_Player::CheckFlashlight( void )
 //-----------------------------------------------------------------------------
 void CHL2_Player::SetPlayerUnderwater( bool state )
 {
-	if ( state )
+	//BG2 - Nah. -HairyPotter
+	/*if ( state )
 	{
 		SuitPower_AddDevice( SuitDeviceBreather );
 	}
 	else
 	{
   		SuitPower_RemoveDevice( SuitDeviceBreather );
-	}
+	}*/
 
 	BaseClass::SetPlayerUnderwater( state );
 }

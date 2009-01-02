@@ -126,7 +126,8 @@ public:
 	virtual void		SetupVisibility( CBaseEntity *pViewEntity, unsigned char *pvs, int pvssize );
 
 	// Suit Power Interface
-	void SuitPower_Update( void );
+	//BG2 - Don't need this suit stuff. -HairyPotter
+	/*void SuitPower_Update( void );
 	bool SuitPower_Drain( float flPower ); // consume some of the suit's power.
 	void SuitPower_Charge( float flPower ); // add suit power.
 	void SuitPower_SetCharge( float flPower ) { m_HL2Local.m_flSuitPower = flPower; }
@@ -135,7 +136,8 @@ public:
 	bool SuitPower_AddDevice( const CSuitPowerDevice &device );
 	bool SuitPower_RemoveDevice( const CSuitPowerDevice &device );
 	bool SuitPower_ShouldRecharge( void );
-	float SuitPower_GetCurrentPercentage( void ) { return m_HL2Local.m_flSuitPower; }
+	float SuitPower_GetCurrentPercentage( void ) { return m_HL2Local.m_flSuitPower; }*/
+	//
 	
 	void SetFlashlightEnabled( bool bState );
 

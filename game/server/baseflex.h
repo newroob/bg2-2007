@@ -56,7 +56,7 @@ public:
 	void Blink( );
 
 	virtual	void		SetViewtarget( const Vector &viewtarget );
-	const Vector		&GetViewtarget( void ) const;
+	//const Vector		&GetViewtarget( void ) const; //BG2 - Not needed anymore. -HairyPotter
 
 	void				SetFlexWeight( char *szName, float value );
 	void				SetFlexWeight( LocalFlexController_t index, float value );
@@ -167,7 +167,7 @@ private:
 	CNetworkArray( float, m_flexWeight, MAXSTUDIOFLEXCTRL );	// indexed by model local flexcontroller
 
 	// Vector from actor to eye target
-	CNetworkVector( m_viewtarget );
+	//CNetworkVector( m_viewtarget ); //BG2 - Not needed anymore. -HairyPotter
 
 	// Blink state
 	CNetworkVar( int, m_blinktoggle );
@@ -278,10 +278,11 @@ inline bool CBaseFlex::HasSceneEvents() const
 //-----------------------------------------------------------------------------
 // Other inlines
 //-----------------------------------------------------------------------------
-inline const Vector &CBaseFlex::GetViewtarget( ) const
+//BG2 - Not needed anymore. -HairyPotter
+/*inline const Vector &CBaseFlex::GetViewtarget( ) const
 {
 	return m_viewtarget.Get();	// bah
-}
+}*/
 
 inline void CBaseFlex::SetFlexWeight( char *szName, float value )
 {

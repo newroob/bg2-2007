@@ -201,7 +201,7 @@ static void CreditsDone_f( void )
 
 static ConCommand creditsdone("creditsdone", CreditsDone_f );
 
-extern ConVar sv_unlockedchapters;
+//extern ConVar sv_unlockedchapters;
 
 void CCredits::OnRestore()
 {
@@ -217,7 +217,7 @@ void CCredits::OnRestore()
 
 void CCredits::RollOutroCredits()
 {
-	sv_unlockedchapters.SetValue( "15" );
+	//sv_unlockedchapters.SetValue( "15" ); //BG2 - Don't need this. - HairyPotter
 	
 	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 

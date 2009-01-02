@@ -43,27 +43,18 @@ private:
 	virtual void AddSection(int teamType, int teamNumber); // add a new section header for a team
 
 	int GetSectionFromTeamNumber( int teamNumber );
-	enum 
-	{ 
-		/*CSTRIKE_NAME_WIDTH = 220, //Modded for BG2. -HairyPotter
-		CSTRIKE_CLASS_WIDTH = 56,
-		CSTRIKE_SCORE_WIDTH = 40,
-		CSTRIKE_DEATH_WIDTH = 46,
-		CSTRIKE_PING_WIDTH = 46,*/
-//		CSTRIKE_VOICE_WIDTH = 40, 
-//		CSTRIKE_FRIENDS_WIDTH = 24,
-		CSTRIKE_NAME_WIDTH = 140, //Modded for BG2. -HairyPotter
-		CSTRIKE_CLASS_WIDTH = 28,
-		CSTRIKE_SCORE_WIDTH = 30,
-		CSTRIKE_DEATH_WIDTH = 30,
-		CSTRIKE_PING_WIDTH = 30,
-	};
 
 	// rounded corners
 	Color					 m_bgColor;
 	Color					 m_borderColor;
 
-	int iAmericanDmg, iBritishDmg, iSpecDmg; //BG2 - For the team damage totals. -HairyPotter
+	int iAmericanDmg, iBritishDmg, iSpecDmg,
+		NAME_WIDTH, //Modded for BG2. -HairyPotter
+		CLASS_WIDTH,
+		SCORE_WIDTH,
+		DEATH_WIDTH,
+		PING_WIDTH; //BG2 - For the team damage totals. -HairyPotter
+
 };
 
 

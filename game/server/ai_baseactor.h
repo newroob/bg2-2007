@@ -118,15 +118,9 @@ public:
 	// CBaseFlex
 	virtual	void			SetViewtarget( const Vector &viewtarget );
 	
-	// CAI_BaseNPC
-	virtual float			PickLookTarget( bool bExcludePlayers = false, float minTime = 1.5, float maxTime = 2.5 );
-	virtual float			PickLookTarget( CAI_InterestTarget &queue, bool bExcludePlayers = false, float minTime = 1.5, float maxTime = 2.5 );
-	virtual bool 			PickTacticalLookTarget( AILookTargetArgs_t *pArgs );
-	virtual bool 			PickRandomLookTarget( AILookTargetArgs_t *pArgs );
-	virtual void			MakeRandomLookTarget( AILookTargetArgs_t *pArgs, float minTime, float maxTime );
+	// CAI_BaseNPC 
 	virtual bool			HasActiveLookTargets( void );
 	virtual void 			OnSelectedLookTarget( AILookTargetArgs_t *pArgs ) { return; }
-	virtual void 			ClearLookTarget( CBaseEntity *pTarget );
 	virtual void			ExpireCurrentRandomLookTarget() { m_flNextRandomLookTime = gpGlobals->curtime - 0.1f; }
 
 	virtual void			StartTaskRangeAttack1( const Task_t *pTask );
@@ -142,8 +136,6 @@ public:
 
 	virtual void			MaintainLookTargets( float flInterval );
 	virtual bool			ValidEyeTarget(const Vector &lookTargetPos);
-	virtual bool			ValidHeadTarget(const Vector &lookTargetPos);
-	virtual float			HeadTargetValidity(const Vector &lookTargetPos);
 
 	virtual bool			ShouldBruteForceFailedNav()	{ return true; }
 

@@ -33,6 +33,7 @@
 
 #include "vgui_avatarimage.h"
 
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -64,10 +65,14 @@ CClientScoreBoardDialog::CClientScoreBoardDialog(IViewPort *pViewPort) : Editabl
 	SetScheme("ClientScheme");
 
 	m_pPlayerList = new SectionedListPanel(this, "PlayerList");
+	m_pBritishPlayerList = new SectionedListPanel(this, "BritishPlayerList");
+
 	m_pPlayerList->SetVerticalScrollbar(false);
+	m_pBritishPlayerList->SetVerticalScrollbar(false);
 
 	LoadControlSettings("Resource/UI/ScoreBoard.res");
 	m_iDesiredHeight = GetTall();
+
 	m_pPlayerList->SetVisible( false ); // hide this until we load the images in applyschemesettings
 
 	m_HLTVSpectators = 0;
@@ -145,6 +150,9 @@ void CClientScoreBoardDialog::Reset()
 	m_pPlayerList->DeleteAllItems();
 	m_pPlayerList->RemoveAllSections();
 
+	m_pBritishPlayerList->DeleteAllItems();
+	m_pBritishPlayerList->RemoveAllSections();
+
 	m_iSectionId = 0;
 	m_fNextUpdateTime = 0;
 	// add all the sections
@@ -190,6 +198,9 @@ void CClientScoreBoardDialog::PostApplySchemeSettings( vgui::IScheme *pScheme )
 
 	m_pPlayerList->SetImageList( m_pImageList, false );
 	m_pPlayerList->SetVisible( true );
+
+	m_pBritishPlayerList->SetImageList( m_pImageList, false );
+	m_pBritishPlayerList->SetVisible( true );
 
 	// light up scoreboard a bit
 	SetBgColor( Color( 0,0,0,0) );
@@ -273,23 +284,29 @@ void CClientScoreBoardDialog::Update( void )
 	
 	// Reset();
 	m_pPlayerList->DeleteAllItems();
+
+	m_pBritishPlayerList->DeleteAllItems();
 	
 	FillScoreBoard();
 
 	// grow the scoreboard to fit all the players
 	int wide, tall;
 	m_pPlayerList->GetContentSize(wide, tall);
+	m_pBritishPlayerList->GetContentSize(wide, tall);
+
 	tall += GetAdditionalHeight();
 	wide = GetWide();
 	if (m_iDesiredHeight < tall)
 	{
 		SetSize(wide, tall);
 		m_pPlayerList->SetSize(wide, tall);
+		m_pBritishPlayerList->SetSize(wide, tall);
 	}
 	else
 	{
 		SetSize(wide, m_iDesiredHeight);
 		m_pPlayerList->SetSize(wide, m_iDesiredHeight);
+		m_pBritishPlayerList->SetSize(wide, m_iDesiredHeight);
 	}
 
 	MoveToCenterOfScreen();
@@ -311,67 +328,7 @@ void CClientScoreBoardDialog::UpdateTeamInfo()
 //-----------------------------------------------------------------------------
 void CClientScoreBoardDialog::UpdatePlayerInfo()
 {
-	m_iSectionId = 0; // 0'th row is a header
-	int selectedRow = -1;
-
-	// walk all the players and make sure they're in the scoreboard
-	for ( int i = 1; i <= gpGlobals->maxClients; ++i )
-	{
-		IGameResources *gr = GameResources();
-
-		if ( gr && gr->IsConnected( i ) )
-		{
-			// add the player to the list
-			KeyValues *playerData = new KeyValues("data");
-			GetPlayerScoreInfo( i, playerData );
-			UpdatePlayerAvatar( i, playerData );
-
-			const char *oldName = playerData->GetString("name","");
-			int bufsize = strlen(oldName) * 2 + 1;
-			char *newName = (char *)_alloca( bufsize );
-
-			UTIL_MakeSafeName( oldName, newName, bufsize );
-
-			playerData->SetString("name", newName);
-
-			int itemID = FindItemIDForPlayerIndex( i );
-  			int sectionID = gr->GetTeam( i );
-			
-			if ( gr->IsLocalPlayer( i ) )
-			{
-				selectedRow = itemID;
-			}
-			if (itemID == -1)
-			{
-				// add a new row
-				itemID = m_pPlayerList->AddItem( sectionID, playerData );
-			}
-			else
-			{
-				// modify the current row
-				m_pPlayerList->ModifyItem( itemID, sectionID, playerData );
-			}
-
-			// set the row color based on the players team
-			m_pPlayerList->SetItemFgColor( itemID, gr->GetTeamColor( sectionID ) );
-
-			playerData->deleteThis();
-		}
-		else
-		{
-			// remove the player
-			int itemID = FindItemIDForPlayerIndex( i );
-			if (itemID != -1)
-			{
-				m_pPlayerList->RemoveItem(itemID);
-			}
-		}
-	}
-
-	if ( selectedRow != -1 )
-	{
-		m_pPlayerList->SetSelectedItem(selectedRow);
-	}
+	//BG2 - Use the one in HL2MPClientScoreboard. -HairyPotter
 }
 
 //-----------------------------------------------------------------------------
@@ -379,18 +336,7 @@ void CClientScoreBoardDialog::UpdatePlayerInfo()
 //-----------------------------------------------------------------------------
 void CClientScoreBoardDialog::AddHeader()
 {
-	// add the top header
-	m_pPlayerList->AddSection(m_iSectionId, "");
-	m_pPlayerList->SetSectionAlwaysVisible(m_iSectionId);
-	m_pPlayerList->AddColumnToSection(m_iSectionId, "name", "#PlayerName", 0, scheme()->GetProportionalScaledValue(NAME_WIDTH) );
-	m_pPlayerList->AddColumnToSection(m_iSectionId, "frags", "#PlayerScore", 0, scheme()->GetProportionalScaledValue(SCORE_WIDTH) );
-	//BG2 - Tjoppen - Where is #PlayerDeath defined? HACKHACK for now..
-	//m_pPlayerList->AddColumnToSection(m_iSectionId, "deaths", "#PlayerDeath", 0, scheme()->GetProportionalScaledValue(DEATH_WIDTH) );
-	m_pPlayerList->AddColumnToSection(m_iSectionId, "deaths", "Damage", 0, scheme()->GetProportionalScaledValue(DEATH_WIDTH) );
-	//
-	m_pPlayerList->AddColumnToSection(m_iSectionId, "ping", "#PlayerPing", 0, scheme()->GetProportionalScaledValue(PING_WIDTH) );
-//	m_pPlayerList->AddColumnToSection(m_iSectionId, "voice", "#PlayerVoice", SectionedListPanel::COLUMN_IMAGE | SectionedListPanel::COLUMN_CENTER, scheme()->GetProportionalScaledValue(VOICE_WIDTH) );
-//	m_pPlayerList->AddColumnToSection(m_iSectionId, "tracker", "#PlayerTracker", SectionedListPanel::COLUMN_IMAGE, scheme()->GetProportionalScaledValue(FRIENDS_WIDTH) );
+	//BG2 - Use the one in HL2MPClientScoreboard. -HairyPotter
 }
 
 //-----------------------------------------------------------------------------
@@ -398,51 +344,7 @@ void CClientScoreBoardDialog::AddHeader()
 //-----------------------------------------------------------------------------
 void CClientScoreBoardDialog::AddSection(int teamType, int teamNumber)
 {
-	if ( teamType == TYPE_TEAM )
-	{
-		IGameResources *gr = GameResources();
-
-		if ( !gr )
-			return;
-
-		// setup the team name
-		wchar_t *teamName = g_pVGuiLocalize->Find( gr->GetTeamName(teamNumber) );
-		wchar_t name[64];
-		wchar_t string1[1024];
-		
-		if (!teamName)
-		{
-			g_pVGuiLocalize->ConvertANSIToUnicode(gr->GetTeamName(teamNumber), name, sizeof(name));
-			teamName = name;
-		}
-
-		g_pVGuiLocalize->ConstructString( string1, sizeof( string1 ), g_pVGuiLocalize->Find("#Player"), 2, teamName );
-		
-		m_pPlayerList->AddSection(m_iSectionId, "", StaticPlayerSortFunc);
-
-		// Avatars are always displayed at 32x32 regardless of resolution
-		if ( ShowAvatars() )
-		{
-			m_pPlayerList->AddColumnToSection( m_iSectionId, "avatar", "", SectionedListPanel::COLUMN_IMAGE | SectionedListPanel::COLUMN_CENTER, m_iAvatarWidth );
-		}
-
-		m_pPlayerList->AddColumnToSection(m_iSectionId, "name", string1, 0, scheme()->GetProportionalScaledValueEx( GetScheme(),NAME_WIDTH) - m_iAvatarWidth );
-		m_pPlayerList->AddColumnToSection(m_iSectionId, "frags", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),SCORE_WIDTH) );
-		m_pPlayerList->AddColumnToSection(m_iSectionId, "deaths", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),DEATH_WIDTH) );
-		m_pPlayerList->AddColumnToSection(m_iSectionId, "ping", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),PING_WIDTH) );
-	}
-	else if ( teamType == TYPE_SPECTATORS )
-	{
-		m_pPlayerList->AddSection(m_iSectionId, "");
-
-		// Avatars are always displayed at 32x32 regardless of resolution
-		if ( ShowAvatars() )
-		{
-			m_pPlayerList->AddColumnToSection( m_iSectionId, "avatar", "", SectionedListPanel::COLUMN_IMAGE | SectionedListPanel::COLUMN_CENTER, m_iAvatarWidth );
-		}
-		m_pPlayerList->AddColumnToSection(m_iSectionId, "name", "#Spectators", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),NAME_WIDTH) - m_iAvatarWidth );
-		m_pPlayerList->AddColumnToSection(m_iSectionId, "frags", "", 0, scheme()->GetProportionalScaledValueEx( GetScheme(),SCORE_WIDTH) );
-	}
+	//BG2 - Use the one in HL2MPClientScoreboard. -HairyPotter
 }
 
 //-----------------------------------------------------------------------------
@@ -482,17 +384,7 @@ bool CClientScoreBoardDialog::StaticPlayerSortFunc(vgui::SectionedListPanel *lis
 //-----------------------------------------------------------------------------
 bool CClientScoreBoardDialog::GetPlayerScoreInfo(int playerIndex, KeyValues *kv)
 {
-	IGameResources *gr = GameResources();
-
-	if (!gr )
-		return false;
-
-	kv->SetInt("deaths", gr->GetDeaths( playerIndex ) );
-	kv->SetInt("frags", gr->GetFrags( playerIndex ) );
-	kv->SetInt("ping", gr->GetPing( playerIndex ) ) ;
-	kv->SetString("name", gr->GetPlayerName( playerIndex ) );
-	kv->SetInt("playerIndex", playerIndex);
-
+	//BG2 - Use the one in HL2MPClientScoreboard. -HairyPotter
 	return true;
 }
 
@@ -502,7 +394,7 @@ bool CClientScoreBoardDialog::GetPlayerScoreInfo(int playerIndex, KeyValues *kv)
 void CClientScoreBoardDialog::UpdatePlayerAvatar( int playerIndex, KeyValues *kv )
 {
 	// Update their avatar
-	if ( kv && ShowAvatars() && SteamFriends() && SteamUtils() )
+	/*if ( kv && ShowAvatars() && SteamFriends() && SteamUtils() )
 	{
 		player_info_t pi;
 		if ( engine->GetPlayerInfo( playerIndex, &pi ) )
@@ -538,7 +430,7 @@ void CClientScoreBoardDialog::UpdatePlayerAvatar( int playerIndex, KeyValues *kv
 				}
 			}
 		}
-	}
+	}*/
 }
 
 //-----------------------------------------------------------------------------

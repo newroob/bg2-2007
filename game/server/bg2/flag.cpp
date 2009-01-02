@@ -150,6 +150,8 @@ void CFlag::Spawn( void )
 
 	SetModel( "models/other/flag.mdl" ); //Always first.
 
+	m_iSavedHUDSlot = m_iHUDSlot;
+
 	if (HasSpawnFlags( CFlag_START_DISABLED ))
 	{
 		m_bActive = false;
@@ -216,6 +218,7 @@ void CFlag::Think( void )
 		ChangeTeam( TEAM_UNASSIGNED );
 		m_iLastTeam = TEAM_UNASSIGNED;
 		AddEffects( EF_NODRAW );
+		m_iHUDSlot = -1; //Make it disappear from the hud as well.
 		SetNextThink( gpGlobals->curtime + 1.25f ); //No need to think soo much. 
 		return; //Die here
 	}
@@ -227,7 +230,10 @@ void CFlag::Think( void )
 	//
 
 	if ( IsEffectActive( EF_NODRAW ) ) //If you've come this far into the code you're definately not disabled, just make sure you're visible.
+	{
+		m_iHUDSlot = m_iSavedHUDSlot;
 		RemoveEffects( EF_NODRAW );
+	}
 
 
 	//award any time bonii
@@ -758,7 +764,7 @@ BEGIN_NETWORK_TABLE( CFlag, DT_Flag )
 	SendPropFloat( SENDINFO( m_flCaptureTime ) ),
 	SendPropStringT( SENDINFO( m_sFlagName ) ),
 	SendPropInt( SENDINFO( m_iHUDSlot ), 5 ),	//15 slots.. 0 = sequential tile, -1 = hidden(don't draw)
-	SendPropBool( SENDINFO( m_bActive ) ),
+	//SendPropBool( SENDINFO( m_bActive ) ), //Tweaked the hudslots to not show anyway. Why send excess shit over the network when it does nothing?
 	SendPropBool( SENDINFO( m_bNotUncappable ) ),
 	SendPropBool( SENDINFO( m_bUncapOnDeath ) ),
 	

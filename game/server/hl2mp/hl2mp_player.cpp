@@ -93,7 +93,7 @@ IMPLEMENT_SERVERCLASS_ST(CHL2MP_Player, DT_HL2MP_Player)
 	//
 	
 	SendPropExclude( "DT_BaseAnimating", "m_flPoseParameter" ),
-	SendPropExclude( "DT_BaseFlex", "m_viewtarget" ),
+	//SendPropExclude( "DT_BaseFlex", "m_viewtarget" ), //BG2 - Not needed anymore. -HairyPotter
 
 	//BG2 - Tjoppen - send stamina via C_HL2MP_Player <=> DT_HL2MP_Player <=> CHL2MP_Player
 	SendPropInt( SENDINFO( m_iStamina ), 7, SPROP_UNSIGNED ),	//0 <= stamina <= 100, 7 bits enough
@@ -311,33 +311,6 @@ void CHL2MP_Player::GiveDefaultItems( void )
 		
 		//Weapon_Switch( Weapon_OwnsThisType( "weapon_brownbess" ) );
 	}
-
-	/*if ( GetPlayerModelType() == PLAYER_SOUNDS_METROPOLICE || GetPlayerModelType() == PLAYER_SOUNDS_COMBINESOLDIER )
-	{
-		GiveNamedItem( "weapon_stunstick" );
-	}
-	else if ( GetPlayerModelType() == PLAYER_SOUNDS_CITIZEN )
-	{
-		GiveNamedItem( "weapon_crowbar" );
-	}
-	
-	GiveNamedItem( "weapon_pistol" );
-	GiveNamedItem( "weapon_smg1" );
-	GiveNamedItem( "weapon_frag" );
-	GiveNamedItem( "weapon_physcannon" );
-
-	const char *szDefaultWeaponName = engine->GetClientConVarValue( engine->IndexOfEdict( edict() ), "cl_defaultweapon" );
-
-	CBaseCombatWeapon *pDefaultWeapon = Weapon_OwnsThisType( szDefaultWeaponName );
-
-	if ( pDefaultWeapon )
-	{
-		Weapon_Switch( pDefaultWeapon );
-	}
-	else
-	{
-		Weapon_Switch( Weapon_OwnsThisType( "weapon_physcannon" ) );
-	}*/
 }
 
 //BG2 - Tjoppen - g_pLastIntermission
@@ -2257,34 +2230,66 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 	player = edict();
 
 	//BG2 - Rewrote all of the stuff below. -HairyPotter
-	if ( GetTeamNumber() == TEAM_AMERICANS )
+	//if ( GetTeamNumber() == TEAM_AMERICANS )
+	switch ( GetTeamNumber() )
 	{
-		while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_american" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
-		{
-			CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
-			if ( pSpot && pSpawn->IsEnabled() )
+		case TEAM_AMERICANS:
+			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_american" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
 			{
-				CBaseEntity *ent = NULL;
-				bool IsTaken = false;
-				//32 world units seems... safe.. -HairyPotter
-				for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 /*128*/ ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
+				CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
+				if ( pSpot && pSpawn->IsEnabled() )
 				{
-					// Check to see if the ent is a player.
-					if ( ent->IsPlayer() && !(ent->edict() == player) )
+					CBaseEntity *ent = NULL;
+					bool IsTaken = false;
+					//32 world units seems... safe.. -HairyPotter
+					for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 /*128*/ ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 					{
-						IsTaken = true;
-						//Msg("Someone is in the way of the american spawn. \n");
+						// Check to see if the ent is a player.
+						if ( ent->IsPlayer() && !(ent->edict() == player) )
+						{
+							IsTaken = true;
+							//Msg("Someone is in the way of the american spawn. \n");
+						}
 					}
-				}
-				if ( IsTaken ) //Retry?
-					continue;
+					if ( IsTaken ) //Retry?
+						continue;
 				
-				pSpot->AddEFlags( EFL_DORMANT );
-				goto ReturnSpot; //Spawn.
+					pSpot->AddEFlags( EFL_DORMANT );
+					goto ReturnSpot; //Spawn. Also pretend this goto doesn't exist.
+				}
 			}
-		}
+			break;
+		case TEAM_BRITISH:
+			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_british" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
+			{
+				CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
+				if ( pSpot && pSpawn->IsEnabled() )
+				{
+					CBaseEntity *ent = NULL;
+					bool IsTaken = false;
+					//32 world units seems... safe.. -HairyPotter
+					for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
+					{
+						// Check to see if the ent is a player.
+						if ( ent->IsPlayer() && !(ent->edict() == player) )
+						{	
+							IsTaken = true;
+							//Msg("Someone is in the way of the british spawn. \n");
+						}
+					}
+					if ( IsTaken ) //Retry?
+						continue;
+
+					pSpot->AddEFlags( EFL_DORMANT );
+					goto ReturnSpot; //Spawn.
+				}
+			}
+			break;
+		default:
+			return false;
+			break;
 	}
-	else if ( GetTeamNumber() == TEAM_BRITISH )
+	/*else if ( GetTeamNumber() == TEAM_BRITISH )
 	{
 		while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_british" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
 		{
@@ -2312,7 +2317,7 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 		}
 	}
 	else
-		return false;
+		return false;*/
 	//
 
 ReturnSpot:

@@ -60,7 +60,7 @@ IMPLEMENT_SERVERCLASS_ST(CBaseFlex, DT_BaseFlex)
 // Note we can't totally disabled flexweights transmission since some things like blink and eye tracking are still done by the server
 	SendPropArray3	(SENDINFO_ARRAY3(m_flexWeight), SendPropFloat(SENDINFO_ARRAY(m_flexWeight), 12, SPROP_ROUNDDOWN, 0.0f, 1.0f ) /*, SendProxy_FlexWeights*/ ),
 	SendPropInt		(SENDINFO(m_blinktoggle), 1, SPROP_UNSIGNED ),
-	SendPropVector	(SENDINFO(m_viewtarget), -1, SPROP_COORD),
+	//SendPropVector	(SENDINFO(m_viewtarget), -1, SPROP_COORD), //BG2 - Not needed anymore. -HairyPotter
 #ifdef HL2_DLL
 	SendPropFloat	( SENDINFO_VECTORELEM(m_vecViewOffset, 0), 0, SPROP_NOSCALE ),
 	SendPropFloat	( SENDINFO_VECTORELEM(m_vecViewOffset, 1), 0, SPROP_NOSCALE ),
@@ -77,7 +77,7 @@ BEGIN_DATADESC( CBaseFlex )
 
 	//						m_blinktoggle
 	DEFINE_ARRAY( m_flexWeight, FIELD_FLOAT, MAXSTUDIOFLEXCTRL ),
-	DEFINE_FIELD( m_viewtarget, FIELD_POSITION_VECTOR ),
+	//DEFINE_FIELD( m_viewtarget, FIELD_POSITION_VECTOR ), //BG2 - Not needed anymore. -HairyPotter
 	//						m_SceneEvents
 	//						m_FileList
 	DEFINE_FIELD( m_flAllowResponsesEndTime, FIELD_TIME ),
@@ -131,7 +131,7 @@ void CBaseFlex::SetModel( const char *szModelName )
 
 void CBaseFlex::SetViewtarget( const Vector &viewtarget )
 {
-	m_viewtarget = viewtarget;	// bah
+	//m_viewtarget = viewtarget;	//BG2 - Not needed anymore. -HairyPotter
 }
 
 void CBaseFlex::SetFlexWeight( LocalFlexController_t index, float value )
@@ -1478,7 +1478,7 @@ bool CBaseFlex::ProcessMoveToSceneEvent( CSceneEventInfo *info, CChoreoScene *sc
 bool CBaseFlex::ProcessLookAtSceneEvent( CSceneEventInfo *info, CChoreoScene *scene, CChoreoEvent *event )
 {
 	VPROF( "CBaseFlex::ProcessLookAtSceneEvent" );
-	CAI_BaseNPC *myNpc = MyNPCPointer( );
+	/*CAI_BaseNPC *myNpc = MyNPCPointer( ); //Testing - HairyPotter
 	if (myNpc && info->m_hTarget != NULL)
 	{
 		float intensity = event->GetIntensity( scene->GetTime() );
@@ -1489,14 +1489,7 @@ bool CBaseFlex::ProcessLookAtSceneEvent( CSceneEventInfo *info, CChoreoScene *sc
 		intensity = clamp( intensity, 0.0f, flMaxIntensity );
 
 		myNpc->AddLookTarget( info->m_hTarget, intensity, 0.1 );
-		if (developer.GetInt() > 0 && scene_showlook.GetBool() && info->m_hTarget)
-		{
-			Vector tmp = info->m_hTarget->EyePosition() - myNpc->EyePosition();
-			VectorNormalize( tmp );
-			Vector p0 = myNpc->EyePosition();
-			NDebugOverlay::VertArrow( p0, p0 + tmp * (4 + 16 * intensity ), 4, 255, 255, 255, 0, true, 0.12 );
-		}
-	}
+	}*/
 	return true;
 }
 
@@ -2547,26 +2540,6 @@ void CFlexCycler::Think( void )
 					SetFlexTarget( m_flexnum );
 				}
 			}
-
-#if 0
-			char szWhat[256];
-			szWhat[0] = '\0';
-			for (int i = 0; i < GetNumFlexControllers(); i++)
-			{
-				if (m_flextarget[i] == 1.0)
-				{
-					if (stricmp( GetFlexFacs( i ), "upper") != 0 && stricmp( GetFlexFacs( i ), "lower") != 0)
-					{
-						if (szWhat[0] == '\0')
-							Q_strncat( szWhat, "-", sizeof( szWhat ), COPY_ALL_CHARACTERS );
-						else
-							Q_strncat( szWhat, "+", sizeof( szWhat ), COPY_ALL_CHARACTERS );
-						Q_strncat( szWhat, GetFlexFacs( i ), sizeof( szWhat ), COPY_ALL_CHARACTERS );
-					}
-				}
-			}
-			Msg( "%s\n", szWhat );
-#endif
 		}
 
 		// slide it up.
@@ -2671,7 +2644,7 @@ void CFlexCycler::Think( void )
 	Vector forward, right, up;
 	GetVectors( &forward, &right, &up );
 
-	CBaseEntity *pPlayer = (CBaseEntity *)UTIL_GetLocalPlayer();
+	/*CBaseEntity *pPlayer = (CBaseEntity *)UTIL_GetLocalPlayer(); //Testing - HairyPotter
 	if (pPlayer)
 	{
 		if (pPlayer->GetSmoothedVelocity().Length() != 0 && DotProduct( forward, pPlayer->EyePosition() - EyePosition()) > 0.5)
@@ -2698,18 +2671,8 @@ void CFlexCycler::Think( void )
 			}
 		}
 
-#if 0
-		float dt = acos( DotProduct( (m_lookTarget - EyePosition()).Normalize(), (m_viewtarget - EyePosition()).Normalize() ) );
-
-		if (dt > M_PI / 4)
-		{
-			dt = (M_PI / 4) * dt;
-			m_viewtarget = ((1 - dt) * m_viewtarget + dt * m_lookTarget);
-		}
-#endif
-
 		SetViewtarget( m_lookTarget );
-	}
+	}*/
 
 	// Handle any facial animation from scene playback
 	// FIXME: do we still actually need flex cyclers?
