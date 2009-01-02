@@ -23,7 +23,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+/* //BG2 - Don't need any hud stuff for zooming anymore. -HairyPotter
 //-----------------------------------------------------------------------------
 // Purpose: Draws the zoom screen
 //-----------------------------------------------------------------------------
@@ -255,4 +255,4 @@ void CHudZoom::Paint( void )
 	pMesh->Draw();
 
 	m_bPainted = true;
-}
+}*/

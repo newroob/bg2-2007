@@ -70,8 +70,6 @@ public:
 
 	
 	bool	CanSprint( void );
-	void	StartSprinting( void );
-	void	StopSprinting( void );
 	void	HandleSpeedChanges( void );
 	void	UpdateLookAt( void );
 	void	Initialize( void );
@@ -96,10 +94,6 @@ private:
 
 	HL2MPPlayerState State_Get() const;
 
-	// Walking
-	void StartWalking( void );
-	void StopWalking( void );
-	bool IsWalking( void ) { return m_fIsWalking; }
 
 private:
 	
@@ -141,7 +135,7 @@ private:
 
 	CNetworkVar( HL2MPPlayerState, m_iPlayerState );	
 
-	bool m_fIsWalking;
+	//bool m_fIsWalking;
 };
 
 //BG2 - Tjoppen - class system

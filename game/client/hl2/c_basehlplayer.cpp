@@ -25,17 +25,14 @@ extern ConVar zoom_sensitivity_ratio;
 extern ConVar default_fov;
 extern ConVar sensitivity;
 
-ConVar cl_npc_speedmod_intime( "cl_npc_speedmod_intime", "0.25", FCVAR_CLIENTDLL | FCVAR_ARCHIVE );
-ConVar cl_npc_speedmod_outtime( "cl_npc_speedmod_outtime", "1.5", FCVAR_CLIENTDLL | FCVAR_ARCHIVE );
-
 IMPLEMENT_CLIENTCLASS_DT(C_BaseHLPlayer, DT_HL2_Player, CHL2_Player)
 	RecvPropDataTable( RECVINFO_DT(m_HL2Local),0, &REFERENCE_RECV_TABLE(DT_HL2Local) ),
-	RecvPropBool( RECVINFO( m_fIsSprinting ) ),
+	//RecvPropBool( RECVINFO( m_fIsSprinting ) ), //BG2 - Don't need this. -HairyPotter
 END_RECV_TABLE()
 
 BEGIN_PREDICTION_DATA( C_BaseHLPlayer )
 	DEFINE_PRED_TYPEDESCRIPTION( m_HL2Local, C_HL2PlayerLocalData ),
-	DEFINE_PRED_FIELD( m_fIsSprinting, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
+	//DEFINE_PRED_FIELD( m_fIsSprinting, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 END_PREDICTION_DATA()
 
 //-----------------------------------------------------------------------------
@@ -531,96 +528,6 @@ void C_BaseHLPlayer::PerformClientSideObstacleAvoidance( float flFrameTime, CUse
 
 void C_BaseHLPlayer::PerformClientSideNPCSpeedModifiers( float flFrameTime, CUserCmd *pCmd )
 {
-	if ( m_hClosestNPC == NULL )
-	{
-		if ( m_flSpeedMod != cl_forwardspeed.GetFloat() )
-		{
-			float flDeltaTime = (m_flSpeedModTime - gpGlobals->curtime);
-			m_flSpeedMod = RemapValClamped( flDeltaTime, cl_npc_speedmod_outtime.GetFloat(), 0, m_flExitSpeedMod, cl_forwardspeed.GetFloat() );
-		}
-	}
-	else
-	{
-		C_AI_BaseNPC *pNPC = dynamic_cast< C_AI_BaseNPC *>( m_hClosestNPC.Get() );
-
-		if ( pNPC )
-		{
-			float flDist = (GetAbsOrigin() - pNPC->GetAbsOrigin()).LengthSqr();
-			bool bShouldModSpeed = false; 
-
-			// Within range?
-			if ( flDist < pNPC->GetSpeedModifyRadius() )
-			{
-				// Now, only slowdown if we're facing & running parallel to the target's movement
-				// Facing check first (in 2D)
-				Vector vecTargetOrigin = pNPC->GetAbsOrigin();
-				Vector los = ( vecTargetOrigin - EyePosition() );
-				los.z = 0;
-				VectorNormalize( los );
-				Vector facingDir;
-				AngleVectors( GetAbsAngles(), &facingDir );
-				float flDot = DotProduct( los, facingDir );
-				if ( flDot > 0.8 )
-				{
-					/*
-					// Velocity check (abort if the target isn't moving)
-					Vector vecTargetVelocity;
-					pNPC->EstimateAbsVelocity( vecTargetVelocity );
-					float flSpeed = VectorNormalize(vecTargetVelocity);
-					Vector vecMyVelocity = GetAbsVelocity();
-					VectorNormalize(vecMyVelocity);
-					if ( flSpeed > 1.0 )
-					{
-						// Velocity roughly parallel?
-						if ( DotProduct(vecTargetVelocity,vecMyVelocity) > 0.4  )
-						{
-							bShouldModSpeed = true;
-						}
-					} 
-					else
-					{
-						// NPC's not moving, slow down if we're moving at him
-						//Msg("Dot: %.2f\n", DotProduct( los, vecMyVelocity ) );
-						if ( DotProduct( los, vecMyVelocity ) > 0.8 )
-						{
-							bShouldModSpeed = true;
-						} 
-					}
-					*/
-
-					bShouldModSpeed = true;
-				}
-			}
-
-			if ( !bShouldModSpeed )
-			{
-				m_hClosestNPC = NULL;
-				m_flSpeedModTime = gpGlobals->curtime + cl_npc_speedmod_outtime.GetFloat();
-				m_flExitSpeedMod = m_flSpeedMod;
-				return;
-			}
-			else 
-			{
-				if ( m_flSpeedMod != pNPC->GetSpeedModifySpeed() )
-				{
-					float flDeltaTime = (m_flSpeedModTime - gpGlobals->curtime);
-					m_flSpeedMod = RemapValClamped( flDeltaTime, cl_npc_speedmod_intime.GetFloat(), 0, cl_forwardspeed.GetFloat(), pNPC->GetSpeedModifySpeed() );
-				}
-			}
-		}
-	}
-
-	if ( pCmd->forwardmove > 0.0f )
-	{
-		pCmd->forwardmove = clamp( pCmd->forwardmove, -m_flSpeedMod, m_flSpeedMod );
-	}
-	else
-	{
-		pCmd->forwardmove = clamp( pCmd->forwardmove, -m_flSpeedMod, m_flSpeedMod );
-	}
-	pCmd->sidemove = clamp( pCmd->sidemove, -m_flSpeedMod, m_flSpeedMod );
-   
-	//Msg( "fwd %f right %f\n", pCmd->forwardmove, pCmd->sidemove );
 }
 
 //-----------------------------------------------------------------------------

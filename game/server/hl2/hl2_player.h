@@ -174,19 +174,19 @@ public:
 	bool CanSprint( void );
 	//void EnableSprint( bool bEnable);
 
-	bool CanZoom( CBaseEntity *pRequester );
+	/*bool CanZoom( CBaseEntity *pRequester );
 	void ToggleZoom(void);
 	void StartZooming( void );
 	void StopZooming( void );
 	bool IsZooming( void );
-	void CheckSuitZoom( void );
+	void CheckSuitZoom( void );*/
 
 	// Walking
 	//BG2 - Don't need these. -HairyPotter
 	//void StartWalking( void );
 	//void StopWalking( void );
 	//
-	bool IsWalking( void ) { return m_fIsWalking; }
+	//bool IsWalking( void ) { return m_fIsWalking; }
 
 	// Aiming heuristics accessors
 	virtual float		GetIdleTime( void ) const { return ( m_flIdleTime - m_flMoveTime ); }
@@ -320,8 +320,8 @@ private:
 	bool				m_bIsAutoSprinting;		// A proxy for holding down the sprint key.
 	float				m_fAutoSprintMinTime;	// Minimum time to maintain autosprint regardless of player speed. 
 
-	CNetworkVar( bool, m_fIsSprinting );
-	CNetworkVarForDerived( bool, m_fIsWalking );
+	//CNetworkVar( bool, m_fIsSprinting ); //BG2 - Don't need these. -HairyPotter
+	//CNetworkVarForDerived( bool, m_fIsWalking );
 
 protected:	// Jeep: Portal_Player needs access to this variable to overload PlayerUse for picking up objects through portals
 	bool				m_bPlayUseDenySound;		// Signaled by PlayerUse, but can be unset by HL2 ladder code...

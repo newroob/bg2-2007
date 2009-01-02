@@ -18,7 +18,6 @@ IMPLEMENT_CLIENTCLASS_DT( C_Koth, DT_Koth, CKoth )
 	RecvPropFloat( RECVINFO( m_flCaptureTime ) ),
 	RecvPropString( RECVINFO( m_sTriggerName ) ),		
 	RecvPropInt( RECVINFO( m_iHUDSlot ) ),			
-	//RecvPropBool( RECVINFO( m_bActive ) ), //Tweaked. See flag.cpp in the server project. -HairyPotter
 
 
 END_RECV_TABLE()

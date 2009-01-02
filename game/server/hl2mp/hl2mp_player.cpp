@@ -2018,7 +2018,7 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 	m_lifeState = LIFE_DEAD;
 
 	RemoveEffects( EF_NODRAW );	// still draw player body
-	StopZooming();
+	//StopZooming();
 }
 
 //BG2 - Tjoppen - GetHitgroupPainSound

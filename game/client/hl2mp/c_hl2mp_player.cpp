@@ -29,7 +29,7 @@ IMPLEMENT_CLIENTCLASS_DT(C_HL2MP_Player, DT_HL2MP_Player, CHL2MP_Player)
 	RecvPropInt( RECVINFO( m_iSpawnInterpCounter ) ),
 	RecvPropInt( RECVINFO( m_iPlayerSoundType) ),
 
-	RecvPropBool( RECVINFO( m_fIsWalking ) ),
+	//RecvPropBool( RECVINFO( m_fIsWalking ) ),
 
 	//BG2 - Tjoppen - send stamina via C_HL2MP_Player <=> DT_HL2MP_Player <=> CHL2MP_Player
 	RecvPropInt( RECVINFO( m_iStamina) ),
@@ -41,12 +41,8 @@ END_RECV_TABLE()
 
 
 BEGIN_PREDICTION_DATA( C_HL2MP_Player )
-	DEFINE_PRED_FIELD( m_fIsWalking, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
+	//DEFINE_PRED_FIELD( m_fIsWalking, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 END_PREDICTION_DATA()
-
-#define	HL2_WALK_SPEED 150
-#define	HL2_NORM_SPEED 190
-#define	HL2_SPRINT_SPEED 320
 
 static ConVar cl_playermodel( "cl_playermodel", "none", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Default Player Model");
 
@@ -340,13 +336,6 @@ void C_HL2MP_Player::PreThink( void )
 
 	HandleSpeedChanges();
 
-	if ( m_HL2Local.m_flSuitPower <= 0.0f )
-	{
-		if( IsSprinting() )
-		{
-			StopSprinting();
-		}
-	}
 }
 
 //BG2 - Tjoppen - EyeAngles() for C_HL2MP_Player
@@ -579,35 +568,6 @@ bool C_HL2MP_Player::CanSprint( void )
 
 
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void C_HL2MP_Player::StartSprinting( void )
-{
-	if( m_HL2Local.m_flSuitPower < 10 )
-	{
-		// Don't sprint unless there's a reasonable
-		// amount of suit power.
-		CPASAttenuationFilter filter( this );
-		filter.UsePredictionRules();
-		EmitSound( filter, entindex(), "HL2Player.SprintNoPower" );
-		return;
-	}
-
-	CPASAttenuationFilter filter( this );
-	filter.UsePredictionRules();
-	EmitSound( filter, entindex(), "HL2Player.SprintStart" );
-
-	SetMaxSpeed( HL2_SPRINT_SPEED );
-	m_fIsSprinting = true;
-}
-
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void C_HL2MP_Player::StopSprinting( void )
-{
-	SetMaxSpeed( HL2_NORM_SPEED );
-	m_fIsSprinting = false;
-}
 
 void C_HL2MP_Player::HandleSpeedChanges( void )
 {
@@ -643,22 +603,6 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 		SetMaxSpeed( iSpeed2 * scale );
 	else
 		SetMaxSpeed( iSpeed * scale );
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void C_HL2MP_Player::StartWalking( void )
-{
-	SetMaxSpeed( HL2_WALK_SPEED );
-	m_fIsWalking = true;
-}
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void C_HL2MP_Player::StopWalking( void )
-{
-	SetMaxSpeed( HL2_NORM_SPEED );
-	m_fIsWalking = false;
 }
 
 void C_HL2MP_Player::ItemPreFrame( void )

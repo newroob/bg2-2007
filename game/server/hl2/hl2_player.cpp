@@ -313,8 +313,8 @@ BEGIN_DATADESC( CHL2_Player )
 
 	DEFINE_FIELD( m_bSprintEnabled, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_flTimeAllSuitDevicesOff, FIELD_TIME ),
-	DEFINE_FIELD( m_fIsSprinting, FIELD_BOOLEAN ),
-	DEFINE_FIELD( m_fIsWalking, FIELD_BOOLEAN ),
+	//DEFINE_FIELD( m_fIsSprinting, FIELD_BOOLEAN ),
+	//DEFINE_FIELD( m_fIsWalking, FIELD_BOOLEAN ),
 
 	/*
 	// These are initialized every time the player calls Activate()
@@ -411,7 +411,7 @@ CSuitPowerDevice SuitDeviceBreather( bits_SUIT_DEVICE_BREATHER, 6.7f );		// 100 
 
 IMPLEMENT_SERVERCLASS_ST(CHL2_Player, DT_HL2_Player)
 	SendPropDataTable(SENDINFO_DT(m_HL2Local), &REFERENCE_SEND_TABLE(DT_HL2Local), SendProxy_SendLocalDataTable),
-	SendPropBool( SENDINFO(m_fIsSprinting) ),
+	//SendPropBool( SENDINFO(m_fIsSprinting) ), //BG2 - Don't need this anymore. -HairyPotter
 END_SEND_TABLE()
 
 
@@ -436,7 +436,7 @@ void CHL2_Player::Precache( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CHL2_Player::CheckSuitZoom( void )
+/*void CHL2_Player::CheckSuitZoom( void ) //BG2 - Just remove the function entirely? -HairyPotter
 {
 //#ifndef _XBOX 
 	//Adrian - No zooming without a suit!
@@ -453,7 +453,7 @@ void CHL2_Player::CheckSuitZoom( void )
 		}
 	}*/
 //#endif//_XBOX
-}
+//}
 
 void CHL2_Player::EquipSuit( bool bPlayEffects )
 {
@@ -606,9 +606,9 @@ void CHL2_Player::PreThink(void)
 	CheckSuitUpdate();
 	VPROF_SCOPE_END();
 
-	VPROF_SCOPE_BEGIN( "CHL2_Player::PreThink-CheckSuitZoom" );
+	/*VPROF_SCOPE_BEGIN( "CHL2_Player::PreThink-CheckSuitZoom" );
 	CheckSuitZoom();
-	VPROF_SCOPE_END();
+	VPROF_SCOPE_END();*/
 
 	if (m_lifeState >= LIFE_DYING)
 	{
@@ -1031,7 +1031,6 @@ void CHL2_Player::UpdateLocatorPosition( const Vector &vecPosition )
 bool CHL2_Player::CanSprint()
 {
 	return ( m_bSprintEnabled &&										// Only if sprint is enabled 
-			!IsWalking() &&												// Not if we're walking
 			!( m_Local.m_bDucked && !m_Local.m_bDucking ) &&			// Nor if we're ducking
 			(GetWaterLevel() != 3) &&									// Certainly not underwater
 			(GlobalEntity_GetState("suit_no_sprint") != GLOBAL_ON) );	// Out of the question without the sprint module
@@ -1144,7 +1143,7 @@ void CHL2_Player::StopWalking( void )
 	SetMaxSpeed( HL2_NORM_SPEED );
 	m_fIsWalking = false;
 }
-*/
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Output : Returns true on success, false on failure.
@@ -1208,7 +1207,7 @@ bool CHL2_Player::IsZooming( void )
 		return true;
 
 	return false;
-}
+}*/
 
 class CPhysicsPlayerCallback : public IPhysicsPlayerControllerEvent
 {
@@ -3101,10 +3100,10 @@ bool CHL2_Player::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelindex 
 	SetCurrentWeaponProficiency( CalcWeaponProficiency( pWeapon ) );
 
 	// Come out of suit zoom mode
-	if ( IsZooming() )
+	/*if ( IsZooming() )
 	{
 		StopZooming();
-	}
+	}*/
 
 	return BaseClass::Weapon_Switch( pWeapon, viewmodelindex );
 }
