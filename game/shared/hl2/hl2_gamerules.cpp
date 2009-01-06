@@ -68,41 +68,8 @@ IMPLEMENT_NETWORKCLASS_ALIASED( HalfLife2Proxy, DT_HalfLife2Proxy )
 	END_SEND_TABLE()
 #endif
 
-ConVar  physcannon_mega_enabled( "physcannon_mega_enabled", "0", FCVAR_CHEAT | FCVAR_REPLICATED );
-
 // Controls the application of the robus radius damage model.
 ConVar	sv_robust_explosions( "sv_robust_explosions","1", FCVAR_REPLICATED );
-
-// Damage scale for damage inflicted by the player on each skill level.
-ConVar	sk_dmg_inflict_scale1( "sk_dmg_inflict_scale1", "1.50", FCVAR_REPLICATED );
-ConVar	sk_dmg_inflict_scale2( "sk_dmg_inflict_scale2", "1.00", FCVAR_REPLICATED );
-ConVar	sk_dmg_inflict_scale3( "sk_dmg_inflict_scale3", "0.75", FCVAR_REPLICATED );
-
-// Damage scale for damage taken by the player on each skill level.
-ConVar	sk_dmg_take_scale1( "sk_dmg_take_scale1", "0.50", FCVAR_REPLICATED );
-ConVar	sk_dmg_take_scale2( "sk_dmg_take_scale2", "1.00", FCVAR_REPLICATED );
-#ifdef HL2_EPISODIC
-	ConVar	sk_dmg_take_scale3( "sk_dmg_take_scale3", "2.0", FCVAR_REPLICATED );
-#else
-	ConVar	sk_dmg_take_scale3( "sk_dmg_take_scale3", "1.50", FCVAR_REPLICATED );
-#endif//HL2_EPISODIC
-
-ConVar	sk_allow_autoaim( "sk_allow_autoaim", "1", FCVAR_REPLICATED | FCVAR_ARCHIVE_XBOX );
-
-// Autoaim scale
-ConVar	sk_autoaim_scale1( "sk_autoaim_scale1", "1.0", FCVAR_REPLICATED );
-ConVar	sk_autoaim_scale2( "sk_autoaim_scale2", "1.0", FCVAR_REPLICATED );
-//ConVar	sk_autoaim_scale3( "sk_autoaim_scale3", "0.0", FCVAR_REPLICATED ); NOT CURRENTLY OFFERED ON SKILL 3
-
-// Quantity scale for ammo received by the player.
-ConVar	sk_ammo_qty_scale1 ( "sk_ammo_qty_scale1", "1.20", FCVAR_REPLICATED );
-ConVar	sk_ammo_qty_scale2 ( "sk_ammo_qty_scale2", "1.00", FCVAR_REPLICATED );
-ConVar	sk_ammo_qty_scale3 ( "sk_ammo_qty_scale3", "0.60", FCVAR_REPLICATED );
-
-ConVar	sk_plr_health_drop_time		( "sk_plr_health_drop_time", "30", FCVAR_REPLICATED );
-ConVar	sk_plr_grenade_drop_time	( "sk_plr_grenade_drop_time", "30", FCVAR_REPLICATED );
-
-
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -127,20 +94,12 @@ int CHalfLife2::Damage_GetTimeBased( void )
 bool CHalfLife2::Damage_IsTimeBased( int iDmgType )
 {
 	// Damage types that are time-based.
-#ifdef HL2_EPISODIC
-	// This makes me think EP2 should have its own rules, but they are #ifdef all over in here.
-	return ( ( iDmgType & ( DMG_PARALYZE | DMG_NERVEGAS | DMG_POISON | DMG_RADIATION | DMG_DROWNRECOVER | DMG_SLOWBURN ) ) != 0 );
-#else
 	return BaseClass::Damage_IsTimeBased( iDmgType );
-#endif
 }
 
 #ifdef CLIENT_DLL
 #else
 
-#ifdef HL2_EPISODIC
-ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REPLICATED );
-#endif // HL2_EPISODIC
 
 #endif // CLIENT_DLL
 
@@ -343,29 +302,8 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 		switch (classType)
 		{
 			case CLASS_NONE:			return "CLASS_NONE";
-			case CLASS_PLAYER:			return "CLASS_PLAYER";
-			/*case CLASS_ANTLION:			return "CLASS_ANTLION";
-			case CLASS_BARNACLE:		return "CLASS_BARNACLE";
-			case CLASS_BULLSEYE:		return "CLASS_BULLSEYE";
-			//case CLASS_BULLSQUID:		return "CLASS_BULLSQUID";	
-			case CLASS_CITIZEN_PASSIVE: return "CLASS_CITIZEN_PASSIVE";		
-			case CLASS_CITIZEN_REBEL:	return "CLASS_CITIZEN_REBEL";
-			case CLASS_COMBINE:			return "CLASS_COMBINE";
-			case CLASS_COMBINE_GUNSHIP:	return "CLASS_COMBINE_GUNSHIP";
-			case CLASS_COMBINE_HUNTER:	return "CLASS_COMBINE_HUNTER";
-			case CLASS_CONSCRIPT:		return "CLASS_CONSCRIPT";
-			case CLASS_HEADCRAB:		return "CLASS_HEADCRAB";
-			//case CLASS_HOUNDEYE:		return "CLASS_HOUNDEYE";
-			case CLASS_MANHACK:			return "CLASS_MANHACK";
-			case CLASS_METROPOLICE:		return "CLASS_METROPOLICE";
-			case CLASS_MILITARY:		return "CLASS_MILITARY";	
-			case CLASS_SCANNER:			return "CLASS_SCANNER";		
-			case CLASS_STALKER:			return "CLASS_STALKER";		
-			case CLASS_VORTIGAUNT:		return "CLASS_VORTIGAUNT";
-			case CLASS_ZOMBIE:			return "CLASS_ZOMBIE";*/
+			case CLASS_PLAYER:			return "CLASS_PLAYER";	
 			case CLASS_PROTOSNIPER:		return "CLASS_PROTOSNIPER";
-			/*case CLASS_MISSILE:			return "CLASS_MISSILE";
-			case CLASS_FLARE:			return "CLASS_FLARE";*/
 			case CLASS_EARTH_FAUNA:		return "CLASS_EARTH_FAUNA";
 
 			default:					return "MISSING CLASS in ClassifyText()";
@@ -380,15 +318,6 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 	{
 		BaseClass::Think();
 
-		if( physcannon_mega_enabled.GetBool() == true )
-		{
-			m_bMegaPhysgun = true;
-		}
-		else
-		{
-			// FIXME: Is there a better place for this?
-			m_bMegaPhysgun = ( GlobalEntity_GetState("super_phys_gun") == GLOBAL_ON );
-		}
 	}
 
 	//-----------------------------------------------------------------------------
@@ -523,7 +452,6 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 	//-----------------------------------------------------------------------------
 	void CHalfLife2::NPC_DroppedHealth( void )
 	{
-		m_flLastHealthDropTime = gpGlobals->curtime + sk_plr_health_drop_time.GetFloat();
 	}
 
 	//-----------------------------------------------------------------------------
@@ -531,7 +459,6 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 	//-----------------------------------------------------------------------------
 	void CHalfLife2::NPC_DroppedGrenade( void )
 	{
-		m_flLastGrenadeDropTime = gpGlobals->curtime + sk_plr_grenade_drop_time.GetFloat();
 	}
 
 #endif //} !CLIENT_DLL
@@ -572,13 +499,6 @@ bool CHalfLife2::ShouldCollide( int collisionGroup0, int collisionGroup1 )
 		collisionGroup1 = COLLISION_GROUP_NPC;
 	}
 
-	// This is only for the super physcannon
-	if ( m_bMegaPhysgun )
-	{
-		if ( collisionGroup0 == COLLISION_GROUP_INTERACTIVE_DEBRIS && collisionGroup1 == COLLISION_GROUP_PLAYER )
-			return false;
-	}
-
 	if ( collisionGroup0 == HL2COLLISION_GROUP_COMBINE_BALL )
 	{
 		if ( collisionGroup1 == HL2COLLISION_GROUP_COMBINE_BALL )
@@ -615,17 +535,6 @@ bool CHalfLife2::ShouldCollide( int collisionGroup0, int collisionGroup1 )
 			return false;
 	}
 
-	if ( ( collisionGroup0 == HL2COLLISION_GROUP_HEADCRAB ) && ( collisionGroup1 == HL2COLLISION_GROUP_HEADCRAB ) )
-		return false;
-
-	// striders don't collide with other striders
-	if ( collisionGroup0 == HL2COLLISION_GROUP_STRIDER && collisionGroup1 == HL2COLLISION_GROUP_STRIDER )
-		return false;
-
-	// gunships don't collide with other gunships
-	if ( collisionGroup0 == HL2COLLISION_GROUP_GUNSHIP && collisionGroup1 == HL2COLLISION_GROUP_GUNSHIP )
-		return false;
-
 	// weapons and NPCs don't collide
 	if ( collisionGroup0 == COLLISION_GROUP_WEAPON && (collisionGroup1 >= HL2COLLISION_GROUP_FIRST_NPC && collisionGroup1 <= HL2COLLISION_GROUP_LAST_NPC ) )
 		return false;
@@ -658,45 +567,13 @@ void CHalfLife2::AdjustPlayerDamageTaken( CTakeDamageInfo *pInfo )
 		// Skill level doesn't affect these types of damage.
 		return;
 	}
-
-	switch( GetSkillLevel() )
-	{
-	case SKILL_EASY:
-		pInfo->ScaleDamage( sk_dmg_take_scale1.GetFloat() );
-		break;
-
-	case SKILL_MEDIUM:
-		pInfo->ScaleDamage( sk_dmg_take_scale2.GetFloat() );
-		break;
-
-	case SKILL_HARD:
-		pInfo->ScaleDamage( sk_dmg_take_scale3.GetFloat() );
-		break;
-	}
 }
 
 //---------------------------------------------------------
 //---------------------------------------------------------
 float CHalfLife2::AdjustPlayerDamageInflicted( float damage )
 {
-	switch( GetSkillLevel() ) 
-	{
-	case SKILL_EASY:
-		return damage * sk_dmg_inflict_scale1.GetFloat();
-		break;
-
-	case SKILL_MEDIUM:
-		return damage * sk_dmg_inflict_scale2.GetFloat();
-		break;
-
-	case SKILL_HARD:
-		return damage * sk_dmg_inflict_scale3.GetFloat();
-		break;
-
-	default:
-		return damage;
-		break;
-	}
+	return damage;
 }
 #endif//CLIENT_DLL
 
@@ -734,61 +611,25 @@ bool CHalfLife2::ShouldUseRobustRadiusDamage(CBaseEntity *pEntity)
 //---------------------------------------------------------
 bool CHalfLife2::ShouldAutoAim( CBasePlayer *pPlayer, edict_t *target )
 {
-	return sk_allow_autoaim.GetBool() != 0;
+	return false;
 }
 
 //---------------------------------------------------------
 //---------------------------------------------------------
 float CHalfLife2::GetAutoAimScale( CBasePlayer *pPlayer )
 {
-#ifdef _X360
-	return 1.0f;
-#else
-	switch( GetSkillLevel() )
-	{
-	case SKILL_EASY:
-		return sk_autoaim_scale1.GetFloat();
-
-	case SKILL_MEDIUM:
-		return sk_autoaim_scale2.GetFloat();
-
-	default:
-		return 0.0f;
-	}
-#endif
+	return 0.0f;
 }
 
 //---------------------------------------------------------
 //---------------------------------------------------------
 float CHalfLife2::GetAmmoQuantityScale( int iAmmoIndex )
 {
-	switch( GetSkillLevel() )
-	{
-	case SKILL_EASY:
-		return sk_ammo_qty_scale1.GetFloat();
-
-	case SKILL_MEDIUM:
-		return sk_ammo_qty_scale2.GetFloat();
-
-	case SKILL_HARD:
-		return sk_ammo_qty_scale3.GetFloat();
-
-	default:
-		return 0.0f;
-	}
+	return 0;
 }
 
 void CHalfLife2::LevelInitPreEntity()
 {
-	// Remove this if you fix the bug in ep1 where the striders need to touch
-	// triggers using their absbox instead of their bbox
-#ifdef HL2_EPISODIC
-	if ( !Q_strnicmp( gpGlobals->mapname.ToCStr(), "ep1_", 4 ) )
-	{
-		// episode 1 maps use the surrounding box trigger behavior
-		CBaseEntity::sm_bAccurateTriggerBboxChecks = false;
-	}
-#endif
 	BaseClass::LevelInitPreEntity();
 }
 
@@ -797,14 +638,7 @@ void CHalfLife2::LevelInitPreEntity()
 //-----------------------------------------------------------------------------
 bool CHalfLife2::IsAlyxInDarknessMode()
 {
-#ifdef HL2_EPISODIC
-	if ( alyx_darkness_force.GetBool() )
-		return true;
-
-	return ( GlobalEntity_GetState( "ep_alyx_darknessmode" ) == GLOBAL_ON );
-#else
 	return false;
-#endif // HL2_EPISODIC
 }
 
 
@@ -814,11 +648,7 @@ bool CHalfLife2::IsAlyxInDarknessMode()
 //-----------------------------------------------------------------------------
 bool CHalfLife2::ShouldBurningPropsEmitLight()
 {
-#ifdef HL2_EPISODIC
-	return IsAlyxInDarknessMode();
-#else
 	return false;
-#endif // HL2_EPISODIC
 }
 
 

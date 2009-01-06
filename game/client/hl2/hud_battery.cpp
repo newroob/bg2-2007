@@ -22,7 +22,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+/* //BG2 - No armor in BG2. -HairyPotter
 #define INIT_BAT	-1
 
 //-----------------------------------------------------------------------------
@@ -148,3 +148,4 @@ void CHudBattery::MsgFunc_Battery( bf_read &msg )
 {
 	m_iNewBat = msg.ReadShort();
 }
+*/

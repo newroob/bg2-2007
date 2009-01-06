@@ -14,7 +14,7 @@
 
 void RegisterUserMessages( void )
 {
-	usermessages->Register( "Geiger", 1 );
+	//usermessages->Register( "Geiger", 1 ); //BG2 - Geiger Removed from BG2. -HairyPotter
 	usermessages->Register( "Train", 1 );
 	usermessages->Register( "HudText", -1 );
 	usermessages->Register( "SayText", -1 );

@@ -230,7 +230,7 @@ public:
 
 // Functions to verify the single/multiplayer status of a game
 	virtual bool IsDeathmatch( void ) = 0;//is this a deathmatch game?
-	virtual bool IsTeamplay( void ) { return FALSE; };// is this deathmatch game being played with team rules?
+	//virtual bool IsTeamplay( void ) { return FALSE; };//BG2 - Don't need it anymore. Always assume teamplay, because BG2 requires it anyway. -HairyPotter
 	virtual bool IsCoOp( void ) = 0;// is this a coop game?
 	virtual const char *GetGameDescription( void ) { return "Half-Life 2"; }  // this is the game name that gets seen in the server browser
 	

@@ -23,7 +23,8 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-/* //BG2 - Don't need any hud stuff for zooming anymore. -HairyPotter
+//BG2 - Don't need this.  - HairyPotter
+/*
 //-----------------------------------------------------------------------------
 // Purpose: Draws the zoom screen
 //-----------------------------------------------------------------------------
@@ -78,7 +79,7 @@ void CHudZoom::Init( void )
 	m_bZoomOn = false;
 	m_bPainted = false;
 	m_flZoomStartTime = -999.0f;
-	m_ZoomMaterial.Init( "vgui/zoom", TEXTURE_GROUP_VGUI );
+	//m_ZoomMaterial.Init( "vgui/zoom", TEXTURE_GROUP_VGUI );
 }
 
 //-----------------------------------------------------------------------------

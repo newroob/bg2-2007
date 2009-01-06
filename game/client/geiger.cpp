@@ -24,7 +24,7 @@ using namespace vgui;
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+/* //BG2 - Don't need any geiger counter. -HairyPotter
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -213,4 +213,4 @@ void CHudGeiger::Paint()
 			C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, ep ); 
 		}
 	}
-}
+}*/

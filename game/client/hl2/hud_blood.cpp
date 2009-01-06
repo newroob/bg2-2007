@@ -14,8 +14,8 @@
 
 void BloodSplatCallback( const CEffectData & data )
 {
-/*
-	Msg("SPLAT!\n");
+
+	/*Msg("SPLAT!\n");
 
 	int		x,y;
 

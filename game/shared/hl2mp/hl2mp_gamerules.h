@@ -188,7 +188,7 @@ public:
 	void PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info );
 
 	
-	bool	IsTeamplay( void ) { return m_bTeamPlayEnabled;	}
+	//bool	IsTeamplay( void ) { return m_bTeamPlayEnabled;	} //BG2 - Don't need it anymore. Always assume teamplay, because BG2 requires it anyway. -HairyPotter
 	void	CheckAllPlayersReady( void );
 
 	//BG2 - Draco - Start
@@ -209,7 +209,7 @@ public:
 	
 private:
 	
-	CNetworkVar( bool, m_bTeamPlayEnabled );
+	//CNetworkVar( bool, m_bTeamPlayEnabled );
 	CNetworkVar( float, m_flGameStartTime );
 	CUtlVector<EHANDLE> m_hRespawnableItemsAndWeapons;
 	float m_tmNextPeriodicThink;

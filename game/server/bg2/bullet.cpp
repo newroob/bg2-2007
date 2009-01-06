@@ -61,15 +61,10 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-//#define BOLT_MODEL			"models/crossbow_bolt.mdl"
 #define BOLT_MODEL			"models/game/musket_ball.mdl"
-//#define BOLT_MODEL	"models/weapons/w_missile_closed.mdl"
 
-//#define BOLT_AIR_VELOCITY	3500
 #define BOLT_AIR_VELOCITY	14400
 #define BOLT_WATER_VELOCITY	1500
-/*#define	BOLT_SKIN_NORMAL	0
-#define BOLT_SKIN_GLOW		1*/
 
 
 #ifndef CLIENT_DLL

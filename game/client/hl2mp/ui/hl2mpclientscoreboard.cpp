@@ -335,17 +335,10 @@ void CHL2MPClientScoreBoardDialog::InitScoreboardSections()
 	// fill out the structure of the scoreboard
 	AddHeader();
 
-	if ( HL2MPRules()->IsTeamplay() )
-	{
-		// add the team sections
-		AddSection( TYPE_TEAM, TEAM_AMERICANS );
-		AddSection( TYPE_TEAM, TEAM_BRITISH );
-		AddSection( TYPE_TEAM, TEAM_SPECTATOR );
-	}
-	else
-	{
-		AddSection( TYPE_TEAM, TEAM_UNASSIGNED );
-	}
+	// add the team sections
+	AddSection( TYPE_TEAM, TEAM_AMERICANS );
+	AddSection( TYPE_TEAM, TEAM_BRITISH );
+	AddSection( TYPE_TEAM, TEAM_SPECTATOR );
 }
 
 //-----------------------------------------------------------------------------
@@ -408,108 +401,89 @@ void CHL2MPClientScoreBoardDialog::UpdateTeamInfo()
 			wchar_t string1[1024];
 			wchar_t wNumPlayers[6];
 
-			if ( HL2MPRules()->IsTeamplay() == false )
-			{
-				_snwprintf(wNumPlayers, 6, L"%i", iNumPlayersInGame );
-				_snwprintf( name, sizeof(name), L"%s", g_pVGuiLocalize->Find("#ScoreBoard_Deathmatch") );
-				
-				teamName = name;
+			_snwprintf(wNumPlayers, 6, L"%i", team->Get_Number_Players());
 
-				if ( iNumPlayersInGame == 1)
-				{
-					g_pVGuiLocalize->ConstructString( string1, sizeof(string1), g_pVGuiLocalize->Find("#ScoreBoard_Player"), 2, teamName, wNumPlayers );
-				}
-				else
-				{
-					g_pVGuiLocalize->ConstructString( string1, sizeof(string1), g_pVGuiLocalize->Find("#ScoreBoard_Players"), 2, teamName, wNumPlayers );
-				}
+			if (!teamName && team)
+			{
+				g_pVGuiLocalize->ConvertANSIToUnicode(team->Get_Name(), name, sizeof(name));
+				teamName = name;
+			}
+
+			if (team->Get_Number_Players() == 1)
+			{
+				g_pVGuiLocalize->ConstructString( string1, sizeof(string1), g_pVGuiLocalize->Find("#ScoreBoard_Player"), 2, teamName, wNumPlayers );
 			}
 			else
 			{
-				_snwprintf(wNumPlayers, 6, L"%i", team->Get_Number_Players());
+				g_pVGuiLocalize->ConstructString( string1, sizeof(string1), g_pVGuiLocalize->Find("#ScoreBoard_Players"), 2, teamName, wNumPlayers );
+			}
 
-				if (!teamName && team)
-				{
-					g_pVGuiLocalize->ConvertANSIToUnicode(team->Get_Name(), name, sizeof(name));
-					teamName = name;
-				}
+			// update stats
+			wchar_t deaths[8];
+			wchar_t val[6];
+			swprintf(val, L"%d", team->Get_Score());
 
-				if (team->Get_Number_Players() == 1)
+			switch( i )
+			{
+				case TEAM_AMERICANS:	
+					swprintf(deaths, L"%d", iAmericanDmg);
+					break;
+				case TEAM_BRITISH:	
+					swprintf(deaths, L"%d", iBritishDmg);
+					break;
+				case TEAM_SPECTATOR:	
+					swprintf(deaths, L"%d", iSpecDmg);
+					break;
+			}
+
+			if ( cl_scoreboard.GetInt() == 1 ) //Old scoreboard.
+			{
+				m_pPlayerList->ModifyColumn(sectionID, "deaths", deaths);
+				m_pPlayerList->ModifyColumn(sectionID, "frags", val);
+				if (team->Get_Ping() < 1)
 				{
-					g_pVGuiLocalize->ConstructString( string1, sizeof(string1), g_pVGuiLocalize->Find("#ScoreBoard_Player"), 2, teamName, wNumPlayers );
+					m_pPlayerList->ModifyColumn(sectionID, "ping", L"");
 				}
 				else
 				{
-					g_pVGuiLocalize->ConstructString( string1, sizeof(string1), g_pVGuiLocalize->Find("#ScoreBoard_Players"), 2, teamName, wNumPlayers );
+					swprintf(val, L"%d", team->Get_Ping());
+					m_pPlayerList->ModifyColumn(sectionID, "ping", val);
 				}
-
-				// update stats
-				wchar_t deaths[8];
-				wchar_t val[6];
-				swprintf(val, L"%d", team->Get_Score());
-
+				m_pPlayerList->ModifyColumn(sectionID, "name", string1);
+			}
+			else //New Scoreboard.
+			{
 				switch( i )
 				{
-					case TEAM_AMERICANS:	
-						swprintf(deaths, L"%d", iAmericanDmg);
+					case TEAM_BRITISH:	//British is always "sectionID" 1 in new scoreboard, because the british team has their own section.
+						//swprintf(deaths, L"%d", iBritishDmg);
+						m_pBritishPlayerList->ModifyColumn(1, "deaths", deaths);
+						m_pBritishPlayerList->ModifyColumn(1, "frags", val);
+						if (team->Get_Ping() < 1)
+						{
+							m_pBritishPlayerList->ModifyColumn(1, "ping", L"");
+						}
+						else
+						{
+							swprintf(val, L"%d", team->Get_Ping());
+							m_pBritishPlayerList->ModifyColumn(1, "ping", val);
+						}
+						m_pBritishPlayerList->ModifyColumn(1, "name", string1);
 						break;
-					case TEAM_BRITISH:	
-						swprintf(deaths, L"%d", iBritishDmg);
+					default: //If it's not British just stick everything in the "default" (American) section.
+						m_pPlayerList->ModifyColumn(sectionID, "deaths", deaths);
+						m_pPlayerList->ModifyColumn(sectionID, "frags", val);
+						if (team->Get_Ping() < 1)
+						{
+							m_pPlayerList->ModifyColumn(sectionID, "ping", L"");
+						}
+						else
+						{
+							swprintf(val, L"%d", team->Get_Ping());
+							m_pPlayerList->ModifyColumn(sectionID, "ping", val);
+						}
+						m_pPlayerList->ModifyColumn(sectionID, "name", string1);
 						break;
-					case TEAM_SPECTATOR:	
-						swprintf(deaths, L"%d", iSpecDmg);
-						break;
-				}
-
-				if ( cl_scoreboard.GetInt() == 1 ) //Old scoreboard.
-				{
-					m_pPlayerList->ModifyColumn(sectionID, "deaths", deaths);
-					m_pPlayerList->ModifyColumn(sectionID, "frags", val);
-					if (team->Get_Ping() < 1)
-					{
-						m_pPlayerList->ModifyColumn(sectionID, "ping", L"");
-					}
-					else
-					{
-						swprintf(val, L"%d", team->Get_Ping());
-						m_pPlayerList->ModifyColumn(sectionID, "ping", val);
-					}
-					m_pPlayerList->ModifyColumn(sectionID, "name", string1);
-				}
-				else //New Scoreboard.
-				{
-					switch( i )
-					{
-						case TEAM_BRITISH:	//British is always "sectionID" 1 in new scoreboard, because the british team has their own section.
-							//swprintf(deaths, L"%d", iBritishDmg);
-							m_pBritishPlayerList->ModifyColumn(1, "deaths", deaths);
-							m_pBritishPlayerList->ModifyColumn(1, "frags", val);
-							if (team->Get_Ping() < 1)
-							{
-								m_pBritishPlayerList->ModifyColumn(1, "ping", L"");
-							}
-							else
-							{
-								swprintf(val, L"%d", team->Get_Ping());
-								m_pBritishPlayerList->ModifyColumn(1, "ping", val);
-							}
-							m_pBritishPlayerList->ModifyColumn(1, "name", string1);
-							break;
-						default: //If it's not British just stick everything in the "default" (American) section.
-							m_pPlayerList->ModifyColumn(sectionID, "deaths", deaths);
-							m_pPlayerList->ModifyColumn(sectionID, "frags", val);
-							if (team->Get_Ping() < 1)
-							{
-								m_pPlayerList->ModifyColumn(sectionID, "ping", L"");
-							}
-							else
-							{
-								swprintf(val, L"%d", team->Get_Ping());
-								m_pPlayerList->ModifyColumn(sectionID, "ping", val);
-							}
-							m_pPlayerList->ModifyColumn(sectionID, "name", string1);
-							break;
-					}
 				}
 			}
 		}

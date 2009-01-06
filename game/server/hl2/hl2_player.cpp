@@ -94,14 +94,14 @@ ConVar hl2_darkness_flashlight_factor ( "hl2_darkness_flashlight_factor", "1" );
 ConVar player_showpredictedposition( "player_showpredictedposition", "0" );
 ConVar player_showpredictedposition_timestep( "player_showpredictedposition_timestep", "1.0" );
 
-ConVar player_squad_transient_commands( "player_squad_transient_commands", "1", FCVAR_REPLICATED );
+/*ConVar player_squad_transient_commands( "player_squad_transient_commands", "1", FCVAR_REPLICATED );
 ConVar player_squad_double_tap_time( "player_squad_double_tap_time", "0.25" );
 
 ConVar sv_infinite_aux_power( "sv_infinite_aux_power", "0", FCVAR_CHEAT );
 
 ConVar autoaim_unlock_target( "autoaim_unlock_target", "0.8666" );
 
-ConVar sv_stickysprint("sv_stickysprint", "0", FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX);
+ConVar sv_stickysprint("sv_stickysprint", "0", FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX);*/
 
 #define	FLASH_DRAIN_TIME	 1.1111	// 100 units / 90 secs
 #define	FLASH_CHARGE_TIME	 50.0f	// 100 units / 2 secs
@@ -185,18 +185,18 @@ private:
 
 public:
 
-	COutputEvent m_OnFlashlightOn;
-	COutputEvent m_OnFlashlightOff;
+	//COutputEvent m_OnFlashlightOn;
+	//COutputEvent m_OnFlashlightOff;
 	COutputEvent m_PlayerHasAmmo;
 	COutputEvent m_PlayerHasNoAmmo;
 	COutputEvent m_PlayerDied;
-	COutputEvent m_PlayerMissedAR2AltFire; // Player fired a combine ball which did not dissolve any enemies. 
+	//COutputEvent m_PlayerMissedAR2AltFire; // Player fired a combine ball which did not dissolve any enemies. 
 
 	COutputInt m_RequestedPlayerHealth;
 
 	void InputRequestPlayerHealth( inputdata_t &inputdata );
-	void InputSetFlashlightSlowDrain( inputdata_t &inputdata );
-	void InputSetFlashlightNormalDrain( inputdata_t &inputdata );
+	//void InputSetFlashlightSlowDrain( inputdata_t &inputdata );
+	//void InputSetFlashlightNormalDrain( inputdata_t &inputdata );
 	void InputSetPlayerHealth( inputdata_t &inputdata );
 	void InputRequestAmmoState( inputdata_t &inputdata );
 	void InputLowerWeapon( inputdata_t &inputdata );
@@ -223,7 +223,7 @@ public:
 	{
 		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
 
-		if( pHL2Player && pHL2Player->IsSuitEquipped() )
+		if( pHL2Player  )
 		{
 			pHL2Player->ToggleZoom();
 		}
@@ -234,8 +234,6 @@ static ConCommand toggle_zoom("toggle_zoom", CC_ToggleZoom, "Toggles zoom displa
 //
 
 // ConVar cl_forwardspeed( "cl_forwardspeed", "400", FCVAR_CHEAT ); // Links us to the client's version
-ConVar xc_crouch_range( "xc_crouch_range", "0.85", FCVAR_ARCHIVE, "Percentarge [1..0] of joystick range to allow ducking within" );	// Only 1/2 of the range is used
-ConVar xc_use_crouch_limiter( "xc_use_crouch_limiter", "0", FCVAR_ARCHIVE, "Use the crouch limiting logic on the controller" );
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -255,27 +253,6 @@ void CC_ToggleDuck( void )
 	{
 		bChecked = true;
 		pCVcl_forwardspeed = ( ConVar * )cvar->FindVar( "cl_forwardspeed" );
-	}
-
-
-	// If we're not ducked, do extra checking
-	if ( xc_use_crouch_limiter.GetBool() )
-	{
-		if ( pPlayer->GetToggledDuckState() == false )
-		{
-			float flForwardSpeed = 400.0f;
-			if ( pCVcl_forwardspeed )
-			{
-				flForwardSpeed = pCVcl_forwardspeed->GetFloat();
-			}
-
-			flForwardSpeed = max( 1.0f, flForwardSpeed );
-
-			// Make sure we're not in the blindspot on the crouch detection
-			float flStickDistPerc = ( pPlayer->GetStickDist() / flForwardSpeed ); // Speed is the magnitude
-			if ( flStickDistPerc > xc_crouch_range.GetFloat() )
-				return;
-		}
 	}
 
 	// Toggle the duck
@@ -330,7 +307,7 @@ BEGIN_DATADESC( CHL2_Player )
 	DEFINE_FIELD( m_nNumMissPositions, FIELD_INTEGER ),
 
 	//					m_pPlayerAISquad
-	DEFINE_EMBEDDED( m_CommanderUpdateTimer ),
+	//DEFINE_EMBEDDED( m_CommanderUpdateTimer ),
 	//					m_RealTimeLastSquadCommand
 	DEFINE_FIELD( m_QueuedCommand, FIELD_INTEGER ),
 
@@ -359,9 +336,9 @@ BEGIN_DATADESC( CHL2_Player )
 
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "IgnoreFallDamage", InputIgnoreFallDamage ),
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "IgnoreFallDamageWithoutReset", InputIgnoreFallDamageWithoutReset ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "OnSquadMemberKilled", OnSquadMemberKilled ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "DisableFlashlight", InputDisableFlashlight ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "EnableFlashlight", InputEnableFlashlight ),
+	//DEFINE_INPUTFUNC( FIELD_VOID, "OnSquadMemberKilled", OnSquadMemberKilled ),
+	//DEFINE_INPUTFUNC( FIELD_VOID, "DisableFlashlight", InputDisableFlashlight ),
+	//DEFINE_INPUTFUNC( FIELD_VOID, "EnableFlashlight", InputEnableFlashlight ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "ForceDropPhysObjects", InputForceDropPhysObjects ),
 
 	DEFINE_SOUNDPATCH( m_sndLeeches ),
@@ -584,9 +561,9 @@ void CHL2_Player::PreThink(void)
 		m_Local.m_iHideHUD |= HIDEHUD_FLASHLIGHT;
 
 	
-	VPROF_SCOPE_BEGIN( "CHL2_Player::PreThink-CommanderUpdate" );
+	/*VPROF_SCOPE_BEGIN( "CHL2_Player::PreThink-CommanderUpdate" );
 	CommanderUpdate();
-	VPROF_SCOPE_END();
+	VPROF_SCOPE_END();*/
 
 	// Operate suit accessories and manage power consumption/charge
 	/*VPROF_SCOPE_BEGIN( "CHL2_Player::PreThink-SuitPower_Update" );
@@ -615,10 +592,6 @@ void CHL2_Player::PreThink(void)
 		PlayerDeathThink();
 		return;
 	}
-
-#ifdef HL2_EPISODIC
-	CheckFlashlight();
-#endif	// HL2_EPISODIC
 
 	// So the correct flags get sent to client asap.
 	//
@@ -822,28 +795,6 @@ void CHL2_Player::Activate( void )
 	BaseClass::Activate();
 	//InitSprinting();
 
-#ifdef HL2_EPISODIC
-
-	// Delay attacks by 1 second after loading a game.
-	if ( GetActiveWeapon() )
-	{
-		float flRemaining = GetActiveWeapon()->m_flNextPrimaryAttack - gpGlobals->curtime;
-
-		if ( flRemaining < HL2PLAYER_RELOADGAME_ATTACK_DELAY )
-		{
-			GetActiveWeapon()->m_flNextPrimaryAttack = gpGlobals->curtime + HL2PLAYER_RELOADGAME_ATTACK_DELAY;
-		}
-
-		flRemaining = GetActiveWeapon()->m_flNextSecondaryAttack - gpGlobals->curtime;
-
-		if ( flRemaining < HL2PLAYER_RELOADGAME_ATTACK_DELAY )
-		{
-			GetActiveWeapon()->m_flNextSecondaryAttack = gpGlobals->curtime + HL2PLAYER_RELOADGAME_ATTACK_DELAY;
-		}
-	}
-
-#endif
-
 	GetPlayerProxy();
 }
 
@@ -977,12 +928,6 @@ void CHL2_Player::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 void CHL2_Player::Spawn(void)
 {
 
-#ifndef HL2MP
-#ifndef PORTAL
-	SetModel( "models/player.mdl" );
-#endif
-#endif
-
 	BaseClass::Spawn();
 
 	//
@@ -1004,16 +949,13 @@ void CHL2_Player::Spawn(void)
 
 	GetPlayerProxy();
 
-	SetFlashlightPowerDrainScale( 1.0f );
+	//SetFlashlightPowerDrainScale( 1.0f );
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHL2_Player::UpdateLocatorPosition( const Vector &vecPosition )
 {
-#ifdef HL2_EPISODIC
-	m_HL2Local.m_vecLocatorOrigin = vecPosition;
-#endif//HL2_EPISODIC 
 }
 
 //-----------------------------------------------------------------------------
@@ -1250,7 +1192,7 @@ CHL2_Player::~CHL2_Player( void )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-
+/*
 bool CHL2_Player::CommanderFindGoal( commandgoal_t *pGoal )
 {
 	CAI_BaseNPC *pAllyNpc;
@@ -1523,7 +1465,7 @@ void CHL2_Player::CommanderMode()
 	{
 		m_QueuedCommand = (player_squad_transient_commands.GetBool()) ? CC_SEND : CC_TOGGLE;
 	}
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -1543,12 +1485,6 @@ void CHL2_Player::CheatImpulseCommands( int iImpulse )
 
 	switch( iImpulse )
 	{
-	case 50:
-	{
-		CommanderMode();
-		break;
-	}
-
 	case 51:
 	{
 		// Cheat to create a dynamic resupply item
@@ -1852,7 +1788,7 @@ bool CHL2_Player::ApplyBattery( float powerMultiplier )
 	}*/
 	return false;
 }
-
+/*
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 int CHL2_Player::FlashlightIsOn( void )
@@ -1868,12 +1804,11 @@ void CHL2_Player::FlashlightTurnOn( void )
 	if( m_bFlashlightDisabled )
 		return;
 
-	//BG2 - Nah. -HairyPotter
-	/*if ( Flashlight_UseLegacyVersion() )
+	if ( Flashlight_UseLegacyVersion() )
 	{
 		if( !SuitPower_AddDevice( SuitDeviceFlashlight ) )
 			return;
-	}*/
+	}
 
 	AddEffects( EF_DIMLIGHT );
 	EmitSound( "HL2Player.FlashLightOn" );
@@ -1888,12 +1823,11 @@ void CHL2_Player::FlashlightTurnOn( void )
 //-----------------------------------------------------------------------------
 void CHL2_Player::FlashlightTurnOff( void )
 {
-	//BG2 - Nah. -HairyPotter
-	/*if ( Flashlight_UseLegacyVersion() )
+	if ( Flashlight_UseLegacyVersion() )
 	{
 		if( !SuitPower_RemoveDevice( SuitDeviceFlashlight ) )
 			return;
-	}*/
+	}
 
 	RemoveEffects( EF_DIMLIGHT );
 	EmitSound( "HL2Player.FlashLightOff" );
@@ -1977,7 +1911,7 @@ void CHL2_Player::CheckFlashlight( void )
 		}
 	}
 }
-
+*/
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void CHL2_Player::SetPlayerUnderwater( bool state )
@@ -2015,7 +1949,7 @@ bool CHL2_Player::PassesDamageFilter( const CTakeDamageInfo &info )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CHL2_Player::SetFlashlightEnabled( bool bState )
+/*void CHL2_Player::SetFlashlightEnabled( bool bState )
 {
 	m_bFlashlightDisabled = !bState;
 }
@@ -2035,7 +1969,7 @@ void CHL2_Player::InputDisableFlashlight( inputdata_t &inputdata )
 void CHL2_Player::InputEnableFlashlight( inputdata_t &inputdata )
 {
 	SetFlashlightEnabled( true );
-}
+}*/
 
 
 //-----------------------------------------------------------------------------
@@ -2072,7 +2006,7 @@ void CHL2_Player::InputIgnoreFallDamageWithoutReset( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 // Purpose: Notification of a player's npc ally in the players squad being killed
 //-----------------------------------------------------------------------------
-void CHL2_Player::OnSquadMemberKilled( inputdata_t &data )
+/*void CHL2_Player::OnSquadMemberKilled( inputdata_t &data )
 {
 	// send a message to the client, to notify the hud of the loss
 	CSingleUserRecipientFilter user( this );
@@ -2108,7 +2042,7 @@ void CHL2_Player::NotifyFriendsOfDamage( CBaseEntity *pAttackerEntity )
 			}
 		}
 	}
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -2653,31 +2587,6 @@ void CHL2_Player::PlayerUse ( void )
 
 			usedSomething = true;
 		}
-
-#if	HL2_SINGLE_PRIMARY_WEAPON_MODE
-
-		//Check for weapon pick-up
-		if ( m_afButtonPressed & IN_USE )
-		{
-			CBaseCombatWeapon *pWeapon = dynamic_cast<CBaseCombatWeapon *>(pUseEntity);
-
-			if ( ( pWeapon != NULL ) && ( Weapon_CanSwitchTo( pWeapon ) ) )
-			{
-				//Try to take ammo or swap the weapon
-				if ( Weapon_OwnsThisType( pWeapon->GetClassname(), pWeapon->GetSubType() ) )
-				{
-					Weapon_EquipAmmoOnly( pWeapon );
-				}
-				else
-				{
-					Weapon_DropSlot( pWeapon->GetSlot() );
-					Weapon_Equip( pWeapon );
-				}
-
-				usedSomething = true;
-			}
-		}
-#endif
 	}
 	else if ( m_afButtonPressed & IN_USE )
 	{
@@ -2944,17 +2853,6 @@ void CHL2_Player::ForceDropOfCarriedPhysObjects( CBaseEntity *pOnlyIfHoldingThis
 		return;
 	}
 
-#ifdef HL2_EPISODIC
-	if ( hl2_episodic.GetBool() )
-	{
-		CBaseEntity *pHeldEntity = PhysCannonGetHeldEntity( GetActiveWeapon() );
-		if( pHeldEntity && pHeldEntity->ClassMatches( "grenade_helicopter" ) )
-		{
-			return;
-		}
-	}
-#endif
-
 	// Drop any objects being handheld.
 	ClearUseEntity();
 
@@ -3020,35 +2918,6 @@ void CHL2_Player::UpdateClientData( void )
 		int iTimeBasedDamage = g_pGameRules->Damage_GetTimeBased();
 		m_bitsDamageType &= iTimeBasedDamage;
 	}
-
-	// Update Flashlight
-#ifdef HL2_EPISODIC
-	if ( Flashlight_UseLegacyVersion() == false )
-	{
-		if ( FlashlightIsOn() && sv_infinite_aux_power.GetBool() == false )
-		{
-			m_HL2Local.m_flFlashBattery -= FLASH_DRAIN_TIME * gpGlobals->frametime;
-			if ( m_HL2Local.m_flFlashBattery < 0.0f )
-			{
-				FlashlightTurnOff();
-				m_HL2Local.m_flFlashBattery = 0.0f;
-			}
-		}
-		else
-		{
-			m_HL2Local.m_flFlashBattery += FLASH_CHARGE_TIME * gpGlobals->frametime;
-			if ( m_HL2Local.m_flFlashBattery > 100.0f )
-			{
-				m_HL2Local.m_flFlashBattery = 100.0f;
-			}
-		}
-	}
-	else
-	{
-		m_HL2Local.m_flFlashBattery = -1.0f;
-	}
-#endif // HL2_EPISODIC
-
 	BaseClass::UpdateClientData();
 }
 
@@ -3417,17 +3286,6 @@ void CHL2_Player::StopWaterDeathSounds( void )
 }
 
 //-----------------------------------------------------------------------------
-// 
-//-----------------------------------------------------------------------------
-void CHL2_Player::MissedAR2AltFire()
-{
-	if( GetPlayerProxy() != NULL )
-	{
-		GetPlayerProxy()->m_PlayerMissedAR2AltFire.FireOutput( this, this );
-	}
-}
-
-//-----------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------
 void CHL2_Player::DisplayLadderHudHint()
@@ -3545,16 +3403,15 @@ void CHL2_Player::FirePlayerProxyOutput( const char *pszOutputName, variant_t va
 LINK_ENTITY_TO_CLASS( logic_playerproxy, CLogicPlayerProxy);
 
 BEGIN_DATADESC( CLogicPlayerProxy )
-	DEFINE_OUTPUT( m_OnFlashlightOn, "OnFlashlightOn" ),
-	DEFINE_OUTPUT( m_OnFlashlightOff, "OnFlashlightOff" ),
+	//DEFINE_OUTPUT( m_OnFlashlightOn, "OnFlashlightOn" ), //BG2 - Don't need these. -HairyPotter
+	//DEFINE_OUTPUT( m_OnFlashlightOff, "OnFlashlightOff" ),
 	DEFINE_OUTPUT( m_RequestedPlayerHealth, "PlayerHealth" ),
 	DEFINE_OUTPUT( m_PlayerHasAmmo, "PlayerHasAmmo" ),
 	DEFINE_OUTPUT( m_PlayerHasNoAmmo, "PlayerHasNoAmmo" ),
 	DEFINE_OUTPUT( m_PlayerDied,	"PlayerDied" ),
-	DEFINE_OUTPUT( m_PlayerMissedAR2AltFire, "PlayerMissedAR2AltFire" ),
 	DEFINE_INPUTFUNC( FIELD_VOID,	"RequestPlayerHealth",	InputRequestPlayerHealth ),
-	DEFINE_INPUTFUNC( FIELD_VOID,	"SetFlashlightSlowDrain",	InputSetFlashlightSlowDrain ),
-	DEFINE_INPUTFUNC( FIELD_VOID,	"SetFlashlightNormalDrain",	InputSetFlashlightNormalDrain ),
+	//DEFINE_INPUTFUNC( FIELD_VOID,	"SetFlashlightSlowDrain",	InputSetFlashlightSlowDrain ),
+	//DEFINE_INPUTFUNC( FIELD_VOID,	"SetFlashlightNormalDrain",	InputSetFlashlightNormalDrain ),
 	DEFINE_INPUTFUNC( FIELD_INTEGER, "SetPlayerHealth",	InputSetPlayerHealth ),
 	DEFINE_INPUTFUNC( FIELD_VOID,	"RequestAmmoState", InputRequestAmmoState ),
 	DEFINE_INPUTFUNC( FIELD_VOID,	"LowerWeapon", InputLowerWeapon ),
@@ -3601,7 +3458,7 @@ void CLogicPlayerProxy::InputRequestPlayerHealth( inputdata_t &inputdata )
 
 	m_RequestedPlayerHealth.Set( m_hPlayer->GetHealth(), inputdata.pActivator, inputdata.pCaller );
 }
-
+/*
 void CLogicPlayerProxy::InputSetFlashlightSlowDrain( inputdata_t &inputdata )
 {
 	if( m_hPlayer == NULL )
@@ -3622,7 +3479,7 @@ void CLogicPlayerProxy::InputSetFlashlightNormalDrain( inputdata_t &inputdata )
 
 	if( pPlayer )
 		pPlayer->SetFlashlightPowerDrainScale( 1.0f );
-}
+}*/
 
 void CLogicPlayerProxy::InputRequestAmmoState( inputdata_t &inputdata )
 {

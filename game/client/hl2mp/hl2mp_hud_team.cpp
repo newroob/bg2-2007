@@ -138,28 +138,10 @@ void CTeamPlayHud::OnThink()
 	if ( pLocalPlayer == NULL )
 		 return;
 
-	if ( HL2MPRules()->IsTeamplay() == false )
-		 return;
 
 	if ( pLocalPlayer->IsAlive() == false )
 		 return;
 
-	if ( pLocalPlayer->m_HL2Local.m_flSuitPower < 100 )
-	{
-		if ( m_bSuitAuxPowerUsed == false )
-		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("FadeOutTeamLine");
-			m_bSuitAuxPowerUsed = true;
-		}
-	}
-	else
-	{
-		if ( m_bSuitAuxPowerUsed == true )
-		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("FadeInTeamLine");
-			m_bSuitAuxPowerUsed = false;
-		}
-	}
 	
 	int iTeamNumber = pLocalPlayer->GetTeamNumber();
 	Color c = GameResources()->GetTeamColor( iTeamNumber );

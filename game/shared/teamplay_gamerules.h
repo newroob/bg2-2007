@@ -65,7 +65,7 @@ public:
 
 	virtual bool ClientCommand( CBaseEntity *pEdict, const CCommand &args );
 	virtual void ClientSettingsChanged( CBasePlayer *pPlayer );
-	virtual bool IsTeamplay( void );
+	//virtual bool IsTeamplay( void ); //BG2 - Don't need it anymore. Always assume teamplay, because BG2 requires it anyway. -HairyPotter
 	virtual bool FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAttacker );
 	virtual int PlayerRelationship( CBaseEntity *pPlayer, CBaseEntity *pTarget );
 	virtual bool PlayerCanHearChat( CBasePlayer *pListener, CBasePlayer *pSpeaker );

@@ -28,9 +28,9 @@ public:
 
 	CHL2PlayerLocalData();
 
-	CNetworkVar( float, m_flSuitPower );
+	//CNetworkVar( float, m_flSuitPower );
 	//CNetworkVar( bool,	m_bZooming );
-	CNetworkVar( int,	m_bitsActiveDevices );
+	//CNetworkVar( int,	m_bitsActiveDevices );
 	CNetworkVar( bool,	m_bWeaponLowered );
 
 	// Ladder related data

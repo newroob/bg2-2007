@@ -112,7 +112,7 @@ public:
 	virtual Vector		EyeDirection2D( void );
 	virtual Vector		EyeDirection3D( void );
 
-	virtual void		CommanderMode();
+	//virtual void		CommanderMode();
 
 	virtual bool		ClientCommand( const CCommand &args );
 
@@ -153,13 +153,14 @@ public:
 		CC_SEND,
 	};
 
-	void CommanderUpdate();
+	//BG2 - Don't need squad stuff in BG2. -HairyPotter
+	/*void CommanderUpdate();
 	void CommanderExecute( CommanderCommand_t command = CC_TOGGLE );
 	bool CommanderFindGoal( commandgoal_t *pGoal );
 	void NotifyFriendsOfDamage( CBaseEntity *pAttackerEntity );
 	CAI_BaseNPC *GetSquadCommandRepresentative();
 	int GetNumSquadCommandables();
-	int GetNumSquadCommandableMedics();
+	int GetNumSquadCommandableMedics();*/
 
 	// Locator
 	void UpdateLocatorPosition( const Vector &vecPosition );
@@ -197,8 +198,8 @@ public:
 	virtual bool		PassesDamageFilter( const CTakeDamageInfo &info );
 	void				InputIgnoreFallDamage( inputdata_t &inputdata );
 	void				InputIgnoreFallDamageWithoutReset( inputdata_t &inputdata );
-	void				InputEnableFlashlight( inputdata_t &inputdata );
-	void				InputDisableFlashlight( inputdata_t &inputdata );
+	//void				InputEnableFlashlight( inputdata_t &inputdata );
+	//void				InputDisableFlashlight( inputdata_t &inputdata );
 
 	const impactdamagetable_t &GetPhysicsImpactDamageTable();
 	virtual int			OnTakeDamage( const CTakeDamageInfo &info );
@@ -230,16 +231,16 @@ public:
 	CLogicPlayerProxy	*GetPlayerProxy( void );
 
 	// Flashlight Device
-	void				CheckFlashlight( void );
-	int					FlashlightIsOn( void );
-	void				FlashlightTurnOn( void );
+	//void				CheckFlashlight( void );
+	/*int					FlashlightIsOn( void );
+	void				FlashlightTurnOn( void ); //BG2 - Main screen turn on! Nah we don't need these. - HairyPotter
 	void				FlashlightTurnOff( void );
-	bool				IsIlluminatedByFlashlight( CBaseEntity *pEntity, float *flReturnDot );
-	void				SetFlashlightPowerDrainScale( float flScale ) { m_flFlashlightPowerDrainScale = flScale; }
+	bool				IsIlluminatedByFlashlight( CBaseEntity *pEntity, float *flReturnDot );*/
+	//void				SetFlashlightPowerDrainScale( float flScale ) { m_flFlashlightPowerDrainScale = flScale; }
 
 	// Underwater breather device
 	virtual void		SetPlayerUnderwater( bool state );
-	virtual bool		CanBreatheUnderwater() const { return m_HL2Local.m_flSuitPower > 0.0f; }
+	//virtual bool		CanBreatheUnderwater() const { return m_HL2Local.m_flSuitPower > 0.0f; }
 
 	// physics interactions
 	virtual void		PickupObject( CBaseEntity *pObject, bool bLimitMassAndSize );
@@ -278,7 +279,6 @@ public:
 									   m_iArmorReductionFrom = ArmorValue(); 
 									 }*/
 
-	void MissedAR2AltFire();
 
 	inline void EnableCappedPhysicsDamage();
 	inline void DisableCappedPhysicsDamage();
@@ -307,7 +307,7 @@ protected:
 private:
 	bool				CommanderExecuteOne( CAI_BaseNPC *pNpc, const commandgoal_t &goal, CAI_BaseNPC **Allies, int numAllies );
 
-	void				OnSquadMemberKilled( inputdata_t &data );
+	//void				OnSquadMemberKilled( inputdata_t &data );
 
 	Class_T				m_nControlClass;			// Class when player is controlling another entity
 	// This player's HL2 specific data that should only be replicated to 
@@ -329,7 +329,7 @@ protected:	// Jeep: Portal_Player needs access to this variable to overload Play
 private:
 
 	CAI_Squad *			m_pPlayerAISquad;
-	CSimpleSimTimer		m_CommanderUpdateTimer;
+	//CSimpleSimTimer		m_CommanderUpdateTimer;
 	float				m_RealTimeLastSquadCommand;
 	CommanderCommand_t	m_QueuedCommand;
 

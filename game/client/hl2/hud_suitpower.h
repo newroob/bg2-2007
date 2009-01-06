@@ -13,7 +13,7 @@
 #include "hudelement.h"
 #include "hud_numericdisplay.h"
 #include <vgui_controls/Panel.h>
-
+/*
 //-----------------------------------------------------------------------------
 // Purpose: Shows the sprint power bar
 //-----------------------------------------------------------------------------
@@ -52,6 +52,6 @@ private:
 	float m_flSuitPower;
 	int m_nSuitPowerLow;
 	int m_iActiveSuitDevices;
-};	
+};	*/
 
 #endif // HUD_SUITPOWER_H

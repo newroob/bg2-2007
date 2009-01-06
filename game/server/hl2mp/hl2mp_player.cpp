@@ -328,6 +328,7 @@ void CHL2MP_Player::PickDefaultSpawnTeam( void )
 		m_pIntermission = NULL;	//just to be safe
 		return;					//we get called on spawn, so anyone that has a team shouldn't get teleported around and stuff
 	}
+
 	SetModel( "models/player/british/jager/jager.mdl" );	//shut up about no model already!
 	AddEffects( EF_NODRAW );
 	//try to find a spot..
@@ -339,7 +340,7 @@ void CHL2MP_Player::PickDefaultSpawnTeam( void )
 
 		if( !pSpot )
 		{
-			Msg( "WARNING: no info_intermission in current map. tell the mapper\n" );
+			Msg( "WARNING: No info_intermission in current map. Tell the mapper!\n" );
 			return;	//oh no! no info_intermission
 		}
 	}
@@ -353,63 +354,10 @@ void CHL2MP_Player::PickDefaultSpawnTeam( void )
 	SetAbsOrigin( pSpot->GetAbsOrigin() );
 	SnapEyeAngles( pSpot->GetAbsAngles() );
 
-	//Msg( "* %f %f %f\n", pSpot->GetAbsAngles().x, pSpot->GetAbsAngles().y, pSpot->GetAbsAngles().z );
-	//Msg( "* %f %f %f\n", pSpot->GetLocalAngles().x, pSpot->GetLocalAngles().y, pSpot->GetLocalAngles().z );
 	pl.fixangle = FIXANGLE_ABSOLUTE;
 
 	return;
 	//
-
-	if ( GetTeamNumber() == 0 )
-	{
-		if ( HL2MPRules()->IsTeamplay() == false )
-		{
-			if ( GetModelPtr() == NULL )
-			{
-				const char *szModelName = NULL;
-				szModelName = engine->GetClientConVarValue( engine->IndexOfEdict( edict() ), "cl_playermodel" );
-
-				if ( ValidatePlayerModel( szModelName ) == false )
-				{
-					char szReturnString[512];
-
-					//BG2 - Tjoppen - default model
-					//Q_snprintf( szReturnString, sizeof (szReturnString ), "cl_playermodel models/combine_soldier.mdl\n" );
-					int nHeads = ARRAYSIZE( g_ppszRandomCombineModels );
-					g_iLastCombineModel = ( g_iLastCombineModel + 1 ) % nHeads;
-					Q_snprintf( szReturnString, sizeof (szReturnString ), "cl_playermodel %s", g_ppszRandomCombineModels[g_iLastCombineModel] );
-					engine->ClientCommand ( edict(), szReturnString );
-				}
-
-				ChangeTeam( TEAM_UNASSIGNED );
-			}
-		}
-		else
-		{
-			CTeam *pCombine = g_Teams[TEAM_AMERICANS];
-			CTeam *pRebels = g_Teams[TEAM_BRITISH];
-
-			if ( pCombine == NULL || pRebels == NULL )
-			{
-				ChangeTeam( random->RandomInt( TEAM_AMERICANS, TEAM_BRITISH ) );
-			}
-			else
-			{
-				if ( pCombine->GetNumPlayers() > pRebels->GetNumPlayers() )
-				{
-					ChangeTeam( TEAM_BRITISH );
-				}
-				else if ( pCombine->GetNumPlayers() < pRebels->GetNumPlayers() )
-				{
-					ChangeTeam( TEAM_AMERICANS );
-				}
-				else
-				{
-					ChangeTeam( random->RandomInt( TEAM_AMERICANS, TEAM_BRITISH ) );
-				}
-			}
-		}
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -426,7 +374,7 @@ void CHL2MP_Player::Spawn(void)
 		return;	//we're done
 	//
 
-	PickDefaultSpawnTeam();
+	PickDefaultSpawnTeam(); //All this does is sends the player to info_intermission if they aren't on a team.
 
 	//BG2 - Tjoppen - reenable spectators
 	if ( GetTeamNumber() <= TEAM_SPECTATOR )
@@ -436,18 +384,7 @@ void CHL2MP_Player::Spawn(void)
 	//BG2 - Tjoppen - pick correct model
 	m_iClass = m_iNextClass;				//BG2 - Tjoppen - sometimes these may not match
 
-	const char	//*szOldModelName = engine->GetClientConVarValue( engine->IndexOfEdict( edict() ), "cl_playermodel" ),
-				*szNewModelName = PlayermodelTeamClass( GetTeamNumber(), m_iClass );
-
-	//if( Q_strncmp( szOldModelName, szNewModelName, 256 ) )
-	{
-		m_flNextModelChangeTime = gpGlobals->curtime - 1; //HACKHACKHACK
-
-		char cmd[512];
-		Q_snprintf( cmd, sizeof (cmd), "cl_playermodel %s\n", szNewModelName );
-		engine->ClientCommand ( edict(), cmd );
-	}
-	//
+	PlayermodelTeamClass( GetTeamNumber(), m_iClass ); //BG2 - Just set the player models on spawn. We have the technology. -HairyPotter
 
 	BaseClass::Spawn();
 
@@ -523,191 +460,6 @@ void CHL2MP_Player::Spawn(void)
 void CHL2MP_Player::PickupObject( CBaseEntity *pObject, bool bLimitMassAndSize )
 {
 	
-}
-
-bool CHL2MP_Player::ValidatePlayerModel( const char *pModel )
-{
-	int iModels = ARRAYSIZE( g_ppszRandomCitizenModels );
-	int i;	
-
-	for ( i = 0; i < iModels; ++i )
-	{
-		if ( !Q_stricmp( g_ppszRandomCitizenModels[i], pModel ) )
-		{
-			return true;
-		}
-	}
-
-	iModels = ARRAYSIZE( g_ppszRandomCombineModels );
-
-	for ( i = 0; i < iModels; ++i )
-	{
-	   	if ( !Q_stricmp( g_ppszRandomCombineModels[i], pModel ) )
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void CHL2MP_Player::SetPlayerTeamModel( void )
-{
-	const char *szModelName = NULL;
-	szModelName = engine->GetClientConVarValue( engine->IndexOfEdict( edict() ), "cl_playermodel" );
-
-	int modelIndex = modelinfo->GetModelIndex( szModelName );
-
-	if ( modelIndex == -1 || ValidatePlayerModel( szModelName ) == false )
-	{
-		//BG2 - Tjoppen - default model
-		//szModelName = "models/Combine_Soldier.mdl";
-		int nHeads = ARRAYSIZE( g_ppszRandomCombineModels );
-		g_iLastCombineModel = ( g_iLastCombineModel + 1 ) % nHeads;
-		szModelName = g_ppszRandomCombineModels[g_iLastCombineModel];
-		m_iModelType = TEAM_AMERICANS;
-
-		char szReturnString[512];
-
-		Q_snprintf( szReturnString, sizeof (szReturnString ), "cl_playermodel %s\n", szModelName );
-		engine->ClientCommand ( edict(), szReturnString );
-	}
-
-	if ( GetTeamNumber() == TEAM_AMERICANS )
-	{
-		//BG2 - Tjoppen - grab random model
-		//if ( Q_stristr( szModelName, "models/human") )
-		//if ( !Q_stristr( szModelName, "models/human") )
-		if ( !Q_stristr( szModelName, "models/player/american") )	//did we pick a non-american model?
-		{
-			int nHeads = ARRAYSIZE( g_ppszRandomCombineModels );
-		
-			g_iLastCombineModel = ( g_iLastCombineModel + 1 ) % nHeads;
-			szModelName = g_ppszRandomCombineModels[g_iLastCombineModel];
-		}
-
-		m_iModelType = TEAM_AMERICANS;
-	}
-	else if ( GetTeamNumber() == TEAM_BRITISH )
-	{
-		//BG2 - Tjoppen - grab random model
-		//if ( !Q_stristr( szModelName, "models/human") )
-		//if ( Q_stristr( szModelName, "models/human") )
-		if ( !Q_stristr( szModelName, "models/player/british") )	//did we pick a non-british model?
-		{
-			int nHeads = ARRAYSIZE( g_ppszRandomCitizenModels );
-
-			g_iLastCitizenModel = ( g_iLastCitizenModel + 1 ) % nHeads;
-			szModelName = g_ppszRandomCitizenModels[g_iLastCitizenModel];
-		}
-
-		m_iModelType = TEAM_BRITISH;
-	}
-	
-	SetModel( szModelName );
-	//SetupPlayerSoundsByModel( szModelName );
-
-	//BG2 - Tjoppen - TEAM_UNASSIGNED doesn't limit teamchange.. and stuff
-	if( GetTeamNumber() == TEAM_UNASSIGNED )
-		m_flNextModelChangeTime = gpGlobals->curtime;
-	else
-	//
-
-	m_flNextModelChangeTime = gpGlobals->curtime + MODEL_CHANGE_INTERVAL;
-}
-
-void CHL2MP_Player::SetPlayerModel( void )
-{
-	const char *szModelName = NULL;
-	const char *pszCurrentModelName = modelinfo->GetModelName( GetModel());
-
-	szModelName = engine->GetClientConVarValue( engine->IndexOfEdict( edict() ), "cl_playermodel" );
-
-	if ( ValidatePlayerModel( szModelName ) == false )
-	{
-		char szReturnString[512];
-
-		if ( ValidatePlayerModel( pszCurrentModelName ) == false )
-		{
-			//BG2 - Tjoppen - default model
-			//pszCurrentModelName = "models/Combine_Soldier.mdl";
-			int nHeads = ARRAYSIZE( g_ppszRandomCombineModels );
-			g_iLastCombineModel = ( g_iLastCombineModel + 1 ) % nHeads;
-			pszCurrentModelName = g_ppszRandomCombineModels[g_iLastCombineModel];
-		}
-
-		Q_snprintf( szReturnString, sizeof (szReturnString ), "cl_playermodel %s\n", pszCurrentModelName );
-		engine->ClientCommand ( edict(), szReturnString );
-
-		szModelName = pszCurrentModelName;
-	}
-
-	if ( GetTeamNumber() == TEAM_AMERICANS )
-	{
-		int nHeads = ARRAYSIZE( g_ppszRandomCombineModels );
-		
-		g_iLastCombineModel = ( g_iLastCombineModel + 1 ) % nHeads;
-		szModelName = g_ppszRandomCombineModels[g_iLastCombineModel];
-
-		m_iModelType = TEAM_AMERICANS;
-	}
-	else if ( GetTeamNumber() == TEAM_BRITISH )
-	{
-		int nHeads = ARRAYSIZE( g_ppszRandomCitizenModels );
-
-		g_iLastCitizenModel = ( g_iLastCitizenModel + 1 ) % nHeads;
-		szModelName = g_ppszRandomCitizenModels[g_iLastCitizenModel];
-
-		m_iModelType = TEAM_BRITISH;
-	}
-	else
-	{
-		if ( Q_strlen( szModelName ) == 0 ) 
-		{
-			int nHeads = ARRAYSIZE( g_ppszRandomCitizenModels );
-			g_iLastCitizenModel = ( g_iLastCitizenModel  + 1 ) % nHeads;
-			szModelName = g_ppszRandomCitizenModels[g_iLastCitizenModel];
-		}
-
-		//if ( Q_stristr( szModelName, "models/human") )
-		if ( Q_stristr( szModelName, "models/player/british") )
-		{
-			m_iModelType = TEAM_BRITISH;
-		}
-		else
-		{
-			m_iModelType = TEAM_AMERICANS;
-		}
-	}
-
-	int modelIndex = modelinfo->GetModelIndex( szModelName );
-
-	if ( modelIndex == -1 )
-	{
-		//BG2 - Tjoppen - default model
-		//szModelName = "models/Combine_Soldier.mdl";
-		int nHeads = ARRAYSIZE( g_ppszRandomCombineModels );
-		g_iLastCombineModel = ( g_iLastCombineModel + 1 ) % nHeads;
-		szModelName = g_ppszRandomCombineModels[g_iLastCombineModel];
-		m_iModelType = TEAM_AMERICANS;
-
-		char szReturnString[512];
-
-		Q_snprintf( szReturnString, sizeof (szReturnString ), "cl_playermodel %s\n", szModelName );
-		engine->ClientCommand ( edict(), szReturnString );
-	}
-
-	SetModel( szModelName );
-	//BG2 - Tjoppen - don't need this
-	//SetupPlayerSoundsByModel( szModelName );
-	//
-
-	//BG2 - Tjoppen - TEAM_UNASSIGNED doesn't limit teamchange.. and stuff
-	if( GetTeamNumber() == TEAM_UNASSIGNED )
-		m_flNextModelChangeTime = gpGlobals->curtime;
-	else
-	//
-	m_flNextModelChangeTime = gpGlobals->curtime + MODEL_CHANGE_INTERVAL;
 }
 
 //BG2 - Tjoppen - don't need this
@@ -1303,29 +1055,11 @@ bool CHL2MP_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 
 void CHL2MP_Player::ChangeTeam( int iTeam )
 {
-/*	if ( GetNextTeamChangeTime() >= gpGlobals->curtime )
-	{
-		char szReturnString[128];
-		Q_snprintf( szReturnString, sizeof( szReturnString ), "Please wait %d more seconds before trying to switch teams again.\n", (int)(GetNextTeamChangeTime() - gpGlobals->curtime) );
-
-		ClientPrint( this, HUD_PRINTTALK, szReturnString );
-		return;
-	}*/
-
 	bool bKill = false;
 
-	if ( HL2MPRules()->IsTeamplay() != true && iTeam != TEAM_SPECTATOR )
+	if ( iTeam != GetTeamNumber() && GetTeamNumber() != TEAM_UNASSIGNED )
 	{
-		//don't let them try to join combine or rebels during deathmatch.
-		iTeam = TEAM_UNASSIGNED;
-	}
-
-	if ( HL2MPRules()->IsTeamplay() == true )
-	{
-		if ( iTeam != GetTeamNumber() && GetTeamNumber() != TEAM_UNASSIGNED )
-		{
-			bKill = true;
-		}
+		bKill = true;
 	}
 
 	//BG2 - Tjoppen - changing team. remove self from flags
@@ -1336,15 +1070,6 @@ void CHL2MP_Player::ChangeTeam( int iTeam )
 	BaseClass::ChangeTeam( iTeam );
 
 	m_flNextTeamChangeTime = gpGlobals->curtime + TEAM_CHANGE_INTERVAL;
-
-	if ( HL2MPRules()->IsTeamplay() == true )
-	{
-		SetPlayerTeamModel();
-	}
-	else
-	{
-		SetPlayerModel();
-	}
 
 	if ( iTeam == TEAM_SPECTATOR )
 	{
@@ -1371,8 +1096,8 @@ void ClientPrinttTalkAll( char *str, int type )
 }
 //
 
-//BG2 - Tjoppen - PlayermodelTeamClass - gives models for specified team/class
-const char* CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
+//BG2 - Tjoppen - PlayermodelTeamClass - gives models for specified team/class -- Restructured a bit. -HairyPotter
+void CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
 {
 	switch( team )
 	{
@@ -1380,30 +1105,36 @@ const char* CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
 		switch( classid )
 		{
 		case CLASS_INFANTRY:
-			return "models/player/american/heavy_a/heavy_a.mdl";
-
+			SetModel("models/player/american/heavy_a/heavy_a.mdl");
+			break;
 		case CLASS_OFFICER:
-			return "models/player/american/light_a/light_a.mdl";
-
+			SetModel("models/player/american/light_a/light_a.mdl");
+			break;
 		case CLASS_SNIPER:
-			return "models/player/american/medium_a/medium_a.mdl";
+			SetModel("models/player/american/medium_a/medium_a.mdl");
+			m_nSkin = RandomInt(0, 1);
+			break;
 		}
+		break;
 	case TEAM_BRITISH:
 		switch( classid )
 		{
 		case CLASS_INFANTRY:
-			return "models/player/british/medium_b/medium_b.mdl";
-
+			SetModel("models/player/british/medium_b/medium_b.mdl");
+			m_nSkin = RandomInt(0, 1);
+			break;
 		case CLASS_OFFICER:
-			return "models/player/british/light_b/light_b.mdl";
-
+			SetModel("models/player/british/light_b/light_b.mdl");
+			break;
 		case CLASS_SNIPER:
-			return "models/player/british/jager/jager.mdl";
+			SetModel("models/player/british/jager/jager.mdl");
+			break;
 		}
+		break;
+	default: //default model
+		SetModel("models/player/british/jager/jager.mdl");
+		break;
 	}
-
-	//default model
-	return "models/player/british/jager/jager.mdl";
 }
 
 //BG2 - Tjoppen - CHL2MP_Player::MayRespawn()
@@ -1427,11 +1158,6 @@ bool CHL2MP_Player::MayRespawn( void )
 
 	switch( mp_respawnstyle.GetInt() )
 	{
-	default:
-		if( gpGlobals->curtime > GetDeathTime() + DEATH_ANIMATION_TIME )
-			return true;
-		else
-			return false;
 	case 1:
 		//waves - we're not allowed to respawn by ourselves. the gamerules decide for us
 		return false;
@@ -1444,6 +1170,11 @@ bool CHL2MP_Player::MayRespawn( void )
 		//rounds - we're not allowed to respawn by ourselves. the gamerules decide for us
 		return false;
 		break;
+	default:
+		if( gpGlobals->curtime > GetDeathTime() + DEATH_ANIMATION_TIME )
+			return true;
+		else
+			return false;
 	}
 }
 //
@@ -1552,28 +1283,41 @@ void CHL2MP_Player::HandleVoicecomm( int comm )
 		char snd[512];
 		char *pClassString, *pTeamString;
 
-		if( m_iClass == CLASS_INFANTRY )
-			pClassString = "Inf";
-		else if( m_iClass == CLASS_OFFICER )
-			pClassString = "Off";
-		else if( m_iClass == CLASS_SNIPER )
-			pClassString = "Rif";
-		else
-			return;	//catch, just in case
+		//BG2 - Make it a switch for great justice. -HairyPotter
+		switch ( m_iClass )
+		{
+			case CLASS_INFANTRY:
+				pClassString = "Inf";
+				break;
+			case CLASS_OFFICER:
+				pClassString = "Off";
+				break;
+			case CLASS_SNIPER:
+				pClassString = "Rif";
+				break;
+			default:
+				return;
+		}
 
-		if( GetTeamNumber() == TEAM_AMERICANS )
-			pTeamString = "American";
-		else if( GetTeamNumber() == TEAM_BRITISH )
-			pTeamString = "British";
-		else
-			return;	//catch, just in case
+		switch ( GetTeamNumber() )
+		{
+			case TEAM_AMERICANS:
+				pTeamString = "American";
+				break;
+			case TEAM_BRITISH:
+				pTeamString = "British";
+				break;
+			default:
+				return;
+		}
+		//
 
 		Q_snprintf( snd, sizeof snd, "Voicecomms.%s.%s_%i", pTeamString, pClassString, comm + 1 );
 
 		//play voicecomm, with attenuation
 		//EmitSound( snd );
 
-		//BG2 - Voice Commsare now Client-Side -HairyPotter
+		//BG2 - Voice Comms are now Client-Side -HairyPotter
 		CRecipientFilter recpfilter;
 		recpfilter.AddAllPlayers();
 		recpfilter.MakeReliable();
@@ -1721,40 +1465,6 @@ bool CHL2MP_Player::HandleCommand_JoinTeam( int team )
 
 	return true;
 }
-/*
-bool CHL2MP_Player::ClientCommand( const CCommand &args )
-{
-	if ( FStrEq( args[0], "spectate" ) )
-	{
-		if ( ShouldRunRateLimitedCommand( args ) )
-		{
-			// instantly join spectators
-			HandleCommand_JoinTeam( TEAM_SPECTATOR );	
-		}
-		return true;
-	}
-	else if ( FStrEq( args[0], "jointeam" ) ) 
-	{
-		if ( args.ArgC() < 2 )
-		{
-			Warning( "Player sent bad jointeam syntax\n" );
-		}
-
-		if ( ShouldRunRateLimitedCommand( args ) )
-		{
-			int iTeam = atoi( args[1] );
-			HandleCommand_JoinTeam( iTeam );
-		}
-		return true;
-	}
-	else if ( FStrEq( args[0], "joingame" ) )
-	{
-		return true;
-	}
-
-	return BaseClass::ClientCommand( args );
-}
-*/
 void CHL2MP_Player::CheatImpulseCommands( int iImpulse )
 {
 	switch ( iImpulse )
@@ -1909,11 +1619,11 @@ extern ConVar flashlight;
 //-----------------------------------------------------------------------------
 void CHL2MP_Player::FlashlightTurnOn( void )
 {
-	if( flashlight.GetInt() > 0 && IsAlive() )
+	/*if( flashlight.GetInt() > 0 && IsAlive() )
 	{
 		AddEffects( EF_DIMLIGHT );
 		EmitSound( "HL2Player.FlashlightOn" );
-	}
+	}*/
 }
 
 
@@ -1921,12 +1631,12 @@ void CHL2MP_Player::FlashlightTurnOn( void )
 //-----------------------------------------------------------------------------
 void CHL2MP_Player::FlashlightTurnOff( void )
 {
-	RemoveEffects( EF_DIMLIGHT );
+	/*RemoveEffects( EF_DIMLIGHT );
 	
 	if( IsAlive() )
 	{
 		EmitSound( "HL2Player.FlashlightOff" );
-	}
+	}*/
 }
 
 void CHL2MP_Player::Weapon_Drop( CBaseCombatWeapon *pWeapon, const Vector *pvecTarget, const Vector *pVelocity )
@@ -2143,82 +1853,6 @@ void CHL2MP_Player::DeathSound( const CTakeDamageInfo &info )
 
 	EmitSound( filter, entindex(), ep );
 }
-/*
-CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
-{
-	CBaseEntity *pSpot = NULL;
-	edict_t		*player = edict();
-	const char *pSpawnpointName = "info_player_american";
-
-	if ( HL2MPRules()->IsTeamplay() )
-	{
-		if ( GetTeamNumber() == TEAM_AMERICANS )
-		{
-			pSpawnpointName = "info_player_american";
-			//Msg("Set the AMERICAN Spawn Point name/n");
-		}
-		else if ( GetTeamNumber() == TEAM_BRITISH )
-		{
-			//Msg("Set the BRITISH Spawn Point name/n");
-			pSpawnpointName = "info_player_british";
-		}
-
-		if ( gEntList.FindEntityByClassname( NULL, pSpawnpointName ) == NULL )
-		{
-			pSpawnpointName = "info_player_start";
-		}
-	}
-
-	CBaseEntity *pFirstSpot = pSpot;
-
-	do 
-	{
-		if ( pSpot )
-		{
-			// check if pSpot is valid
-			if ( g_pGameRules->IsSpawnPointValid( pSpot, this ) )
-			{
-				if ( pSpot->GetLocalOrigin() == vec3_origin )
-				{
-					pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-					continue;
-				}
-
-				// if so, go to pSpot
-				goto ReturnSpot;
-			}
-		}
-		// increment pSpot
-		pSpot = gEntList.FindEntityByClassname( pSpot, pSpawnpointName );
-	} while ( pSpot != pFirstSpot ); // loop if we're not back to the start
-
-	// we haven't found a place to spawn yet,  so kill any guy at the first spawn point and spawn there
-	if ( pSpot )
-	{
-		CBaseEntity *ent = NULL;
-		for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 128 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
-		{
-			// if ent is a client, kill em (unless they are ourselves)
-			if ( ent->IsPlayer() && !(ent->edict() == player) )
-				ent->TakeDamage( CTakeDamageInfo( GetContainingEntity(INDEXENT(0)), GetContainingEntity(INDEXENT(0)), 300, DMG_GENERIC ) );
-		}
-		goto ReturnSpot;
-	}
-
-	if ( !pSpot  )
-	{
-		pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_start" );
-
-		if ( pSpot )
-			goto ReturnSpot;
-	}
-
-ReturnSpot:
-
-	m_flSlamProtectTime = gpGlobals->curtime + 0.5;
-
-	return pSpot;
-} */
 CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 {
 	if( GetTeamNumber() <= TEAM_SPECTATOR )
@@ -2281,7 +1915,7 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 						continue;
 
 					pSpot->AddEFlags( EFL_DORMANT );
-					goto ReturnSpot; //Spawn.
+					goto ReturnSpot; //Spawn. Also pretend this goto doesn't exist.
 				}
 			}
 			break;

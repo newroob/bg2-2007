@@ -32,7 +32,7 @@ ConVar  lservercfgfile( "lservercfgfile","listenserver.cfg" );
 // multiplayer server rules
 //BG2 - Tjoppen - default to teamplay
 //ConVar	teamplay( "mp_teamplay","0", FCVAR_NOTIFY );
-ConVar	teamplay( "mp_teamplay","1", FCVAR_NOTIFY );
+//ConVar	teamplay( "mp_teamplay","1", FCVAR_NOTIFY ); //BG2 - Don't need it anymore. Teamplay is always assumed now. -HairyPotter
 //
 ConVar	fraglimit( "mp_fraglimit","0", FCVAR_NOTIFY );
 ConVar	falldamage( "mp_falldamage","0", FCVAR_NOTIFY );
@@ -43,7 +43,7 @@ ConVar	flashlight( "mp_flashlight","0", FCVAR_NOTIFY );
 ConVar	aimcrosshair( "mp_autocrosshair","1", FCVAR_NOTIFY );
 ConVar	decalfrequency( "decalfrequency","10", FCVAR_NOTIFY );
 ConVar	teamlist( "mp_teamlist","hgrunt;scientist", FCVAR_NOTIFY );
-ConVar	teamoverride( "mp_teamoverride","1" );
+//ConVar	teamoverride( "mp_teamoverride","1" );
 ConVar	defaultteam( "mp_defaultteam","0" );
 ConVar	allowNPCs( "mp_allowNPCs","1", FCVAR_NOTIFY );
 

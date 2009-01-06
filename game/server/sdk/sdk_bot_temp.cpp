@@ -141,33 +141,6 @@ CBasePlayer *BotPutInServer( bool bFrozen )
 	gBots[pPlayer->GetClientIndex()].attack2 = 0;
 	gBots[pPlayer->GetClientIndex()].respawn = 0;
 
-	/*if ( bFrozen )
-		pPlayer->AddEFlags( EFL_BOT_FROZEN );*/
-
-	//this doesn't work anymore.. for some reason. maybe it never worked?
-	/*static int lastclass = 0;
-	switch( lastclass++ )
-	{
-	case 0:
-		engine->ClientCommand( pEdict, "light_a" );
-		break;
-	case 1:
-		engine->ClientCommand( pEdict, "medium_a" );
-		break;
-	case 2:
-		engine->ClientCommand( pEdict, "heavy_a" );
-		break;
-	case 3:
-		engine->ClientCommand( pEdict, "light_b" );
-		break;
-	case 4:
-		engine->ClientCommand( pEdict, "medium_b" );
-		break;
-	case 5:
-		engine->ClientCommand( pEdict, "heavy_b" );
-		break;
-	}*/
-
 	pPlayer->ClearFlags();
 
     //pPlayer->ChangeTeam( TEAM_UNASSIGNED );
@@ -184,20 +157,6 @@ CBasePlayer *BotPutInServer( bool bFrozen )
 	pPlayer->ChangeTeam( TEAM_AMERICANS + last );
 	last = !last;
 
-	//HACKHACKHACK
-	/*const char	*szNewModelName = ((CHL2MP_Player*)pPlayer)->PlayermodelTeamClass( pPlayer->GetTeamNumber(), tmp );
-
-	//if( Q_strncmp( szOldModelName, szNewModelName, 256 ) )
-	{
-		//((CHL2MP_Player*)pPlayer)->m_flNextModelChangeTime = gpGlobals->curtime - 1;
-
-		//char cmd[512];
-		//Q_snprintf( cmd, sizeof (cmd), "cl_playermodel %s\n", szNewModelName );
-		//engine->ClientCommand ( pPlayer->edict(), cmd );
-		pPlayer->SetModel( szNewModelName ); //BG2 - Why so serious? -HairyPotter
-	}*/
-	//
-
 	pPlayer->AddFlag( FL_CLIENT | FL_FAKECLIENT );
 	pPlayer->Spawn();
 
@@ -209,30 +168,7 @@ CBasePlayer *BotPutInServer( bool bFrozen )
 // Handler for the "bot" command.
 void BotAdd_f()
 {
-	/*extern int FindEngineArgInt( const char *pName, int defaultVal );
-	extern const char* FindEngineArg( const char *pName );
-
-	// Look at -count.
-	int count = FindEngineArgInt( "-count", 1 );
-	count = clamp( count, 1, 16 );
-
-	// Look at -frozen.
-	bool bFrozen = !!FindEngineArg( "-frozen" );*/
-
-	/*int count = 0;
-	if( cc_Bot.GetInt() > 0 )
-	{
-		count = cc_Bot.GetInt();
-		cc_Bot.SetValue( 0 );
-	}*/
-
-	/*int count = 1;
-		
-	// Ok, spawn all the bots.
-	while ( --count >= 0 )
-	{*/
-		BotPutInServer( false );//bFrozen );
-	//}
+	BotPutInServer( false );//bFrozen );
 }
 
 ConCommand cc_Bot( "bot_add", BotAdd_f, "Add a bot", FCVAR_CHEAT );
@@ -251,30 +187,6 @@ void Bot_RunAll( void )
 			CSDKBot *pBot = &gBots[pPlayer->GetClientIndex()];//dynamic_cast< CSDKBot* >( pPlayer );
 			if( pBot && pBot->m_bInuse )
 				Bot_Think( pBot );
-			/*else
-			{
-				CUserCmd cmd;
-				Q_memset( &cmd, 0, sizeof( cmd ) );
-
-				if( !RandomInt( 0, 10 ) )
-					cmd.buttons |= IN_ATTACK;
-
-				if( !RandomInt( 0, 100 ) )
-					cmd.buttons |= IN_RELOAD;
-
-				cmd.forwardmove	= RandomFloat( -1000, 1000 );
-				cmd.sidemove	= RandomFloat( -1000, 1000 );
-				cmd.mousedx		= RandomFloat( -100, 100 );
-				cmd.mousedy		= RandomFloat( -100, 100 );
-
-				RunPlayerMove( pPlayer, cmd, gpGlobals->frametime );
-
-				/*if( !pPlayer->IsAlive() )
-				{
-					Msg( "bot dead - respawning\n" );
-					pPlayer->Respawn();
-				}*//*
-			}*/
 		}
 	}
 }
@@ -414,38 +326,6 @@ CBaseEntity *FindClosestFlag( CSDKBot *pBot, bool insight, float *pdist )
 		else
 			continue;
 	}
-
-	//for( int x = 0; x < pTeam->GetNumPlayers(); x++ )
-	//{
-		//CBasePlayer *pEnemy = pTeam->GetPlayer(x);
-	//	if( !pEnemy->IsAlive() )
-		//	continue;
-
-		/*float dist = (pEnemy->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin()).Length();
-		if( dist < mindist )
-		{
-			if( insight )
-			{
-				//check to make sure enemy is in sight
-				trace_t tr;	
-				UTIL_TraceLine( pBot->m_pPlayer->GetLocalOrigin() + Vector(0,0,36), 
-								pEnemy->GetLocalOrigin() + Vector(0,0,36),
-								MASK_SOLID, pBot->m_pPlayer, COLLISION_GROUP_NONE, &tr );
-
-				if( tr.DidHitWorld() )
-					continue;
-			}
-
-			mindist = dist;
-			pClosest = pEnemy;
-		}*/
-	//}
-
-	/*Msg( "%s closest enemy is ", pBot->m_pPlayer->PlayerData()->netname );
-	if( pClosest )
-		Msg( "%s\n", pClosest->PlayerData()->netname );
-	else
-		Msg( "(null)\n" );*/
 
 	if( pdist )
 		*pdist = mindist;
@@ -801,80 +681,6 @@ void Bot_Think( CSDKBot *pBot )
 
 	pBot->m_flNextThink = gpGlobals->curtime + 0.1f;
 
-	/*FindClosestEnemy( pBot, false );
-	FindClosestEnemy( pBot, true );*/
-
-	/*if( pBot->m_flNextThink < gpGlobals->curtime )
-	{
-		if( !pBot->m_pPlayer->IsAlive() )
-		{
-			Bot_HandleRespawn( pBot, cmd );
-			float frametime = gpGlobals->frametime;
-			RunPlayerMove( pBot->m_pPlayer, cmd, frametime );
-			return;
-		}
-
-		float dist, fdist;
-		CBasePlayer *pEnemy = FindClosestEnemy( pBot, true, &dist ),
-				*pFriend = FindClosestFriend( pBot, true, &fdist );
-
-		//bool hasammo = pBot->m_pPlayer->GetActiveWeapon() && pBot->m_pPlayer->GetActiveWeapon()->m_iClip1 > 0;
-
-		if( pEnemy )
-		{
-			QAngle angles;
-			Vector forward = pEnemy->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin();
-			VectorAngles( forward, angles );
-			pBot->m_pPlayer->SetLocalAngles( angles );
-
-			pBot->m_flSideMove = RandomFloat( -100, 100 );
-			pBot->m_flForwardMove = RandomFloat( -75, 200 );
-
-			if( RandomInt( 0, 100 ) > 50 )
-				cmd.buttons |= IN_ATTACK2;
-
-			if( dist < 512 && RandomInt( 0, 100 ) > 50 )
-				cmd.buttons |= IN_ATTACK;
-
-			if( dist > 768 || RandomInt( 0, 100 ) > 70 )
-				cmd.buttons |= IN_RELOAD;				//damn reloaders!
-		}
-		else if( pFriend )
-		{
-			//no enemies around - reload
-			if( RandomInt( 0, 100 ) > 50 )
-				cmd.buttons |= IN_RELOAD;
-
-			//face same way as friend now and then
-			if( RandomInt( 0, 100 ) > 70 )
-				pBot->m_pPlayer->SetLocalAngles( pFriend->GetLocalAngles() );
-
-			if( RandomInt( 0, 100 ) > 70 )
-			{
-				pBot->m_LastAngles = pBot->m_pPlayer->GetLocalAngles();
-				pBot->m_LastAngles.y += RandomInt( -90, 90 );
-			}
-
-			pBot->m_flSideMove = RandomFloat( -50, 50 );
-			pBot->m_flForwardMove = RandomFloat( -25, 200 );
-		}
-		else	//all alone..
-		{
-			//walk randomly
-			if( RandomInt( 0, 100 ) > 70 )
-			{
-				pBot->m_LastAngles = pBot->m_pPlayer->GetLocalAngles();
-				pBot->m_LastAngles.y += RandomInt( -90, 90 );
-			}
-
-			pBot->m_flSideMove = RandomFloat( -50, 50 );
-			pBot->m_flForwardMove = RandomFloat( -25, 200 );
-		}
-
-		pBot->m_flNextThink = gpGlobals->curtime + RandomFloat( 0.2, 0.5 );
-	}
-/*s	else	//fall back on default behaviour
-	{*/
 	// Finally, override all this stuff if the bot is being forced to mimic a player.
 		if ( !Bot_RunMimicCommand( cmd ) )
 		{
@@ -912,15 +718,6 @@ void Bot_Think( CSDKBot *pBot )
 			cmd.impulse = 0;
 		}
 	//}*/
-
-	/*cmd.forwardmove = pBot->m_flForwardMove;
-	cmd.sidemove	= pBot->m_flSideMove;
-
-	pBot->m_pPlayer->PostClientMessagesSent();*/
-
-	//BG2 - Tjoppen - longer between RunPlayerMove...
-	/*cmd.forwardmove *= 10;
-	cmd.sidemove *= 10;*/
 
 	cmd.viewangles = pBot->m_pPlayer->GetLocalAngles();
 	cmd.upmove = 0;

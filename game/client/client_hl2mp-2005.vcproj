@@ -2963,30 +2963,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\bg2\teammenu2.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\bg2\teammenu2.h"
-					>
-				</File>
-				<File
 					RelativePath="..\server\bg2\vcomm.cpp"
 					>
 					<FileConfiguration

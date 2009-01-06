@@ -20,7 +20,7 @@ extern ConVar	servercfgfile;
 extern ConVar	lservercfgfile;
 
 // multiplayer server rules
-extern ConVar	teamplay;
+//extern ConVar	teamplay;
 extern ConVar	fraglimit;
 extern ConVar	falldamage;
 extern ConVar	weaponstay;
@@ -30,7 +30,7 @@ extern ConVar	flashlight;
 extern ConVar	aimcrosshair;
 extern ConVar	decalfrequency;
 extern ConVar	teamlist;
-extern ConVar	teamoverride;
+//extern ConVar	teamoverride;
 extern ConVar	defaultteam;
 extern ConVar	allowNPCs;
 

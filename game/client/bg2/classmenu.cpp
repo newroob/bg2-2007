@@ -84,38 +84,42 @@ void CClassButton::OnCursorEntered( void )
 	CClassMenu *pThisMenu = (CClassMenu*)GetParent();
 	char pANSIPath[512];
 
-	if( m_iCommand == 1 )
+	//BG2 - Make it a switch for great justice. -HairyPotter
+	switch ( m_iCommand )
 	{
-		//officer
-		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
-			ResolveLocalizedPath( "#BG2_InfoHTML_A_Off_Path", pANSIPath, sizeof pANSIPath );
-		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
-			ResolveLocalizedPath( "#BG2_InfoHTML_B_Off_Path", pANSIPath, sizeof pANSIPath );
-		else
+		case 1: //Officer
+			{
+				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+					ResolveLocalizedPath( "#BG2_InfoHTML_A_Off_Path", pANSIPath, sizeof pANSIPath );
+				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+					ResolveLocalizedPath( "#BG2_InfoHTML_B_Off_Path", pANSIPath, sizeof pANSIPath );
+				else
+					return;
+			}
+			break;
+		case 2: //Infantry
+			{
+				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+					ResolveLocalizedPath( "#BG2_InfoHTML_A_Inf_Path", pANSIPath, sizeof pANSIPath );
+				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+					ResolveLocalizedPath( "#BG2_InfoHTML_B_Inf_Path", pANSIPath, sizeof pANSIPath );
+				else
+					return;
+			}
+			break;
+		case 3: //Rifleman
+			{
+				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+					ResolveLocalizedPath( "#BG2_InfoHTML_A_Rif_Path", pANSIPath, sizeof pANSIPath );
+				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+					ResolveLocalizedPath( "#BG2_InfoHTML_B_Rif_Path", pANSIPath, sizeof pANSIPath );
+				else
+					return;
+			}
+			break;
+		default:
 			return;
 	}
-	else if( m_iCommand == 2 )
-	{
-		//infantry
-		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
-			ResolveLocalizedPath( "#BG2_InfoHTML_A_Inf_Path", pANSIPath, sizeof pANSIPath );
-		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
-			ResolveLocalizedPath( "#BG2_InfoHTML_B_Inf_Path", pANSIPath, sizeof pANSIPath );
-		else
-			return;
-	}
-	else if( m_iCommand == 3 )
-	{
-		//rifleman
-		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
-			ResolveLocalizedPath( "#BG2_InfoHTML_A_Rif_Path", pANSIPath, sizeof pANSIPath );
-		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
-			ResolveLocalizedPath( "#BG2_InfoHTML_B_Rif_Path", pANSIPath, sizeof pANSIPath );
-		else
-			return;
-	}
-	else
-		return;
 
 	pThisMenu->ShowFile( pANSIPath );
 }
@@ -124,29 +128,35 @@ void CClassButton::PerformCommand( void )
 {
 	CClassMenu *pThisMenu = (CClassMenu*)GetParent();
 
-    if( m_iCommand == 1 )
+	//BG2 - Make it a switch for great justice. -HairyPotter
+	switch ( m_iCommand )
 	{
-		//officer
-		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
-			engine->ServerCmd( "light_a" );
-		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
-			engine->ServerCmd( "light_b" );
-	}
-	else if( m_iCommand == 2 )
-	{
-		//infantry
-		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
-			engine->ServerCmd( "heavy_a" );
-		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
-			engine->ServerCmd( "medium_b" );
-	}
-	else if( m_iCommand == 3 )
-	{
-		//rifleman
-		if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
-			engine->ServerCmd( "medium_a" );
-		else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
-			engine->ServerCmd( "heavy_b" );
+		case 1: //Officer
+			{
+				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+					engine->ServerCmd( "light_a" );
+				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+					engine->ServerCmd( "light_b" );
+			}
+			break;
+		case 2: //Infantry
+			{
+				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+					engine->ServerCmd( "heavy_a" );
+				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+					engine->ServerCmd( "medium_b" );
+			}
+			break;
+		case 3: //Rifleman
+			{
+				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+					engine->ServerCmd( "medium_a" );
+				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+					engine->ServerCmd( "heavy_b" );
+			}
+			break;
+		default:
+			return;
 	}
 }
 
@@ -201,16 +211,24 @@ void CTeamButton::OnCursorEntered( void )
 	CClassMenu *pThisMenu = (CClassMenu *)GetParent();
 	char pANSIPath[512];
 
-	if( m_iCommand == TEAM_AMERICANS )
-		ResolveLocalizedPath( "#BG2_InfoHTML_Americans_Path", pANSIPath, sizeof pANSIPath );
-	else if( m_iCommand == TEAM_BRITISH )
-		ResolveLocalizedPath( "#BG2_InfoHTML_British_Path", pANSIPath, sizeof pANSIPath );
-	else if( m_iCommand == TEAM_UNASSIGNED )	//spectate
-		ResolveLocalizedPath( "#BG2_InfoHTML_Spectate_Path", pANSIPath, sizeof pANSIPath );
-	else if( m_iCommand == -1 )					//autoassign
-		ResolveLocalizedPath( "#BG2_InfoHTML_Autoassign_Path", pANSIPath, sizeof pANSIPath );
-	else
-		return;
+	//BG2 - Make it a switch for great justice. -HairyPotter
+	switch ( m_iCommand )
+	{
+		case TEAM_AMERICANS:
+			ResolveLocalizedPath( "#BG2_InfoHTML_Americans_Path", pANSIPath, sizeof pANSIPath );
+			break;
+		case TEAM_BRITISH:
+			ResolveLocalizedPath( "#BG2_InfoHTML_British_Path", pANSIPath, sizeof pANSIPath );
+			break;
+		case TEAM_UNASSIGNED:	//Spectate
+			ResolveLocalizedPath( "#BG2_InfoHTML_Spectate_Path", pANSIPath, sizeof pANSIPath );
+			break;
+		case -1:				//Autoassign
+			ResolveLocalizedPath( "#BG2_InfoHTML_Autoassign_Path", pANSIPath, sizeof pANSIPath );
+			break;
+		default:
+			return;
+	}
 	
 	pThisMenu->ShowFile( pANSIPath );
 }

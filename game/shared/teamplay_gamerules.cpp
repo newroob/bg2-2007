@@ -339,10 +339,11 @@ void CTeamplayRules::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &
 //=========================================================
 // IsTeamplay
 //=========================================================
+/* //BG2 - Don't need it anymore. Always assume teamplay, because BG2 requires it anyway. -HairyPotter
 bool CTeamplayRules::IsTeamplay( void )
 {
 	return true;
-}
+}*/
 
 bool CTeamplayRules::FPlayerCanTakeDamage( CBasePlayer *pPlayer, CBaseEntity *pAttacker )
 {

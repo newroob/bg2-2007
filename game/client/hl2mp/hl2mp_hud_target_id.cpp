@@ -161,7 +161,7 @@ void CTargetID::Paint()
 			
 			if ( hud_showtargetid.GetBool() ) //BG2 - Add option to disable name displays entirely. -HairyPotter
 			{
-				if ( HL2MPRules()->IsTeamplay() == true && pPlayer->InSameTeam(pLocalPlayer) )
+				if ( pPlayer->InSameTeam(pLocalPlayer) )
 				{
 					printFormatString = "#Playerid_sameteam";
 					bShowHealth = true;

@@ -1931,10 +1931,10 @@ void CHLClient::WriteSaveGameScreenshot( const char *pFilename )
 //  the appropriate close caption if running with closecaption = 1
 void CHLClient::EmitSentenceCloseCaption( char const *tokenstream )
 {
-	extern ConVar closecaption;
+	//extern ConVar closecaption;
 	
-	if ( !closecaption.GetBool() )
-		return;
+	//if ( !closecaption.GetBool() )
+	//	return;
 
 	//BG2 - Don't need closed caption stuff. -HairyPotter
 	/*CHudCloseCaption *hudCloseCaption = GET_HUDELEMENT( CHudCloseCaption );
@@ -1947,10 +1947,10 @@ void CHLClient::EmitSentenceCloseCaption( char const *tokenstream )
 
 void CHLClient::EmitCloseCaption( char const *captionname, float duration )
 {
-	extern ConVar closecaption;
+	//extern ConVar closecaption;
 
-	if ( !closecaption.GetBool() )
-		return;
+	//if ( !closecaption.GetBool() )
+	//	return;
 
 	//BG2 - Don't need closed caption stuff. -HairyPotter
 	/*CHudCloseCaption *hudCloseCaption = GET_HUDELEMENT( CHudCloseCaption );

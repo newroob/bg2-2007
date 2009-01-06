@@ -85,7 +85,6 @@ public:
 	void FlashlightTurnOn( void );
 	void FlashlightTurnOff( void );
 	void	PrecacheFootStepSounds( void );
-	bool	ValidatePlayerModel( const char *pModel );
 
 	QAngle GetAnimEyeAngles( void ) { return m_angEyeAngles.Get(); }
 
@@ -99,8 +98,6 @@ public:
 	void NoteWeaponFired( void );
 
 	void ResetAnimation( void );
-	void SetPlayerModel( void );
-	void SetPlayerTeamModel( void );
 	Activity TranslateTeamActivity( Activity ActToTranslate );
 	
 	float GetNextModelChangeTime( void ) { return m_flNextModelChangeTime; }
@@ -168,7 +165,7 @@ private:
 
 	//BG2 - Tjoppen - vars in hl2mp_player
 public:
-	const char*	PlayermodelTeamClass( int team, int classid );
+	void	PlayermodelTeamClass( int team, int classid );
 	void		RemoveSelfFromFlags( void );	//BG2 - Tjoppen - do this whenever we die, change team or disconnect or anything similar
 	int			GetLimitTeamClass( int iTeam, int iClass );
 	bool		AttemptJoin( int iTeam, int iClass, const char *pClassName );

@@ -29,9 +29,9 @@ public:
 
 	C_HL2PlayerLocalData();
 
-	float	m_flSuitPower;
-	bool	m_bZooming;
-	int		m_bitsActiveDevices;
+	//float	m_flSuitPower;
+	//bool	m_bZooming;
+	//int		m_bitsActiveDevices;
 	bool	m_bWeaponLowered;
 
 	// Ladder related data

@@ -1111,15 +1111,6 @@ void CPropCombineBall::DoExplosion( )
 	m_bEmit = false;
 
 	
-	if( !m_bStruckEntity && hl2_episodic.GetBool() && GetOwnerEntity() != NULL )
-	{
-		// Notify the player proxy that this combine ball missed so that it can fire an output.
-		CHL2_Player *pPlayer = dynamic_cast<CHL2_Player *>( GetOwnerEntity() );
-		if ( pPlayer )
-		{
-			pPlayer->MissedAR2AltFire();
-		}
-	}
 
 	SetContextThink( &CPropCombineBall::SUB_Remove, gpGlobals->curtime + 0.5f, s_pRemoveContext );
 	StopLoopingSounds();
@@ -1388,11 +1379,8 @@ bool CPropCombineBall::IsAttractiveTarget( CBaseEntity *pEntity )
 			 return false;
 		
 		//No tracking teammates in teammode!
-		if ( g_pGameRules->IsTeamplay() )
-		{
-			if ( g_pGameRules->PlayerRelationship( GetOwnerEntity(), pEntity ) == GR_TEAMMATE )
-				 return false;
-		}
+		if ( g_pGameRules->PlayerRelationship( GetOwnerEntity(), pEntity ) == GR_TEAMMATE )
+			return false;
 #endif
 
 		// We must be able to hit them

@@ -1713,10 +1713,10 @@ void CBasePlayer::Event_Killed( const CTakeDamageInfo &info )
 	// reset FOV
 	SetFOV( this, 0 );
 	
-	if ( FlashlightIsOn() )
+	/*if ( FlashlightIsOn() )
 	{
 		 FlashlightTurnOff();
-	}
+	}*/
 
 	m_flDeathTime = gpGlobals->curtime;
 
@@ -4997,17 +4997,8 @@ void CBasePlayer::Precache( void )
 
 	// init geiger counter vars during spawn and each time
 	// we cross a level transition
-	m_flgeigerRange = 1000;
-	m_igeigerRangePrev = 1000;
-
-#if 0
-	// @Note (toml 04-19-04): These are saved, used to be slammed here
-	m_bitsDamageType = 0;
-	m_bitsHUDDamage = -1;
-	SetPlayerUnderwter( false );
-
-	m_iTrain = TRAIN_NEW;
-#endif
+	//m_flgeigerRange = 1000;
+	//m_igeigerRangePrev = 1000;
 
 	m_iClientBattery = -1;
 
@@ -5280,10 +5271,6 @@ bool CBasePlayer::CanEnterVehicle( IServerVehicle *pVehicle, int nRole )
 
 	// Must be alive
 	if ( IsAlive() == false )
-		return false;
-
-	// Can't be pulled by a barnacle
-	if ( IsEFlagSet( EFL_IS_BEING_LIFTED_BY_BARNACLE ) )
 		return false;
 
 	return true;
@@ -5775,7 +5762,7 @@ void CBasePlayer::ImpulseCommands( )
 	int iImpulse = (int)m_nImpulse;
 	switch (iImpulse)
 	{
-	case 100:
+	/*case 100:
         // temporary flashlight for level designers
         if ( FlashlightIsOn() )
 		{
@@ -5785,7 +5772,7 @@ void CBasePlayer::ImpulseCommands( )
 		{
 			FlashlightTurnOn();
 		}
-		break;
+		break;*/
 
 	case 200:
 		if ( sv_cheats->GetBool() )
@@ -7542,13 +7529,13 @@ void CMovementSpeedMod::InputSpeedMod(inputdata_t &data)
 			}
 
 			// Turn off the flashlight
-			if ( pPlayer->FlashlightIsOn() )
+			/*if ( pPlayer->FlashlightIsOn() )
 			{
 				pPlayer->FlashlightTurnOff();
-			}
+			}*/
 			
 			// Disable the flashlight's further use
-			pPlayer->SetFlashlightEnabled( false );
+			//pPlayer->SetFlashlightEnabled( false );
 			pPlayer->DisableButtons( GetDisabledButtonMask() );
 
 			// Hide the HUD
@@ -7570,7 +7557,7 @@ void CMovementSpeedMod::InputSpeedMod(inputdata_t &data)
 			}
 
 			// Allow the flashlight again
-			pPlayer->SetFlashlightEnabled( true );
+			//pPlayer->SetFlashlightEnabled( true );
 			pPlayer->EnableButtons( GetDisabledButtonMask() );
 
 			// Restore the HUD

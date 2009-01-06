@@ -49,9 +49,6 @@ extern IFileSystem *filesystem;
 // player->CurrentCommandNumber() in the meantime.
 #define tickcount USE_PLAYER_CURRENT_COMMAND_NUMBER__INSTEAD_OF_TICKCOUNT
 
-#if defined( HL2_DLL )
-ConVar xc_uncrouch_on_jump( "xc_uncrouch_on_jump", "1", FCVAR_ARCHIVE, "Uncrouch when jump occurs" );
-#endif
 
 #if defined( HL2_DLL ) || defined( HL2_CLIENT_DLL )
 ConVar player_limit_jump_speed( "player_limit_jump_speed", "1", FCVAR_REPLICATED );
@@ -2338,12 +2335,6 @@ bool CGameMovement::CheckJumpButton( void )
 		return false;		// in air, so no effect
 	}
 
-	// Don't allow jumping when the player is in a stasis field.
-#ifndef HL2_EPISODIC
-	if ( player->m_Local.m_bSlowMovement )
-		return false;
-#endif
-
 	//BG2 - Tjoppen - don't allow jumping while reloading
 	if( player->GetActiveWeapon() && player->GetActiveWeapon()->m_bInReload )
 		return false;
@@ -2464,13 +2455,10 @@ bool CGameMovement::CheckJumpButton( void )
 
 #if defined( HL2_DLL )
 
-	if ( xc_uncrouch_on_jump.GetBool() )
+	// Uncrouch when jumping
+	if ( player->GetToggledDuckState() )
 	{
-		// Uncrouch when jumping
-		if ( player->GetToggledDuckState() )
-		{
-			player->ToggleDuck();
-		}
+		player->ToggleDuck();
 	}
 
 #endif
@@ -4212,18 +4200,6 @@ void CGameMovement::Duck( void )
 		// DUCK
 		if ( ( mv->m_nButtons & IN_DUCK ) || bDuckJump )
 		{
-// XBOX SERVER ONLY
-#if !defined(CLIENT_DLL)
-			if ( IsX360() && buttonsPressed & IN_DUCK )
-			{
-				// Hinting logic
-				if ( player->GetToggledDuckState() && player->m_nNumCrouches < NUM_CROUCH_HINTS )
-				{
-					UTIL_HudHintText( player, "#Valve_Hint_Crouch" );
-					player->m_nNumCrouches++;
-				}
-			}
-#endif
 			// Have the duck button pressed, but the player currently isn't in the duck position.
 			if ( ( buttonsPressed & IN_DUCK ) && !bInDuck && !bDuckJump && !bDuckJumpTime )
 			{

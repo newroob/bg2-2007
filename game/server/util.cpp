@@ -1423,10 +1423,6 @@ void UTIL_PlayerDecalTrace( trace_t *pTrace, int playernum )
 
 bool UTIL_TeamsMatch( const char *pTeamName1, const char *pTeamName2 )
 {
-	// Everyone matches unless it's teamplay
-	if ( !g_pGameRules->IsTeamplay() )
-		return true;
-
 	// Both on a team?
 	if ( *pTeamName1 != 0 && *pTeamName2 != 0 )
 	{

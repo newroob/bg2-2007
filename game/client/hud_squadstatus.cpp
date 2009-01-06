@@ -17,7 +17,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+/* //Bg2 - No squads in BG2. -HairyPotter
 ConVar player_squad_transient_commands( "player_squad_transient_commands", "1", FCVAR_REPLICATED );
 
 //-----------------------------------------------------------------------------
@@ -206,6 +206,6 @@ void CHudSquadStatus::Paint()
 		surface()->DrawSetTextPos(text_xpos, text_ypos);
 		surface()->DrawPrintText(text, wcslen(text));
 	}
-}
+}*/
 
 

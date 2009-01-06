@@ -428,11 +428,12 @@ public:
 	virtual void			ExitLadder() {}
 	virtual surfacedata_t	*GetLadderSurface( const Vector &origin );
 
-	virtual void			SetFlashlightEnabled( bool bState ) { };
+	//BG2 - Don't need flashlight stuff anymore. -HairyPotter
+	/*virtual void			SetFlashlightEnabled( bool bState ) { };
 	virtual int				FlashlightIsOn( void ) { return false; }
 	virtual void			FlashlightTurnOn( void ) { };
 	virtual void			FlashlightTurnOff( void ) { };
-	virtual bool			IsIlluminatedByFlashlight( CBaseEntity *pEntity, float *flReturnDot ) {return false; }
+	virtual bool			IsIlluminatedByFlashlight( CBaseEntity *pEntity, float *flReturnDot ) {return false; }*/
 	
 	void					UpdatePlayerSound ( void );
 	virtual void			UpdateStepSound( surfacedata_t *psurface, const Vector &vecOrigin, const Vector &vecVelocity );
