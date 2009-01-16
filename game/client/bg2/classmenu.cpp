@@ -117,6 +117,16 @@ void CClassButton::OnCursorEntered( void )
 					return;
 			}
 			break;
+		case 4: //Skirmisher
+			{
+				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+					ResolveLocalizedPath( "#BG2_InfoHTML_A_Rif_Path", pANSIPath, sizeof pANSIPath ); //Changeme - HairyPotter
+				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+					ResolveLocalizedPath( "#BG2_InfoHTML_B_Rif_Path", pANSIPath, sizeof pANSIPath ); //Changeme - HairyPotter
+				else
+					return;
+			}
+			break;
 		default:
 			return;
 	}
@@ -153,6 +163,14 @@ void CClassButton::PerformCommand( void )
 					engine->ServerCmd( "medium_a" );
 				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
 					engine->ServerCmd( "heavy_b" );
+			}
+			break;
+		case 4: //Skirmisher
+			{
+				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
+					engine->ServerCmd( "skirm_a" );
+				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+					engine->ServerCmd( "skirm_b" );
 			}
 			break;
 		default:
@@ -244,7 +262,7 @@ void CTeamButton::PerformCommand( void )
 //-----------------------------------------------------------------------------
 CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 {
-	m_iInfantryKey = m_iOfficerKey = m_iSniperKey = -1;
+	m_iInfantryKey = m_iOfficerKey = m_iSniperKey = m_iSkirmisherKey = -1;
 	m_iCancelKey = -1;
 	m_iSpectateKey = -1;
 	teammenu = classmenu = commmenu = commmenu2 = -1;
@@ -272,6 +290,7 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pInfantryButton = new CClassButton( this, "InfantryButton", "1. Infantry(in code)" );
 	m_pOfficerButton = new CClassButton( this, "OfficerButton", "2. Officer(in code)" );
 	m_pSniperButton = new CClassButton( this, "RiflemanButton", "3. Rifleman(in code)" );
+	m_pSkirmisherButton = new CClassButton( this, "SkirmisherButton", "4. Skirmisher(in code)" );
 
 	m_pCancelButton = new CClassButton( this, "CancelButton", "0. Cancel" );
 
@@ -289,6 +308,7 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pInfantryButton->SetCommand( 2 );
 	m_pOfficerButton->SetCommand( 1 );
 	m_pSniperButton->SetCommand( 3 );
+	m_pSkirmisherButton->SetCommand( 4 );
 
 	char pANSIPath[512];
 	ResolveLocalizedPath( "#BG2_InfoHTML_Blank_Path", pANSIPath, sizeof pANSIPath );
@@ -324,10 +344,12 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 	m_pInfantryButton->MakeReadyForUse();
 	m_pOfficerButton->MakeReadyForUse();
 	m_pSniperButton->MakeReadyForUse();
+	m_pSkirmisherButton->MakeReadyForUse();
 
 	m_pInfantryButton->SetBgColor( BLACK_BAR_COLOR );
 	m_pOfficerButton->SetBgColor( BLACK_BAR_COLOR );
 	m_pSniperButton->SetBgColor( BLACK_BAR_COLOR );
+	m_pSkirmisherButton->SetBgColor( BLACK_BAR_COLOR );
 
 	m_pCancelButton->MakeReadyForUse();
 	m_pCancelButton->SetBgColor( BLACK_BAR_COLOR );
@@ -383,6 +405,16 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 		else if( m_pSniperButton->IsVisible() )
 		{
 			m_pSniperButton->OnMousePressed( code2 );
+			m_pViewPort->ShowPanel( this, false );
+		}
+	}
+	else if( code == m_iSkirmisherKey )
+	{
+		if( m_pAutoassignButton->IsVisible() )
+			m_pAutoassignButton->OnMousePressed( code2 );
+		else if( m_pSkirmisherButton->IsVisible() )
+		{
+			m_pSkirmisherButton->OnMousePressed( code2 );
 			m_pViewPort->ShowPanel( this, false );
 		}
 	}
@@ -480,10 +512,6 @@ void CClassMenu::ShowPanel(bool bShow)
 		SetKeyBoardInputEnabled( false );
 	}
 
-	//m_pInfantryButton->SetVisible( bShow );
-	//m_pOfficerButton->SetVisible( bShow );
-	//m_pSniperButton->SetVisible( bShow );
-
 	m_pCancelButton->SetVisible( bShow );
 }
 
@@ -499,7 +527,8 @@ void CClassMenu::Update( void )
 	if( m_iInfantryKey < 0 ) m_iInfantryKey = gameuifuncs->GetButtonCodeForBind( "slot1" );
 	if( m_iOfficerKey < 0 ) m_iOfficerKey = gameuifuncs->GetButtonCodeForBind( "slot2" );
 	if( m_iSniperKey < 0 ) m_iSniperKey = gameuifuncs->GetButtonCodeForBind( "slot3" );
-	if( m_iSpectateKey < 0 ) m_iSpectateKey = gameuifuncs->GetButtonCodeForBind( "slot4" );
+	if( m_iSkirmisherKey < 0 ) m_iSkirmisherKey = gameuifuncs->GetButtonCodeForBind( "slot4" );
+	if( m_iSpectateKey < 0 ) m_iSpectateKey = gameuifuncs->GetButtonCodeForBind( "slot5" );
 
 	if( m_iCancelKey < 0 ) m_iCancelKey = gameuifuncs->GetButtonCodeForBind( "slot10" );
 
@@ -539,6 +568,9 @@ void CClassMenu::OnThink()
 
 	UpdateClassButtonText( m_pSniperButton, CLASS_SNIPER, 
 			m_iTeamSelection == TEAM_AMERICANS ? "3. Frontiersman" : "3. Jaeger" );
+
+	UpdateClassButtonText( m_pSkirmisherButton, CLASS_SKIRMISHER, 
+			m_iTeamSelection == TEAM_AMERICANS ? "4. Militia" : "4. Native" );
 }
 
 void CClassMenu::UpdateClassButtonText( CClassButton *pButton, int iClass, const char *pPrefix )
@@ -587,6 +619,7 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pOfficerButton->SetVisible(false);
 			m_pInfantryButton->SetVisible(false);
 			m_pSniperButton->SetVisible(false);
+			m_pSkirmisherButton->SetVisible(false);
 			break;
 		case 2:
 			m_pBritishButton->SetVisible(false);
@@ -596,6 +629,7 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pOfficerButton->SetVisible(true);
 			m_pInfantryButton->SetVisible(true);
 			m_pSniperButton->SetVisible(true);
+			m_pSkirmisherButton->SetVisible(true);
 			break;
 	}
 }

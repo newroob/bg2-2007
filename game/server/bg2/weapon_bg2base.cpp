@@ -108,9 +108,6 @@ END_NETWORK_TABLE()
 BEGIN_PREDICTION_DATA( CBaseBG2Weapon )
 END_PREDICTION_DATA()
 
-/*LINK_ENTITY_TO_CLASS( weapon_revolutionnaire, CBaseBG2Weapon );
-PRECACHE_WEAPON_REGISTER( weapon_revolutionnaire );*/
-
 #ifndef CLIENT_DLL
 
 #endif

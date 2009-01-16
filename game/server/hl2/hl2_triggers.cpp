@@ -5,7 +5,6 @@
 //=============================================================================//
 
 #include "cbase.h"
-//#include "weapon_physcannon.h"
 #include "hl2_player.h"
 #include "saverestore_utlvector.h"
 #include "triggers.h"
@@ -1042,19 +1041,25 @@ END_DATADESC()
 //-----------------------------------------------------------------------------
 void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 {
-	//if ( PassesTriggerFilters(pOther) == false )
-	//	return;
-
 	if ( !pOther->IsPlayer() ) //Nothing else should trigger this.
 		return;
 
 	//Defines
-	//Yeah, all this is needed. If an entity has a parent, you have to go through the parent to get to the entity. Figures.
+	//Yeah, all this is needed. If an entity has a parent, you have to go through the parent to get to that entity. Figures.
 	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther );
 	CtfFlag *pFlag = dynamic_cast< CtfFlag* >( pPlayer->CtfFlag );
 
+	//if ( !pPlayer->IsAlive() ) //Still alive?
+	//	return;
+
 	if ( !pFlag ) //Player doesn't have a flag. Just die.
 		return;
+
+	if ( pFlag->GetParent() == NULL ) //Does the flag not have a parent for whatever reason? Maybe it was reset while a player had it?
+	{
+		pPlayer->CtfFlag = NULL; //Player no longer has the flag entity, if he ever had it.
+		return;
+	}
 
 	int TeamNumber = pPlayer->GetTeamNumber();
 	//
@@ -1076,38 +1081,37 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 		return;
 	//
 
-	if ( pFlag->m_bFlagIsCarried && pPlayer->IsAlive() )
+	//Assuming we've made it thus far, you're probably carrying a flag that belongs to the enemy. Go ahead and cap it.
+	pFlag->PlaySound( GetAbsOrigin(), m_iSound ); //Play the capture sound.
+
+	pFlag->ResetFlag();
+
+	g_Teams[TeamNumber]->AddScore( m_iTeamBonus ); //Adds the team score bonus.
+	pPlayer->IncrementFragCount( m_iPlayerBonus ); //Give the player the points.
+
+	//For the player speed difference.
+	switch( pPlayer->m_iClass )
 	{
-
-		pFlag->PlaySound( GetAbsOrigin(), m_iSound ); //Play the capture sound.
-
-		pFlag->ResetFlag();
-
-		g_Teams[TeamNumber]->AddScore( m_iTeamBonus ); //Adds the team score bonus.
-		pPlayer->IncrementFragCount( m_iPlayerBonus ); //Give the player the points.
-
-		//For the player speed difference.
-		switch( pPlayer->m_iClass )
-		{
-			case CLASS_INFANTRY:
-				pPlayer->iSpeed = pPlayer->iSpeed + pFlag->m_iFlagWeight; 
-				break;
-			case CLASS_OFFICER:
-				pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.6);
-				break;
-			case CLASS_SNIPER:
-				pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.2);
-				break;
-		}
-		//
-
-		pFlag->PrintAlert( "%s Has Captured The %s Flag!", pPlayer->GetPlayerName(), pFlag->cFlagName );
-
-		m_OnFlagCaptured.FireOutput( this, this ); //Fire the OnFlagCaptured output, set it last just in case.
-
-		pPlayer->CtfFlag = NULL; //Player no longer has the flag.
+		case CLASS_INFANTRY:
+			pPlayer->iSpeed = pPlayer->iSpeed + pFlag->m_iFlagWeight; 
+			break;
+		case CLASS_OFFICER:
+			pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.6);
+			break;
+		case CLASS_SNIPER:
+			pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.2);
+			break;
+		case CLASS_SKIRMISHER:
+			pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.8);
+			break;
 	}
+	//
 
+	pFlag->PrintAlert( "%s Has Captured The %s Flag!", pPlayer->GetPlayerName(), pFlag->cFlagName );
+
+	m_OnFlagCaptured.FireOutput( this, this ); //Fire the OnFlagCaptured output, set it last just in case.
+
+	pPlayer->CtfFlag = NULL; //Player no longer has the flag entity.
 }
 
 //-----------------------------------------------------------------------------

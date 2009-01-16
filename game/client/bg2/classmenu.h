@@ -95,6 +95,7 @@ public:
 
 	CClassButton	*m_pInfantryButton,
 					*m_pOfficerButton,
+					*m_pSkirmisherButton,
 					*m_pSniperButton;
 
 	CTeamButton		*m_pBritishButton,
@@ -130,6 +131,7 @@ private:
 	int				m_iInfantryKey,
 					m_iOfficerKey,
 					m_iSniperKey,
+					m_iSkirmisherKey,
 					m_iSpectateKey;
 
 	CClassButton	*m_pCancelButton;

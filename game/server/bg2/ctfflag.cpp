@@ -11,7 +11,8 @@
 #include "engine/IEngineSound.h"
 
 ConVar sv_ctf_flagweight ("sv_ctf_flagweight", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL, "How much speed does carrying this flag drain?");
-ConVar sv_ctf_returnstyle ("sv_ctf_returnstyle", "1", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Which way is a flag returned?");
+ConVar sv_ctf_returnstyle ("sv_ctf_returnstyle", "1", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Which way is a flag returned? Setting this to '2' will allow teams to return their own flags when they touch them.");
+ConVar sv_ctf_capturestyle ("sv_ctf_capturestyle", "1", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Which way is a flag captured Setting this to '2' will not allow you to pick up a flag if your own is not at home.");
 ConVar sv_flagalerts ("sv_flagalerts", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Print out flag notifications to hud?");
 
 void CtfFlag::Spawn( void )
@@ -96,7 +97,7 @@ void CtfFlag::Precache( void )
 }
 void CtfFlag::Think( void )
 {
-	if ( !m_bActive ) //If it isn't active, just die here.
+	if ( !m_bActive ) //If it isn't active...
 	{
 		SetNextThink( gpGlobals->curtime + 1.0f ); //Think Less
 		return; //Die here.
@@ -114,7 +115,6 @@ void CtfFlag::Think( void )
 			SetModel( "models/other/flag.mdl" );
 			SetParent( NULL );
 			SetAbsOrigin( GetAbsOrigin() - Vector( 0,0,25 ) ); //HACKHACK: Bring the flag down to it's original height.
-			m_bFlagIsCarried = false;
 			m_bFlagIsDropped = true;
 			fReturnTime = gpGlobals->curtime + m_fReturnTime;
 			PrintAlert( "%s Has Dropped The %s Flag!", pPlayer->GetPlayerName(), cFlagName );
@@ -124,29 +124,47 @@ void CtfFlag::Think( void )
 	}
 	else //If there isn't someone holding the flag, we need to search for a potential capturer or perhaps return it.
 	{
-		if ( m_bFlagIsDropped && gpGlobals->curtime > fReturnTime && sv_ctf_returnstyle.GetInt() == 1 ) //Should the flag return when time is up?
+		if ( m_bFlagIsDropped && gpGlobals->curtime > fReturnTime /*&& sv_ctf_returnstyle.GetInt() == 1*/ ) //Should the flag return when time is up?
 			ReturnFlag();
 
 		CBasePlayer *pPlayer = NULL;
 		while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flPickupRadius ))) != NULL )
 		{
-			if ( !pPlayer->IsAlive() )
+			if ( !pPlayer->IsAlive() ) //Dead players cannot pick up the flag.
 				continue;
 		
 			int TeamNumber = pPlayer->GetTeamNumber();
-			if ( iTeam != NULL && TeamNumber != iTeam )
+			if ( iTeam != NULL && TeamNumber != iTeam ) //Check to see if the player's team will work for the flag.
 			{
-				if( sv_ctf_returnstyle.GetInt() == 2 && m_bFlagIsDropped ) //Should the flag return if a friendly touches it?
+				if( sv_ctf_returnstyle.GetInt() > 1 && m_bFlagIsDropped ) //Should the flag return if a friendly touches it?
 					ReturnFlag();
 	
 				continue;
 			}
+			
+			//This will see if our flag is at home. If it's not, we can't take the enemy flag! 
+			if ( sv_ctf_capturestyle.GetInt() > 1 ) 
+			{
+				CtfFlag *pFlag = NULL;
+				while( (pFlag = dynamic_cast<CtfFlag*>(gEntList.FindEntityByClassname( pFlag, "ctf_flag" ))) != NULL ) //Check all flags.
+				{
+					if ( pFlag->iTeam == TeamNumber ) //This flag can be capped by the player's team, we want the other team's flag.
+						continue;
+
+					if ( pFlag->GetAbsOrigin() != pFlag->FlagOrigin ) //This flag belongs to the player's team. Is it at home?
+					{
+						ClientPrint( pPlayer, HUD_PRINTCENTER, "Your team's flag must be at home before you can take an enemy flag!\n" ); //Let the player know.
+						return; //Die here.
+					}
+				}
+			}
+			//
 
 			//Assuming you've passed all the checks, you deserve to pick up the flag. So run the code below.
 			pPlayer->CtfFlag = this;	//So the capture trigger will know which flag is being captured.
-			SetModel( "models/other/flag_nopole.mdl" );
-			SetAbsOrigin( pPlayer->GetAbsOrigin() + Vector( 0,0,25 ) );	//Keeps the flag out of the player's FOV, also raises it so it doesn't look like it's stuck in the player's grill.
+			SetModel( "models/other/flag_nopole.mdl" ); //Something I came up with. Since it doesn't look lik the player is actually holding the flag, just have it work like an indicator.
 			SetAbsAngles( pPlayer->GetAbsAngles() + QAngle( 0,180,0 ) ); // Make sure the flag is flying with the player model, not against it.
+			SetAbsOrigin( pPlayer->GetAbsOrigin() + Vector( 0,0,25 ) );	//Keeps the flag out of the player's FOV, also raises it so it doesn't look like it's stuck in the player's grill.
 			SetParent( pPlayer );	//Attach the entity to the player.
 			//For the player speed difference.
 			switch( pPlayer->m_iClass )
@@ -160,17 +178,18 @@ void CtfFlag::Think( void )
 				case CLASS_SNIPER:
 					pPlayer->iSpeed = pPlayer->iSpeed - (m_iFlagWeight * 1.2);
 					break;
+				case CLASS_SKIRMISHER:
+					pPlayer->iSpeed = pPlayer->iSpeed - (m_iFlagWeight * 1.8);
+					break;
 			}
 			//
-			m_bFlagIsCarried = true;
-			m_bFlagIsDropped = false;
+			m_bFlagIsDropped = false; //So it doesn't return while you're carrying it!
 			PrintAlert( "%s Has Taken The %s Flag!", pPlayer->GetPlayerName(), cFlagName );
 			PlaySound( GetAbsOrigin(), m_iPickupSound );
 			m_OnPickedUp.FireOutput( this, this ); //Fire the OnPickedUp output.
 		}
 	}
 }
-
 void CtfFlag::PrintAlert( char *Msg, const char * PlayerName, char * FlagName )
 {
 	if ( PlayerName == NULL )
@@ -201,7 +220,6 @@ void CtfFlag::ResetFlag()
 	SetAbsOrigin( FlagOrigin );
 	SetAbsAngles( FlagAngle );
 	m_bFlagIsDropped = false;
-	m_bFlagIsCarried = false;
 	SetParent ( NULL );
 }
 void CtfFlag::PlaySound( Vector origin, int sound )
@@ -222,16 +240,13 @@ void CtfFlag::PlaySound( Vector origin, int sound )
 //Inputs Below ------------------------------------------------------------
 void CtfFlag::InputReset( inputdata_t &inputData )
 {
-	if (GetAbsOrigin() == FlagOrigin)
+	if ( GetAbsOrigin() == FlagOrigin )
 		return;
 
 	ReturnFlag();
 }
 void CtfFlag::InputEnable( inputdata_t &inputData )
 {
-	if ( GetParent() )
-		m_bFlagIsCarried = false;
-
 	RemoveEffects( EF_NODRAW );
 	m_bActive = true;
 	m_OnEnable.FireOutput( inputData.pActivator, this );
@@ -240,9 +255,6 @@ void CtfFlag::InputEnable( inputdata_t &inputData )
 }
 void CtfFlag::InputDisable( inputdata_t &inputData )
 {
-	if ( GetParent() ) //Just in case you disable the flag when someone has it.
-		m_bFlagIsCarried = false;
-
 	AddEffects( EF_NODRAW );
 	m_bActive = false;
 	m_OnDisable.FireOutput( inputData.pActivator, this );

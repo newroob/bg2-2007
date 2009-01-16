@@ -597,6 +597,10 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 			iSpeed = 200;
 			iSpeed2 = 130;
 			break;
+		case CLASS_SKIRMISHER:
+			iSpeed = 250;
+			iSpeed2 = 140;
+			break;
 	}
 
 	if( m_nButtons & IN_WALK )

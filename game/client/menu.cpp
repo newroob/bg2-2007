@@ -376,6 +376,8 @@ void CHudMenu::HideMenu( void )
 //		menuName  : menu name string 
 //		validSlots: a bitfield describing the valid keys
 //-----------------------------------------------------------------------------
+char *szVersionString; 
+wchar_t *g_szVersionString;
 void CHudMenu::ShowMenu( const char * menuName, int validSlots )
 {
 	m_flShutoffTime = -1;

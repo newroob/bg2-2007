@@ -120,6 +120,7 @@ const char *g_ppszRandomCitizenModels[] =
 	"models/player/british/jager/jager.mdl",
 	"models/player/british/medium_b/medium_b.mdl",
 	"models/player/british/light_b/light_b.mdl",
+	"models/player/mohawk.mdl",
 };
 
 const char *g_ppszRandomCombineModels[] =
@@ -285,6 +286,9 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			GiveNamedItem( "weapon_knife" );
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Snipers. -HairyPotter
 			break;
+		case CLASS_SKIRMISHER:
+			GiveNamedItem( "weapon_tomahawk" );
+			break;
 		}
 
 		//Weapon_Switch( Weapon_OwnsThisType( "weapon_revolutionnaire" ) );
@@ -306,6 +310,9 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			GiveNamedItem( "weapon_jaeger" );
 			GiveNamedItem( "weapon_hirschf" );
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Snipers. -HairyPotter
+			break;
+		case CLASS_SKIRMISHER:
+			GiveNamedItem( "weapon_tomahawk" );
 			break;
 		}
 		
@@ -449,6 +456,10 @@ void CHL2MP_Player::Spawn(void)
 		case CLASS_SNIPER:
 			iSpeed = 200;
 			iSpeed2 = 130;
+			break;
+		case CLASS_SKIRMISHER:
+			iSpeed = 250;
+			iSpeed2 = 140;
 			break;
 	}
 	//
@@ -1114,6 +1125,9 @@ void CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
 			SetModel("models/player/american/medium_a/medium_a.mdl");
 			m_nSkin = RandomInt(0, 1);
 			break;
+		case CLASS_SKIRMISHER:
+			SetModel("models/player/mohawk.mdl"); //TODO - HairyPotter //CAN WE PLEASE ORGANIZE THE PLAYER MODELS?
+			break;
 		}
 		break;
 	case TEAM_BRITISH:
@@ -1128,6 +1142,9 @@ void CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
 			break;
 		case CLASS_SNIPER:
 			SetModel("models/player/british/jager/jager.mdl");
+			break;
+		case CLASS_SKIRMISHER:
+			SetModel("models/player/mohawk.mdl"); //CAN WE PLEASE ORGANIZE THE PLAYER MODELS?
 			break;
 		}
 		break;
@@ -1389,6 +1406,11 @@ bool CHL2MP_Player::ClientCommand( const CCommand &args )
 		AttemptJoin( TEAM_AMERICANS, CLASS_SNIPER, "a Frontiersman" );
 		return true;
 	}
+	else if ( FStrEq( cmd, "skirm_a" ) )
+	{
+		AttemptJoin( TEAM_AMERICANS, CLASS_SKIRMISHER, "Militia" ); //TODO - HairyPotter
+		return true;
+	}
 	if ( FStrEq( cmd, "medium_b" ) )
 	{
 		AttemptJoin( TEAM_BRITISH, CLASS_INFANTRY, "Royal Infantry" );
@@ -1402,6 +1424,11 @@ bool CHL2MP_Player::ClientCommand( const CCommand &args )
 	else if ( FStrEq( cmd, "heavy_b" ) )
 	{
 		AttemptJoin( TEAM_BRITISH, CLASS_SNIPER, "a Jaeger" );
+		return true;
+	}
+	else if ( FStrEq( cmd, "skirm_b" ) )
+	{
+		AttemptJoin( TEAM_BRITISH, CLASS_SKIRMISHER, "a Native" );
 		return true;
 	}
 	//BG2 - Tjoppen - voice comms

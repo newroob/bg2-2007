@@ -35,7 +35,7 @@ class CtfFlag : public CBaseAnimating
 
 public:
 
-	bool m_bFlagIsDropped, m_bFlagIsCarried, m_bActive;   
+	bool m_bFlagIsDropped, m_bActive;   
 	char *cFlagName;
 	int m_iFlagWeight;
 

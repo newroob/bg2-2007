@@ -91,12 +91,16 @@ extern CBaseEntity	 *g_pLastRebelSpawn;*/
 									"Max number of Continental Officers on " sizename " maps" );\
 	ConVar mp_limit_rif_a_##size( "mp_limit_rif_a_"#size, "-1", CVAR_FLAGS,\
 									"Max number of Frontiersmen on " sizename " maps" );\
+	ConVar mp_limit_ski_a_##size( "mp_limit_ski_a_"#size, "-1", CVAR_FLAGS,\
+									"Max number of Skirmishers on " sizename " maps" );\
 	ConVar mp_limit_inf_b_##size( "mp_limit_inf_b_"#size, "-1", CVAR_FLAGS,\
 									"Max number of Royal Infantry on " sizename " maps" );\
 	ConVar mp_limit_off_b_##size( "mp_limit_off_b_"#size, "-1", CVAR_FLAGS,\
 									"Max number of Royal Commanders on " sizename " maps" );\
 	ConVar mp_limit_rif_b_##size( "mp_limit_rif_b_"#size, "-1", CVAR_FLAGS,\
-									"Max number of Jägers on " sizename " maps" );
+									"Max number of Jägers on " sizename " maps" );\
+	ConVar mp_limit_ski_b_##size( "mp_limit_ski_b_"#size, "-1", CVAR_FLAGS,\
+									"Max number of Skirmishers on " sizename " maps" );
 
 //as you can see, the macro is a shorthand and should also help avoid misspellings and such that are
 //usually common with repetitive stuff like this

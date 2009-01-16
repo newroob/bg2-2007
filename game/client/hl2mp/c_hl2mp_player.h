@@ -142,6 +142,7 @@ private:
 	#define	CLASS_INFANTRY	0
 	#define	CLASS_OFFICER	1
 	#define	CLASS_SNIPER	2
+	#define	CLASS_SKIRMISHER	3
 	//
 
 inline C_HL2MP_Player *ToHL2MPPlayer( CBaseEntity *pEntity )
