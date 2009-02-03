@@ -18,7 +18,8 @@
 
 #include <vgui/KeyCode.h>
 #include <UtlVector.h>
-
+//BG2 - Depreciated Team Menu System. -HairyPotter
+/* 
 namespace vgui
 {
 	class RichText;
@@ -81,6 +82,6 @@ protected:
 
 	char m_szMapName[ MAX_PATH ];
 };
-
+*/
 
 #endif // TEAMMENU_H

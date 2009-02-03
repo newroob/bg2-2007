@@ -63,12 +63,12 @@ ConVar cl_spec_mode(
 	FCVAR_ARCHIVE | FCVAR_USERINFO | FCVAR_SERVER_CAN_EXECUTE,
 	"spectator mode" );
 
-
+//BG2 - Spectator menu system not needed, never used. Empty anyway. So we'll just remove it for now. -HairyPotter
 
 //-----------------------------------------------------------------------------
 // Purpose: left and right buttons pointing buttons
 //-----------------------------------------------------------------------------
-class CSpecButton : public Button
+/*class CSpecButton : public Button
 {
 public:
 	CSpecButton(Panel *parent, const char *panelName): Button(parent, panelName, "") {}
@@ -245,7 +245,7 @@ void CSpectatorMenu::FireGameEvent( IGameEvent * event )
 			}
 		}
 	}*/
-}
+/*}
 
 //-----------------------------------------------------------------------------
 // Purpose: when duck is pressed it hides the active part of the GUI
@@ -361,7 +361,8 @@ void CSpectatorMenu::Update( void )
 			break;
 		}
 	}
-}
+}*/
+//
 
 //-----------------------------------------------------------------------------
 // main spectator panel
@@ -474,7 +475,7 @@ void CSpectatorGUI::OnThink()
 				gViewPortInterface->ShowPanel( PANEL_SCOREBOARD, m_bSpecScoreboard );
 			}
 		}
-		UpdateTimer();//BG2- Fire that timer! -HairyPotter
+		UpdateTimer();//BG2 - Fire that timer! -HairyPotter
 	}
 }
 
@@ -563,7 +564,7 @@ void CSpectatorGUI::Update()
 	int specmode = GetSpectatorMode();
 	int playernum = GetSpectatorTarget();
 
-	IViewPortPanel *overview = gViewPortInterface->FindPanelByName( PANEL_OVERVIEW );
+	/*IViewPortPanel *overview = gViewPortInterface->FindPanelByName( PANEL_OVERVIEW );
 
 	if ( overview && overview->IsVisible() )
 	{
@@ -587,11 +588,11 @@ void CSpectatorGUI::Update()
 		}
 	}
 	else
-	{
+	{*/
 		// full top bar
 		m_pTopBar->SetSize( wide , btall ); // change width, keep height
 		m_pTopBar->SetPos( 0, 0 );
-	}
+	//}
 
 	m_pPlayerLabel->SetVisible( ShouldShowPlayerLabel(specmode) );
 

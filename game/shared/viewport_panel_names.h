@@ -17,10 +17,8 @@
 
 #define PANEL_SCOREBOARD	"scores"
 #define PANEL_OVERVIEW		"overview"
-#define PANEL_CLASS			"class"
-#define PANEL_TEAM			"team"
 #define PANEL_SPECGUI		"specgui"	// passive spectator elements (top/bottom bars)
-#define PANEL_SPECMENU		"specmenu"  // active spectator elements (options menus etc)
+//#define PANEL_SPECMENU		"specmenu"  // active spectator elements (options menus etc) //BG2 - Removed for now. -HairyPotter
 #define PANEL_INFO			"info"
 #define PANEL_NAV_PROGRESS	"nav_progress"
 #define PANEL_INTRO			"intro"

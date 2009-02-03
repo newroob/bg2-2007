@@ -31,7 +31,8 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+//BG2 - Depreciated Team Menu System. -HairyPotter
+/*
 extern IGameUIFuncs *gameuifuncs; // for key binding details
 
 using namespace vgui;
@@ -372,7 +373,7 @@ void CTeamMenu::OnTeamButton( int team )
 //-----------------------------------------------------------------------------
 // Purpose: Sets the text of a control by name
 //-----------------------------------------------------------------------------
-void CTeamMenu::SetLabelText(const char *textEntryName, const char *text)
+/*void CTeamMenu::SetLabelText(const char *textEntryName, const char *text)
 {
 	Label *entry = dynamic_cast<Label *>(FindChildByName(textEntryName));
 	if (entry)
@@ -396,4 +397,4 @@ void CTeamMenu::OnKeyCodePressed(KeyCode code)
 	{
 		BaseClass::OnKeyCodePressed( code );
 	}
-}
+}*/

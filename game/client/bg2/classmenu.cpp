@@ -466,6 +466,9 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	}
 	else if( code == commmenu )
 	{
+		if ( !C_BasePlayer::GetLocalPlayer()->IsAlive() ) //Make sure the player is on a team and alive to use voicecomms. -HairyPotter
+			return;
+
 		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
 		m_pViewPort->ShowPanel( PANEL_COMM, true );
 		m_pViewPort->ShowPanel( PANEL_COMM2, false );
@@ -474,14 +477,12 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	}
 	else if( code == commmenu2 )
 	{
-		/*bool EnforceOfficerForCommenu2( void );
+		if ( !C_BasePlayer::GetLocalPlayer()->IsAlive() ) //Make sure the player is on a team and alive to use voicecomms. -HairyPotter
+			return;
 
-		if( EnforceOfficerForCommenu2() )*/
-		{
-			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
-			m_pViewPort->ShowPanel( PANEL_COMM, false );
-			m_pViewPort->ShowPanel( PANEL_COMM2, true );
-		}
+		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+		m_pViewPort->ShowPanel( PANEL_COMM, false );
+		m_pViewPort->ShowPanel( PANEL_COMM2, true );
 		
 		return;
 	}

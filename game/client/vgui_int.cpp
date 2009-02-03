@@ -28,9 +28,6 @@
 
 using namespace vgui;
 
-void MP3Player_Create( vgui::VPANEL parent );
-void MP3Player_Destroy();
-
 #include <vgui/IInputInternal.h>
 vgui::IInputInternal *g_InputInternal = NULL;
 
@@ -162,7 +159,7 @@ void VGui_CreateGlobalPanels( void )
 #endif
 	// Part of game
 	internalCenterPrint->Create( gameToolParent );
-	loadingdisc->Create( gameToolParent );
+	//loadingdisc->Create( gameToolParent ); //BG2 - So I guess this does nothing. -HairyPotter
 	messagechars->Create( gameToolParent );
 
 	// Debugging or related tool
@@ -177,20 +174,11 @@ void VGui_CreateGlobalPanels( void )
 	VPANEL GameUiDll = enginevgui->GetPanel( PANEL_GAMEUIDLL );
 	bg2options = new CBG2OptionsPanel( GameUiDll );	//make into main menu panel
 	//
-
-#ifndef _X360
-	// Create mp3 player off of tool parent panel
-	MP3Player_Create( toolParent );
-#endif
 }
 
 void VGui_Shutdown()
 {
 	VGUI_DestroyClientDLLRootPanel();
-
-#ifndef _X360
-	MP3Player_Destroy();
-#endif
 
 	netgraphpanel->Destroy();
 	debugoverlaypanel->Destroy();
@@ -200,7 +188,7 @@ void VGui_Shutdown()
 	fps->Destroy();
 
 	messagechars->Destroy();
-	loadingdisc->Destroy();
+	//loadingdisc->Destroy(); //BG2 - So I guess this does nothing. -HairyPotter
 	internalCenterPrint->Destroy();
 
 	//BG2 - Tjoppen - options panel

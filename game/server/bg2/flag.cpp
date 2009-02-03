@@ -499,7 +499,8 @@ void CFlag::Capture( int iTeam )
 	//this function handles a lot of the capture related stuff
 
 	CRecipientFilter recpfilter;
-	recpfilter.AddAllPlayers();
+	//recpfilter.AddAllPlayers();
+	recpfilter.AddRecipientsByPAS( GetAbsOrigin() ); //Instead, let's send this to players that are at least slose enough to hear it.. -HairyPotter
 	recpfilter.MakeReliable();
 	
 	UserMessageBegin( recpfilter, "CaptureSounds" );

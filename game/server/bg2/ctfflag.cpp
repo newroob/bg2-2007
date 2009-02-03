@@ -64,7 +64,6 @@ void CtfFlag::Spawn( void )
 		case TEAM_AMERICANS: //American Flag
 			cFlagName = "British"; //This is just for the capture text. (Capped British Flag!)
 			break;
-
 		}
 	}
 	else
@@ -89,6 +88,9 @@ void CtfFlag::Spawn( void )
 
 	SetThink( &CtfFlag::Think );
 	SetNextThink( gpGlobals->curtime );
+
+	//HACKHACK - Set the networked flag name here since it's not going to change after this. -HairyPotter
+	n_cFlagName.Set( MAKE_STRING( cFlagName ) ); //Holy shit.
 }
 void CtfFlag::Precache( void )
 {
@@ -166,6 +168,7 @@ void CtfFlag::Think( void )
 			SetAbsAngles( pPlayer->GetAbsAngles() + QAngle( 0,180,0 ) ); // Make sure the flag is flying with the player model, not against it.
 			SetAbsOrigin( pPlayer->GetAbsOrigin() + Vector( 0,0,25 ) );	//Keeps the flag out of the player's FOV, also raises it so it doesn't look like it's stuck in the player's grill.
 			SetParent( pPlayer );	//Attach the entity to the player.
+			m_bIsCarried = true;
 			//For the player speed difference.
 			switch( pPlayer->m_iClass )
 			{
@@ -220,6 +223,7 @@ void CtfFlag::ResetFlag()
 	SetAbsOrigin( FlagOrigin );
 	SetAbsAngles( FlagAngle );
 	m_bFlagIsDropped = false;
+	m_bIsCarried = false;
 	SetParent ( NULL );
 }
 void CtfFlag::PlaySound( Vector origin, int sound )
@@ -229,7 +233,8 @@ void CtfFlag::PlaySound( Vector origin, int sound )
 
 	char *SoundFile = (char *)sound;
 	CRecipientFilter recpfilter;
-	recpfilter.AddAllPlayers();
+	//recpfilter.AddAllPlayers();
+	recpfilter.AddRecipientsByPAS( GetAbsOrigin() ); //Instead, let's send this to players that are at least slose enough to hear it.. -HairyPotter
 	recpfilter.MakeReliable();
 	UserMessageBegin( recpfilter, "CaptureSounds" );
 		WRITE_VEC3COORD( GetAbsOrigin() );
@@ -268,7 +273,18 @@ void CtfFlag::InputToggle( inputdata_t &inputData )
 	else
 		InputEnable( inputData );
 }
+IMPLEMENT_NETWORKCLASS_ALIASED( tfFlag, DT_CtfFlag ) //Doesn't need the "C" in front of it? Mmmkay...
 //-------------------------------------------------------------------------
+
+BEGIN_NETWORK_TABLE( CtfFlag, DT_CtfFlag )
+	SendPropBool( SENDINFO( m_bIsCarried ) ),
+	SendPropInt( SENDINFO( m_iForTeam ), 2, SPROP_UNSIGNED ),
+	SendPropStringT( SENDINFO( n_cFlagName ) ),
+END_NETWORK_TABLE()
+
+BEGIN_PREDICTION_DATA( CtfFlag )
+END_PREDICTION_DATA()
+
 BEGIN_DATADESC( CtfFlag )
 
 	DEFINE_KEYFIELD( m_flPickupRadius, FIELD_FLOAT, "PickupRadius" ),

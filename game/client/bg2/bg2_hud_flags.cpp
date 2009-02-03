@@ -79,14 +79,6 @@ public:
 
 private:
 
-	CPanelAnimationVarAliasType( float, m_flLineHeight, "LineHeight", "15", "proportional_float" );
-
-	CPanelAnimationVar( float, m_flMaxDeathNotices, "MaxDeathNotices", "4" );
-
-	CPanelAnimationVar( bool, m_bRightJustify, "RightJustify", "1" );
-
-	CPanelAnimationVar( vgui::HFont, m_hTextFont, "TextFont", "HudNumbersTimer" ); 
-
 
 	CHudTexture		*m_pIconBlank,
 					*m_pIconRed,
@@ -182,6 +174,11 @@ bool CHudFlags::ShouldDraw( void )
 //==============================================
 void CHudFlags::Paint()
 {
+	int m_iFlagCount = g_Flags.Count();
+
+	if ( !m_iFlagCount ) //No flags? Die here. -HairyPotter
+		return;
+
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 
 	if( !pPlayer )
@@ -208,7 +205,7 @@ void CHudFlags::Paint()
 			m_pLabelFlag[i]->SetVisible(false);
 		}
 
-		for( i = 0; i < g_Flags.Count() && i < 12; i++ )
+		for( i = 0; i < m_iFlagCount && i < 12; i++ )
 		{
 			if( !g_Flags[i] )
 			{
@@ -456,7 +453,7 @@ void CHudFlags::Paint()
 			i++;
 		}
 		int xinc = 0;	//incremental x.. for old flags
-		for( i = 0; i < g_Flags.Count(); i++ )
+		for( i = 0; i < m_iFlagCount; i++ )
 		{
 			int x_offset;
 			if( g_Flags[i]->m_iHUDSlot < 0 )

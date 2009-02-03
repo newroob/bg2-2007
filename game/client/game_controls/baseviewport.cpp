@@ -196,15 +196,11 @@ void CBaseViewport::OnScreenSizeChanged(int iOldWide, int iOldTall)
 
 	// recreate all the default panels
 	RemoveAllPanels();
-#ifndef _XBOX
 	m_pBackGround = new CBackGroundPanel( NULL );
 	m_pBackGround->SetZPos( -20 ); // send it to the back 
 	m_pBackGround->SetVisible( false );
-#endif
 	CreateDefaultPanels();
-#ifndef _XBOX
 	vgui::ipanel()->MoveToBack( m_pBackGround->GetVPanel() ); // really send it to the back 
-#endif
 
 	// hide all panels when reconnecting 
 	ShowPanel( PANEL_ALL, false );
@@ -217,22 +213,16 @@ void CBaseViewport::OnScreenSizeChanged(int iOldWide, int iOldTall)
 
 void CBaseViewport::CreateDefaultPanels( void )
 {
-#ifndef _XBOX
 	AddNewPanel( CreatePanelByName( PANEL_SCOREBOARD ), "PANEL_SCOREBOARD" );
 	AddNewPanel( CreatePanelByName( PANEL_INFO ), "PANEL_INFO" );
 	AddNewPanel( CreatePanelByName( PANEL_SPECGUI ), "PANEL_SPECGUI" );
-	AddNewPanel( CreatePanelByName( PANEL_SPECMENU ), "PANEL_SPECMENU" );
-	AddNewPanel( CreatePanelByName( PANEL_NAV_PROGRESS ), "PANEL_NAV_PROGRESS" );
-	// AddNewPanel( CreatePanelByName( PANEL_TEAM ), "PANEL_TEAM" );
-	// AddNewPanel( CreatePanelByName( PANEL_CLASS ), "PANEL_CLASS" );
-	// AddNewPanel( CreatePanelByName( PANEL_BUY ), "PANEL_BUY" );
+	//AddNewPanel( CreatePanelByName( PANEL_SPECMENU ), "PANEL_SPECMENU" ); //BG2 - Removed for now. -HairyPotter
+	AddNewPanel( CreatePanelByName( PANEL_NAV_PROGRESS ), "PANEL_NAV_PROGRESS" ); 
 	//BG2 - Tjoppen - class selection menu
 	AddNewPanel( CreatePanelByName( PANEL_CLASSES ), "PANEL_CLASSES" );
-	//AddNewPanel( CreatePanelByName( PANEL_TEAMS ) );
 	AddNewPanel( CreatePanelByName( PANEL_COMM ), "PANEL_COMM" );
 	AddNewPanel( CreatePanelByName( PANEL_COMM2 ), "PANEL_COMM2" );
 	//
-#endif
 }
 
 void CBaseViewport::UpdateAllPanels( void )
@@ -254,7 +244,6 @@ IViewPortPanel* CBaseViewport::CreatePanelByName(const char *szPanelName)
 {
 	IViewPortPanel* newpanel = NULL;
 
-#ifndef _XBOX
 	if ( Q_strcmp(PANEL_SCOREBOARD, szPanelName) == 0 )
 	{
 		newpanel = new CClientScoreBoardDialog( this );
@@ -263,19 +252,19 @@ IViewPortPanel* CBaseViewport::CreatePanelByName(const char *szPanelName)
 	{
 		newpanel = new CTextWindow( this );
 	}
-/*	else if ( Q_strcmp(PANEL_OVERVIEW, szPanelName) == 0 )
+	/*else if ( Q_strcmp(PANEL_OVERVIEW, szPanelName) == 0 )
 	{
 		newpanel = new CMapOverview( this );
 	}
-	*/
+	
 	else if ( Q_strcmp(PANEL_TEAM, szPanelName) == 0 )
 	{
 		newpanel = new CTeamMenu( this );
-	}
-	else if ( Q_strcmp(PANEL_SPECMENU, szPanelName) == 0 )
+	}*/
+	/*else if ( Q_strcmp(PANEL_SPECMENU, szPanelName) == 0 ) //BG2 - Removed for now. -HairyPotter
 	{
 		newpanel = new CSpectatorMenu( this );
-	}
+	}*/
 	else if ( Q_strcmp(PANEL_SPECGUI, szPanelName) == 0 )
 	{
 		newpanel = new CSpectatorGUI( this );
@@ -302,7 +291,6 @@ IViewPortPanel* CBaseViewport::CreatePanelByName(const char *szPanelName)
 		newpanel = new CCommMenu2( this );
 	}
 	//
-#endif
 	
 	return newpanel; 
 }
@@ -465,13 +453,11 @@ void CBaseViewport::RemoveAllPanels( void)
 		vgui::VPANEL vPanel = m_Panels[i]->GetVPanel();
 		vgui::ipanel()->DeletePanel( vPanel );
 	}
-#ifndef _XBOX
 	if ( m_pBackGround )
 	{
 		m_pBackGround->MarkForDeletion();
 		m_pBackGround = NULL;
 	}
-#endif
 	m_Panels.Purge();
 	m_pActivePanel = NULL;
 	m_pLastActivePanel = NULL;
@@ -481,13 +467,12 @@ CBaseViewport::~CBaseViewport()
 {
 	m_bInitialized = false;
 
-#ifndef _XBOX
 	if ( !m_bHasParent && m_pBackGround )
 	{
 		m_pBackGround->MarkForDeletion();
 	}
 	m_pBackGround = NULL;
-#endif
+
 	RemoveAllPanels();
 
 	gameeventmanager->RemoveListener( this );
@@ -502,11 +487,9 @@ void CBaseViewport::Start( IGameUIFuncs *pGameUIFuncs, IGameEventManager2 * pGam
 {
 	m_GameuiFuncs = pGameUIFuncs;
 	m_GameEventManager = pGameEventManager;
-#ifndef _XBOX
 	m_pBackGround = new CBackGroundPanel( NULL );
 	m_pBackGround->SetZPos( -20 ); // send it to the back 
 	m_pBackGround->SetVisible( false );
-#endif
 	CreateDefaultPanels();
 
 	m_GameEventManager->AddListener( this, "game_newmap", false );

@@ -5537,7 +5537,7 @@ void CBloodSplat::Think( void )
 //-----------------------------------------------------------------------------
 // Purpose: Create and give the named item to the player. Then return it.
 //-----------------------------------------------------------------------------
-CBaseEntity	*CBasePlayer::GiveNamedItem( const char *pszName, int iSubType )
+CBaseEntity	*CBasePlayer::GiveNamedItem( const char *pszName, int Skin, int iSubType )
 {
 	// If I already own this type don't create one
 	if ( Weapon_OwnsThisType(pszName, iSubType) )
@@ -5561,6 +5561,7 @@ CBaseEntity	*CBasePlayer::GiveNamedItem( const char *pszName, int iSubType )
 	if ( pWeapon )
 	{
 		pWeapon->SetSubType( iSubType );
+		pWeapon->m_nSkin = Skin; //BG2 - Set the weapon skin. -HairyPotter
 	}
 
 	DispatchSpawn( pent );

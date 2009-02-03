@@ -544,7 +544,8 @@ void ToggleScores( void )
 
 void SpecMenu( void )
 {
-	if( gViewPortInterface )
+	//BG2 - Removed for now. -HairyPotter
+	/*if( gViewPortInterface )
 	{
 		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_SPECMENU );
 		if( panel )
@@ -552,7 +553,7 @@ void SpecMenu( void )
 			//toggle
 			panel->ShowPanel( !panel->IsVisible() );
 		}
-	}
+	}*/
 }
 //
 
@@ -617,6 +618,10 @@ void CommMenu( void )
 {
 	if( gViewPortInterface )
 	{
+		if ( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR || 
+			!C_BasePlayer::GetLocalPlayer()->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
+			return;
+
 		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_COMM );
 		if( panel )
 		{
@@ -635,6 +640,10 @@ void CommMenu2( void )
 
 	if( gViewPortInterface /*&& EnforceOfficerForCommenu2()*/ )
 	{
+		if ( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR || 
+			!C_BasePlayer::GetLocalPlayer()->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
+			return;
+
 		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_COMM2 );
 		if( panel )
 		{
@@ -1559,7 +1568,7 @@ static ConCommand startshowscores("+showscores", IN_ScoreDown);
 static ConCommand endshowscores("-showscores", IN_ScoreUp);
 //BG2 - Tjoppen - Enable togglescores and spec_menu
 static ConCommand togglescores("togglescores", ToggleScores);
-static ConCommand spec_menu("spec_menu", SpecMenu);
+//static ConCommand spec_menu("spec_menu", SpecMenu); //BG2 - Removed for now. -HairyPotter
 //
 //BG2 - Tjoppen - make vgui stuff into proper commands that can be issued via console
 static ConCommand teammenu("teammenu", TeamMenu);

@@ -2750,6 +2750,18 @@
 				Name="BG2"
 				>
 				<File
+					RelativePath=".\bg2\bg2_hud_ctf.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\bg2\bg2_hud_flags.cpp"
 					>
 					<FileConfiguration
@@ -2764,6 +2776,15 @@
 				<File
 					RelativePath=".\bg2\bg2_hud_koth.cpp"
 					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\bg2\bg2_hud_main.cpp"
@@ -2788,6 +2809,18 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\bg2\bg2_mapintros.cpp"
+					>
 					<FileConfiguration
 						Name="Release|Win32"
 						>
@@ -2823,6 +2856,14 @@
 				</File>
 				<File
 					RelativePath="..\server\bg2\bullet.h"
+					>
+				</File>
+				<File
+					RelativePath=".\bg2\c_ctfflag.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\bg2\c_ctfflag.h"
 					>
 				</File>
 				<File

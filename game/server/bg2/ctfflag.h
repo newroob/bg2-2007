@@ -5,6 +5,8 @@ const int CtfFlag_START_DISABLED = 1;		// spawnflag definition
 class CtfFlag : public CBaseAnimating
 {
 	DECLARE_CLASS( CtfFlag, CBaseAnimating );
+	DECLARE_NETWORKCLASS(); 
+	DECLARE_PREDICTABLE();
 	DECLARE_DATADESC();
 
 	COutputEvent m_OnPickedUp;
@@ -13,12 +15,16 @@ class CtfFlag : public CBaseAnimating
 	COutputEvent m_OnEnable;
 	COutputEvent m_OnDisable;
 
+	CNetworkVar( string_t, n_cFlagName );
+	CNetworkVar( bool, m_bIsCarried );
+	CNetworkVar( int, m_iForTeam );
+
 	void InputReset( inputdata_t &inputData );
 	void InputEnable( inputdata_t &inputData );
 	void InputDisable( inputdata_t &inputData );
 	void InputToggle( inputdata_t &inputData );
 
-	int		m_iForTeam,
+	int		//m_iForTeam,
 			m_iTeamBonus,
 			iTeam,
 			m_iPlayerBonus,

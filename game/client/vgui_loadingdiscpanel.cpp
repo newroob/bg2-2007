@@ -53,7 +53,7 @@ public:
 	virtual void PaintBackground()
 	{
 		SetBgColor( Color(0, 0, 0, 128) );
-		SetPaintBackgroundType( 2 );
+		SetPaintBackgroundType( 2 ); //2
 		BaseClass::PaintBackground();
 	}
 

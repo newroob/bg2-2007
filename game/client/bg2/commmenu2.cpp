@@ -168,6 +168,10 @@ void CCommMenu2::OnKeyCodePressed(KeyCode code)
 	}
 	else if( iLastTrappedKey == commmenu )
 	{
+		if ( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR || 
+			!C_BasePlayer::GetLocalPlayer()->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
+			return;
+
 		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
 		m_pViewPort->ShowPanel( PANEL_COMM, true );
 		m_pViewPort->ShowPanel( PANEL_COMM2, false );
@@ -176,6 +180,10 @@ void CCommMenu2::OnKeyCodePressed(KeyCode code)
 	}
 	else if( iLastTrappedKey == commmenu2 )
 	{
+		if ( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR || 
+			!C_BasePlayer::GetLocalPlayer()->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
+			return;
+
 		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
 		m_pViewPort->ShowPanel( PANEL_COMM, false );
 		m_pViewPort->ShowPanel( PANEL_COMM2, false );

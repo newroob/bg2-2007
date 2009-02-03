@@ -598,7 +598,7 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 			iSpeed2 = 130;
 			break;
 		case CLASS_SKIRMISHER:
-			iSpeed = 250;
+			iSpeed = 230;
 			iSpeed2 = 140;
 			break;
 	}

@@ -340,7 +340,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		info.m_iDamage = -1;		//ancient chinese secret..
 		info.m_iTracerFreq = 1;		//always do tracers
 
-		// Fire the bullets, and force the first shot to be perfectly accuracy
+		// Fire the bullets, and force the first shot to be perfectly accurate
 		pPlayer->FireBullets( info );
 	}
 

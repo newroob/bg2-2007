@@ -129,6 +129,7 @@ const char *g_ppszRandomCombineModels[] =
 	"models/player/american/heavy_a/heavy_a.mdl",
 	"models/player/american/medium_a/medium_a.mdl",
 	"models/player/american/light_a/light_a.mdl",
+	"models/player/american/militia/militia.mdl",
 };
 
 
@@ -281,13 +282,14 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			CBasePlayer::SetAmmoCount( 12,	GetAmmoDef()->Index("357")); //Default ammo for Officers. -HairyPotter
 			break;
 		case CLASS_SNIPER:
-			//GiveNamedItem( "weapon_revolutionnaire" );	//rev is no more
 			GiveNamedItem( "weapon_pennsylvania" );
 			GiveNamedItem( "weapon_knife" );
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Snipers. -HairyPotter
 			break;
 		case CLASS_SKIRMISHER:
-			GiveNamedItem( "weapon_tomahawk" );
+			//GiveNamedItem( "weapon_tomahawk" );
+			GiveNamedItem( "weapon_revolutionnaire" );
+			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Skirmishers. -HairyPotter
 			break;
 		}
 
@@ -313,6 +315,8 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			break;
 		case CLASS_SKIRMISHER:
 			GiveNamedItem( "weapon_tomahawk" );
+			GiveNamedItem( "weapon_brownbess_nobayo", 1 ); //So the native skin is set to 1 (2 in HLMV since 0 is default in the code)
+			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Skirmishers. -HairyPotter
 			break;
 		}
 		
@@ -458,7 +462,7 @@ void CHL2MP_Player::Spawn(void)
 			iSpeed2 = 130;
 			break;
 		case CLASS_SKIRMISHER:
-			iSpeed = 250;
+			iSpeed = 230;
 			iSpeed2 = 140;
 			break;
 	}
@@ -719,7 +723,7 @@ void CHL2MP_Player::PlayerDeathThink()
 void CHL2MP_Player::FireBullets ( const FireBulletsInfo_t &info )
 {
 	// Move other players back to history positions based on local player's lag
-	lagcompensation->StartLagCompensation( this, this->GetCurrentCommand() );
+	//lagcompensation->StartLagCompensation( this, this->GetCurrentCommand() ); //BG2 - Looks like this was causing players to "jump" around whenever someone shot them. -HairyPotter
 
 	FireBulletsInfo_t modinfo = info;
 
@@ -740,7 +744,7 @@ void CHL2MP_Player::FireBullets ( const FireBulletsInfo_t &info )
 	BaseClass::FireBullets( modinfo );
 
 	// Move other players back to history positions based on local player's lag
-	lagcompensation->FinishLagCompensation( this );
+	//lagcompensation->FinishLagCompensation( this ); //BG2 - Looks like this was causing players to "jump" around whenever someone shot them. -HairyPotter
 }
 
 void CHL2MP_Player::NoteWeaponFired( void )
@@ -1126,7 +1130,7 @@ void CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
 			m_nSkin = RandomInt(0, 1);
 			break;
 		case CLASS_SKIRMISHER:
-			SetModel("models/player/mohawk.mdl"); //TODO - HairyPotter //CAN WE PLEASE ORGANIZE THE PLAYER MODELS?
+			SetModel("models/player/american/militia/militia.mdl");
 			break;
 		}
 		break;
@@ -1336,8 +1340,9 @@ void CHL2MP_Player::HandleVoicecomm( int comm )
 
 		//BG2 - Voice Comms are now Client-Side -HairyPotter
 		CRecipientFilter recpfilter;
-		recpfilter.AddAllPlayers();
-		recpfilter.MakeReliable();
+		//recpfilter.AddAllPlayers();
+		recpfilter.AddRecipientsByPAS( GetAbsOrigin() ); //Instead, let's send this to players that are at least slose enough to hear it.. -HairyPotter
+		recpfilter.MakeReliable(); //More network priority.
 	
 		UserMessageBegin( recpfilter, "VCommSounds" );
 			WRITE_BYTE( entindex() );

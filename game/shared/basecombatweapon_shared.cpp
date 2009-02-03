@@ -1085,10 +1085,13 @@ void CBaseCombatWeapon::SetViewModel()
 	if ( pOwner == NULL )
 		return;
 	CBaseViewModel *vm = pOwner->GetViewModel( m_nViewModelIndex );
+	int WeaponSkin = pOwner->GetActiveWeapon()->m_nSkin; //BG2 - HACKHACK Sets the weapon skin for viewmodel -HairyPotter
+
 	if ( vm == NULL )
 		return;
 	Assert( vm->ViewModelIndex() == m_nViewModelIndex );
 	vm->SetWeaponModel( GetViewModel( m_nViewModelIndex ), this );
+	vm->m_nSkin = WeaponSkin; //BG2 - HACKHACK Sets the weapon skin for viewmodel - HairyPotter
 }
 
 //-----------------------------------------------------------------------------
@@ -1363,9 +1366,12 @@ Activity CBaseCombatWeapon::GetDrawActivity( void )
 bool CBaseCombatWeapon::Holster( CBaseCombatWeapon *pSwitchingTo )
 { 
 
+	CBaseCombatCharacter *pOwner = GetOwner();
 	//BG2 - Tjoppen - m_bCantAbortReload
 	if( m_bCantAbortReload && m_bInReload )
 		return false;
+	else if ( pOwner && m_bInReload )
+		pOwner->RemoveAmmo( 1, m_iPrimaryAmmoType ); //Let's just remove that shot from our ammo box. -HairyPotter
 	//
 
 	MDLCACHE_CRITICAL_SECTION();
@@ -1386,7 +1392,7 @@ bool CBaseCombatWeapon::Holster( CBaseCombatWeapon *pSwitchingTo )
 		flSequenceDuration = SequenceDuration();
 	}
 
-	CBaseCombatCharacter *pOwner = GetOwner();
+	//CBaseCombatCharacter *pOwner = GetOwner();
 	if (pOwner)
 	{
 		pOwner->SetNextAttack( gpGlobals->curtime + flSequenceDuration );

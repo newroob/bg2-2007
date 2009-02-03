@@ -26,9 +26,6 @@ class CBG2OptionsPanel : public vgui::Frame
 {
 	DECLARE_CLASS_SIMPLE( CBG2OptionsPanel, vgui::Frame );
 
-	/*MESSAGE_FUNC_PARAMS( RedSliderChanged, "ValueChanged", data );
-#define MESSAGE_FUNC_PARAMS( name, scriptname, p1 )*/
-
 	//BG2 - Tjoppen - don't want any virtual crap.. everything in the class. thus the reason for not using
 	//				the MESSAGE_FUNC_PARAMS macro
 	_MessageFuncCommon( Command, "Command", 1, vgui::DATATYPE_KEYVALUES, NULL, 0, 0 );
