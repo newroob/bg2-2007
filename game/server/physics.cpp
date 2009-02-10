@@ -105,12 +105,12 @@ IPhysicsCollisionEvent * const g_pCollisionEventHandler = &g_Collisions;
 IPhysicsObjectEvent * const g_pObjectEventHandler = &g_Collisions;
 
 
-struct vehiclescript_t
+/*struct vehiclescript_t
 {
 	string_t scriptName;
 	vehicleparams_t params;
 	vehiclesounds_t sounds;
-};
+};*/
 
 class CPhysicsHook : public CBaseGameSystemPerFrame
 {
@@ -125,11 +125,11 @@ public:
 	virtual void FrameUpdatePostEntityThink();
 	virtual void PreClientUpdate();
 
-	bool FindOrAddVehicleScript( const char *pScriptName, vehicleparams_t *pVehicle, vehiclesounds_t *pSounds );
+	/*bool FindOrAddVehicleScript( const char *pScriptName, vehicleparams_t *pVehicle, vehiclesounds_t *pSounds );
 	void FlushVehicleScripts()
 	{
 		m_vehicleScripts.RemoveAll();
-	}
+	}*/
 
 	bool ShouldSimulate()
 	{
@@ -140,7 +140,7 @@ public:
 	CUtlVector<physicssound::breaksound_t> m_breakSounds;
 
 	CUtlVector<masscenteroverride_t>	m_massCenterOverrides;
-	CUtlVector<vehiclescript_t>			m_vehicleScripts;
+	//CUtlVector<vehiclescript_t>			m_vehicleScripts;
 
 	float		m_impactSoundTime;
 	bool		m_bPaused;
@@ -182,7 +182,7 @@ bool CPhysicsHook::Init( void )
 
 	m_isFinalTick = true;
 	m_impactSoundTime = 0;
-	m_vehicleScripts.EnsureCapacity(4);
+	//m_vehicleScripts.EnsureCapacity(4);
 	return true;
 }
 
@@ -225,9 +225,6 @@ void CPhysicsHook::LevelInitPreEntity()
 	params.maxCollisionsPerObjectPerTimestep = 10;
 	physenv->SetPerformanceSettings( &params );
 
-#ifdef PORTAL
-	physenv_main = physenv;
-#endif
 	{
 	g_EntityCollisionHash = physics->CreateObjectPairHash();
 	}
@@ -298,11 +295,11 @@ void CPhysicsHook::LevelShutdownPostEntity()
 	m_impactSounds.RemoveAll();
 	m_breakSounds.RemoveAll();
 	m_massCenterOverrides.Purge();
-	FlushVehicleScripts();
+	//FlushVehicleScripts();
 }
 
-
-bool CPhysicsHook::FindOrAddVehicleScript( const char *pScriptName, vehicleparams_t *pVehicle, vehiclesounds_t *pSounds )
+//BG2 - Vehicles Removed. -HairyPotter
+/*bool CPhysicsHook::FindOrAddVehicleScript( const char *pScriptName, vehicleparams_t *pVehicle, vehiclesounds_t *pSounds )
 {
 	bool bLoadedSounds = false;
 	int index = -1;
@@ -368,7 +365,7 @@ bool CPhysicsHook::FindOrAddVehicleScript( const char *pScriptName, vehicleparam
 	}
 
 	return false;
-}
+}*/
 
 // called after entities think
 void CPhysicsHook::FrameUpdatePostEntityThink( ) 
@@ -2778,7 +2775,7 @@ void PhysSetEntityGameFlags( CBaseEntity *pEntity, unsigned short flags )
 	}
 }
 
-bool PhysFindOrAddVehicleScript( const char *pScriptName, vehicleparams_t *pParams, vehiclesounds_t *pSounds )
+/*bool PhysFindOrAddVehicleScript( const char *pScriptName, vehicleparams_t *pParams, vehiclesounds_t *pSounds )
 {
 	return g_PhysicsHook.FindOrAddVehicleScript(pScriptName, pParams, pSounds);
 }
@@ -2786,7 +2783,7 @@ bool PhysFindOrAddVehicleScript( const char *pScriptName, vehicleparams_t *pPara
 void PhysFlushVehicleScripts()
 {
 	g_PhysicsHook.FlushVehicleScripts();
-}
+}*/
 
 IPhysicsObject *FindPhysicsObjectByName( const char *pName, CBaseEntity *pErrorEntity )
 {

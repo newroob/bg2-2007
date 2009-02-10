@@ -1597,7 +1597,7 @@ void CBreakableProp::Break( CBaseEntity *pBreaker, const CTakeDamageInfo &info )
 		{
 			bSmashed = true;
 		}
-		else if ( pBreaker && dynamic_cast< CPropVehicleDriveable * >( pBreaker ) )
+		/*else if ( pBreaker && dynamic_cast< CPropVehicleDriveable * >( pBreaker ) )
 		{
 			CPropVehicleDriveable *veh = static_cast< CPropVehicleDriveable * >( pBreaker );
 			CBaseEntity *driver = veh->GetDriver();
@@ -1605,7 +1605,7 @@ void CBreakableProp::Break( CBaseEntity *pBreaker, const CTakeDamageInfo &info )
 			{
 				bSmashed = true;
 			}
-		}
+		}*/
 		if ( bSmashed )
 		{
 			gamestats->Event_CrateSmashed();

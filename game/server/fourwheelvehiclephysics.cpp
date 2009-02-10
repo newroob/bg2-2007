@@ -21,7 +21,8 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+//BG2 - Vehicles Removed. -HairyPotter
+/*
 #define STICK_EXTENTS	400.0f
 
 
@@ -1417,3 +1418,4 @@ int CFourWheelVehiclePhysics::VPhysicsGetObjectList( IPhysicsObject **pList, int
 	}
 	return count;
 }
+*/

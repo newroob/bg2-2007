@@ -89,14 +89,6 @@
 	#include "sdk/sdk_bot_temp.h"
 #endif
 
-#ifdef CSTRIKE_DLL // BOTPORT: TODO: move these ifdefs out
-#include "bot/bot.h"
-#endif
-
-#ifdef PORTAL
-#include "prop_portal_shared.h"
-#include "portal_player.h"
-#endif
 
 extern IToolFrameworkServer *g_pToolFrameworkServer;
 extern IParticleSystemQuery *g_pParticleSystemQuery;
@@ -158,7 +150,7 @@ extern ConVar sv_noclipduringpause;
 ConVar sv_massreport( "sv_massreport", "0" );
 ConVar sv_force_transmit_ents( "sv_force_transmit_ents", "0", FCVAR_CHEAT  , "Will transmit all entities to client, regardless of PVS conditions (will still skip based on transmit flags, however)." );
 
-ConVar sv_autosave( "sv_autosave", "1", 0, "Set to 1 to autosave game on level transition. Does not affect autosave triggers." );
+//ConVar sv_autosave( "sv_autosave", "1", 0, "Set to 1 to autosave game on level transition. Does not affect autosave triggers." ); //BG2 - DOn't need this. - HairyPotter
 ConVar *sv_maxreplay = NULL;
 static ConVar  *g_pcv_commentary = NULL;
 static ConVar *g_pcv_ThreadMode = NULL;
@@ -849,12 +841,6 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	ResetWindspeed();
 	UpdateChapterRestrictions( pMapName );
 
-	if ( IsX360() && !background && (gpGlobals->maxClients == 1) && (g_nCurrentChapterIndex >= 0) )
-	{
-		// Single player games tell xbox live what game & chapter the user is playing
-		UpdateRichPresence();
-	}
-
 	// IGameSystem::LevelInitPreEntityAllSystems() is called when the world is precached
 	// That happens either in LoadGameState() or in MapEntity_ParseAllEntities()
 	if ( loadGame )
@@ -892,7 +878,8 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 			engine->ClearSaveDirAfterClientLoad();
 		}
 
-		if ( pOldLevel && sv_autosave.GetBool() == true )
+		//BG2 - DOn't need this. - HairyPotter
+		/*if ( pOldLevel && sv_autosave.GetBool() == true ) 
 		{
 			// This is a single-player style level transition.
 			// Queue up an autosave one second into the level
@@ -902,7 +889,7 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 				g_EventQueue.AddEvent( pAutosave, "Save", 1.0, NULL, NULL );
 				g_EventQueue.AddEvent( pAutosave, "Kill", 1.1, NULL, NULL );
 			}
-		}
+		}*/
 	}
 	else
 	{
@@ -1411,59 +1398,6 @@ typedef struct
 // this list gets searched for the first partial match, so some are out of order
 static TITLECOMMENT gTitleComments[] =
 {
-#ifdef HL1_DLL
-	{ "t0a0", "#T0A0TITLE" },
-	{ "c0a0", "#HL1_Chapter1_Title" },
-	{ "c1a0", "#HL1_Chapter2_Title" },
-	{ "c1a1", "#HL1_Chapter3_Title" },
-	{ "c1a2", "#HL1_Chapter4_Title" },
-	{ "c1a3", "#HL1_Chapter5_Title" },
-	{ "c1a4", "#HL1_Chapter6_Title" },
-	{ "c2a1", "#HL1_Chapter7_Title" },
-	{ "c2a2", "#HL1_Chapter8_Title" },
-	{ "c2a3", "#HL1_Chapter9_Title" },
-	{ "c2a4d", "#HL1_Chapter11_Title" },	// These must appear before "C2A4" so all other map names starting with C2A4 get that title
-	{ "c2a4e", "#HL1_Chapter11_Title" },
-	{ "c2a4f", "#HL1_Chapter11_Title" },
-	{ "c2a4g", "#HL1_Chapter11_Title" },
-	{ "c2a4", "#HL1_Chapter10_Title" },
-	{ "c2a5", "#HL1_Chapter12_Title" },
-	{ "c3a1", "#HL1_Chapter13_Title" },
-	{ "c3a2", "#HL1_Chapter14_Title" },
-	{ "c4a1a", "#HL1_Chapter17_Title"  },	// Order is important, see above
-	{ "c4a1b", "#HL1_Chapter17_Title"  },
-	{ "c4a1c", "#HL1_Chapter17_Title"  },
-	{ "c4a1d", "#HL1_Chapter17_Title"  },
-	{ "c4a1e", "#HL1_Chapter17_Title"  },
-	{ "c4a1", "#HL1_Chapter15_Title" },
-	{ "c4a2", "#HL1_Chapter16_Title"  },
-	{ "c4a3", "#HL1_Chapter18_Title"  },
-	{ "c5a1", "#HL1_Chapter19_Title"  },
-#elif defined PORTAL
-	{ "testchmb_a_00",			"#Portal_Chapter1_Title"  },
-	{ "testchmb_a_01",			"#Portal_Chapter1_Title"  },
-	{ "testchmb_a_02",			"#Portal_Chapter2_Title"  },
-	{ "testchmb_a_03",			"#Portal_Chapter2_Title"  },
-	{ "testchmb_a_04",			"#Portal_Chapter3_Title"  },
-	{ "testchmb_a_05",			"#Portal_Chapter3_Title"  },
-	{ "testchmb_a_06",			"#Portal_Chapter4_Title"  },
-	{ "testchmb_a_07",			"#Portal_Chapter4_Title"  },
-	{ "testchmb_a_08_advanced",	"#Portal_Chapter5_Title"  },
-	{ "testchmb_a_08",			"#Portal_Chapter5_Title"  },
-	{ "testchmb_a_09_advanced",	"#Portal_Chapter6_Title"  },
-	{ "testchmb_a_09",			"#Portal_Chapter6_Title"  },
-	{ "testchmb_a_10_advanced",	"#Portal_Chapter7_Title"  },
-	{ "testchmb_a_10",			"#Portal_Chapter7_Title"  },
-	{ "testchmb_a_11_advanced",	"#Portal_Chapter8_Title"  },
-	{ "testchmb_a_11",			"#Portal_Chapter8_Title"  },
-	{ "testchmb_a_13_advanced",	"#Portal_Chapter9_Title"  },
-	{ "testchmb_a_13",			"#Portal_Chapter9_Title"  },
-	{ "testchmb_a_14_advanced",	"#Portal_Chapter10_Title"  },
-	{ "testchmb_a_14",			"#Portal_Chapter10_Title"  },
-	{ "testchmb_a_15",			"#Portal_Chapter11_Title"  },
-	{ "escape_",				"#Portal_Chapter11_Title"  },
-	{ "background2",			"#Portal_Chapter12_Title"  },
-#else
 	{ "intro", "#HL2_Chapter1_Title" },
 
 	{ "d1_trainstation_05", "#HL2_Chapter2_Title" },
@@ -1542,24 +1476,7 @@ static TITLECOMMENT gTitleComments[] =
 	
 	{ "ep2_outland_12a", "#ep2_Chapter7_Title" },
 	{ "ep2_outland_12", "#ep2_Chapter6_Title" },
-#endif
 };
-
-#ifdef _XBOX
-void CServerGameDLL::GetTitleName( const char *pMapName, char* pTitleBuff, int titleBuffSize )
-{
-	// Try to find a matching title comment for this mapname
-	for ( int i = 0; i < ARRAYSIZE(gTitleComments); i++ )
-	{
-		if ( !Q_strnicmp( pMapName, gTitleComments[i].pBSPName, strlen(gTitleComments[i].pBSPName) ) )
-		{
-			Q_strncpy( pTitleBuff, gTitleComments[i].pTitleName, titleBuffSize );
-			return;
-		}
-	}
-	Q_strncpy( pTitleBuff, pMapName, titleBuffSize );
-}
-#endif
 
 void CServerGameDLL::GetSaveComment( char *text, int maxlength, float flMinutes, float flSeconds, bool bNoTime )
 {
@@ -2533,14 +2450,6 @@ void CServerGameClients::ClientSetupVisibility( edict_t *pViewEntity, edict_t *p
 		// Update our array of which portals are open and flush it if necessary.		
 		portalNums[iOutPortal] = pCur->m_portalNumber;
 		isOpen[iOutPortal] = pCur->UpdateVisibility( org, fovDistanceAdjustFactor, bIsOpenOnClient );
-
-#ifdef PORTAL
-		// If the client doesn't need this open, test if portals might need this area portal open
-		if ( isOpen[iOutPortal] == 0 )
-		{
-			isOpen[iOutPortal] = TestAreaPortalVisibilityThroughPortals( pCur, pViewEntity, pvs, pvssize );
-		}
-#endif
 
 		++iOutPortal;
 		if ( iOutPortal >= ARRAYSIZE( portalNums ) )

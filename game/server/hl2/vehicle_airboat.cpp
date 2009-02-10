@@ -26,7 +26,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+/*
 extern ConVar sv_vehicle_autoaim_scale;
 
 #define	VEHICLE_HITBOX_DRIVER	1
@@ -460,7 +460,7 @@ void CPropAirboat::UpdateOnRemove()
 		UTIL_Remove( m_hAvoidSphere );
 		m_hAvoidSphere = NULL;
 	}*/
-}
+/*}
 
 
 //-----------------------------------------------------------------------------
@@ -1593,7 +1593,7 @@ void CPropAirboat::FireGun( )
 	VectorNormalize( vecRay );
 	*/
 	
-	CAmmoDef *pAmmoDef = GetAmmoDef();
+	/*CAmmoDef *pAmmoDef = GetAmmoDef();
 	int ammoType = pAmmoDef->Index( "AirboatGun" );
 
 	FireBulletsInfo_t info;
@@ -1688,7 +1688,7 @@ void CPropAirboat::FireGun( )
 //			pEnt->DisableGuiding();
 		}
 	}*/
-}
+/*}
 
 
 //-----------------------------------------------------------------------------
@@ -2016,7 +2016,7 @@ void CPropAirboat::CreateSplash( int nSplashType )
 			data.m_flScale = AIRBOAT_SPLASH_RIPPLE_SIZE + random->RandomFloat( 0, AIRBOAT_SPLASH_RIPPLE_SIZE * 0.25 );
 			DispatchEffect( "waterripple", data );
 			*/
-		}
+		/*}
 		default:
 		{
 			return;
@@ -2081,5 +2081,5 @@ void CPropAirboat::ApplyStressDamage( IPhysicsObject *pPhysics )
 		dmgInfo.SetDamagePosition( GetAbsOrigin() );
 		m_hPlayer->TakeDamage( dmgInfo );
 	}
-}
+}*/
 

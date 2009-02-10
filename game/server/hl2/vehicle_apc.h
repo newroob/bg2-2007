@@ -14,7 +14,7 @@
 
 #include "vehicle_base.h"
 #include "smoke_trail.h"
-
+/*
 //-----------------------------------------------------------------------------
 // Purpose: Four wheel physics vehicle server vehicle with weaponry
 //-----------------------------------------------------------------------------
@@ -157,6 +157,6 @@ private:
 
 	DECLARE_DATADESC();
 };
-
+*/
 #endif // VEHICLE_APC_H
 

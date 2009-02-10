@@ -13,7 +13,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+/*
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -118,7 +118,7 @@ void CPropVehicleViewController::EnterVehicle( CBasePlayer *pPlayer )
 			pHL2Player->FlashlightTurnOff();
 		}
 	}*/
-}
+/*}
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -178,3 +178,4 @@ void CPropVehicleViewController::InputForcePlayerOut( inputdata_t &inputdata )
 
 	GetServerVehicle()->HandlePassengerExit( m_hPlayer );
 }
+*/

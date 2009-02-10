@@ -17,8 +17,8 @@
 #include <vgui_controls/AnimationController.h>
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
-
+//BG2 - Not used, don't need it. -HairyPotter
+/*
 //-----------------------------------------------------------------------------
 // Purpose: Displays current ammunition level
 //-----------------------------------------------------------------------------
@@ -64,7 +64,7 @@ CTeamPlayHud::CTeamPlayHud( const char *pElementName ) : BaseClass(NULL, "TeamDi
 
 	m_pBackground = new vgui::Label( this, "Background", "" );
 
-	m_pWarmupLabel = new vgui::Label( this, "RoundState_warmup", "test label" /*g_pVGuiLocalize->Find( "#Clan_warmup_mode" )*/ );
+	m_pWarmupLabel = new vgui::Label( this, "RoundState_warmup", "test label" /*g_pVGuiLocalize->Find( "#Clan_warmup_mode" )*//* );
 	m_pWarmupLabel->SetPaintBackgroundEnabled( false );
 	m_pWarmupLabel->SetPaintBorderEnabled( false );
 	m_pWarmupLabel->SizeToContents();
@@ -168,4 +168,4 @@ void CTeamPlayHud::OnThink()
 	}
 
 	InvalidateLayout();
-}
+}*/

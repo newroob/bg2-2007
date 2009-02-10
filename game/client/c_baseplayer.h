@@ -281,7 +281,7 @@ public:
 	virtual void	SetVehicleRole( int nRole );
 	void					LeaveVehicle( void );
 
-	bool					UsingStandardWeaponsInVehicle( void );
+	//bool					UsingStandardWeaponsInVehicle( void ); //BG2 - Vehicles Removed. -HairyPotter
 
 	virtual void			SetAnimation( PLAYER_ANIM playerAnim );
 

@@ -123,7 +123,7 @@ void CBasePlayer::ItemPreFrame()
 // Purpose: 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CBasePlayer::UsingStandardWeaponsInVehicle( void )
+/*bool CBasePlayer::UsingStandardWeaponsInVehicle( void )
 {
 	Assert( IsInAVehicle() );
 #if !defined( CLIENT_DLL )
@@ -145,7 +145,7 @@ bool CBasePlayer::UsingStandardWeaponsInVehicle( void )
 		return false;
 
 	return true;
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Purpose: Called every usercmd by the player PostThink
@@ -158,7 +158,7 @@ void CBasePlayer::ItemPostFrame()
 	CalcViewModelView( EyePosition(), EyeAngles() );
 
 	// Don't process items while in a vehicle.
-	if ( GetVehicle() )
+	/*if ( GetVehicle() )
 	{
 #if defined( CLIENT_DLL )
 		IClientVehicle *pVehicle = GetVehicle();
@@ -177,7 +177,7 @@ void CBasePlayer::ItemPostFrame()
 
 		if (!bUsingStandardWeapons || !GetVehicle())
 			return;
-	}
+	}*/
 
 
 	// check if the player is using something
@@ -199,7 +199,7 @@ void CBasePlayer::ItemPostFrame()
 	}
 	else
 	{
-		if ( GetActiveWeapon() && (!IsInAVehicle() || UsingStandardWeaponsInVehicle()) )
+		if ( GetActiveWeapon() /*&& (!IsInAVehicle() || UsingStandardWeaponsInVehicle())*/ )
 		{
 #if defined( CLIENT_DLL )
 			// Not predicting this weapon

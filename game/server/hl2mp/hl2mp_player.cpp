@@ -462,8 +462,8 @@ void CHL2MP_Player::Spawn(void)
 			iSpeed2 = 130;
 			break;
 		case CLASS_SKIRMISHER:
-			iSpeed = 230;
-			iSpeed2 = 140;
+			iSpeed = 195;
+			iSpeed2 = 130;
 			break;
 	}
 	//
@@ -818,7 +818,7 @@ Activity CHL2MP_Player::TranslateTeamActivity( Activity ActToTranslate )
 	return ActToTranslate;
 }
 
-extern ConVar hl2_normspeed;
+//extern ConVar hl2_normspeed;
 
 // Set the activity based on an event or current state
 void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )

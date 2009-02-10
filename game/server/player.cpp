@@ -1741,10 +1741,10 @@ void CBasePlayer::Event_Dying()
 	//
 
 	// The dead body rolls out of the vehicle.
-	if ( IsInAVehicle() )
+	/*if ( IsInAVehicle() )
 	{
 		LeaveVehicle();
-	}
+	}*/
 
 	QAngle angles = GetLocalAngles();
 
@@ -1762,7 +1762,8 @@ void CBasePlayer::Event_Dying()
 // Set the activity based on an event or current state
 void CBasePlayer::SetAnimation( PLAYER_ANIM playerAnim )
 {
-	int animDesired;
+	//BG2 - Player Anims are handled from SetAnimation in hl2mp_player.cpp - HairyPotter
+	/*int animDesired;
 	char szAnim[64];
 
 	float speed;
@@ -1860,7 +1861,9 @@ void CBasePlayer::SetAnimation( PLAYER_ANIM playerAnim )
 		Q_strncat( szAnim, m_szAnimExtension ,sizeof(szAnim), COPY_ALL_CHARACTERS );
 		animDesired = LookupSequence( szAnim );
 		if (animDesired == -1)
+		{
 			animDesired = 0;
+		}
 
 		if ( GetSequence() != animDesired || !SequenceLoops() )
 		{
@@ -1926,7 +1929,7 @@ void CBasePlayer::SetAnimation( PLAYER_ANIM playerAnim )
 	//Msg( "Set animation to %d\n", animDesired );
 	// Reset to first frame of desired animation
 	ResetSequence( animDesired );
-	SetCycle( 0 );
+	SetCycle( 0 );*/
 }
 
 /*
@@ -5254,7 +5257,8 @@ void CBasePlayer::VelocityPunch( const Vector &vecForce )
 // Purpose: Whether or not the player is currently able to enter the vehicle
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CBasePlayer::CanEnterVehicle( IServerVehicle *pVehicle, int nRole )
+//BG2 - Vehicles removed. -HairyPotter
+/*bool CBasePlayer::CanEnterVehicle( IServerVehicle *pVehicle, int nRole )
 {
 	// Must not have a passenger there already
 	if ( pVehicle->GetPassenger( nRole ) )
@@ -5435,7 +5439,8 @@ void CBasePlayer::LeaveVehicle( const Vector &vecExitPoint, const QAngle &vecExi
 
 	// Just cut all of the rumble effects. 
 	RumbleEffect( RUMBLE_STOP_ALL, 0, RUMBLE_FLAGS_NONE );
-}
+}*/
+//
 
 
 //==============================================
@@ -5841,46 +5846,8 @@ void CBasePlayer::ImpulseCommands( )
 	
 	m_nImpulse = 0;
 }
-
-#ifdef HL2_EPISODIC
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-static void CreateJalopy( CBasePlayer *pPlayer )
-{
-	// Cheat to create a jeep in front of the player
-	Vector vecForward;
-	AngleVectors( pPlayer->EyeAngles(), &vecForward );
-	CBaseEntity *pJeep = (CBaseEntity *)CreateEntityByName( "prop_vehicle_jeep" );
-	if ( pJeep )
-	{
-		Vector vecOrigin = pPlayer->GetAbsOrigin() + vecForward * 256 + Vector(0,0,64);
-		QAngle vecAngles( 0, pPlayer->GetAbsAngles().y - 90, 0 );
-		pJeep->SetAbsOrigin( vecOrigin );
-		pJeep->SetAbsAngles( vecAngles );
-		pJeep->KeyValue( "model", "models/vehicle.mdl" );
-		pJeep->KeyValue( "solid", "6" );
-		pJeep->KeyValue( "targetname", "jeep" );
-		pJeep->KeyValue( "vehiclescript", "scripts/vehicles/jalopy.txt" );
-		DispatchSpawn( pJeep );
-		pJeep->Activate();
-		pJeep->Teleport( &vecOrigin, &vecAngles, NULL );
-	}
-}
-
-void CC_CH_CreateJalopy( void )
-{
-	CBasePlayer *pPlayer = UTIL_GetCommandClient();
-	if ( !pPlayer )
-		return;
-	CreateJalopy( pPlayer );
-}
-
-static ConCommand ch_createjalopy("ch_createjalopy", CC_CH_CreateJalopy, "Spawn jalopy in front of the player.", FCVAR_CHEAT);
-
-#endif // HL2_EPISODIC
-
+//BG2 - Vehicles removed. Sorry to do this guys :( -HairyPotter
+/*
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -5957,7 +5924,7 @@ void CC_CH_CreateAirboat( void )
 }
 
 static ConCommand ch_createairboat( "ch_createairboat", CC_CH_CreateAirboat, "Spawn airboat in front of the player.", FCVAR_CHEAT );
-
+*/
 
 //=========================================================
 //=========================================================
@@ -5994,7 +5961,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveNamedItem( "weapon_cubemap" );
 		break;
 
-	case 82:
+	/*case 82:
 		// Cheat to create a jeep in front of the player
 		CreateJeep( this );
 		break;
@@ -6002,7 +5969,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 	case 83:
 		// Cheat to create a airboat in front of the player
 		CreateAirboat( this );
-		break;
+		break;*/
 
 	case 101:
 		gEvilImpulse101 = true;
@@ -6146,32 +6113,8 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 bool CBasePlayer::ClientCommand( const CCommand &args )
 {
 	const char *cmd = args[0];
-#ifdef _DEBUG
-	if( stricmp( cmd, "test_SmokeGrenade" ) == 0 )
-	{
-		if ( sv_cheats && sv_cheats->GetBool() )
-		{
-			ParticleSmokeGrenade *pSmoke = dynamic_cast<ParticleSmokeGrenade*>( CreateEntityByName(PARTICLESMOKEGRENADE_ENTITYNAME) );
-			if ( pSmoke )
-			{
-				Vector vForward;
-				AngleVectors( GetLocalAngles(), &vForward );
-				vForward.z = 0;
-				VectorNormalize( vForward );
 
-				pSmoke->SetLocalOrigin( GetLocalOrigin() + vForward * 100 );
-				pSmoke->SetFadeTime(25, 30);	// Fade out between 25 seconds and 30 seconds.
-				pSmoke->Activate();
-				pSmoke->SetLifetime(30);
-				pSmoke->FillVolume();
-
-				return true;
-			}
-		}
-	}
-	else
-#endif // _DEBUG
-	if( stricmp( cmd, "vehicleRole" ) == 0 )
+	/*if( stricmp( cmd, "vehicleRole" ) == 0 )
 	{
 		// Get the vehicle role value.
 		if ( args.ArgC() == 2 )
@@ -6194,8 +6137,8 @@ bool CBasePlayer::ClientCommand( const CCommand &args )
 
 			return true;
 		}
-	}
-	else if ( stricmp( cmd, "spectate" ) == 0 ) // join spectator team & start observer mode
+	}*/
+	if ( stricmp( cmd, "spectate" ) == 0 ) // join spectator team & start observer mode
 	{
 		if ( GetTeamNumber() == TEAM_SPECTATOR )
 			return true;

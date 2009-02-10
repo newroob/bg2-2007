@@ -891,10 +891,10 @@ void CPrediction::RunCommand( C_BasePlayer *player, CUserCmd *ucmd, IMoveHelper 
 		// Discard impulse commands unless the vehicle allows them.
 		// FIXME: UsingStandardWeapons seems like a bad filter for this. 
 		// The flashlight is an impulse command, for example.
-		if ( !pVehicle || player->UsingStandardWeaponsInVehicle() )
-		{
+		//if ( !pVehicle || player->UsingStandardWeaponsInVehicle() )
+		//{
 			player->m_nImpulse = ucmd->impulse;
-		}
+		//}
 	}
 
 	// Get button states

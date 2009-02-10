@@ -652,7 +652,6 @@ void CBaseViewport::FireGameEvent( IGameEvent * event)
 void CBaseViewport::ReloadScheme(const char *fromFile)
 {
 	// See if scheme should change
-	
 	if ( fromFile != NULL )
 	{
 		// "resource/ClientScheme.res"

@@ -2469,17 +2469,6 @@ bool CHL2_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 //-----------------------------------------------------------------------------
 bool CHL2_Player::ClientCommand( const CCommand &args )
 {
-#if	HL2_SINGLE_PRIMARY_WEAPON_MODE
-
-	//Drop primary weapon
-	if ( !Q_stricmp( args[0], "DropPrimary" ) )
-	{
-		Weapon_DropSlot( WEAPON_PRIMARY_SLOT );
-		return true;
-	}
-
-#endif
-
 	if ( !Q_stricmp( args[0], "emit" ) )
 	{
 		CSingleUserRecipientFilter filter( this );
@@ -2771,14 +2760,14 @@ bool CHL2_Player::Weapon_Ready( void )
 //-----------------------------------------------------------------------------
 bool CHL2_Player::Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon )
 {
-	CBasePlayer *pPlayer = (CBasePlayer *)this;
+	/*CBasePlayer *pPlayer = (CBasePlayer *)this;
 #if !defined( CLIENT_DLL )
 	IServerVehicle *pVehicle = pPlayer->GetVehicle();
 #else
 	IClientVehicle *pVehicle = pPlayer->GetVehicle();
 #endif
 	if (pVehicle && !pPlayer->UsingStandardWeaponsInVehicle())
-		return false;
+		return false;*/
 
 	if ( !pWeapon->HasAnyAmmo() && !GetAmmoCount( pWeapon->m_iPrimaryAmmoType ) )
 		return false;

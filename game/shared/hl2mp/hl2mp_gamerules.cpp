@@ -92,7 +92,7 @@ extern CBaseEntity	 *g_pLastRebelSpawn;*/
 	ConVar mp_limit_rif_a_##size( "mp_limit_rif_a_"#size, "-1", CVAR_FLAGS,\
 									"Max number of Frontiersmen on " sizename " maps" );\
 	ConVar mp_limit_ski_a_##size( "mp_limit_ski_a_"#size, "-1", CVAR_FLAGS,\
-									"Max number of Skirmishers on " sizename " maps" );\
+									"Max number of Militia on " sizename " maps" );\
 	ConVar mp_limit_inf_b_##size( "mp_limit_inf_b_"#size, "-1", CVAR_FLAGS,\
 									"Max number of Royal Infantry on " sizename " maps" );\
 	ConVar mp_limit_off_b_##size( "mp_limit_off_b_"#size, "-1", CVAR_FLAGS,\
@@ -100,7 +100,7 @@ extern CBaseEntity	 *g_pLastRebelSpawn;*/
 	ConVar mp_limit_rif_b_##size( "mp_limit_rif_b_"#size, "-1", CVAR_FLAGS,\
 									"Max number of Jägers on " sizename " maps" );\
 	ConVar mp_limit_ski_b_##size( "mp_limit_ski_b_"#size, "-1", CVAR_FLAGS,\
-									"Max number of Skirmishers on " sizename " maps" );
+									"Max number of Natives on " sizename " maps" );
 
 //as you can see, the macro is a shorthand and should also help avoid misspellings and such that are
 //usually common with repetitive stuff like this
@@ -1970,12 +1970,14 @@ int CHL2MPRules::GetLimitTeamClass( int iTeam, int iClass )
 		case CLASS_INFANTRY: return mp_limit_inf_a_##size.GetInt();\
 		case CLASS_OFFICER: return mp_limit_off_a_##size.GetInt();\
 		case CLASS_SNIPER: return mp_limit_rif_a_##size.GetInt();\
+		case CLASS_SKIRMISHER: return mp_limit_ski_a_##size.GetInt();\
 		default: return -1;}\
 	case TEAM_BRITISH:\
 		switch( iClass ){\
 		case CLASS_INFANTRY: return mp_limit_inf_b_##size.GetInt();\
 		case CLASS_OFFICER: return mp_limit_off_b_##size.GetInt();\
 		case CLASS_SNIPER: return mp_limit_rif_b_##size.GetInt();\
+		case CLASS_SKIRMISHER: return mp_limit_ski_b_##size.GetInt();\
 		default: return -1;}\
 	default: return -1;}
 

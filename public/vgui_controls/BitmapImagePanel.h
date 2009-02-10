@@ -19,6 +19,7 @@ class CBitmapImagePanel : public vgui::Panel
 {
 public:
 	CBitmapImagePanel( vgui::Panel *parent, char const *panelName, char const *filename = NULL );
+	~CBitmapImagePanel(); // BG2 - Added as a fix to potential memory leak listed on Valve Dev Wiki. -HairyPotter
 
 	virtual void	PaintBackground();
 

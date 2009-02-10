@@ -18,7 +18,7 @@ CLIENTEFFECT_REGISTER_END()
 //
 // Crossbow bolt
 //
-
+/*
 class C_CrossbowBolt : public C_BaseCombatCharacter
 {
 	DECLARE_CLASS( C_CrossbowBolt, C_BaseCombatCharacter );
@@ -157,3 +157,4 @@ void CrosshairLoadCallback( const CEffectData &data )
 }
 
 DECLARE_CLIENT_EFFECT( "CrossbowLoad", CrosshairLoadCallback );
+*/

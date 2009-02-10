@@ -66,7 +66,7 @@
 #include "tier0/memdbgon.h"
 
 extern bool g_bTestMoveTypeStepSimulation;
-extern ConVar sv_vehicle_autoaim_scale;
+//extern ConVar sv_vehicle_autoaim_scale;
 
 // Init static class variables
 bool CBaseEntity::m_bInDebugSelect = false;	// Used for selection in debug overlays
@@ -828,10 +828,10 @@ void CBaseEntity::DrawDebugGeometryOverlays(void)
 			}
 		}
 
-		if( pPlayer->IsInAVehicle() )
+		/*if( pPlayer->IsInAVehicle() )
 		{
 			radius *= sv_vehicle_autoaim_scale.GetFloat();
-		}
+		}*/
 
 		NDebugOverlay::Line( vecCenter, vecCenter + vecRight * radius, r, g, b, true, 0.1 );
 		NDebugOverlay::Line( vecCenter, vecCenter - vecRight * radius, r, g, b, true, 0.1 );

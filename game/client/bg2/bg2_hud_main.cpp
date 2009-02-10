@@ -88,7 +88,6 @@ private:
 	vgui::Label * m_pLabelAScore; 
 	vgui::Label * m_pLabelAmmo; 
 	vgui::Label * m_pLabelWaveTime; 
-	//vgui::Label * m_pLabelBGVersion; 
 	vgui::Label *m_pLabelDamageVerificator,
 				*m_pLabelLMS;		//BG2 - Tjoppen - TODO: remove this when hintbox works correctly
 
@@ -152,13 +151,6 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_pLabelWaveTime->SizeToContents();
 	m_pLabelWaveTime->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelWaveTime->SetFgColor( ColourWhite );
-
-	/*m_pLabelBGVersion = new vgui::Label( this, "RoundState_warmup", "");
-	m_pLabelBGVersion->SetPaintBackgroundEnabled( false );
-	m_pLabelBGVersion->SetPaintBorderEnabled( false );
-	m_pLabelBGVersion->SizeToContents();
-	m_pLabelBGVersion->SetContentAlignment( vgui::Label::a_west );
-	m_pLabelBGVersion->SetFgColor( ColourWhite );*/
 
 	m_pLabelDamageVerificator = new vgui::Label( pParent, "RoundState_warmup", "");
 	m_pLabelDamageVerificator->SetPaintBackgroundEnabled( false );

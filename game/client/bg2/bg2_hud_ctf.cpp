@@ -52,6 +52,7 @@ private:
 					*m_pIconBlue;
 
 	vgui::Label * m_pLabelFlag[MAX_FLAGS]; 
+
 };
 
 using namespace vgui;

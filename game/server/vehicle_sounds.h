@@ -11,7 +11,7 @@
 #endif
 
 #include "vcollide_parse.h"
-
+/*
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -133,5 +133,5 @@ private:
 	int	m_iCurrentState;
 	int m_iCurrentCrashSound;
 };
-
+*/
 #endif // VEHICLE_SOUNDS_H

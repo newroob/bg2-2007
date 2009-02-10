@@ -21,7 +21,8 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+//BG2 - Vehicles Removed. - HairyPotter
+/*
 #ifdef CLIENT_DLL
 
 extern ConVar default_fov;
@@ -409,4 +410,4 @@ void SharedVehicleViewSmoothing(CBasePlayer *pPlayer,
 		// Not running an entry/exit anim. Just use the vehicle's FOV.
 		*pFOV = pData->flFOV;
 	}
-}
+}*/

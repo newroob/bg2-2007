@@ -16,7 +16,8 @@
 #include "vcollide_parse.h"
 #include "datamap.h"
 #include "vehicle_sounds.h"
-
+//BG2 - Vehicles Removed. -HairyPotter
+/*
 // in/sec to miles/hour
 #define INS2MPH_SCALE	( 3600 * (1/5280.0f) * (1/12.0f) )
 #define INS2MPH(x)		( (x) * INS2MPH_SCALE )
@@ -214,5 +215,5 @@ float RemapAngleRange( float startInterval, float endInterval, float value );
 
 #define PITCH_CURVE_ZERO		10	// pitch less than this is clamped to zero
 #define PITCH_CURVE_LINEAR		45	// pitch greater than this is copied out
-
+*/
 #endif // FOUR_WHEEL_VEHICLE_PHYSICS_H

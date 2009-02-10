@@ -70,7 +70,7 @@ bool CBaseCombatCharacter::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmo
 //-----------------------------------------------------------------------------
 bool CBaseCombatCharacter::Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon )
 {
-	if (IsPlayer())
+	/*if (IsPlayer())
 	{
 		CBasePlayer *pPlayer = (CBasePlayer *)this;
 #if !defined( CLIENT_DLL )
@@ -80,7 +80,7 @@ bool CBaseCombatCharacter::Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon )
 #endif
 		if (pVehicle && !pPlayer->UsingStandardWeaponsInVehicle())
 			return false;
-	}
+	}*/
 
 	if ( !pWeapon->HasAnyAmmo() && !GetAmmoCount( pWeapon->m_iPrimaryAmmoType ) )
 		return false;

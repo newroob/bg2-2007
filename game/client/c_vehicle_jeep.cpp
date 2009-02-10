@@ -15,7 +15,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+/*
 extern ConVar default_fov;
 
 ConVar r_JeepViewBlendTo( "r_JeepViewBlendTo", "1", FCVAR_CHEAT );
@@ -323,4 +323,4 @@ void WheelDustCallback( const CEffectData &data )
 	}
 }
 
-DECLARE_CLIENT_EFFECT( "WheelDust", WheelDustCallback );
+DECLARE_CLIENT_EFFECT( "WheelDust", WheelDustCallback );*/

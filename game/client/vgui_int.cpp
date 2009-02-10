@@ -25,6 +25,35 @@
 //BG2 - Tjoppen - options panel
 #include "../bg2/vgui_bg2_options.h"
 //
+class CBG2Version : public vgui::Panel
+{
+	DECLARE_CLASS_SIMPLE( CBG2Version, vgui::Panel );
+	CBG2Version( vgui::Panel parent ) : BaseClass( NULL, "BG2Version" )
+	{
+		vgui::Panel *pParent = g_pClientMode->GetViewport();
+		SetParent( pParent );
+
+		//BG2 - Print out the BG2 version number in the main menu panel. -HairyPotter
+		Color ColourWhite( 255, 255, 255, 255 );
+		vgui::Label *m_pLabelBGVersion = NULL;
+		m_pLabelBGVersion = new vgui::Label( this, "RoundState_warmup", "");
+		m_pLabelBGVersion->SetPaintBackgroundEnabled( false );
+		m_pLabelBGVersion->SetPaintBorderEnabled( false );
+		m_pLabelBGVersion->SetText( "1.3.00b (SVN)" );
+		m_pLabelBGVersion->SizeToContents();
+		m_pLabelBGVersion->SetContentAlignment( vgui::Label::a_west );
+		m_pLabelBGVersion->SetFgColor( ColourWhite );
+		m_pLabelBGVersion->SetPos( GetWide() - 20, GetTall() - 20);
+		//
+		
+		SetVisible( true );
+	}
+
+	~CBG2Version()
+	{
+	}
+};
+extern CBG2Version *bg2version;
 
 using namespace vgui;
 
@@ -219,11 +248,11 @@ void VGui_PreRender()
 	VPROF( "VGui_PreRender" );
 
 	// 360 does not use these plaques
-	if ( IsPC() )
+	/*if ( IsPC() )
 	{
 		loadingdisc->SetLoadingVisible( engine->IsDrawingLoadingImage() && !engine->IsPlayingDemo() );
 		loadingdisc->SetPausedVisible( !enginevgui->IsGameUIVisible() && cl_showpausedimage.GetBool() && engine->IsPaused() && !engine->IsTakingScreenshot() && !engine->IsPlayingDemo() );
-	}
+	}*/
 }
 
 void VGui_PostRender()

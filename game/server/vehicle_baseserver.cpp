@@ -28,7 +28,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar g_debug_vehiclesound( "g_debug_vehiclesound", "0", FCVAR_CHEAT );
+/*ConVar g_debug_vehiclesound( "g_debug_vehiclesound", "0", FCVAR_CHEAT );
 ConVar g_debug_vehicleexit( "g_debug_vehicleexit", "0", FCVAR_CHEAT );
 
 ConVar sv_vehicle_autoaim_scale("sv_vehicle_autoaim_scale", "8");
@@ -478,7 +478,7 @@ void CBaseServerVehicle::SetPassenger( int nRole, CBaseCombatCharacter *pPasseng
 				{
 					pHL2Player->FlashlightTurnOff();
 				}*/
-			}
+			/*}
 #endif
 		}
 	}
@@ -1478,7 +1478,7 @@ void CBaseServerVehicle::HandleEntryExitFinish( bool bExitAnimOn, bool bResetAni
 			}
 			*/
 
-			pPlayer->LeaveVehicle( vecEyes, vecEyeAng );
+			/*pPlayer->LeaveVehicle( vecEyes, vecEyeAng );
 		}
 	}
 
@@ -1503,7 +1503,7 @@ void CBaseServerVehicle::HandleEntryExitFinish( bool bExitAnimOn, bool bResetAni
 //-----------------------------------------------------------------------------
 // Purpose: Where does the passenger see from?
 //-----------------------------------------------------------------------------
-void CBaseServerVehicle::GetVehicleViewPosition( int nRole, Vector *pAbsOrigin, QAngle *pAbsAngles, float *pFOV /*= NULL*/ )
+void CBaseServerVehicle::GetVehicleViewPosition( int nRole, Vector *pAbsOrigin, QAngle *pAbsAngles, float *pFOV /*= NULL*/ /*)
 {
 	Assert( nRole == VEHICLE_ROLE_DRIVER );
 	CBaseCombatCharacter *pPassenger = GetPassenger( VEHICLE_ROLE_DRIVER );
@@ -2743,5 +2743,5 @@ void CVehicleSoundsParser::SetDefaults( void *pData )
 {
 	vehiclesounds_t *pSounds = (vehiclesounds_t *)pData;
 	pSounds->Init();
-}
+}*/
 

@@ -12,7 +12,8 @@
 
 #include "vehicle_sounds.h"
 #include "entityblocker.h"
-
+//BG2 - Vehicles Removed. -HairyPotter
+/*
 class CSoundPatch;
 
 struct vbs_sound_update_t
@@ -324,5 +325,5 @@ private:
 	bool	GetLocalAttachmentAtTime( int nQuerySequence, int nAttachmentIndex, float flCyclePoint, Vector *vecOriginOut, QAngle *vecAnglesOut );
 	bool	GetLocalAttachmentAtTime( const char *lpszAnimName, int nAttachmentIndex, float flCyclePoint, Vector *vecOriginOut, QAngle *vecAnglesOut );
 };
-
+*/
 #endif // VEHICLE_BASESERVER_H

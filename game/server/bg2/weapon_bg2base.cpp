@@ -499,77 +499,25 @@ int CBaseBG2Weapon::Swing( int iAttack, bool bDoEffects )
 	CTakeDamageInfo triggerInfo( GetOwner(), GetOwner(), GetDamage(iAttack), DMG_CLUB );
 
 	TraceAttackToTriggers( triggerInfo, traceHit.startpos, traceHit.endpos, vec3_origin );
-	if ( sv_meleestyle.GetBool() ) //Toggle between 1.1b melee and 0.17
-	{
 #endif //Keep the following code with the client.dll
-		if ( traceHit.fraction == 1.0f )
-		{
-			//miss, do any waterimpact stuff
-			if( bDoEffects )
-			{
-				Vector testEnd = swingStart + forward * GetRange(iAttack);
-				ImpactWater( swingStart, testEnd );
-
-				WeaponSound( SPECIAL1 );	//miss
-			}
-		}
-		else
-		{
-			//stop attempting more swings (don't cut through masses of people or hit the same person ten times)
-			m_flStopAttemptingSwing = 0;
-
-			Hit( traceHit, iAttack );
-		}
-#ifdef GAME_DLL //
-	}
-	else //Start 0.17 melee code here...
-	{ 
-		if (GetAttackType(iAttack) == ATTACKTYPE_SLASH && GetAttackType(iAttack) == ATTACKTYPE_STAB && GetAttackType(iAttack) == ATTACKTYPE_FIREARM)
-		{
-			float bludgeonHullRadius = 1.732f * BLUDGEON_HULL_DIM;  // hull is +/- 16, so use cuberoot of 2 to determine how big the hull is from center to the corner point
-
-			swingEnd -= forward * bludgeonHullRadius;
-
-			UTIL_TraceHull( swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
-			if ( traceHit.fraction < 1.0 && traceHit.m_pEnt )
-			{
-				Vector vecToTarget = traceHit.m_pEnt->GetAbsOrigin() - swingStart;
-				VectorNormalize( vecToTarget );
-
-				float dot = vecToTarget.Dot( forward );
-
-				if ( dot < 0.70721f )
-				{
-					traceHit.fraction = 1.0f;
-				}
-			}
-		}
-		else
-		{
-			UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &traceHit );
-			if ( traceHit.fraction == 1.0f )
-			{
-				UTIL_TraceLine( swingStart, swingEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
-			}
-		}
-		WeaponSound( SPECIAL1 );
-
-		// -------------------------
-		//	Miss
-		// -------------------------
-		if ( traceHit.fraction == 1.0f )
+	if ( traceHit.fraction == 1.0f )
+	{
+		//miss, do any waterimpact stuff
+		if( bDoEffects )
 		{
 			Vector testEnd = swingStart + forward * GetRange(iAttack);
-		
 			ImpactWater( swingStart, testEnd );
-		}
-		else
-		{
-			Hit( traceHit, iAttack );
-		}
-	} //End 0.17 melee code.
-#endif
 
+			WeaponSound( SPECIAL1 );	//miss
+		}
+	}
+	else
+	{
+		//stop attempting more swings (don't cut through masses of people or hit the same person ten times)
+		m_flStopAttemptingSwing = 0;
+
+		Hit( traceHit, iAttack );
+	}
 	// Send the anim
 	if( bDoEffects )
 	{

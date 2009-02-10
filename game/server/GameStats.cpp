@@ -348,7 +348,7 @@ void CBaseGameStats::Event_PlayerTraveled( CBasePlayer *pBasePlayer, float dista
 
 void CBaseGameStats::Event_FlippedVehicle( CBasePlayer *pDriver, CPropVehicleDriveable *pVehicle )
 {
-	StatsLog( "CBaseGameStats::Event_FlippedVehicle [%s] flipped [%s]\n", pDriver->GetPlayerName(), pVehicle->GetClassname() );
+	//StatsLog( "CBaseGameStats::Event_FlippedVehicle [%s] flipped [%s]\n", pDriver->GetPlayerName(), pVehicle->GetClassname() );
 }
 
 // Called before .sav file is actually loaded (player should still be in previous level, if any)

@@ -79,7 +79,7 @@ void CHLPlayerMove::SetupMove( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper 
 
 	//pHLMove->m_bIsSprinting = pHLPlayer->IsSprinting();
 
-	if ( gpGlobals->frametime != 0 )
+	/*if ( gpGlobals->frametime != 0 )
 	{
 		IServerVehicle *pVehicle = player->GetVehicle();
 
@@ -101,7 +101,7 @@ void CHLPlayerMove::SetupMove( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper 
 				m_bWasInVehicle = false;
 			}
 		}
-	}
+	}*/
 }
 
 
@@ -111,8 +111,9 @@ void CHLPlayerMove::FinishMove( CBasePlayer *player, CUserCmd *ucmd, CMoveData *
 	BaseClass::FinishMove( player, ucmd, move );
 	if ( gpGlobals->frametime != 0 )
 	{		
-		float distance = 0.0f;
-		IServerVehicle *pVehicle = player->GetVehicle();
+		//float distance = 0.0f;
+		//BG2 - Vehicles Removed. -HairyPotter
+		/*IServerVehicle *pVehicle = player->GetVehicle();
 		if ( pVehicle )
 		{
 			pVehicle->FinishMove( player, ucmd, move );
@@ -142,9 +143,9 @@ void CHLPlayerMove::FinishMove( CBasePlayer *player, CUserCmd *ucmd, CMoveData *
 				}
 			}
 			else
-			{
-				m_bVehicleFlipped = false;
-			}
+			{*/
+				/*m_bVehicleFlipped = false;
+			//}
 		}
 		else
 		{

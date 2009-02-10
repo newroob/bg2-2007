@@ -485,7 +485,8 @@ public:
 	//
 
 	// Vehicles
-	virtual bool			IsInAVehicle( void ) const;
+	//BG2 - Vehicles Removed. - HairyPotter
+	/*virtual bool			IsInAVehicle( void ) const;
 			bool			CanEnterVehicle( IServerVehicle *pVehicle, int nRole );
 	virtual bool			GetInVehicle( IServerVehicle *pVehicle, int nRole );
 	virtual void			LeaveVehicle( const Vector &vecExitPoint = vec3_origin, const QAngle &vecExitAngles = vec3_angle );
@@ -497,7 +498,7 @@ public:
 	virtual void			OnVehicleEnd( Vector &playerDestPosition ) {} 
 	IServerVehicle			*GetVehicle();
 	CBaseEntity				*GetVehicleEntity( void );
-	bool					UsingStandardWeaponsInVehicle( void );
+	bool					UsingStandardWeaponsInVehicle( void );*/
 	
 	void					AddPoints( int score, bool bAllowNegativeScore );
 	void					AddPointsToTeam( int score, bool bAllowNegativeScore );
@@ -1220,7 +1221,7 @@ inline const CUserCmd *CBasePlayer::GetCurrentUserCommand() const
 	Assert( m_pCurrentCommand );
 	return m_pCurrentCommand;
 }
-
+/* //BG2 - Vehicles Removed. -HairyPotter
 inline IServerVehicle *CBasePlayer::GetVehicle() 
 { 
 	CBaseEntity *pVehicleEnt = m_hVehicle.Get();
@@ -1235,7 +1236,7 @@ inline CBaseEntity *CBasePlayer::GetVehicleEntity()
 inline bool CBasePlayer::IsInAVehicle( void ) const 
 { 
 	return ( NULL != m_hVehicle.Get() ) ? true : false; 
-}
+}*/
 
 inline void CBasePlayer::SetTouchedPhysics( bool bTouch ) 
 { 

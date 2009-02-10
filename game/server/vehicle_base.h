@@ -20,7 +20,8 @@
 #include "entityblocker.h"
 #include "vehicle_baseserver.h"
 #include "vehicle_viewblend_shared.h"
-
+//BG2 - Vehicles Removed. -HairyPotter
+/*
 class CNPC_VehicleDriver;
 class CFourWheelVehiclePhysics;
 class CPropVehicleDriveable;
@@ -308,6 +309,6 @@ inline bool CPropVehicleDriveable::HasGun()
 {
 	return m_bHasGun;
 }
-
+*/
 
 #endif // VEHICLE_BASE_H

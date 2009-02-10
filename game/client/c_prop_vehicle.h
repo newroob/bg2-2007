@@ -10,6 +10,7 @@
 
 #include "IClientVehicle.h"
 #include "vehicle_viewblend_shared.h"
+/*
 class C_PropVehicleDriveable : public C_BaseAnimating, public IClientVehicle
 {
 
@@ -123,7 +124,7 @@ protected:
 	CHandle<C_BasePlayer>		m_hPrevPlayer;
 
 	ViewSmoothingData_t			m_ViewSmoothingData;
-};
+};*/
 
 
 #endif // C_PROP_VEHICLE_H

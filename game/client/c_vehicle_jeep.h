@@ -22,6 +22,7 @@
 //
 // Client-side Jeep Class
 //
+/*
 class C_PropJeep : public C_PropVehicleDriveable
 {
 
@@ -61,6 +62,6 @@ private:
 	float		m_flJeepFOV;
 	CHeadlightEffect *m_pHeadlight;
 	bool		m_bHeadlightIsOn;
-};
+};*/
 
 #endif C_VEHICLE_JEEP_H

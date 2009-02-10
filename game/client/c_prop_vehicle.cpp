@@ -18,7 +18,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+/*
 int ScreenTransform( const Vector& point, Vector& screen );
 
 extern ConVar default_fov;
@@ -192,7 +192,7 @@ void C_PropVehicleDriveable::DampenEyePosition( Vector &vecVehicleEyePos, QAngle
 //-----------------------------------------------------------------------------
 // Purpose: Modify the player view/camera while in a vehicle
 //-----------------------------------------------------------------------------
-void C_PropVehicleDriveable::GetVehicleViewPosition( int nRole, Vector *pAbsOrigin, QAngle *pAbsAngles, float *pFOV /*=NULL*/ )
+void C_PropVehicleDriveable::GetVehicleViewPosition( int nRole, Vector *pAbsOrigin, QAngle *pAbsAngles, float *pFOV /*=NULL*//* )
 {
 	SharedVehicleViewSmoothing( m_hPlayer,
 								pAbsOrigin, pAbsAngles,
@@ -368,5 +368,5 @@ void C_PropVehicleDriveable::UpdateViewAngles( C_BasePlayer *pLocalPlayer, CUser
 //-----------------------------------------------------------------------------
 void C_PropVehicleDriveable::OnEnteredVehicle( C_BaseCombatCharacter *pPassenger )
 {
-}
+}*/
 

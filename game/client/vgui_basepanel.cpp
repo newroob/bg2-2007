@@ -108,6 +108,7 @@ void CBasePanel::PaintBackground( void )
 	{
 		vgui::surface()->DrawTexturedRect( 0, 0, wide, tall );
 	}
+
 }
 
 //-----------------------------------------------------------------------------

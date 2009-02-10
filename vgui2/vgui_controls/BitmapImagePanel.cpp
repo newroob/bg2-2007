@@ -61,6 +61,14 @@ CBitmapImagePanel::CBitmapImagePanel( Panel *parent, char const *panelName,
 	m_bgColor = Color(255, 255, 255, 255);
 }
 
+// BG2 - Added as a fix to potential memory leak listed on Valve Dev Wiki. -HairyPotter
+CBitmapImagePanel::~CBitmapImagePanel()
+{
+	delete [] m_pszImageName;
+	delete [] m_pszColorName;
+}
+//
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------

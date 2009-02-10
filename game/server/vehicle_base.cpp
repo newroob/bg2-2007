@@ -21,7 +21,8 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
+//BG2 - Vehicles Removed. -HairyPotter
+/*
 #define SF_PROP_VEHICLE_ALWAYSTHINK		0x00000001
 
 ConVar g_debug_vehiclebase( "g_debug_vehiclebase", "0", FCVAR_CHEAT );
@@ -1045,14 +1046,14 @@ bool CPropVehicleDriveable::NPC_CanExitVehicle( CAI_BaseNPC *pPassenger, bool bC
 bool CPropVehicleDriveable::NPC_AddPassenger( CAI_BaseNPC *pPassenger, string_t strRoleName, int nSeatID )
 {
 	// Must be allowed to enter
-	//if ( NPC_CanEnterVehicle( pPassenger, true /*FIXME*/ ) == false )
+	//if ( NPC_CanEnterVehicle( pPassenger, true /*FIXME*//* ) == false )
 	//	return false;
 
 	/*IServerVehicle *pVehicleServer = GetServerVehicle();
 	if ( pVehicleServer != NULL )
 		return pVehicleServer->NPC_AddPassenger( pPassenger, strRoleName, nSeatID );*/
 
-	return true;
+	/*return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1063,14 +1064,14 @@ bool CPropVehicleDriveable::NPC_AddPassenger( CAI_BaseNPC *pPassenger, string_t 
 bool CPropVehicleDriveable::NPC_RemovePassenger( CAI_BaseNPC *pPassenger )
 {
 	// Must be allowed to exit
-	//if ( NPC_CanExitVehicle( pPassenger, true /*FIXME*/ ) == false )
+	//if ( NPC_CanExitVehicle( pPassenger, true /*FIXME*/ /*) == false )
 	//	return false;
 
 	/*IServerVehicle *pVehicleServer = GetServerVehicle();
 	if ( pVehicleServer != NULL )
 		return pVehicleServer->NPC_RemovePassenger( pPassenger );*/
 
-	return true;
+/*	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1140,7 +1141,7 @@ void CFourWheelServerVehicle::SetVehicle( CBaseEntity *pVehicle )
 //-----------------------------------------------------------------------------
 // Purpose: Modify the player view/camera while in a vehicle
 //-----------------------------------------------------------------------------
-void CFourWheelServerVehicle::GetVehicleViewPosition( int nRole, Vector *pAbsOrigin, QAngle *pAbsAngles, float *pFOV /*= NULL*/ )
+void CFourWheelServerVehicle::GetVehicleViewPosition( int nRole, Vector *pAbsOrigin, QAngle *pAbsAngles, float *pFOV /*= NULL*//* )
 {
 	CBaseEntity *pDriver = GetPassenger( nRole );
 	if ( pDriver && pDriver->IsPlayer())
@@ -1261,7 +1262,7 @@ void CFourWheelServerVehicle::NPC_SetDriver( CNPC_VehicleDriver *pDriver )
 		GetFourWheelVehicle()->SetOwnerEntity( NULL );
 		SetVehicleVolume( 0.5 );
 	}*/
-}
+/*}
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -1298,7 +1299,7 @@ void CFourWheelServerVehicle::NPC_DriveVehicle( void )
 			}
 		}
 	}*/
-#endif
+/*#endif
 
 	int buttonsChanged = m_nPrevNPCButtons ^ m_nNPCButtons;
 	int afButtonPressed = buttonsChanged & m_nNPCButtons;		// The changed ones still down are "pressed"
@@ -1340,4 +1341,4 @@ bool CFourWheelServerVehicle::GetWheelContactPoint( int nWheelIndex, Vector &vec
 		}
 	}
 	return false;
-}
+}*/
