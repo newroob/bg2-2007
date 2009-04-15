@@ -343,6 +343,7 @@ void CPlayerMove::RunPostThink( CBasePlayer *player )
 //-----------------------------------------------------------------------------
 void CPlayerMove::RunCommand ( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper *moveHelper )
 {
+
 	StartCommand( player, ucmd );
 
 	// Set globals appropriately

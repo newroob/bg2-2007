@@ -359,7 +359,7 @@ void FileWeaponInfo_t::Parse( KeyValues *pKeyValuesData, const char *szWeaponNam
 	iDefaultClip2 = pKeyValuesData->GetInt( "default_clip2", iMaxClip2 );		// amount of secondary ammo placed in the secondary clip when it's picked up
 	iWeight = pKeyValuesData->GetInt( "weight", 0 );
 
-	iRumbleEffect = pKeyValuesData->GetInt( "rumble", -1 );
+	//iRumbleEffect = pKeyValuesData->GetInt( "rumble", -1 );
 	
 	// LAME old way to specify item flags.
 	// Weapon scripts should use the flag names.

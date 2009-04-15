@@ -1047,7 +1047,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 	//Defines
 	//Yeah, all this is needed. If an entity has a parent, you have to go through the parent to get to that entity. Figures.
 	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther );
-	CtfFlag *pFlag = dynamic_cast< CtfFlag* >( pPlayer->CtfFlag );
+	CtfFlag *pFlag = dynamic_cast< CtfFlag* >( pPlayer->e_CtfFlag );
 
 	//if ( !pPlayer->IsAlive() ) //Still alive?
 	//	return;
@@ -1057,7 +1057,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 
 	if ( pFlag->GetParent() == NULL ) //Does the flag not have a parent for whatever reason? Maybe it was reset while a player had it?
 	{
-		pPlayer->CtfFlag = NULL; //Player no longer has the flag entity, if he ever had it.
+		pPlayer->e_CtfFlag = NULL; //Player no longer has the flag entity, if he ever had it.
 		return;
 	}
 
@@ -1102,7 +1102,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 			pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.2);
 			break;
 		case CLASS_SKIRMISHER:
-			pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.8);
+			pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.1);
 			break;
 	}
 	//
@@ -1111,7 +1111,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 
 	m_OnFlagCaptured.FireOutput( this, this ); //Fire the OnFlagCaptured output, set it last just in case.
 
-	pPlayer->CtfFlag = NULL; //Player no longer has the flag entity.
+	pPlayer->e_CtfFlag = NULL; //Player no longer has the flag entity.
 }
 
 //-----------------------------------------------------------------------------

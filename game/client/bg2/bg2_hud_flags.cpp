@@ -165,6 +165,10 @@ void CHudFlags::VidInit( void )
 //==============================================
 bool CHudFlags::ShouldDraw( void )
 {
+
+	if ( !g_Flags.Count() ) //No flags? Die here. -HairyPotter
+		return false;
+
 	return CHudElement::ShouldDraw();
 }
 
@@ -175,9 +179,6 @@ bool CHudFlags::ShouldDraw( void )
 void CHudFlags::Paint()
 {
 	int m_iFlagCount = g_Flags.Count();
-
-	if ( !m_iFlagCount ) //No flags? Die here. -HairyPotter
-		return;
 
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 
@@ -605,7 +606,7 @@ void CHudFlags::Paint()
 			Q_snprintf( text, 512, "%i/%i", g_Flags[i]->m_iNearbyPlayers, g_Flags[i]->m_iCapturePlayers );
 			m_pLabelFlag[i]->SetText( text );
 			m_pLabelFlag[i]->SizeToContents();
-			m_pLabelFlag[i]->SetVisible( true );
+			//m_pLabelFlag[i]->SetVisible( true );
 
 			//m_pLabelFlag[i]->SetPos( (x_offset + 32), 64 );
 			//center on icon

@@ -8,7 +8,7 @@
 
 
 #include "igamesystem.h"
-#include "GameStats.h"
+//#include "GameStats.h"
 #include "tier1/utlstring.h"
 #include "filesystem.h"
 #include "tier1/utlbuffer.h"
@@ -38,7 +38,7 @@
 #define WALKED_AWAY_FROM_KEYBOARD_SECONDS 300.0f   // 5 minutes of no movement == might be paused
 #endif
 */
-
+/*
 
 extern IUploadGameStats *gamestatsuploader;
 extern ConVar skill;
@@ -346,13 +346,13 @@ void CBaseGameStats::Event_PlayerTraveled( CBasePlayer *pBasePlayer, float dista
 {
 }
 
-void CBaseGameStats::Event_FlippedVehicle( CBasePlayer *pDriver, CPropVehicleDriveable *pVehicle )
+/*void CBaseGameStats::Event_FlippedVehicle( CBasePlayer *pDriver, CPropVehicleDriveable *pVehicle )
 {
-	//StatsLog( "CBaseGameStats::Event_FlippedVehicle [%s] flipped [%s]\n", pDriver->GetPlayerName(), pVehicle->GetClassname() );
-}
+	StatsLog( "CBaseGameStats::Event_FlippedVehicle [%s] flipped [%s]\n", pDriver->GetPlayerName(), pVehicle->GetClassname() );
+}*/
 
 // Called before .sav file is actually loaded (player should still be in previous level, if any)
-void CBaseGameStats::Event_PreSaveGameLoaded( char const *pSaveName, bool bInGame )
+/*void CBaseGameStats::Event_PreSaveGameLoaded( char const *pSaveName, bool bInGame )
 {
 	StatsLog( "CBaseGameStats::Event_PreSaveGameLoaded [%s] %s\n", pSaveName, bInGame ? "in-game" : "at console" );
 }
@@ -701,7 +701,6 @@ void CBaseGameStats_Driver::Shutdown()
 		g_LogFileHandle = FILESYSTEM_INVALID_HANDLE;
 	}
 }
-
 void CBaseGameStats_Driver::PossibleMapChange( void )
 {
 	//detect and copy map changes
@@ -755,7 +754,6 @@ void CBaseGameStats_Driver::LevelShutdownPreEntity()
 		Warning( "EVENT_LEVELSHUTDOWN:  with negative elapsed time (rt %f starttime %f)\n", gpGlobals->realtime, m_flLevelStartTime );
 		flElapsed = 0.0f;
 	}
-
 	//Assert( m_bInLevel ); //so, apparently shutdowns can happen before inits
 	if ( m_bInLevel && ( gpGlobals->eLoadType != MapLoad_Background ) )
 	{
@@ -768,6 +766,7 @@ void CBaseGameStats_Driver::LevelShutdownPreEntity()
 			gamestats->UploadStatsFileNOW();
 
 		m_bInLevel = false;	
+		//Error("Sending map: %s", gpGlobals->mapname);
 	}
 }
 
@@ -982,7 +981,7 @@ void CBaseGameStats::SetHL2UnlockedChapterStatistic( void )
 			delete [] configBuffer;
 		}
 	}	*/
-}
+/*}
 
 static void CC_ResetGameStats( const CCommand &args )
 {
@@ -1073,4 +1072,4 @@ void CPointGamestatsCounter::InputEnable( inputdata_t &inputdata )
 void CPointGamestatsCounter::InputDisable( inputdata_t &inputdata )
 {
 	m_bDisabled = true;
-}
+}*/

@@ -76,7 +76,7 @@ class CHudChat;
 
 static vgui::HContext s_hVGuiContext = DEFAULT_VGUI_CONTEXT;
 
-ConVar cl_drawhud( "cl_drawhud","1", FCVAR_CHEAT, "Enable the rendering of the hud" );
+ConVar cl_drawhud( "cl_drawhud","1", 0, "Enable the rendering of the hud" );
 
 extern ConVar v_viewmodel_fov;
 

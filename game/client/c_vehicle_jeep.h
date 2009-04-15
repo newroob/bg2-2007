@@ -22,6 +22,7 @@
 //
 // Client-side Jeep Class
 //
+//BG2 - Vehicles Removed. -HairyPotter
 /*
 class C_PropJeep : public C_PropVehicleDriveable
 {

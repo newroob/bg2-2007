@@ -81,7 +81,7 @@ BEGIN_DATADESC( CBullet )
 	DEFINE_FUNCTION( BoltTouch ),
 
 	// These are recreated on reload, they don't need storage
-	DEFINE_FIELD( m_pGlowSprite, FIELD_EHANDLE ),
+	//DEFINE_FIELD( m_pGlowSprite, FIELD_EHANDLE ),
 	//DEFINE_FIELD( m_pGlowTrail, FIELD_EHANDLE ),
 
 END_DATADESC()
@@ -89,7 +89,7 @@ END_DATADESC()
 IMPLEMENT_SERVERCLASS_ST( CBullet, DT_Bullet )
 END_SEND_TABLE()
 
-CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles, int iDamage, float flConstantDamageRange, float flRelativeDrag, CBasePlayer *pentOwner )
+CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles, int iDamage, float flConstantDamageRange, float flRelativeDrag, CBasePlayer *pentOwner, CBaseCombatWeapon *pWeapon  )
 {
 	// Create a new entity with CBullet private data
 	CBullet *pBullet = (CBullet *)CreateEntityByName( "bullet" );
@@ -104,12 +104,14 @@ CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles
 
 	pBullet->m_iDamage = iDamage;
 
-#define LIFETIME	10.f
+#define LIFETIME	3.f //10.f //3 seconds is definately long enough lifetime.
 	pBullet->m_flDyingTime = gpGlobals->curtime + LIFETIME;
 	pBullet->m_flConstantDamageRange = flConstantDamageRange;
 	pBullet->m_flRelativeDrag = flRelativeDrag;
-	pBullet->m_vTrajStart = pBullet->GetAbsOrigin();
+	pBullet->m_vTrajStart = vecOrigin;//pBullet->GetAbsOrigin();
 	pBullet->m_bHasPlayedNearmiss = false;
+	pBullet->firedWeapon = pWeapon; //Store this off.
+	pBullet->pAttacker = pentOwner; //This too.
 
 	return pBullet;
 }
@@ -119,10 +121,10 @@ CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles
 //-----------------------------------------------------------------------------
 CBullet::~CBullet( void )
 {
-	if ( m_pGlowSprite )
+	/*if ( m_pGlowSprite )
 	{
 		UTIL_Remove( m_pGlowSprite );
-	}
+	}*/
 }
 
 //-----------------------------------------------------------------------------
@@ -133,7 +135,6 @@ bool CBullet::CreateVPhysics( void )
 {
 	// Create the object in the physics system
 	//BG2 - Tjoppen - SOLID_VPHYSICS
-	//VPhysicsInitNormal( SOLID_BBOX, FSOLID_NOT_STANDABLE, false );
 	VPhysicsInitNormal( SOLID_VPHYSICS, FSOLID_NOT_STANDABLE, false );	
 
 	return true;
@@ -148,32 +149,11 @@ unsigned int CBullet::PhysicsSolidMaskForEntity() const
 
 //-----------------------------------------------------------------------------
 // Purpose: 
-// Output : Returns true on success, false on failure.
-//-----------------------------------------------------------------------------
-/*bool CBullet::CreateSprites( void )
-{
-	// Start up the eye glow
-	m_pGlowSprite = CSprite::SpriteCreate( "sprites/light_glow02_noz.vmt", GetLocalOrigin(), false );
-
-	if ( m_pGlowSprite != NULL )
-	{
-		m_pGlowSprite->FollowEntity( this );
-		m_pGlowSprite->SetTransparency( kRenderGlow, 255, 255, 255, 128, kRenderFxNoDissipation );
-		m_pGlowSprite->SetScale( 0.2f );
-		m_pGlowSprite->TurnOff();
-	}
-
-	return true;
-}*/
-
-//-----------------------------------------------------------------------------
-// Purpose: 
 //-----------------------------------------------------------------------------
 void CBullet::Spawn( void )
 {
 	Precache( );
 
-	//SetModel( "models/crossbow_bolt.mdl" );
 	SetModel( BOLT_MODEL );
 	SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_CUSTOM );
 	//UTIL_SetSize( this, -Vector(1,1,1), Vector(1,1,1) );
@@ -210,11 +190,6 @@ void CBullet::Precache( void )
 	//PrecacheScriptSound( "Bullet.HitWorld" );
 	//PrecacheScriptSound( "Bullet.HitBody" );
 	PrecacheScriptSound( "Bullets.DefaultNearmiss" );
-
-	// This is used by C_TEStickyBolt, despte being different from above!!!
-	//PrecacheModel( "models/crossbow_bolt.mdl" );
-
-	//PrecacheModel( "sprites/light_glow02_noz.vmt" );
 }
 
 //-----------------------------------------------------------------------------
@@ -225,6 +200,18 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 {
 	if ( !pOther->IsSolid() || pOther->IsSolidFlagSet(FSOLID_VOLUME_CONTENTS) )
 		return;
+
+	if ( pAttacker == NULL || firedWeapon == NULL ) //One of these were null, die.
+	{
+		UTIL_Remove( this );
+		return;
+	}
+
+	if ( pAttacker->GetActiveWeapon() != firedWeapon ) //So the weapon belonging to the person that fired the shot is not the same as the one that fired the shot.
+	{
+		UTIL_Remove( this );
+		return;	
+	}
 
 	if ( pOther->m_takedamage != DAMAGE_NO )
 	{
@@ -266,7 +253,7 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		UTIL_ImpactTrace( &tr, DMG_BULLET );	//BG2 - Tjoppen - surface blood
 
 		//no force!
-		CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | DMG_PREVENT_PHYSICS_FORCE | DMG_NEVERGIB );
+		CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, /*DMG_BULLET | DMG_PREVENT_PHYSICS_FORCE |*/DMG_CRUSH | DMG_NEVERGIB ); //Changed to avoid asserts. -HairyPotter
 		dmgInfo.SetDamagePosition( tr.endpos );
 		pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
 
@@ -349,8 +336,6 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 			}
 			else
 			{
-				SetThink( &CBullet::SUB_Remove );
-				SetNextThink( gpGlobals->curtime + 2.0f );
 				
 				//FIXME: We actually want to stick (with hierarchy) to what we've hit
 				SetMoveType( MOVETYPE_NONE );
@@ -370,16 +355,13 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 				
 				UTIL_ImpactTrace( &tr, DMG_BULLET );
 
-				AddEffects( EF_NODRAW );
 				SetTouch( NULL );
-				SetThink( &CBullet::SUB_Remove );
-				SetNextThink( gpGlobals->curtime + 2.0f );
 
-				if ( m_pGlowSprite != NULL )
-				{
-					m_pGlowSprite->TurnOn();
-					m_pGlowSprite->FadeAndDie( 3.0f );
-				}
+				//Just remove the bullet instantly. -HairyPotter
+				/*AddEffects( EF_NODRAW );
+				SetThink( &CBullet::SUB_Remove );
+				SetNextThink( gpGlobals->curtime + 2.0f );*/
+				UTIL_Remove( this );
 			}
 			
 			//BG2 - BP  TODO: musket balls only create sparks on metal surfaces Shoot some sparks
@@ -578,50 +560,6 @@ void C_Bullet::OnDataChanged( DataUpdateType_t updateType )
 //-----------------------------------------------------------------------------
 int C_Bullet::DrawModel( int flags )
 {
-	// See if we're drawing the motion blur
-	/*if ( flags & STUDIO_TRANSPARENCY )
-	{
-		float		color[3];
-		IMaterial	*pBlurMaterial = materials->FindMaterial( "effects/muzzleflash1", NULL, false );
-
-		Vector	vecDir = GetAbsOrigin() - m_vecLastOrigin;
-		float	speed = VectorNormalize( vecDir );
-		
-		speed = clamp( speed, 0, 32 );
-		
-		if ( speed > 0 )
-		{
-			float	stepSize = min( ( speed * 0.5f ), 4.0f );
-
-			Vector	spawnPos = GetAbsOrigin() + ( vecDir * 24.0f );
-			Vector	spawnStep = -vecDir * stepSize;
-
-			materials->Bind( pBlurMaterial );
-
-			float	alpha;
-
-			// Draw the motion blurred trail
-			for ( int i = 0; i < 20; i++ )
-			{
-				spawnPos += spawnStep;
-
-				alpha = RemapValClamped( i, 5, 11, 0.25f, 0.05f );
-
-				color[0] = color[1] = color[2] = alpha;
-
-				DrawHalo( pBlurMaterial, spawnPos, 3.0f, color );
-			}
-		}
-
-		if ( gpGlobals->frametime > 0.0f && !m_bUpdated)
-		{
-			m_bUpdated = true;
-			m_vecLastOrigin = GetAbsOrigin();
-		}
-
-		return 1;
-	}*/
-
 	// Draw the normal portion
 	return BaseClass::DrawModel( flags );
 }

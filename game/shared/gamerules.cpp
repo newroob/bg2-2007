@@ -25,7 +25,7 @@
 	#include "voice_gamemgr.h"
 	#include "globalstate.h"
 	#include "player_resource.h"
-	#include "GameStats.h"
+	//#include "GameStats.h"
 	//BG2 - Tjoppen - #includes
 	#include "bg2/spawnpoint.h"
 	//
@@ -534,7 +534,7 @@ void CGameRules::RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc
 				bIsPrimary = false;
 			}
 
-			gamestats->Event_WeaponHit( player, bIsPrimary, (pWeapon != NULL) ? player->GetActiveWeapon()->GetClassname() : "NULL", info );
+			//gamestats->Event_WeaponHit( player, bIsPrimary, (pWeapon != NULL) ? player->GetActiveWeapon()->GetClassname() : "NULL", info );
 		}
 #endif
 	}
@@ -611,7 +611,7 @@ void CGameRules::CreateStandardEntities()
 //-----------------------------------------------------------------------------
 void CGameRules::MarkAchievement( IRecipientFilter& filter, char const *pchAchievementName )
 {
-	gamestats->Event_IncrementCountedStatistic( vec3_origin, pchAchievementName, 1.0f );
+	//gamestats->Event_IncrementCountedStatistic( vec3_origin, pchAchievementName, 1.0f );
 
 	IAchievementMgr *pAchievementMgr = engine->GetAchievementMgr();
 	if ( !pAchievementMgr )

@@ -76,7 +76,7 @@
 #include "scenefilecache/ISceneFileCache.h"
 #include "tier2/tier2.h"
 #include "particles/particles.h"
-#include "GameStats.h"
+//#include "GameStats.h"
 #include "ixboxsystem.h"
 #include "engine/imatchmaking.h"
 #include "hl2orange.spa.h"
@@ -95,7 +95,7 @@ extern IParticleSystemQuery *g_pParticleSystemQuery;
 
 extern ConVar commentary;
 
-IUploadGameStats *gamestatsuploader = NULL;
+//IUploadGameStats *gamestatsuploader = NULL;
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -536,8 +536,8 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 	if ( (soundemitterbase = (ISoundEmitterSystemBase *)appSystemFactory(SOUNDEMITTERSYSTEM_INTERFACE_VERSION, NULL)) == NULL )
 		return false;
 #ifndef _XBOX
-	if ( (gamestatsuploader = (IUploadGameStats *)appSystemFactory( INTERFACEVERSION_UPLOADGAMESTATS, NULL )) == NULL )
-		return false;
+	//if ( (gamestatsuploader = (IUploadGameStats *)appSystemFactory( INTERFACEVERSION_UPLOADGAMESTATS, NULL )) == NULL )
+	//	return false;
 #endif
 	if ( !mdlcache )
 		return false;
@@ -545,10 +545,10 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 		return false;
 	if ( (scenefilecache = (ISceneFileCache *)appSystemFactory( SCENE_FILE_CACHE_INTERFACE_VERSION, NULL )) == NULL )
 		return false;
-	if ( IsX360() && (xboxsystem = (IXboxSystem *)appSystemFactory( XBOXSYSTEM_INTERFACE_VERSION, NULL )) == NULL )
+	/*if ( IsX360() && (xboxsystem = (IXboxSystem *)appSystemFactory( XBOXSYSTEM_INTERFACE_VERSION, NULL )) == NULL )
 		return false;
 	if ( IsX360() && (matchmaking = (IMatchmaking *)appSystemFactory( VENGINE_MATCHMAKING_VERSION, NULL )) == NULL )
-		return false;
+		return false;*/
 
 	// If not running dedicated, grab the engine vgui interface
 	if ( !engine->IsDedicatedServer() )
@@ -652,7 +652,7 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 	TheNavMesh = new CNavMesh;
 
 	// init the gamestatsupload connection
-	gamestatsuploader->InitConnection();
+	//gamestatsuploader->InitConnection();
 #endif
 
 	return true;
@@ -1027,9 +1027,7 @@ void CServerGameDLL::ServerActivate( edict_t *pEdictList, int edictCount, int cl
 	TheNavMesh->Load();
 #endif
 
-#ifdef CSTRIKE_DLL // BOTPORT: TODO: move these ifdefs out
-	TheBots->ServerActivate();
-#endif
+	m_bServerReady = true; //BG2 - This is for BG2 bots. This lets the server know it's okat to spawn them.
 }
 
 //-----------------------------------------------------------------------------
@@ -1078,7 +1076,7 @@ void CServerGameDLL::GameFrame( bool simulating )
 #ifndef _XBOX
 	TheNavMesh->Update();
 
-	gamestatsuploader->UpdateConnection();
+	//gamestatsuploader->UpdateConnection();
 
 	//BG2 - Tjoppen - bots are run here
 	void Bot_RunAll();
@@ -1558,7 +1556,7 @@ void CServerGameDLL::ReadRestoreHeaders( CSaveRestoreData *s )
 
 void CServerGameDLL::PreSaveGameLoaded( char const *pSaveName, bool bInGame )
 {
-	gamestats->Event_PreSaveGameLoaded( pSaveName, bInGame );
+	//gamestats->Event_PreSaveGameLoaded( pSaveName, bInGame );
 }
 
 //-----------------------------------------------------------------------------
@@ -2236,7 +2234,7 @@ void CServerGameClients::ClientDisconnect( edict_t *pEdict )
 			if ( g_pGameRules )
 			{
 				g_pGameRules->ClientDisconnected( pEdict );
-				gamestats->Event_PlayerDisconnected( player );
+				//gamestats->Event_PlayerDisconnected( player );
 			}
 		}
 

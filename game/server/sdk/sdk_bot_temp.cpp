@@ -71,148 +71,155 @@ ConVar bot_limitclass( "bot_limitclass", "1", 0, "Force bots to conform to class
 ConVar bot_forceclass( "bot_forceclass", "-1", 0, "Force bots to spawn as given class. 0 = Infantry, 1 = Officer, 2 = Sniper, 3 = Skirmisher" );
 static ConVar bot_mimic( "bot_mimic", "0", 0, "Bot uses usercmd of player by index." );
 static ConVar bot_mimic_yaw_offset( "bot_mimic_yaw_offset", "0", 0, "Offsets the bot yaw." );
+ConVar bot_pause("bot_pause", "0", 0, "Stops the bot thinking cycle entirely." );
 
 //ConVar bot_sendcmd( "bot_sendcmd", "", 0, "Forces bots to send the specified command." );
 
-int g_CurBotNumber = 1;
-
-//LINK_ENTITY_TO_CLASS( sdk_bot, CSDKBot );
-
+//So what if these are global? Want to fight about it?
+int g_CurBotNumber = 1; //This int here is pretty much used for the bot names only.
 CSDKBot	gBots[MAX_PLAYERS];
-
-/*class CBotManager
-{
-public:
-	static CBasePlayer* ClientPutInServerOverride_Bot( edict_t *pEdict, const char *playername )
-	{
-		// This tells it which edict to use rather than creating a new one.
-		CBasePlayer::s_PlayerEdict = pEdict;
-
-		CSDKBot *pPlayer = static_cast<CSDKBot *>( CreateEntityByName( "sdk_bot" ) );
-		if ( pPlayer )
-		{
-			char trimmedName[MAX_PLAYER_NAME_LENGTH];
-			Q_strncpy( trimmedName, playername, sizeof( trimmedName ) );
-			pPlayer->PlayerData()->netname = AllocPooledString( trimmedName );
-		}
-
-		return pPlayer;
-	}
-};*/
+bool m_bServerReady = false; //Are we ready to use the temp int below?
+int m_iWaitingAmount = 0; //This is just a temp int really.
 
 
 //-----------------------------------------------------------------------------
 // Purpose: Create a new Bot and put it in the game.
 // Output : Pointer to the new Bot, or NULL if there's no free clients.
 //-----------------------------------------------------------------------------
-CBasePlayer *BotPutInServer( bool bFrozen )
+CBasePlayer *BotPutInServer( int iAmount, bool bFrozen )
 {
-	char botname[ 64 ];
-	Q_snprintf( botname, sizeof( botname ), "Bot%02i", g_CurBotNumber );
-
-	// This trick lets us create a CSDKBot for this client instead of the CSDKPlayer
-	// that we would normally get when ClientPutInServer is called.
-	//ClientPutInServerOverride( &CBotManager::ClientPutInServerOverride_Bot );
-	edict_t *pEdict = engine->CreateFakeClient( botname );
-	//ClientPutInServerOverride( NULL );
-
-	if (!pEdict)
+	int i = 1;
+	while( i <= iAmount )
 	{
-		Msg( "Failed to create Bot(%s).\n", botname );
-		return NULL;
-	}
+		char botname[ 64 ];
+		Q_snprintf( botname, sizeof( botname ), "Bot%02i", g_CurBotNumber );
 
-	// Allocate a player entity for the bot, and call spawn
-	//CSDKBot *pPlayer = ((CSDKBot*)CBaseEntity::Instance( pEdict ));
-	CSDKPlayer *pPlayer = ((CSDKPlayer *)CBaseEntity::Instance( pEdict ));
+		// This trick lets us create a CSDKBot for this client instead of the CSDKPlayer
+		// that we would normally get when ClientPutInServer is called.
+		//ClientPutInServerOverride( &CBotManager::ClientPutInServerOverride_Bot );
+		edict_t *pEdict = engine->CreateFakeClient( botname );
+		//ClientPutInServerOverride( NULL );
 
-	if( !pPlayer )
-	{
-		Msg( "Couldn't cast bot to player\n" );
-		return NULL;
-	}
-
-	gBots[pPlayer->GetClientIndex()].m_bInuse = true;
-	gBots[pPlayer->GetClientIndex()].m_pPlayer = pPlayer;
-	//BG2 - Tjoppen - start thinking immediately
-	gBots[pPlayer->GetClientIndex()].m_flNextThink = gpGlobals->curtime;
-	gBots[pPlayer->GetClientIndex()].reload = 0;
-	gBots[pPlayer->GetClientIndex()].attack = 0;
-	gBots[pPlayer->GetClientIndex()].attack2 = 0;
-	gBots[pPlayer->GetClientIndex()].respawn = 0;
-
-	pPlayer->ClearFlags();
-
-    //pPlayer->ChangeTeam( TEAM_UNASSIGNED );
-	//pPlayer->RemoveAllItems( true );
-
-	//new team/class picking code. it works.
-	static int lastTeam = 0, lastClass = 0;
-
-	//lastClass = (lastClass + 1) % 4; //4 classes now.
-	lastClass = RandomInt( 0, 3 );
-
-	int iTeam = TEAM_AMERICANS + lastTeam;
-	pPlayer->ChangeTeam( iTeam );
-
-	//BG2 - Obey Class Limits now. -HairyPotter
-	if ( bot_limitclass.GetBool() && bot_forceclass.GetInt() < 0 ) //Just make sure we're not trying to force a class that has a limit.
-	{
-		int limit = HL2MPRules()->GetLimitTeamClass( iTeam, lastClass );
-		if ( limit >= 0 && g_Teams[iTeam]->GetNumOfNextClass(lastClass) >= limit )
+		if (!pEdict)
 		{
-			Msg("Tried to spawn too much of class %i. Spawning as infantry. \n", lastClass );
-			((CHL2MP_Player*)pPlayer)->SetNextClass( 0 ); //Infantry by default
+			Msg( "Failed to create Bot(%s).\n", botname );
+			return NULL;
 		}
-		else
+
+		// Allocate a player entity for the bot, and call spawn
+		CSDKPlayer *pPlayer = ((CSDKPlayer *)CBaseEntity::Instance( pEdict ));
+
+		if( !pPlayer )
+		{
+			Msg( "Couldn't cast bot to player\n" );
+			return NULL;
+		}
+
+		//gBots[pPlayer->GetClientIndex()].m_bInuse = true;
+		gBots[pPlayer->GetClientIndex()].m_pPlayer = pPlayer;
+		gBots[pPlayer->GetClientIndex()].reload = 0;
+		gBots[pPlayer->GetClientIndex()].attack = 0;
+		gBots[pPlayer->GetClientIndex()].attack2 = 0;
+		gBots[pPlayer->GetClientIndex()].respawn = 0;
+
+		pPlayer->ClearFlags();
+
+		//new team/class picking code. it works.
+		static int lastTeam = 0;
+
+		//lastClass = (lastClass + 1) % 4; //4 classes now.
+		int lastClass = RandomInt( 0, 3 );
+
+		int iTeam = TEAM_AMERICANS + lastTeam;
+		pPlayer->ChangeTeam( iTeam );
+
+		//BG2 - Obey Class Limits now. -HairyPotter
+		if ( bot_forceclass.GetInt() > -1 ) //Force the bot to spawn as the given class.
+			((CHL2MP_Player*)pPlayer)->SetNextClass( bot_forceclass.GetInt() );
+
+		else if ( bot_limitclass.GetBool() && bot_forceclass.GetInt() < 0 ) //Just make sure we're not trying to force a class that has a limit.
+		{
+			int limit = HL2MPRules()->GetLimitTeamClass( iTeam, lastClass );
+			if ( limit >= 0 && g_Teams[iTeam]->GetNumOfNextClass(lastClass) >= limit )
+			{
+				Msg("Tried to spawn too much of class %i. Spawning as infantry. \n", lastClass );
+				((CHL2MP_Player*)pPlayer)->SetNextClass( 0 ); //Infantry by default
+			}
+			else
+				((CHL2MP_Player*)pPlayer)->SetNextClass( lastClass );
+		}
+		else //Otherwise just spawn as whatever RandomInt() turns up.
 			((CHL2MP_Player*)pPlayer)->SetNextClass( lastClass );
+
+		lastTeam = !lastTeam; //Alternate after we've aready set the other bot's team.
+
+		pPlayer->AddFlag( FL_CLIENT | FL_FAKECLIENT );
+		pPlayer->Spawn();
+
+		g_CurBotNumber++;
+		
+		i++;
+		//return pPlayer;
 	}
-	else if ( bot_forceclass.GetInt() > -1 ) //Force the bot to spawn as the given class.
-		((CHL2MP_Player*)pPlayer)->SetNextClass( bot_forceclass.GetInt() );
-	else //Otherwise just spawn as whatever RandomInt() turns up.
-		((CHL2MP_Player*)pPlayer)->SetNextClass( lastClass );
-
-	lastTeam = !lastTeam; //Alternate after we've aready set the other bot's team.
-
-	pPlayer->AddFlag( FL_CLIENT | FL_FAKECLIENT );
-	pPlayer->Spawn();
-
-	g_CurBotNumber++;
-
-	return pPlayer;
+	return NULL;
 }
 
 // Handler for the "bot" command.
-void BotAdd_f()
+/*void BotAdd_f()
 {
-	BotPutInServer( false );//bFrozen );
-}
+	if ( args.ArgC()> 1 )
+		BotPutInServer( args[1], false );//bFrozen ); //Spawn given number of bots.
+	else
+		BotPutInServer( 1, false );//bFrozen ); //Just spawn 1 bot.
+}*/
 
-ConCommand cc_Bot( "bot_add", BotAdd_f, "Add a bot", FCVAR_CHEAT );
+//ConCommand  cc_Bot( "bot_add", BotAdd_f, "Add a bot", FCVAR_CHEAT );
+CON_COMMAND_F( bot_add, "Creates bot(s)in the server. <Bot Count>", FCVAR_CHEAT )
+{
+	int m_iCount = 0;
+	if ( args.ArgC() > 1 )
+		m_iCount = atoi( args[1] ); //Spawn given number of bots.
+	else
+		m_iCount = 1; //Just spawn 1 bot.
+
+	if ( m_bServerReady ) //Server is already loaded, just do it.
+		BotPutInServer( m_iCount, false );
+	else				  //Server just exec'd the server.cfg, but isn't ready to handle players. Just wait a while.
+		m_iWaitingAmount = m_iCount;
+}	
 
 //-----------------------------------------------------------------------------
 // Purpose: Run through all the Bots in the game and let them think.
 //-----------------------------------------------------------------------------
 void Bot_RunAll( void )
 {
+	if ( bot_pause.GetBool() ) //If we're true, just don't run the thinking cycle. Effectively "pausing" the bots.
+		return;
+
+	if ( m_iWaitingAmount && m_bServerReady ) //Kind of a shitty hack. But this will allow people to spawn a certain amount of bots in 
+	{										  //the server.cfg. Anyway, the server is ready, so do it.
+		BotPutInServer( m_iWaitingAmount, false );
+		m_iWaitingAmount = 0; //Make sure we've reset the waiting count.
+	}
+
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{
-		CSDKPlayer *pPlayer = /*ToSDKPlayer(*/ UTIL_PlayerByIndex( i );// );
+		CSDKPlayer *pPlayer = UTIL_PlayerByIndex( i );// );
 
 		if ( pPlayer && (pPlayer->GetFlags() & FL_FAKECLIENT) )
 		{
-			CSDKBot *pBot = &gBots[pPlayer->GetClientIndex()];//dynamic_cast< CSDKBot* >( pPlayer );
-			if( pBot && pBot->m_bInuse && pBot->m_flNextThink < gpGlobals->curtime ) 
+			CSDKBot *pBot = &gBots[pPlayer->GetClientIndex()];
+			if( pBot && pBot->m_pPlayer->IsAlive() ) //Do most of the "filtering" here.
 				Bot_Think( pBot );
 		}
 	}
 }
 
-CBasePlayer *FindClosestEnemy( CSDKBot *pBot, bool insight, float *pdist )
+CBasePlayer *FindClosestEnemy( CSDKBot *pBot, bool insight )
 {
 	//Msg( "FindClosestEnemy(insight=%s)\n", insight ? "true" : "false" );
-	if( !pBot->m_pPlayer->IsAlive() )
-		return NULL;
+	//if( !pBot->m_pPlayer->IsAlive() ) //This is now checked by Bot_Runall to save CPU.
+	//	return NULL;
 
 	int team = pBot->m_pPlayer->GetTeam()->GetTeamNumber();
 
@@ -222,7 +229,7 @@ CBasePlayer *FindClosestEnemy( CSDKBot *pBot, bool insight, float *pdist )
 	int otherteam = team == TEAM_AMERICANS ? TEAM_BRITISH : TEAM_AMERICANS;
 
 	CBasePlayer *pClosest = NULL;
-	float		mindist = 3000.0f;
+	float		maxdist = 1500.0f; //3000.0f
 
 	CTeam *pTeam = g_Teams[otherteam];
 	for( int x = 0; x < pTeam->GetNumPlayers(); x++ )
@@ -232,33 +239,27 @@ CBasePlayer *FindClosestEnemy( CSDKBot *pBot, bool insight, float *pdist )
 			continue;
 
 		float dist = (pEnemy->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin()).Length();
-		if( dist < mindist )
+		if( dist < maxdist )
 		{
-			if( insight )
-			{
-				//check to make sure enemy is in sight
-				trace_t tr;	
-				UTIL_TraceLine( pBot->m_pPlayer->GetLocalOrigin() + Vector(0,0,36), 
-								pEnemy->GetLocalOrigin() + Vector(0,0,36),
-								MASK_SOLID, pBot->m_pPlayer, COLLISION_GROUP_DEBRIS_TRIGGER, &tr );
+			//check to make sure enemy is in sight
+			trace_t tr;	
+			UTIL_TraceLine( pBot->m_pPlayer->GetLocalOrigin() + Vector(0,0,36), 
+							pEnemy->GetLocalOrigin() + Vector(0,0,36),
+							MASK_SOLID, pBot->m_pPlayer, COLLISION_GROUP_DEBRIS_TRIGGER, &tr );
 
-				if( tr.DidHitWorld() )
-					continue;
+			if( tr.DidHitWorld() )
+			{
+				//Msg("We can't see the player ent! \n" );
+				continue;
 			}
 
-			mindist = dist;
+			//mindist = dist;
 			pClosest = pEnemy;
 		}
 	}
 
-	/*Msg( "%s closest enemy is ", pBot->m_pPlayer->PlayerData()->netname );
-	if( pClosest )
-		Msg( "%s\n", pClosest->PlayerData()->netname );
-	else
-		Msg( "(null)\n" );*/
-
-	if( pdist )
-		*pdist = mindist;
+	//if( pdist )
+	//	*pdist = mindist;
 
 	return pClosest;
 }
@@ -266,8 +267,8 @@ CBasePlayer *FindClosestEnemy( CSDKBot *pBot, bool insight, float *pdist )
 CBasePlayer *FindClosestFriend( CSDKBot *pBot, bool insight, float *pdist )
 {
 	//Msg( "FindClosestEnemy(insight=%s)\n", insight ? "true" : "false" );
-	if( !pBot->m_pPlayer->IsAlive() )
-		return NULL;
+	//if( !pBot->m_pPlayer->IsAlive() ) //This is now run in Bot_Runall to save CPU.
+	//	return NULL;
 
 	int team = pBot->m_pPlayer->GetTeam()->GetTeamNumber();
 
@@ -304,47 +305,45 @@ CBasePlayer *FindClosestFriend( CSDKBot *pBot, bool insight, float *pdist )
 		}
 	}
 
-	/*Msg( "%s closest enemy is ", pBot->m_pPlayer->PlayerData()->netname );
-	if( pClosest )
-		Msg( "%s\n", pClosest->PlayerData()->netname );
-	else
-		Msg( "(null)\n" );*/
-
-	if( pdist )
-		*pdist = mindist;
+	//if( pdist )
+	//	*pdist = mindist;
 
 	return pClosest;
 }
 
-CBaseEntity *FindClosestFlag( CSDKBot *pBot, bool insight, float *pdist )
+CBaseEntity *FindClosestFlag( CSDKBot *pBot, bool insight )
 {
 	//Msg( "FindClosestEnemy(insight=%s)\n", insight ? "true" : "false" );
-	if( !pBot->m_pPlayer->IsAlive() )
-		return NULL;
+	//if( !pBot->m_pPlayer->IsAlive() )
+	//	return NULL;
 
 	int team = pBot->m_pPlayer->GetTeam()->GetTeamNumber();
 
-	if( team < TEAM_AMERICANS && team < TEAM_BRITISH )
-		return NULL;	//spectator or unassigned
+	//if( team < TEAM_AMERICANS && team < TEAM_BRITISH )
+	//	return NULL;	//spectator or unassigned
 
 	CBaseEntity *pClosest = NULL;
-	float		mindist = 1000000000.0f;
+	//float dist;
+	static float dist2 = 0;
 
 	CBaseEntity *pEntity = NULL;
-	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL && pEntity->GetTeam()->GetTeamNumber() != team  )
 	{
-		if ( pEntity->GetTeam()->GetTeamNumber() != team)
-		{
-			float dist = (pEntity->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin()).Length();
-			mindist = dist;
-			pClosest = pEntity;
-		}
-		else
-			continue;
-	}
+		/*dist = (pEntity->GetLocalOrigin() + pBot->m_pPlayer->GetLocalOrigin()).Length(); //Why subtract?
 
-	if( pdist )
-		*pdist = mindist;
+		if ( dist2 > 0 ) //Set the first value.
+			dist2 = dist;
+
+		if ( dist > dist2 ) //Make sure we're not setting a flag that's further away.
+			continue;
+
+		dist2 = dist; //Set the value to static float.
+
+		Msg("Flag dist2 = %d \n", dist2);*/
+		//pClosest = pEntity;
+		//Just go to the first one for now.
+		return pEntity;
+	}
 
 	return pClosest;
 }
@@ -385,8 +384,8 @@ bool Bot_RunMimicCommand( CUserCmd& cmd )
 //-----------------------------------------------------------------------------
 static void RunPlayerMove( CSDKPlayer *fakeclient, CUserCmd &cmd, float frametime )
 {
-	if ( !fakeclient )
-		return;
+	//if ( !fakeclient )
+	//	return;
 
 	// Store off the globals.. they're gonna get whacked
 	float flOldFrametime = gpGlobals->frametime;
@@ -407,6 +406,7 @@ static void RunPlayerMove( CSDKPlayer *fakeclient, CUserCmd &cmd, float frametim
 	// Restore the globals..
 	gpGlobals->frametime = flOldFrametime;
 	gpGlobals->curtime = flOldCurtime;
+	MoveHelperServer()->SetHost( NULL );
 }
 
 
@@ -442,9 +442,9 @@ void Bot_UpdateStrafing( CSDKBot *pBot, CUserCmd &cmd )
 void Bot_UpdateDirection( CSDKBot *pBot )
 {
 	//BG2 - Tjoppen
-	float dist;
-	CBasePlayer *pEnemy = FindClosestEnemy( pBot, true, &dist );
-	CBaseEntity *pFlag = FindClosestFlag( pBot, true, &dist );
+	//float dist;
+	CBasePlayer *pEnemy = FindClosestEnemy( pBot, true/*, &dist*/ );
+	CBaseEntity *pFlag = FindClosestFlag( pBot, true/*, &dist*/ );
 	if( pEnemy )
 	{
 		QAngle angles;
@@ -522,9 +522,9 @@ void Bot_UpdateDirection( CSDKBot *pBot )
 
 void Bot_FlipOut( CSDKBot *pBot, CUserCmd &cmd )
 {
-	if ( bot_flipout.GetInt() > 0 && pBot->m_pPlayer->IsAlive() )
+	if ( bot_flipout.GetInt() > 0 /*&& pBot->m_pPlayer->IsAlive()*/ )
 	{
-		if ( bot_forceattackon.GetBool() || pBot->attack++ >= 20 )//(RandomFloat(0.0,1.0) > 0.5) )
+		if ( pBot->attack++ >= 20 )//(RandomFloat(0.0,1.0) > 0.5) )
 		{
 			//cmd.buttons |= bot_forceattack2.GetBool() ? IN_ATTACK2 : IN_ATTACK;
 			cmd.buttons |= IN_ATTACK;
@@ -618,21 +618,10 @@ void Bot_ForceFireWeapon( CSDKBot *pBot, CUserCmd &cmd )
 
 void Bot_SetForwardMovement( CSDKBot *pBot, CUserCmd &cmd )
 {
-	if ( !pBot->m_pPlayer->IsEFlagSet(EFL_BOT_FROZEN) )
+	cmd.forwardmove = 600 * ( pBot->m_bBackwards ? -1 : 1 );
+	if ( pBot->m_flSideMove != 0.0f )
 	{
-		if ( 1 )// pBot->m_pPlayer->m_iHealth == 100 )
-		{
-			cmd.forwardmove = 600 * ( pBot->m_bBackwards ? -1 : 1 );
-			if ( pBot->m_flSideMove != 0.0f )
-			{
-				cmd.forwardmove *= RandomFloat( 0.1, 1.0f );
-			}
-		}
-		else
-		{
-			// Stop when shot
-			cmd.forwardmove = 0;
-		}
+		cmd.forwardmove *= RandomFloat( 0.1, 1.0f );
 	}
 }
 
@@ -640,15 +629,12 @@ void Bot_SetForwardMovement( CSDKBot *pBot, CUserCmd &cmd )
 //-----------------------------------------------------------------------------
 // Run this Bot's AI for one frame.
 //-----------------------------------------------------------------------------
-int lastclass = 0;
 void Bot_Think( CSDKBot *pBot )
 {
 	/*if( !pBot ) //These are figured out by bot_runall anyway.
 		return;
 	if( !pBot->m_bInuse || !pBot->m_pPlayer )
 		return;*/
-
-	float frametime = gpGlobals->frametime;
 
 	// Make sure we stay being a bot
 	//pBot->m_pPlayer->AddFlag( FL_FAKECLIENT );
@@ -661,8 +647,8 @@ void Bot_Think( CSDKBot *pBot )
 	{
 		cmd.sidemove = pBot->m_flSideMove;
 
-		if ( pBot->m_pPlayer->IsAlive() && (pBot->m_pPlayer->GetSolid() == SOLID_BBOX) )
-		{
+		//if ( /*pBot->m_pPlayer->IsAlive() &&*/ (pBot->m_pPlayer->GetSolid() == SOLID_BBOX) )
+		//{
 			Bot_SetForwardMovement( pBot, cmd );
 
 			Bot_UpdateDirection( pBot );
@@ -672,20 +658,19 @@ void Bot_Think( CSDKBot *pBot )
 			Bot_ForceFireWeapon( pBot, cmd );
 			//Bot_HandleSendCmd( pBot );
 			Bot_FlipOut( pBot, cmd );
-		}
+		//}
 
 		// Fix up the m_fEffects flags
-		pBot->m_pPlayer->PostClientMessagesSent();
+		//pBot->m_pPlayer->PostClientMessagesSent();
 	}
 
 	cmd.viewangles = pBot->m_pPlayer->GetLocalAngles();
-	cmd.upmove = 0;
-	cmd.impulse = 0;
+	//cmd.upmove = 0;
+	//cmd.impulse = 0;
 
 	pBot->m_LastCmd = cmd;
 
-	RunPlayerMove( pBot->m_pPlayer, cmd, frametime );
-	pBot->m_flNextThink = gpGlobals->curtime + 0.0125f;
+	RunPlayerMove( pBot->m_pPlayer, cmd, gpGlobals->frametime );
 }
 
 

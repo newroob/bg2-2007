@@ -50,13 +50,13 @@ public:
 	void BoltTouch( CBaseEntity *pOther );
 	bool CreateVPhysics( void );
 	unsigned int PhysicsSolidMaskForEntity() const;
-	static CBullet *BulletCreate( const Vector &vecOrigin, const QAngle &angAngles, int iDamage, float flConstantDamageRange, float flRelativeDrag, CBasePlayer *pentOwner = NULL );
+	static CBullet *BulletCreate( const Vector &vecOrigin, const QAngle &angAngles, int iDamage, float flConstantDamageRange, float flRelativeDrag, CBasePlayer *pentOwner = NULL, CBaseCombatWeapon *pWeapon = NULL );
 
 protected:
 
 	//bool	CreateSprites( void );
 
-	CHandle<CSprite>		m_pGlowSprite;
+	//CHandle<CSprite>		m_pGlowSprite;
 	//CHandle<CSpriteTrail>	m_pGlowTrail;
 	
 	int		m_iDamage;
@@ -69,6 +69,9 @@ protected:
 										//					pistols, muskets and rifles in terms of range,
 										//					dropoff and other things..
 	Vector	m_vTrajStart;	//BG2 - Tjoppen - where the bullet started. for range calculations
+
+	CBaseCombatWeapon *firedWeapon;
+	CBasePlayer	*pAttacker;
 
 	bool	m_bHasPlayedNearmiss;
 

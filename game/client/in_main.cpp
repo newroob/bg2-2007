@@ -25,6 +25,7 @@
 #include "vguicenterprint.h"
 #include "bg2/classmenu.h"
 #include "bg2/vgui_bg2_options.h"
+#include "hl2mp_gamerules.h"
 //
 
 extern ConVar in_joystick;
@@ -558,6 +559,77 @@ void SpecMenu( void )
 //
 
 //BG2 - Tjoppen - make vgui stuff into proper commands that can be issued via console
+CON_COMMAND_F( joinclass, "Attempt to join a given class.", 0 )
+{
+	int m_iClass = 0;
+	static float m_fSwitchTime;
+
+	if ( m_fSwitchTime >= gpGlobals->curtime )
+		return;
+
+	if ( args.ArgC() == 0 )
+	{
+		Msg("You need to specify a class number. 0 = Infantry, 1 = Officer, 2 = Sniper, 3 = Skirmisher. \n");
+		return;
+	}
+
+	m_iClass = atoi( args[1] ); 
+
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+
+	if (!pPlayer)
+		return;
+
+	int m_iTeam = pPlayer->GetTeamNumber();
+
+	if ( m_iTeam <= TEAM_SPECTATOR )
+	{
+		Msg("You must be on a team first. \n");
+		return;
+	}
+
+	switch ( m_iClass )
+	{
+		case 0: //Infantry
+			{
+				if( m_iTeam == TEAM_AMERICANS )
+					engine->ServerCmd( "heavy_a" );
+				else
+					engine->ServerCmd( "medium_b" );
+			}
+			break;
+		case 1: //Officer
+			{
+				if( m_iTeam == TEAM_AMERICANS )
+					engine->ServerCmd( "light_a" );
+				else
+					engine->ServerCmd( "light_b" );
+			}
+			break;
+		case 2: //Rifleman
+			{
+				if( m_iTeam == TEAM_AMERICANS )
+					engine->ServerCmd( "medium_a" );
+				else
+					engine->ServerCmd( "heavy_b" );
+			}
+			break;
+		case 3: //Skirmisher
+			{
+				if( m_iTeam == TEAM_AMERICANS )
+					engine->ServerCmd( "skirm_a" );
+				else
+					engine->ServerCmd( "skirm_b" );
+			}
+			break;
+		default:
+			Msg("Unknown class number. \n");
+			return;
+	}
+
+	m_fSwitchTime = gpGlobals->curtime + 1.25f;
+}	
+
 void TeamMenu( void )
 {
 	if( gViewPortInterface )

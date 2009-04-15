@@ -10,6 +10,7 @@
 
 #include "IClientVehicle.h"
 #include "vehicle_viewblend_shared.h"
+//BG2 - Vehicles Removed. -HairyPotter
 /*
 class C_PropVehicleDriveable : public C_BaseAnimating, public IClientVehicle
 {

@@ -204,6 +204,8 @@ void CPrediction::CheckError( int commands_acknowledged )
 void CPrediction::ShutdownPredictables( void )
 {
 #if !defined( NO_ENTITY_PREDICTION )
+	MDLCACHE_CRITICAL_SECTION(); //BG2 - This was added to fix the IsFrameLocking assert. -HairyPotter
+
 	// Transfer intermediate data from other predictables
 	int c = predictables->GetPredictableCount();
 	int i;

@@ -85,11 +85,11 @@ bool CBG2MapPreview::ShouldDraw( void )
 //-----------------------------------------------------------------------------
 void CBG2MapPreview::OnTick()
 {
-	if ( engine->IsDrawingLoadingImage()  )
+	if ( engine->IsDrawingLoadingImage()  ) //This should suffice.
 	{
-		//const char *mapname = IGameSystem::MapName();
-		//if ( mapname )
-		//Error("Drawing loading screen for %s. This is a good thing. \n", mapname);
+		/*const char *mapname = IGameSystem::MapName();
+		if ( mapname )
+		Error("Drawing loading screen for %s. This is a good thing. \n", mapname);*/
 	}
 }
 

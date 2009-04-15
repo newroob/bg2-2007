@@ -2774,7 +2774,7 @@ void PhysSetEntityGameFlags( CBaseEntity *pEntity, unsigned short flags )
 		PhysSetGameFlags( pList[i], flags );
 	}
 }
-
+//BG2 - Vehicles Removed. -HairyPotter
 /*bool PhysFindOrAddVehicleScript( const char *pScriptName, vehicleparams_t *pParams, vehiclesounds_t *pSounds )
 {
 	return g_PhysicsHook.FindOrAddVehicleScript(pScriptName, pParams, pSounds);

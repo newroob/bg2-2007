@@ -7,12 +7,12 @@
 
 
 #include "cbase.h"
-#include "statgather.h"
+//#include "statgather.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-
+/*
 #define STATS_WINDOW_SIZE ( 60 * 10 )						// # of records to hold
 #define STATS_RECORD_INTERVAL 1								// # of seconds between data grabs. 2 * 300 = every 10 minutes
 
@@ -194,4 +194,4 @@ void UploadPerfData( void )
 														 pPerfData );
 		}
 	}	
-}
+}*/

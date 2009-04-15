@@ -26,6 +26,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
+//BG2 - Vehicles Removed. -HairyPotter
 /*
 extern ConVar sv_vehicle_autoaim_scale;
 

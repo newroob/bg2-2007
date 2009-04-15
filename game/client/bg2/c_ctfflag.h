@@ -17,4 +17,4 @@ public:
 
 };
 
-extern CUtlVector< C_CtfFlag * > g_CtfFlags;
+extern CUtlVector< C_CtfFlag * > g_CtfFlags, g_AmericanFlags, g_BritishFlags;

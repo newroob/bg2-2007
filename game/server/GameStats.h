@@ -12,7 +12,7 @@
 
 #include "tier1/utldict.h"
 #include "tier1/utlbuffer.h"
-
+/*
 #define GAMESTATS_STANDARD_NOT_SAVED 0xFEEDBEEF
 
 enum GameStatsVersions_t
@@ -92,7 +92,7 @@ public:
 };
 
 class CBasePlayer;
-class CPropVehicleDriveable;
+//class CPropVehicleDriveable;
 class CTakeDamageInfo;
 
 class CBaseGameStats
@@ -160,7 +160,7 @@ public:
 	virtual void Event_PlayerTraveled( CBasePlayer *pBasePlayer, float distanceInInches, bool bInVehicle, bool bSprinting );
 	virtual void Event_WeaponFired( CBasePlayer *pShooter, bool bPrimary, char const *pchWeaponName );
 	virtual void Event_WeaponHit( CBasePlayer *pShooter, bool bPrimary, char const *pchWeaponName, const CTakeDamageInfo &info );
-	virtual void Event_FlippedVehicle( CBasePlayer *pDriver, CPropVehicleDriveable *pVehicle );
+	//virtual void Event_FlippedVehicle( CBasePlayer *pDriver, CPropVehicleDriveable *pVehicle );
 	// Called before .sav file is actually loaded (player should still be in previous level, if any)
 	virtual void Event_PreSaveGameLoaded( char const *pSaveName, bool bInGame );
 	virtual void Event_PlayerEnteredGodMode( CBasePlayer *pBasePlayer );
@@ -238,7 +238,7 @@ inline bool CBaseGameStats::AppendLump( int nMaxLumpCount, CUtlBuffer &SaveBuffe
 //			&iLumpCount - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-inline bool CBaseGameStats::GetLumpHeader( int nMaxLumpCount, CUtlBuffer &LoadBuffer, unsigned short &iLump, unsigned short &iLumpCount, bool bPermissive /*= false*/ )
+inline bool CBaseGameStats::GetLumpHeader( int nMaxLumpCount, CUtlBuffer &LoadBuffer, unsigned short &iLump, unsigned short &iLumpCount, bool bPermissive /*= false*/ /*)
 {
 	// Get the lump id and element count.
 	iLump = LoadBuffer.GetUnsignedShort();
@@ -279,5 +279,5 @@ inline void CBaseGameStats::LoadLump( CUtlBuffer &LoadBuffer, unsigned short iLu
 }
 
 extern CBaseGameStats *gamestats; //starts out pointing at a singleton of the class above, overriding this in any constructor should work for replacing it
-
+*/
 #endif // GAMESTATS_H

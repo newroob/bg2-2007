@@ -145,7 +145,7 @@ void CClassButton::PerformCommand( void )
 			{
 				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
 					engine->ServerCmd( "light_a" );
-				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+				else //if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
 					engine->ServerCmd( "light_b" );
 			}
 			break;
@@ -153,7 +153,7 @@ void CClassButton::PerformCommand( void )
 			{
 				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
 					engine->ServerCmd( "heavy_a" );
-				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+				else //if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
 					engine->ServerCmd( "medium_b" );
 			}
 			break;
@@ -161,7 +161,7 @@ void CClassButton::PerformCommand( void )
 			{
 				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
 					engine->ServerCmd( "medium_a" );
-				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+				else //if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
 					engine->ServerCmd( "heavy_b" );
 			}
 			break;
@@ -169,7 +169,7 @@ void CClassButton::PerformCommand( void )
 			{
 				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
 					engine->ServerCmd( "skirm_a" );
-				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+				else //if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
 					engine->ServerCmd( "skirm_b" );
 			}
 			break;

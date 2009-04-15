@@ -11,6 +11,7 @@
 #endif
 
 #include "vcollide_parse.h"
+//BG2 - Vehicles Removed. -HairyPotter
 /*
 //-----------------------------------------------------------------------------
 // Purpose: 

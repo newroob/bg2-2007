@@ -2774,19 +2774,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\bg2\bg2_hud_koth.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath=".\bg2\bg2_hud_main.cpp"
 					>
 					<FileConfiguration
@@ -2888,14 +2875,6 @@
 				</File>
 				<File
 					RelativePath=".\bg2\c_flag.h"
-					>
-				</File>
-				<File
-					RelativePath=".\bg2\c_koth.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\bg2\c_koth.h"
 					>
 				</File>
 				<File

@@ -486,7 +486,8 @@ const char *CBaseCombatWeapon::GetShootSound( int iIndex ) const
 //-----------------------------------------------------------------------------
 int CBaseCombatWeapon::GetRumbleEffect() const
 {
-	return GetWpnData().iRumbleEffect;
+	//return GetWpnData().iRumbleEffect;
+	return 0;
 }
 
 //-----------------------------------------------------------------------------

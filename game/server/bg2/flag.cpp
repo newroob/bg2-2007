@@ -148,7 +148,25 @@ void CFlag::Spawn( void )
 {
 	Precache( );
 
-	SetModel( "models/other/flag.mdl" ); //Always first.
+	if ( !m_bInvisible ) 
+	{
+		SetModel( "models/other/flag.mdl" ); //Always first.
+		// BG2 - This is all for finding the animation for the flag model. -HairyPotter
+		int nSequence = LookupSequence( "flag_idle1" );
+		if ( nSequence > ACTIVITY_NOT_AVAILABLE )
+		{
+			SetSequence(nSequence);
+			SetCycle( 0 );
+			ResetSequence( nSequence );
+			ResetClientsideFrame();
+		}
+		else
+		{
+			Msg( "Flag sequence is busted...\n");
+			SetSequence( 0 );
+		}
+	//
+	}
 
 	m_iSavedHUDSlot = m_iHUDSlot;
 
@@ -168,7 +186,7 @@ void CFlag::Spawn( void )
 
 	BaseClass::Spawn( );
 
-	// BG2 - This is all for finding the animation for the flag model. -HairyPotter
+	/*// BG2 - This is all for finding the animation for the flag model. -HairyPotter
 	int nSequence = LookupSequence( "flag_idle1" );
 	if ( nSequence > ACTIVITY_NOT_AVAILABLE )
 	{
@@ -182,7 +200,7 @@ void CFlag::Spawn( void )
 		Msg( "Flag sequence is busted...\n");
 		SetSequence( 0 );
 	}
-	//
+	//*/
 
 	SetThink( &CFlag::Think );
 	SetNextThink( gpGlobals->curtime );
@@ -226,7 +244,8 @@ void CFlag::Think( void )
 	//For the flag animation. Yes, It's a sort of hack, but the frame can only be advanced on a think.. Animation is 8 FPS, so must think 8 times a second. -HairyPotter
 	//SetNextThink( gpGlobals->curtime + 0.5f );
 	SetNextThink( gpGlobals->curtime + 0.125f );
-	StudioFrameAdvance();
+	if ( !m_bInvisible )
+		StudioFrameAdvance();
 	//
 
 	if ( IsEffectActive( EF_NODRAW ) ) //If you've come this far into the code you're definately not disabled, just make sure you're visible.
@@ -508,6 +527,17 @@ void CFlag::Capture( int iTeam )
 		WRITE_STRING( "Flag.capture" );
 	MessageEnd();
 
+	//BG2 - Added for HlstatsX Support. -HairyPotter
+	IGameEvent * event = gameeventmanager->CreateEvent( "flag_capture" );
+	if ( event )
+	{
+		event->SetString("team", iTeam == TEAM_AMERICANS ? "Americans" : "British" );
+		event->SetInt("priority", 7 );	// HLTV event priority, not transmitted
+			
+		gameeventmanager->FireEvent( event );
+	}
+	//
+
 	g_Teams[iTeam]->AddScore( m_iTeamBonus );
 	m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
 
@@ -680,28 +710,31 @@ void CFlag::ThinkCapped( void )
 
 void CFlag::ChangeTeam( int iTeamNum )
 {
-	switch( iTeamNum )
+	if ( !m_bInvisible )
 	{
-	case TEAM_AMERICANS:
-		m_nSkin = GetAmericanSkin();
-		break;
-	case TEAM_BRITISH:
-		m_nSkin = GetBritishSkin();
-		break;
-	default:
-		switch( m_iForTeam )
+		switch( iTeamNum )
 		{
-			case 1://amer
-				m_nSkin = GetBritishSkin();
-				break;
-			case 2://brit
-				m_nSkin = GetAmericanSkin();
-				break;
-			default:
-				m_nSkin = GetNeutralSkin();
-				break;
+		case TEAM_AMERICANS:
+			m_nSkin = GetAmericanSkin();
+			break;
+		case TEAM_BRITISH:
+			m_nSkin = GetBritishSkin();
+			break;
+		default:
+			switch( m_iForTeam )
+			{
+				case 1://amer
+					m_nSkin = GetBritishSkin();
+					break;
+				case 2://brit
+					m_nSkin = GetAmericanSkin();
+					break;
+				default:
+					m_nSkin = GetNeutralSkin();
+					break;
+			}
+			break;
 		}
-		break;
 	}
 
 	//m_iLastTeam = iTeamNum;
@@ -805,6 +838,8 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_KEYFIELD( m_iDisabledFlagSkin, FIELD_INTEGER, "DisabledFlagSkin" ),
 	DEFINE_KEYFIELD( m_iBritishFlagSkin, FIELD_INTEGER, "BritishFlagSkin" ),
 	DEFINE_KEYFIELD( m_iAmericanFlagSkin, FIELD_INTEGER, "AmericanFlagSkin" ), //
+	DEFINE_KEYFIELD( m_iFullCap, FIELD_INTEGER, "FullCap" ), //This is used in the UpdateFlags function in hl2mp_gamerules.cpp -HairyPotter
+	DEFINE_KEYFIELD( m_bInvisible, FIELD_BOOLEAN, "Invisible" ), //This is used in the UpdateFlags function in hl2mp_gamerules.cpp -HairyPotter
 
 #ifndef CLIENT_DLL
 	DEFINE_THINKFUNC( Think ),

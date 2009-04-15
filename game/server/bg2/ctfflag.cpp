@@ -40,12 +40,12 @@ void CtfFlag::Spawn( void )
 			iTeam = NULL;
 			break;
 		case 1: //British Flag
-			m_nSkin = 0;
+			m_nSkin = 1;
 			//cFlagName = "American"; //This is just for the capture text. (Capped American Flag!)
 			iTeam = TEAM_BRITISH; 
 			break;
 		case 2: //American Flag
-			m_nSkin = 1;
+			m_nSkin = 0;
 			//cFlagName = "British"; //This is just for the capture text. (Capped British Flag!)
 			iTeam = TEAM_AMERICANS; //This is opposite land.
 			break;
@@ -59,10 +59,10 @@ void CtfFlag::Spawn( void )
 			cFlagName = "Neutral";
 			break;
 		case TEAM_BRITISH: //British Flag
-			cFlagName = "American"; //This is just for the capture text. (Capped American Flag!)
+			cFlagName = "British"; //This is just for the capture text. (Capped American Flag!)
 			break;
 		case TEAM_AMERICANS: //American Flag
-			cFlagName = "British"; //This is just for the capture text. (Capped British Flag!)
+			cFlagName = "American"; //This is just for the capture text. (Capped British Flag!)
 			break;
 		}
 	}
@@ -111,18 +111,7 @@ void CtfFlag::Think( void )
 
 	if ( GetParent() ) //Is a player holding the flag??
 	{
-		if ( !GetParent()->IsAlive() ) //Did the player die while holding the flag? Otherwise just do nothing.
-		{
-			CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( GetParent() );
-			SetModel( "models/other/flag.mdl" );
-			SetParent( NULL );
-			SetAbsOrigin( GetAbsOrigin() - Vector( 0,0,25 ) ); //HACKHACK: Bring the flag down to it's original height.
-			m_bFlagIsDropped = true;
-			fReturnTime = gpGlobals->curtime + m_fReturnTime;
-			PrintAlert( "%s Has Dropped The %s Flag!", pPlayer->GetPlayerName(), cFlagName );
-			PlaySound( GetAbsOrigin(), m_iDropSound );
-			m_OnDropped.FireOutput( this, this ); //Fire the OnDropped output.
-		}
+		return; //Do nothing, we're all set here.
 	}
 	else //If there isn't someone holding the flag, we need to search for a potential capturer or perhaps return it.
 	{
@@ -163,7 +152,7 @@ void CtfFlag::Think( void )
 			//
 
 			//Assuming you've passed all the checks, you deserve to pick up the flag. So run the code below.
-			pPlayer->CtfFlag = this;	//So the capture trigger will know which flag is being captured.
+			pPlayer->e_CtfFlag = this;	//So the capture trigger will know which flag is being captured.
 			SetModel( "models/other/flag_nopole.mdl" ); //Something I came up with. Since it doesn't look lik the player is actually holding the flag, just have it work like an indicator.
 			SetAbsAngles( pPlayer->GetAbsAngles() + QAngle( 0,180,0 ) ); // Make sure the flag is flying with the player model, not against it.
 			SetAbsOrigin( pPlayer->GetAbsOrigin() + Vector( 0,0,25 ) );	//Keeps the flag out of the player's FOV, also raises it so it doesn't look like it's stuck in the player's grill.
@@ -182,7 +171,7 @@ void CtfFlag::Think( void )
 					pPlayer->iSpeed = pPlayer->iSpeed - (m_iFlagWeight * 1.2);
 					break;
 				case CLASS_SKIRMISHER:
-					pPlayer->iSpeed = pPlayer->iSpeed - (m_iFlagWeight * 1.8);
+					pPlayer->iSpeed = pPlayer->iSpeed - (m_iFlagWeight * 1.1);
 					break;
 			}
 			//
@@ -210,6 +199,21 @@ void CtfFlag::PrintAlert( char *Msg, const char * PlayerName, char * FlagName )
 			break;
 	}
 }
+void CtfFlag::DropFlag( void ) //This function now fires precisely when a player dies / changes teams / disconnects, 
+{							   //this will fix a bug where a player can spawn within 1/8th of a second and still hold the flag after dying.
+	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( GetParent() );
+	if ( !pPlayer )
+		return;
+
+	SetModel( "models/other/flag.mdl" );
+	SetParent( NULL );
+	SetAbsOrigin( GetAbsOrigin() - Vector( 0,0,25 ) ); //HACKHACK: Bring the flag down to it's original height.
+	m_bFlagIsDropped = true;
+	fReturnTime = gpGlobals->curtime + m_fReturnTime;
+	PrintAlert( "%s Has Dropped The %s Flag!", pPlayer->GetPlayerName(), cFlagName );
+	PlaySound( GetAbsOrigin(), m_iDropSound );
+	m_OnDropped.FireOutput( this, this ); //Fire the OnDropped output.
+}
 void CtfFlag::ReturnFlag( void )
 {
 	PlaySound( GetAbsOrigin(), m_iReturnSound );
@@ -234,10 +238,10 @@ void CtfFlag::PlaySound( Vector origin, int sound )
 	char *SoundFile = (char *)sound;
 	CRecipientFilter recpfilter;
 	//recpfilter.AddAllPlayers();
-	recpfilter.AddRecipientsByPAS( GetAbsOrigin() ); //Instead, let's send this to players that are at least slose enough to hear it.. -HairyPotter
+	recpfilter.AddRecipientsByPAS( origin ); //Instead, let's send this to players that are at least close enough to hear it.. -HairyPotter
 	recpfilter.MakeReliable();
 	UserMessageBegin( recpfilter, "CaptureSounds" );
-		WRITE_VEC3COORD( GetAbsOrigin() );
+		WRITE_VEC3COORD( origin );
 		WRITE_STRING( SoundFile );
 	MessageEnd();
 }

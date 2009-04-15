@@ -3697,29 +3697,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\bg2\koth.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\bg2\koth.h"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath=".\bg2\mapfilter.cpp"
 					>
 					<FileConfiguration

@@ -90,7 +90,7 @@ extern IXboxSystem *xboxsystem;	// Xbox 360 only
 extern IMatchmaking *matchmaking;
 extern IAvi *avi;
 extern IBik *bik;
-extern IUploadGameStats *g_pClientGameStatsUploader;
+//extern IUploadGameStats *g_pClientGameStatsUploader;
 
 
 // Set to true between LevelInit and LevelShutdown.

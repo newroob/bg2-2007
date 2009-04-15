@@ -25,7 +25,7 @@
 #include "hl2_player.h"
 #include "eventqueue.h"
 #include "physics_collisionevent.h"
-#include "GameStats.h"
+//#include "GameStats.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -1245,11 +1245,11 @@ void CPropCombineBall::OnHitEntity( CBaseEntity *pHitEntity, float flSpeed, int 
 				if ( (m_nState != STATE_HOLDING) )
 				{
 
-					CBasePlayer *pPlayer = ToBasePlayer( GetOwnerEntity() );
-					if ( pPlayer && UTIL_IsAR2CombineBall( this ) && ToBaseCombatCharacter( pHitEntity ) )
+					//CBasePlayer *pPlayer = ToBasePlayer( GetOwnerEntity() );
+					/*if ( pPlayer && UTIL_IsAR2CombineBall( this ) && ToBaseCombatCharacter( pHitEntity ) )
 					{
 						gamestats->Event_WeaponHit( pPlayer, false, "weapon_ar2", info );
-					}
+					}*/
 
 					DissolveEntity( pHitEntity );
 					if ( pHitEntity->ClassMatches( "npc_hunter" ) )

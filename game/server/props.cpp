@@ -39,7 +39,7 @@
 #include "datacache/imdlcache.h"
 #include "doors.h"
 #include "physics_collisionevent.h"
-#include "GameStats.h"
+//#include "GameStats.h"
 #include "vehicle_base.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -1606,10 +1606,10 @@ void CBreakableProp::Break( CBaseEntity *pBreaker, const CTakeDamageInfo &info )
 				bSmashed = true;
 			}
 		}*/
-		if ( bSmashed )
+		/*if ( bSmashed )
 		{
 			gamestats->Event_CrateSmashed();
-		}
+		}*/
 	}
 
 	IGameEvent * event = gameeventmanager->CreateEvent( "break_prop" );

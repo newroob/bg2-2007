@@ -762,6 +762,8 @@ void CBasePlayer::Weapon_SetLast( CBaseCombatWeapon *pWeapon )
 //-----------------------------------------------------------------------------
 bool CBasePlayer::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelindex /*=0*/ ) 
 {
+    MDLCACHE_CRITICAL_SECTION(); //BG2 - This was added to fix the IsFrameLocking assert. -HairyPotter
+
 	CBaseCombatWeapon *pLastWeapon = GetActiveWeapon();
 
 	if ( BaseClass::Weapon_Switch( pWeapon, viewmodelindex ))

@@ -20,7 +20,7 @@
 #include "weapon_hl2mpbase.h"
 //#include "grenade_satchel.h"
 #include "eventqueue.h"
-#include "GameStats.h"
+//#include "GameStats.h"
 
 //#includes - HairyPotter
 #include "ammodef.h"
@@ -37,6 +37,7 @@
 #include "SoundEmitterSystem/isoundemittersystembase.h"
 
 #include "ilagcompensationmanager.h"
+#include "bg2/ctfflag.h"
 
 extern ConVar mp_autobalanceteams;
 extern ConVar mp_autobalancetolerance;
@@ -314,8 +315,8 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Snipers. -HairyPotter
 			break;
 		case CLASS_SKIRMISHER:
-			GiveNamedItem( "weapon_tomahawk" );
 			GiveNamedItem( "weapon_brownbess_nobayo", 1 ); //So the native skin is set to 1 (2 in HLMV since 0 is default in the code)
+			GiveNamedItem( "weapon_tomahawk" );
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Skirmishers. -HairyPotter
 			break;
 		}
@@ -376,8 +377,9 @@ void CHL2MP_Player::PickDefaultSpawnTeam( void )
 //-----------------------------------------------------------------------------
 void CHL2MP_Player::Spawn(void)
 {
-	m_flNextModelChangeTime = 0.0f;
-	m_flNextTeamChangeTime = 0.0f;
+	//BG2 - Always wait.
+	//m_flNextModelChangeTime = 0.0f;
+	//m_flNextTeamChangeTime = 0.0f;
 
 
 	//BG2 - Tjoppen - reenable spectators
@@ -1253,6 +1255,18 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 	char str[512];
 	Q_snprintf( str, 512, "%s is going to fight as %s for the %s\n", GetPlayerName(), pClassName, iTeam == TEAM_AMERICANS ? "Americans" : "British" );
 	ClientPrinttTalkAll( str, HUD_BG2CLASSCHANGE  );
+	
+	//BG2 - Added for HlstatsX Support. -HairyPotter
+	IGameEvent * event = gameeventmanager->CreateEvent( "class_change" );
+	if ( event )
+	{
+		event->SetString("name", GetPlayerName() );
+		event->SetString("newclass", pClassName );
+		event->SetString("team", iTeam == TEAM_AMERICANS ? "Americans" : "British" );
+			
+		gameeventmanager->FireEvent( event );
+	}
+	//
 
 	//The following line prevents anyone else from stealing our spot..
 	//Without this line several teamswitching/new players can pick a free class, so there can be for instance 
@@ -2235,6 +2249,12 @@ void CHL2MP_Player::RemoveSelfFromFlags( void )
 	CFlag *pFlag = NULL;
 	while( (pFlag = dynamic_cast<CFlag*>( gEntList.FindEntityByClassname( pFlag, "flag" ) )) != NULL )
 		pFlag->m_vOverloadingPlayers.FindAndRemove( this );
+
+	//Also have the player drop CTF Flags if they are holding one. -HairyPotter
+	CtfFlag *ctfFlag = dynamic_cast< CtfFlag* >( e_CtfFlag );  //So the player ent has the flag ent stored...
+	if ( ctfFlag ) //It exists....
+		ctfFlag->DropFlag();  //DropFlag() takes care of the rest.
+	//
 }
 
 //BG2 - Tjoppen - HACKHACK: no more weapon_physcannon

@@ -3834,7 +3834,7 @@ void CGameMovement::PlayerRoughLandingEffects( float fvol )
 		}
 
 #if !defined( CLIENT_DLL )
-		player->RumbleEffect( ( fvol > 0.85f ) ? ( RUMBLE_FALL_LONG ) : ( RUMBLE_FALL_SHORT ), 0, RUMBLE_FLAGS_NONE );
+		//player->RumbleEffect( ( fvol > 0.85f ) ? ( RUMBLE_FALL_LONG ) : ( RUMBLE_FALL_SHORT ), 0, RUMBLE_FLAGS_NONE );
 #endif
 	}
 }

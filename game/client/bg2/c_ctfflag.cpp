@@ -8,6 +8,13 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+enum
+{
+	TEAM_AMERICANS = 2,
+	TEAM_BRITISH,
+	//BG2 - Tjoppen - NUM_TEAMS is useful
+	NUM_TEAMS,	//!! must be last !!
+};
 
 IMPLEMENT_CLIENTCLASS_DT( C_CtfFlag, DT_CtfFlag, CtfFlag )
 
@@ -18,7 +25,7 @@ IMPLEMENT_CLIENTCLASS_DT( C_CtfFlag, DT_CtfFlag, CtfFlag )
 END_RECV_TABLE()
 
 // Global list of client side team entities
-CUtlVector< C_CtfFlag * > g_CtfFlags;
+CUtlVector< C_CtfFlag * > g_CtfFlags, g_AmericanFlags, g_BritishFlags;
 
 //=================================================================================================
 // C_Team functionality
@@ -33,6 +40,16 @@ C_CtfFlag::C_CtfFlag()
 
 	// Add myself to the global list of team entities
 	g_CtfFlags.AddToTail( this );
+
+	switch( GetTeamNumber() )
+	{
+		case TEAM_AMERICANS:
+			g_AmericanFlags.AddToTail( this );
+			break;
+		case TEAM_BRITISH:
+			g_BritishFlags.AddToTail( this );
+			break;
+	}
 }
 
 C_CtfFlag::~C_CtfFlag()

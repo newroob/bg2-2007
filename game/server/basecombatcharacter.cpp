@@ -2976,7 +2976,7 @@ void CBaseCombatCharacter::VPhysicsShadowCollision( int index, gamevcollisioneve
 	// inertia tensor to get torque?
 	Vector damageForce = pEvent->postVelocity[index] * pEvent->pObjects[index]->GetMass() * phys_impactforcescale.GetFloat();
 	
-	IServerVehicle *vehicleOther = pOther->GetServerVehicle();
+	/*IServerVehicle *vehicleOther = pOther->GetServerVehicle();
 	if ( vehicleOther )
 	{
 		CBaseCombatCharacter *pPassenger = vehicleOther->GetPassenger();
@@ -3002,7 +3002,7 @@ void CBaseCombatCharacter::VPhysicsShadowCollision( int index, gamevcollisioneve
 				}
 			}
 		}
-	}
+	}*/
 
 	Vector damagePos;
 	pEvent->pInternalData->GetContactPoint( damagePos );

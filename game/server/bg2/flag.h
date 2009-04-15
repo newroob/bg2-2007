@@ -53,7 +53,9 @@ class CFlag : public CBaseAnimating
 
 	//BG2 - Used with the flag triggers. -HairyPotter
 	bool m_bIsParent,										//Helps the flag remember it's place... as a parent.
-		 m_bActive;											//Is it active? And yes, this replaces the networked version.
+		 m_bActive,											//Is it active? And yes, this replaces the networked version.
+		 m_bInvisible;										//Is the flag model "invisible"?
+
 	CUtlVector<CBasePlayer*>	m_vTriggerBritishPlayers,	//British players who have stepped into the trigger
 								m_vTriggerAmericanPlayers;	//American players who have stepped into the trigger
 	int americans,
@@ -108,7 +110,8 @@ class CFlag : public CBaseAnimating
 			m_iBritishFlagSkin,
 			m_iNeutralFlagSkin,
 			m_iDisabledFlagSkin,
-			m_iSavedHUDSlot;     //This is for the flag enable/disable addon. The original Hud Slot value is stored here.
+			m_iSavedHUDSlot,     //This is for the flag enable/disable addon. The original Hud Slot value is stored here.
+			m_iFullCap;
 
 	float	m_flNextTeamBonus;
 

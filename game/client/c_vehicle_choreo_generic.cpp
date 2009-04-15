@@ -15,6 +15,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
+//BG2 - Vehicles Removed. -HairyPotter
 /*
 extern float RemapAngleRange( float startInterval, float endInterval, float value );
 

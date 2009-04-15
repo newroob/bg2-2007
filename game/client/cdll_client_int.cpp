@@ -90,7 +90,7 @@
 #include "ipresence.h"
 #include "engine/imatchmaking.h"
 #include "cdll_bounded_cvars.h"
-#include "statgather.h"
+//#include "statgather.h"
 
 #ifdef PORTAL
 #include "PortalRender.h"
@@ -131,7 +131,7 @@ IXboxSystem *xboxsystem = NULL;	// Xbox 360 only
 IMatchmaking *matchmaking = NULL;
 IAvi *avi = NULL;
 IBik *bik = NULL;
-IUploadGameStats *g_pClientGameStatsUploader = NULL;
+//IUploadGameStats *g_pClientGameStatsUploader = NULL;
 
 
 IGameSystem *SoundEmitterSystem();
@@ -697,13 +697,13 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 		return false;
 	if ( (scenefilecache = (ISceneFileCache *)appSystemFactory( SCENE_FILE_CACHE_INTERFACE_VERSION, NULL )) == NULL )
 		return false;
-	if ( IsX360() && (xboxsystem = (IXboxSystem *)appSystemFactory( XBOXSYSTEM_INTERFACE_VERSION, NULL )) == NULL )
+	/*if ( IsX360() && (xboxsystem = (IXboxSystem *)appSystemFactory( XBOXSYSTEM_INTERFACE_VERSION, NULL )) == NULL )
 		return false;
 	if ( IsX360() && (matchmaking = (IMatchmaking *)appSystemFactory( VENGINE_MATCHMAKING_VERSION, NULL )) == NULL )
-		return false;
+		return false;*/
 #ifndef _XBOX
-	if ( ( g_pClientGameStatsUploader = (IUploadGameStats *)appSystemFactory( INTERFACEVERSION_UPLOADGAMESTATS, NULL )) == NULL )
-		return false;
+	//if ( ( g_pClientGameStatsUploader = (IUploadGameStats *)appSystemFactory( INTERFACEVERSION_UPLOADGAMESTATS, NULL )) == NULL )
+	//	return false;
 #endif
 	if (!g_pMatSystemSurface)
 		return false;
@@ -1102,7 +1102,7 @@ void CHLClient::View_Render( vrect_t *rect )
 		return;
 
 	view->Render( rect );
-	UpdatePerfStats();
+	//UpdatePerfStats();
 }
 
 
@@ -1257,7 +1257,7 @@ void CHLClient::LevelShutdown( void )
 	if (!g_bLevelInitialized)
 		return;
 
-	UploadPerfData();										// upload perf data to steam, if we have any
+	//UploadPerfData();										// upload perf data to steam, if we have any
 
 	g_bLevelInitialized = false;
 

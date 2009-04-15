@@ -20,7 +20,7 @@
 #include "ndebugoverlay.h"
 #include "te_effect_dispatch.h"
 #include "rumble_shared.h"
-#include "GameStats.h"
+//#include "GameStats.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -143,7 +143,7 @@ void CBaseHLBludgeonWeapon::Hit( trace_t &traceHit, Activity nHitActivity, bool 
 	CSoundEnt::InsertSound( SOUND_BULLET_IMPACT, traceHit.endpos, 400, 0.2f, pPlayer );
 
 	// This isn't great, but it's something for when the crowbar hits.
-	pPlayer->RumbleEffect( RUMBLE_AR2, 0, RUMBLE_FLAG_RESTART );
+	//pPlayer->RumbleEffect( RUMBLE_AR2, 0, RUMBLE_FLAG_RESTART );
 
 	CBaseEntity	*pHitEntity = traceHit.m_pEnt;
 
@@ -170,10 +170,10 @@ void CBaseHLBludgeonWeapon::Hit( trace_t &traceHit, Activity nHitActivity, bool 
 		// Now hit all triggers along the ray that... 
 		TraceAttackToTriggers( info, traceHit.startpos, traceHit.endpos, hitDirection );
 
-		if ( ToBaseCombatCharacter( pHitEntity ) )
+		/*if ( ToBaseCombatCharacter( pHitEntity ) )
 		{
 			gamestats->Event_WeaponHit( pPlayer, !bIsSecondary, GetClassname(), info );
-		}
+		}*/
 	}
 
 	// Apply an impact effect
@@ -298,7 +298,7 @@ void CBaseHLBludgeonWeapon::Swing( int bIsSecondary )
 	if ( !pOwner )
 		return;
 
-	pOwner->RumbleEffect( RUMBLE_CROWBAR_SWING, 0, RUMBLE_FLAG_RESTART );
+	//pOwner->RumbleEffect( RUMBLE_CROWBAR_SWING, 0, RUMBLE_FLAG_RESTART );
 
 	Vector swingStart = pOwner->Weapon_ShootPosition( );
 	Vector forward;
@@ -352,7 +352,7 @@ void CBaseHLBludgeonWeapon::Swing( int bIsSecondary )
 		m_iSecondaryAttacks++;
 	}
 
-	gamestats->Event_WeaponFired( pOwner, !bIsSecondary, GetClassname() );
+	//gamestats->Event_WeaponFired( pOwner, !bIsSecondary, GetClassname() );
 
 	// -------------------------
 	//	Miss

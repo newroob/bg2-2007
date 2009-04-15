@@ -28,7 +28,7 @@ void RegisterUserMessages( void )
 	usermessages->Register( "Shake", 13 );
 	usermessages->Register( "Fade", 10 );
 	usermessages->Register( "VGUIMenu", -1 );	// Show VGUI menu
-	usermessages->Register( "Rumble", 3 );	// Send a rumble to a controller
+	//usermessages->Register( "Rumble", 3 );	// Send a rumble to a controller
 	usermessages->Register( "Battery", 2 );
 	usermessages->Register( "Damage", 18 );		// BUG: floats are sent for coords, no variable bitfields in hud & fixed size Msg
 	usermessages->Register( "VoiceMask", VOICE_MAX_PLAYERS_DW*4 * 2 + 1 );
@@ -41,11 +41,11 @@ void RegisterUserMessages( void )
 	usermessages->Register( "CreditsMsg", 1 );
 	usermessages->Register( "LogoTimeMsg", 4 );
 	usermessages->Register( "AchievementEvent", -1 );
-	usermessages->Register( "UpdateJalopyRadar", -1 );
+	//usermessages->Register( "UpdateJalopyRadar", -1 );
 	//BG2 - Draco - stamina message to HUD
 	//usermessages->Register( "Stamina", 2 );
-	usermessages->Register( "classreward", -1 );
-	usermessages->Register( "teamreward", -1 );
+	//usermessages->Register( "classreward", -1 );
+	//usermessages->Register( "teamreward", -1 );
 	//usermessages->Register( "flagstatus", -1 );
 	//BG2 - Tjoppen - usermessages
 	usermessages->Register( "VoiceComm", 2 );

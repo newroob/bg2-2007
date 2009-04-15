@@ -118,13 +118,17 @@ void CHudCTFFlags::VidInit( void )
 	m_pIconRed		= gHUD.GetIcon( "hud_flagicon_red" );
 	m_pIconBlue		= gHUD.GetIcon( "hud_flagicon_blue" );
 }
-
+int m_iFlagCount = g_CtfFlags.Count();
 //==============================================
 // CHudFlags's ShouldDraw
 // whether the panel should be drawing
 //==============================================
 bool CHudCTFFlags::ShouldDraw( void )
 {
+
+	if ( !g_CtfFlags.Count() ) //No flags? Die here. -HairyPotter
+		return false;
+
 	return CHudElement::ShouldDraw();
 }
 
@@ -136,192 +140,83 @@ void CHudCTFFlags::Paint()
 {
 	int m_iFlagCount = g_CtfFlags.Count();
 
-	if ( !m_iFlagCount ) //No flags? Die here. -HairyPotter
-		return;
-
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 
 	if( !pPlayer )
 		return;
 
-	char text[512];
+	//char text[512];
 	int i;// = 0;
 	int x_offset = 0;
-	int y_offset = 5;
+	//int y_offset = 5;
 	Color ColourWhite( 255, 255, 255, 255 );
-	switch (cl_flagstatus.GetInt())
+
+	i = 0;
+	while (i < MAX_FLAGS)
 	{
-	case 0: // not display anything
-		for( i = 0; i < MAX_FLAGS; i++ )
-		{
-			m_pLabelFlag[i]->SetVisible(false);
-		}
-		break;
-	case 1: // display flag status as text 
-		for( i = 0; i < MAX_FLAGS; i++ )
-		{
-			m_pLabelFlag[i]->SetVisible(false);
-		}
+		m_pLabelFlag[i]->SetVisible(false);
+		i++;
+	}
+	
+	//x_offset = ( (ScreenWidth() / 2) - (m_iFlagCount * 74) ); //Always lean to the left from the center. -HairyPotter
+	x_offset = 0;
 
-		for( i = 0; i < m_iFlagCount && i < MAX_FLAGS; i++ )
+	for( i = 0; i < m_iFlagCount; i++ )
+	{
+
+		x_offset += 68;
+
+		float fTimeToCap = gpGlobals->curtime;
+		//switch( g_Flags[i]->m_iLastTeam )
+		switch( g_CtfFlags[i]->GetTeamNumber() )
 		{
-			if( !g_CtfFlags[i] )
+		case TEAM_UNASSIGNED:
+			switch( g_CtfFlags[i]->m_iForTeam )
 			{
+			case 0:
+				m_pIconBlank->DrawSelf( x_offset, 0, ColourWhite );
 				break;
-			}
-
-			float iTimeToCap = gpGlobals->curtime;
-
-			//team specific flag?
-			//flag can be taken by any team
-			Q_snprintf( text, sizeof(text), "%s", g_CtfFlags[i]->n_cFlagName);
-
-			//figure out which colors to use
-			float r = 0;
-			float g = 0;
-			float b = 0;
-
-			switch( g_CtfFlags[i]->GetTeamNumber() )
-			{
-				case TEAM_AMERICANS:
-					r = 66;
-					g = 115;
-					b = 247;
-					r += 188 * (sin(iTimeToCap*4) + 1)/2;
-					g += 139 * (sin(iTimeToCap*4) + 1)/2;
-					b += 7 * (sin(iTimeToCap*4) + 1)/2;
-					break;
-				case TEAM_BRITISH:
-					r = 255;
-					g = 16;
-					b = 16;
-					g += 238 * (sin(iTimeToCap*4) + 1)/2;
-					b += 238 * (sin(iTimeToCap*4) + 1)/2;
-					break;
-				default:
-				case TEAM_UNASSIGNED:
-					switch (g_CtfFlags[i]->GetTeamNumber())
-					{
-						case TEAM_AMERICANS:
-							r = 66;
-							g = 115;
-							b = 247;
-							break;
-						case TEAM_BRITISH:
-							r = 255;
-							g = 16;
-							b = 16;
-							break;
-						case TEAM_UNASSIGNED:
-							r = 255;
-							g = 255;
-							b = 255;
-							break;
-					}
-					break;
-			}
-			m_pLabelFlag[i]->SetFgColor(Color(r,g,b,255));
-			m_pLabelFlag[i]->SetText( text );
-			m_pLabelFlag[i]->SizeToContents();
-			
-			//BP hack to widen the label so no cropping can occur
-			m_pLabelFlag[i]->SetWide(m_pLabelFlag[i]->GetWide() + 5);
-
-			m_pLabelFlag[i]->SetVisible( true );
-
-			m_pLabelFlag[i]->SetPos(x_offset,y_offset);
-			y_offset += 20;
-			//
-		}
-		break; //End of case 1.
-
-	case 2: // Display Flag status as Icons
-		i = 0;
-		while (i < MAX_FLAGS)
-		{
-			m_pLabelFlag[i]->SetVisible(false);
-			i++;
-		}
-
-		//int x_offset = ( (ScreenWidth() / 2) - (g_CtfFlags.Count() * 40) ); //Always center up. -HairyPotter
-		int ScreenCenter = ScreenWidth() - (m_iFlagCount * 80);
-		int x_offset = ( (ScreenCenter / 2) ); //Always center up. -HairyPotter
-		//int x_offset = 5;
-		Msg("Screen is %i centered. \n", x_offset );
-		for( i = 0; i < m_iFlagCount; i++ )
-		{
-
-			x_offset += 80;
-
-			//BG2 - Tjoppen - first draw the color of the team holding the flag, then progress bar of capture
-			float fTimeToCap = gpGlobals->curtime;
-			//switch( g_Flags[i]->m_iLastTeam )
-			switch( g_CtfFlags[i]->GetTeamNumber() )
-			{
-			case TEAM_UNASSIGNED:
-				switch( g_CtfFlags[i]->m_iForTeam )
-				{
-				case 0:
-					m_pIconBlank->DrawSelf( x_offset, 0, ColourWhite );
-					break;
-				case 1:
-					m_pIconRed->DrawSelf( x_offset, 0, ColourWhite );
-					break;
-				case 2:
-					m_pIconBlue->DrawSelf( x_offset, 0, ColourWhite );
-					break;
-				}
-				break;
-			case TEAM_AMERICANS:
-				m_pIconBlue->DrawSelf( x_offset, 0, ColourWhite );
-				break;
-			case TEAM_BRITISH:
+			case 1:
 				m_pIconRed->DrawSelf( x_offset, 0, ColourWhite );
 				break;
+			case 2:
+				m_pIconBlue->DrawSelf( x_offset, 0, ColourWhite );
+				break;
 			}
-
-			if ( g_CtfFlags[i]->m_bIsCarried )
-			{
-				int r=0,g=0,b=0;
-				switch( g_CtfFlags[i]->GetTeamNumber() )
-				{
-					case TEAM_AMERICANS:
-						r = 66;
-						g = 115;
-						b = 247;
-						r += 188 * (sin(fTimeToCap*4) + 1)/2;
-						g += 139 * (sin(fTimeToCap*4) + 1)/2;
-						b += 7 * (sin(fTimeToCap*4) + 1)/2;
-						break;
-					case TEAM_BRITISH:
-						r = 255;
-						g = 16;
-						b = 16;
-						g += 238 * (sin(fTimeToCap*4) + 1)/2;
-						b += 238 * (sin(fTimeToCap*4) + 1)/2;
-						break;
-					case TEAM_UNASSIGNED:
-						r = 255;
-						g = 255;
-						b = 255;
-						break;
-				}
-
-				m_pLabelFlag[i]->SetText( "Taken" );
-				m_pLabelFlag[i]->SizeToContents();
-				m_pLabelFlag[i]->SetVisible( true );
-
-				//center on icon
-				int w,h;
-				m_pLabelFlag[i]->GetSize( w, h );
-				m_pLabelFlag[i]->SetPos( (x_offset + 32) - w/2, 32 - h/2 );
-
-				m_pLabelFlag[i]->SetFgColor( Color(r,g,b,255) );
-				m_pLabelFlag[i]->SetVisible(true);
-
-				//x_offset += 80;
-			}
+			break;
+		case TEAM_AMERICANS:
+			m_pIconBlue->DrawSelf( x_offset, 0, ColourWhite );
+			break;
+		case TEAM_BRITISH:
+			m_pIconRed->DrawSelf( x_offset, 0, ColourWhite );
+			break;
 		}
-		break; //End of case 2.
+
+		if ( g_CtfFlags[i]->m_bIsCarried )
+		{
+			int r=0,g=0,b=0;
+			
+			//Start at blue.
+			r = 0;
+			g = 0;
+			b = 255;
+			//End up at red.
+			r += 255 * (sin(fTimeToCap*4) + 1)/2;
+			//g -= 100 * (sin(gpGlobals->curtime*4) + 1)/2;
+			b -= 255 * (sin(fTimeToCap*4) + 1)/2;
+
+			m_pLabelFlag[i]->SetText( "Taken" );
+			m_pLabelFlag[i]->SizeToContents();
+			//m_pLabelFlag[i]->SetVisible( true );
+
+			//center on icon
+			int w,h;
+			m_pLabelFlag[i]->GetSize( w, h );
+			m_pLabelFlag[i]->SetPos( (x_offset + 32) - w/2, 32 - h/2 );
+
+			m_pLabelFlag[i]->SetFgColor( Color(r,g,b,255) );
+			m_pLabelFlag[i]->SetVisible(true);
+
+		}
 	}
 }

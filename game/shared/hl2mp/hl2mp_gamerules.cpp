@@ -275,7 +275,7 @@ CHL2MPRules::CHL2MPRules()
 	for( int x = 0; x < MAX_PLAYERS; x++ )
 	{
 		gBots[x].m_pPlayer = NULL;
-		gBots[x].m_bInuse = false;
+		//gBots[x].m_bInuse = false;
 	}
 
 	extern float flNextClientPrintAll;
@@ -301,6 +301,7 @@ CHL2MPRules::CHL2MPRules()
 	m_iAmericanDmg = 0;
 	m_iBritishDmg = 0;
 	m_fNextWinSong = gpGlobals->curtime;
+	m_bServerReady = false; //Do this too, this will make it so map changes with bots work.
 //BG2 - Skillet
 #else
 	m_hRagdollList.RemoveAll();
@@ -1063,6 +1064,7 @@ void CHL2MPRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info
 	CBaseEntity *pInflictor = info.GetInflictor();
 	CBaseEntity *pKiller = info.GetAttacker();
 	CBasePlayer *pScorer = GetDeathScorer( pKiller, pInflictor );
+	
 
 	// Custom kill type?
 	if ( info.GetDamageCustom() )
@@ -1120,7 +1122,7 @@ void CHL2MPRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info
 			killer_weapon_name = "physics";
 		}
 
-		if ( strcmp( killer_weapon_name, "prop_combine_ball" ) == 0 )
+		/*if ( strcmp( killer_weapon_name, "prop_combine_ball" ) == 0 )
 		{
 			killer_weapon_name = "combine_ball";
 		}
@@ -1131,7 +1133,7 @@ void CHL2MPRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info
 		else if ( strcmp( killer_weapon_name, "satchel" ) == 0 || strcmp( killer_weapon_name, "tripmine" ) == 0)
 		{
 			killer_weapon_name = "slam";
-		}
+		}*/
 
 
 	}
@@ -1841,36 +1843,53 @@ void CHL2MPRules::UpdateFlags( void )
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{
 		CFlag *pFlag = dynamic_cast<CFlag*>(pEntity);
+
 		if( !pFlag || !pFlag->IsActive() )
+			continue;
+
+		int FullCap = pFlag->m_iFullCap;
+
+		if ( FullCap == 3) //we're not doing full caps on this flag. 0 = normal, 1 = Americans Fullcap, 2 = Brits Fullcap, 3 = No Fullcap.
 			continue;
 
 		switch( pFlag->GetTeamNumber() )
 		{
 		case TEAM_AMERICANS:
-			american_flags++;
+			if ( FullCap == (1 | 0) )
+				american_flags++;
 			break;
 		case TEAM_BRITISH:
-			british_flags++;
+			if ( FullCap == (2 | 0) )
+				british_flags++;
 			break;
 		default:
-			neutral_flags++;
+			if ( FullCap == 0 )
+				neutral_flags++;
 			break;
 		}
 		switch(pFlag->m_iForTeam)
 		{
 			case 0:
-				foramericans++;
-				forbritish++;
+				if ( FullCap == 0 )
+				{
+					foramericans++;
+					forbritish++;
+				}
 				break;
 			case 1:
-				foramericans++;
+				if ( FullCap == (1 | 0) )
+					foramericans++;
 				break;
 			case 2:
-				forbritish++;
+				if ( FullCap == (2 | 0) )
+					forbritish++;
 				break;
 			default://assume both
-				foramericans++;
-				forbritish++;
+				if ( FullCap == 0 )
+				{
+					foramericans++;
+					forbritish++;
+				}
 				break;
 		}
 	}

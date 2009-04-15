@@ -507,10 +507,6 @@ void CHudBG2::MsgFunc_WinMusic( bf_read &msg )
 
 	CLocalPlayerFilter filter;
 
-	/*if( team == TEAM_AMERICANS )
-		C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "Americans.win" );
-	else if( team == TEAM_BRITISH )
-		C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "British.win" );*/
 
 	switch( team ) //Switches are more efficient.
 	{
@@ -538,7 +534,15 @@ void CHudBG2::MsgFunc_CaptureSounds( bf_read &msg )
 void CHudBG2::PlayCaptureSound( const Vector &origin, char sound[255] )
 {
 	CLocalPlayerFilter filter;
-	C_BaseEntity::EmitSound( filter, SOUND_FROM_WORLD, sound, &origin );
+
+	//Hadto fix this because valve's code doesn't like direct wavs + scripts being played with the same code.
+	EmitSound_t params;
+	params.m_pSoundName = sound;
+	params.m_flSoundTime = 0.0f;
+	params.m_pOrigin = &origin;
+
+	C_BaseEntity::EmitSound( filter, SOUND_FROM_WORLD, params );
+	//
 }
 //
 //Make voice comm sounds client side. -HairyPotter

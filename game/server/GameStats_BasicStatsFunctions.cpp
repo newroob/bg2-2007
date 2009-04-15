@@ -4,8 +4,8 @@
 //
 //=============================================================================
 
-#include "GameStats.h"
-
+//#include "GameStats.h"
+/*
 void BasicGameStatsRecord_t::Clear()
 {
 	m_nCount = 0;
@@ -178,5 +178,5 @@ bool BasicGameStats_t::ParseFromBuffer( CUtlBuffer& buf, int iBufferStatsVersion
 		m_nDXLevel = (int)buf.GetShort();
 	}
 	return bret;
-}
+}*/
 

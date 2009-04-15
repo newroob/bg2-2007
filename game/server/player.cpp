@@ -58,7 +58,7 @@
 #include "nav_mesh.h"
 #include "env_zoom.h"
 #include "rumble_shared.h"
-#include "GameStats.h"
+//#include "GameStats.h"
 #include "npcevent.h"
 #include "datacache/imdlcache.h"
 #include "hintsystem.h"
@@ -609,6 +609,7 @@ CBasePlayer::CBasePlayer( )
 CBasePlayer::~CBasePlayer( )
 {
 	VPhysicsDestroyObject();
+	delete STRING(pl.netname); //BG2 - Ths fixes a memory leak in BG2. -HairyPotter
 }
 
 //-----------------------------------------------------------------------------
@@ -873,9 +874,9 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 			// --------------------------------------------------
 			//  If an NPC check if friendly fire is disallowed
 			// --------------------------------------------------
-			CAI_BaseNPC *pNPC = info.GetAttacker()->MyNPCPointer();
+			/*CAI_BaseNPC *pNPC = info.GetAttacker()->MyNPCPointer();
 			if ( pNPC && (pNPC->CapabilitiesGet() & bits_CAP_NO_HIT_PLAYER) && pNPC->IRelationType( this ) != D_HT )
-				return;
+				return;*/
 
 			// Prevent team damage here so blood doesn't appear
 			if ( info.GetAttacker()->IsPlayer() )
@@ -1642,10 +1643,10 @@ int CBasePlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 	}
 	
 	// Insert a combat sound so that nearby NPCs hear battle
-	if ( attacker->IsNPC() )
+	/*if ( attacker->IsNPC() )
 	{
 		CSoundEnt::InsertSound( SOUND_COMBAT, GetAbsOrigin(), 512, 0.5, this );//<<TODO>>//magic number
-	}
+	}*/
 
 	return 1;
 }
@@ -1662,9 +1663,9 @@ void CBasePlayer::Event_Killed( const CTakeDamageInfo &info )
 
 	g_pGameRules->PlayerKilled( this, info );
 
-	gamestats->Event_PlayerKilled( this, info );
+	//gamestats->Event_PlayerKilled( this, info );
 
-	RumbleEffect( RUMBLE_STOP_ALL, 0, RUMBLE_FLAGS_NONE );
+	//RumbleEffect( RUMBLE_STOP_ALL, 0, RUMBLE_FLAGS_NONE );
 
 	ClearUseEntity();
 	
@@ -1762,8 +1763,7 @@ void CBasePlayer::Event_Dying()
 // Set the activity based on an event or current state
 void CBasePlayer::SetAnimation( PLAYER_ANIM playerAnim )
 {
-	//BG2 - Player Anims are handled from SetAnimation in hl2mp_player.cpp - HairyPotter
-	/*int animDesired;
+	int animDesired;
 	char szAnim[64];
 
 	float speed;
@@ -1929,7 +1929,7 @@ void CBasePlayer::SetAnimation( PLAYER_ANIM playerAnim )
 	//Msg( "Set animation to %d\n", animDesired );
 	// Reset to first frame of desired animation
 	ResetSequence( animDesired );
-	SetCycle( 0 );*/
+	SetCycle( 0 );
 }
 
 /*
@@ -2189,7 +2189,7 @@ void CBasePlayer::PlayerDeathThink(void)
 // forcerespawn isn't on. Send the player off to an intermission camera until they 
 // choose to respawn.
 	//BG2 - Tjoppen - send the recently deceased off to deathcam, and then let them roam until they respawn
-	if ( g_pGameRules->IsMultiplayer() && ( gpGlobals->curtime > (m_flDeathTime + DEATH_ANIMATION_TIME) ) && (!IsObserver() || GetObserverMode() == OBS_MODE_DEATHCAM) )
+	/*if ( g_pGameRules->IsMultiplayer() && ( gpGlobals->curtime > (m_flDeathTime + DEATH_ANIMATION_TIME) ) && (!IsObserver() || GetObserverMode() == OBS_MODE_DEATHCAM) )
 	{
 		// go to dead camera. 
 		StartObserverMode( m_iObserverLastMode );
@@ -2198,10 +2198,10 @@ void CBasePlayer::PlayerDeathThink(void)
 	else if( g_pGameRules->IsMultiplayer() && !IsObserver() )
 	{
 		//look at the bastard that killed us
-		//StartObserverMode( OBS_MODE_DEATHCAM );
+		//StartObserverMode( OBS_MODE_DEATHCAM );*/
 		StartObserverMode( m_iObserverLastMode ); //BG2 - Just default to roaming ffs. - HairyPotter
 		//Msg("Nope, this happens now.");
-	}
+	/*}
 	//
 	
 // wait for any button down,  or mp_forcerespawn is set and the respawn time is up
@@ -2214,7 +2214,8 @@ void CBasePlayer::PlayerDeathThink(void)
 
 	//Msg( "Respawn\n");
 
-	respawn( this, !IsObserver() );// don't copy a corpse if we're in deathcam.
+
+	respawn( this, false );// don't copy a corpse if we're in deathcam.*/
 	SetNextThink( TICK_NEVER_THINK );
 }
 
@@ -4502,10 +4503,7 @@ void CBasePlayer::PostThink()
 				// if they've moved too far from the gun, or deployed another weapon, unuse the gun
 				if ( m_hUseEntity->OnControls( this ) && 
 					( !GetActiveWeapon() || GetActiveWeapon()->IsEffectActive( EF_NODRAW ) ||
-					( GetActiveWeapon()->GetActivity() == ACT_VM_HOLSTER ) 
-	#ifdef PORTAL // Portalgun view model stays up when holding an object -Jeep
-					|| FClassnameIs( GetActiveWeapon(), "weapon_portalgun" ) 
-	#endif //#ifdef PORTAL			
+					( GetActiveWeapon()->GetActivity() == ACT_VM_HOLSTER ) 		
 					) )
 				{  
 					m_hUseEntity->Use( this, this, USE_SET, 2 );	// try fire the gun
@@ -4535,10 +4533,7 @@ void CBasePlayer::PostThink()
 
 			// select the proper animation for the player character	
 			VPROF( "CBasePlayer::PostThink-Animation" );
-			// If he's in a vehicle, sit down
-			if ( IsInAVehicle() )
-				SetAnimation( PLAYER_IN_VEHICLE );
-			else if (!GetAbsVelocity().x && !GetAbsVelocity().y)
+			if (!GetAbsVelocity().x && !GetAbsVelocity().y)
 				SetAnimation( PLAYER_IDLE );
 			else if ((GetAbsVelocity().x || GetAbsVelocity().y) && ( GetFlags() & FL_ONGROUND ))
 				SetAnimation( PLAYER_WALK );
@@ -4774,7 +4769,7 @@ CBaseEntity *CBasePlayer::EntSelectSpawnPoint()
 void CBasePlayer::InitialSpawn( void )
 {
 	m_iConnected = PlayerConnected;
-	gamestats->Event_PlayerConnected( this );
+	//gamestats->Event_PlayerConnected( this );
 }
 
 //-----------------------------------------------------------------------------
@@ -4937,7 +4932,7 @@ void CBasePlayer::Spawn( void )
 		gameeventmanager->FireEvent( event );
 	}
 
-	RumbleEffect( RUMBLE_STOP_ALL, 0, RUMBLE_FLAGS_NONE );
+	//RumbleEffect( RUMBLE_STOP_ALL, 0, RUMBLE_FLAGS_NONE );
 
 	// Calculate this immediately
 	m_nVehicleViewSavedFrame = 0;
@@ -4949,7 +4944,7 @@ void CBasePlayer::Activate( void )
 
 	AimTarget_ForceRepopulateList();
 
-	RumbleEffect( RUMBLE_STOP_ALL, 0, RUMBLE_FLAGS_NONE );
+	//RumbleEffect( RUMBLE_STOP_ALL, 0, RUMBLE_FLAGS_NONE );
 
 	// Reset the analog bias. If the player is in a vehicle when the game
 	// reloads, it will autosense and apply the correct bias.
@@ -6114,6 +6109,7 @@ bool CBasePlayer::ClientCommand( const CCommand &args )
 {
 	const char *cmd = args[0];
 
+	//BG2 - Vehicles Removed. -HairyPotter
 	/*if( stricmp( cmd, "vehicleRole" ) == 0 )
 	{
 		// Get the vehicle role value.
@@ -6543,8 +6539,8 @@ void CBasePlayer::UpdateClientData( void )
 	// Let any global rules update the HUD, too
 	g_pGameRules->UpdateClientData( this );
 }
-
-void CBasePlayer::RumbleEffect( unsigned char index, unsigned char rumbleData, unsigned char rumbleFlags )
+//BG2 - Commented out all Rumble Effects. -HairyPotter
+/*void CBasePlayer::RumbleEffect( unsigned char index, unsigned char rumbleData, unsigned char rumbleFlags )
 {
 	if( !IsAlive() )
 		return;
@@ -6557,8 +6553,8 @@ void CBasePlayer::RumbleEffect( unsigned char index, unsigned char rumbleData, u
 	WRITE_BYTE( rumbleData );
 	WRITE_BYTE( rumbleFlags	);
 	MessageEnd();
-}
-
+}*/
+//
 void CBasePlayer::EnableControl(bool fControl)
 {
 	if (!fControl)
@@ -8821,10 +8817,10 @@ CBotCmd CPlayerInfo::GetLastUserCommand()
 void CBasePlayer::Event_KilledOther( CBaseEntity *pVictim, const CTakeDamageInfo &info )
 {
 	BaseClass::Event_KilledOther( pVictim, info );
-	if ( pVictim != this )
+	/*if ( pVictim != this )
 	{
 		gamestats->Event_PlayerKilledOther( this, pVictim, info );
-	}
+	}*/
 }
 
 void CBasePlayer::SetModel( const char *szModelName )

@@ -52,6 +52,7 @@ public:
 	void PrintAlert( char *Msg, const char * PlayerName, char * FlagName );
 	void ReturnFlag( void );
 	void PlaySound( int iSound );
+	void DropFlag( void );
 	void Think( void );
 };
 //END CTF FLAG

@@ -13,7 +13,7 @@
 #include "iservervehicle.h"
 #include "hl2_player.h"
 #include "vehicle_base.h"
-#include "GameStats.h"
+//#include "GameStats.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -162,18 +162,18 @@ void CHLPlayerMove::FinishMove( CBasePlayer *player, CUserCmd *ucmd, CMoveData *
 	if ( m_bInGodMode != bGodMode )
 	{
 		m_bInGodMode = bGodMode;
-		if ( bGodMode )
+		/*if ( bGodMode )
 		{
 			gamestats->Event_PlayerEnteredGodMode( player );
-		}
+		}*/
 	}
 	bool bNoClip = ( player->GetMoveType() == MOVETYPE_NOCLIP );
 	if ( m_bInNoClip != bNoClip )
 	{
 		m_bInNoClip = bNoClip;
-		if ( bNoClip )
+		/*if ( bNoClip )
 		{
 			gamestats->Event_PlayerEnteredNoClip( player );
-		}
+		}*/
 	}
 }

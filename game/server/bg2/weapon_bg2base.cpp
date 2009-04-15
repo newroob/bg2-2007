@@ -90,7 +90,6 @@ ConVar mp_disable_firearms( "mp_disable_firearms", "0", FCVAR_NOTIFY | FCVAR_REP
 ConVar sv_show_damages("sv_show_damages", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Allow people to view enemy damages in scoreboard?");
 ConVar sv_show_enemy_names("sv_show_enemy_names", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Allow people to view enemy names in crosshair?");
 
-ConVar sv_meleestyle("sv_meleestyle", "1", FCVAR_NOTIFY | FCVAR_REPLICATED, "Use 1.1b style melee?");
 
 #ifdef CLIENT_DLL
 int m_iLastAttackType = 0, Shot = 0; //BG2 - For the hitverif. Keep it local. -HairyPotter
@@ -171,7 +170,7 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 			return;
 
 		//do tracelines for so many seconds
-		if( sv_retracing_melee.GetBool() && sv_meleestyle.GetBool() )
+		if( sv_retracing_melee.GetBool() )
 			m_flStopAttemptingSwing = gpGlobals->curtime + SWING_ATTEMPT_TIME;
 
 		drain = Swing( ATTACK_PRIMARY, true );
@@ -327,7 +326,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 
 		CBullet::BulletCreate( vecSrc, angDir, GetDamage(iAttack),
 								m_Attackinfos[iAttack].m_flConstantDamageRange,
-								m_Attackinfos[iAttack].m_flRelativeDrag, pPlayer );
+								m_Attackinfos[iAttack].m_flRelativeDrag, pPlayer, pPlayer->GetActiveWeapon() );
 #endif
 	}
 	else
@@ -358,11 +357,13 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		m_flLastRecoil = gpGlobals->curtime;
 	}
 
-	if ( !m_iClip1 && pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 )
+	/*if ( !m_iClip1 && pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 )
 	{
 		// HEV suit - indicate out of ammo condition
 		pPlayer->SetSuitUpdate( "!HEV_AMO0", FALSE, 0 ); 
-	}
+	}*/
+
+	m_fNextHolster = gpGlobals->curtime + 0.50f; //Keep people from switching weapons right after shooting.
 
 	return 15;
 }
