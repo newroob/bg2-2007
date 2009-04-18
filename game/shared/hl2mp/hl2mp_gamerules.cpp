@@ -1849,17 +1849,21 @@ void CHL2MPRules::UpdateFlags( void )
 
 		int FullCap = pFlag->m_iFullCap;
 
+		//if ( FullCap < 0 || FullCap == NULL ) //This is needed for backwards compat reasons. -HairyPotter
+		//	FullCap = 0;
+		//Msg("Full cap for %s = %i \n", pFlag->m_sFlagName, FullCap );
+
 		if ( FullCap == 3) //we're not doing full caps on this flag. 0 = normal, 1 = Americans Fullcap, 2 = Brits Fullcap, 3 = No Fullcap.
 			continue;
 
 		switch( pFlag->GetTeamNumber() )
 		{
 		case TEAM_AMERICANS:
-			if ( FullCap == (1 | 0) )
+			if ( FullCap == 1 || FullCap == 0 )
 				american_flags++;
 			break;
 		case TEAM_BRITISH:
-			if ( FullCap == (2 | 0) )
+			if ( FullCap == 2 || FullCap == 0 )
 				british_flags++;
 			break;
 		default:
@@ -1877,11 +1881,11 @@ void CHL2MPRules::UpdateFlags( void )
 				}
 				break;
 			case 1:
-				if ( FullCap == (1 | 0) )
+				if ( FullCap == 1 || FullCap == 0 )
 					foramericans++;
 				break;
 			case 2:
-				if ( FullCap == (2 | 0) )
+				if ( FullCap == 2 || FullCap == 0 )
 					forbritish++;
 				break;
 			default://assume both
