@@ -168,6 +168,15 @@ void CFlag::Spawn( void )
 	//
 	}
 
+	if ( !m_iCaptureSound )
+		SoundFile = "Flag.capture";
+	else
+		SoundFile = (char *)m_iCaptureSound;
+
+	//if ( !m_sCaptureSound )
+		//n_cFlagName.Set( MAKE_STRING( cFlagName ) );
+		//m_iCaptureSound = MAKE_STRING(  );
+
 	m_iSavedHUDSlot = m_iHUDSlot;
 
 	if (HasSpawnFlags( CFlag_START_DISABLED ))
@@ -209,7 +218,7 @@ void CFlag::Precache( void )
 {
 	PrecacheModel( "models/other/flag.mdl" );
 
-	PrecacheScriptSound( "Flag.capture" );
+	//PrecacheScriptSound( "Flag.capture" );
 }
 
 void CFlag::Think( void )
@@ -524,7 +533,7 @@ void CFlag::Capture( int iTeam )
 	
 	UserMessageBegin( recpfilter, "CaptureSounds" );
 		WRITE_VEC3COORD( GetAbsOrigin() );
-		WRITE_STRING( "Flag.capture" );
+		WRITE_STRING( SoundFile );
 	MessageEnd();
 
 	//BG2 - Added for HlstatsX Support. -HairyPotter
@@ -532,7 +541,6 @@ void CFlag::Capture( int iTeam )
 	if ( event )
 	{
 		event->SetString("team", iTeam == TEAM_AMERICANS ? "Americans" : "British" );
-		event->SetInt("priority", 7 );	// HLTV event priority, not transmitted
 			
 		gameeventmanager->FireEvent( event );
 	}
@@ -834,6 +842,7 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_KEYFIELD( m_sDisabledFlagModelName, FIELD_STRING, "DisabledFlagModelName" ),
 	DEFINE_KEYFIELD( m_sBritishFlagModelName, FIELD_STRING, "BritishFlagModelName" ),
 	DEFINE_KEYFIELD( m_sAmericanFlagModelName, FIELD_STRING, "AmericanFlagModelName" ), //
+	DEFINE_KEYFIELD( m_iCaptureSound, FIELD_SOUNDNAME, "CaptureSound" ),
 	DEFINE_KEYFIELD( m_iNeutralFlagSkin, FIELD_INTEGER, "NeutralFlagSkin" ), //New skin values.
 	DEFINE_KEYFIELD( m_iDisabledFlagSkin, FIELD_INTEGER, "DisabledFlagSkin" ),
 	DEFINE_KEYFIELD( m_iBritishFlagSkin, FIELD_INTEGER, "BritishFlagSkin" ),

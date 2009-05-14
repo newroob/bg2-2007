@@ -1251,23 +1251,6 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 		return false;
 	} 
 
-	//BG2 - Tjoppen - TODO: usermessage this
-	char str[512];
-	Q_snprintf( str, 512, "%s is going to fight as %s for the %s\n", GetPlayerName(), pClassName, iTeam == TEAM_AMERICANS ? "Americans" : "British" );
-	ClientPrinttTalkAll( str, HUD_BG2CLASSCHANGE  );
-	
-	//BG2 - Added for HlstatsX Support. -HairyPotter
-	IGameEvent * event = gameeventmanager->CreateEvent( "class_change" );
-	if ( event )
-	{
-		event->SetString("name", GetPlayerName() );
-		event->SetString("newclass", pClassName );
-		event->SetString("team", iTeam == TEAM_AMERICANS ? "Americans" : "British" );
-			
-		gameeventmanager->FireEvent( event );
-	}
-	//
-
 	//The following line prevents anyone else from stealing our spot..
 	//Without this line several teamswitching/new players can pick a free class, so there can be for instance 
 	// two loyalists even though the limit is one.
@@ -1292,6 +1275,24 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 		else
 			ChangeTeam( iTeam );
 	}
+
+	//BG2 - Tjoppen - TODO: usermessage this change 
+	//This bit of code needs to be run AFTER the team change... if it changed.
+	char str[512];
+	CTeam *team = GetTeam();
+	Q_snprintf( str, 512, "%s is going to fight as %s for the %s\n", GetPlayerName(), pClassName, /*iTeam == TEAM_AMERICANS ? "Americans" : "British"*/ team->GetName() );
+	ClientPrinttTalkAll( str, HUD_BG2CLASSCHANGE  );
+	
+	//BG2 - Added for HlstatsX Support. -HairyPotter
+	IGameEvent * event = gameeventmanager->CreateEvent( "class_change" );
+	if ( event )
+	{
+		event->SetInt("userid", GetUserID() );
+		event->SetString("newclass", pClassName );
+			
+		gameeventmanager->FireEvent( event );
+	}
+	//
 
 	return true;
 }
@@ -2202,7 +2203,7 @@ void CHL2MP_Player::State_PreThink_OBSERVER_MODE()
 {
 	// Make sure nobody has changed any of our state.
 	//	Assert( GetMoveType() == MOVETYPE_FLY );
-	//Assert( m_takedamage == DAMAGE_NO ); //Commented - HairyPotter
+	Assert( m_takedamage == DAMAGE_NO ); 
 	Assert( IsSolidFlagSet( FSOLID_NOT_SOLID ) );
 	//	Assert( IsEffectActive( EF_NODRAW ) );
 

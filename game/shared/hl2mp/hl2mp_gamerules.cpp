@@ -1692,10 +1692,33 @@ void CHL2MPRules::RespawnAll()
 	HL2MPRules()->m_flNextRoundRestart = gpGlobals->curtime + 1;*/
 }
 
-void CHL2MPRules::WinSong( int team )
+void CHL2MPRules::WinSong( int team, bool m_bWonMap )
 {
 	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
 		return;
+
+	//This is a good place to do the round_win log stuff, since this function is pretty much called every time a team wins a map/round. -HairyPotter
+	if ( !m_bWonMap ) //So this is just an ordinary round.
+	{
+		IGameEvent * event = gameeventmanager->CreateEvent( "round_win" );
+		if ( event )
+		{
+			event->SetString("team", team == TEAM_AMERICANS ? "Americans" : "British" );
+			
+			gameeventmanager->FireEvent( event );
+		}
+	}
+	else //Or it's the end of a map.
+	{
+		IGameEvent * event = gameeventmanager->CreateEvent( "map_win" );
+		if ( event )
+		{
+			event->SetString("team", team == TEAM_AMERICANS ? "Americans" : "British" );
+			
+			gameeventmanager->FireEvent( event );
+		}
+	}
+	//
 
 	if( m_fNextWinSong > gpGlobals->curtime )
 		return;

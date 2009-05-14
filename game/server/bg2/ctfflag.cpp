@@ -13,7 +13,7 @@
 ConVar sv_ctf_flagweight ("sv_ctf_flagweight", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL, "How much speed does carrying this flag drain?");
 ConVar sv_ctf_returnstyle ("sv_ctf_returnstyle", "1", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Which way is a flag returned? Setting this to '2' will allow teams to return their own flags when they touch them.");
 ConVar sv_ctf_capturestyle ("sv_ctf_capturestyle", "1", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Which way is a flag captured Setting this to '2' will not allow you to pick up a flag if your own is not at home.");
-ConVar sv_flagalerts ("sv_flagalerts", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Print out flag notifications to hud?");
+ConVar sv_ctf_flagalerts ("sv_ctf_flagalerts", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Print out flag notifications to hud?");
 
 void CtfFlag::Spawn( void )
 {
@@ -30,7 +30,7 @@ void CtfFlag::Spawn( void )
 
 	BaseClass::Spawn( );
 	//cFlagName = m_strName;
-	iTeam = m_iForTeam;
+	//iTeam = m_iForTeam;
 
 	switch( m_iForTeam )
 	{
@@ -40,14 +40,14 @@ void CtfFlag::Spawn( void )
 			iTeam = NULL;
 			break;
 		case 1: //British Flag
-			m_nSkin = 1;
+			m_nSkin = 0;
 			//cFlagName = "American"; //This is just for the capture text. (Capped American Flag!)
 			iTeam = TEAM_BRITISH; 
 			break;
 		case 2: //American Flag
-			m_nSkin = 0;
+			m_nSkin = 1; 
 			//cFlagName = "British"; //This is just for the capture text. (Capped British Flag!)
-			iTeam = TEAM_AMERICANS; //This is opposite land.
+			iTeam = TEAM_AMERICANS; 
 			break;
 	}
 
@@ -58,11 +58,11 @@ void CtfFlag::Spawn( void )
 		case NULL:
 			cFlagName = "Neutral";
 			break;
-		case TEAM_BRITISH: //British Flag
-			cFlagName = "British"; //This is just for the capture text. (Capped American Flag!)
+		case TEAM_BRITISH: //This flag is picked up by the brits... so it's actually the american flag.
+			cFlagName = "American"; //This is just for the capture text. (Capped American Flag!)
 			break;
-		case TEAM_AMERICANS: //American Flag
-			cFlagName = "American"; //This is just for the capture text. (Capped British Flag!)
+		case TEAM_AMERICANS: //This flag is picked up by the americans... so it's actually the british flag.
+			cFlagName = "British"; //This is just for the capture text. (Capped British Flag!)
 			break;
 		}
 	}
@@ -189,7 +189,7 @@ void CtfFlag::PrintAlert( char *Msg, const char * PlayerName, char * FlagName )
 	else 
 		Q_snprintf( CTFMsg, 512, Msg, PlayerName, FlagName );
 
-	switch( sv_flagalerts.GetInt() )
+	switch( sv_ctf_flagalerts.GetInt() )
 	{
 		case 1:
 			UTIL_ClientPrintAll( HUD_PRINTCENTER, CTFMsg );
@@ -277,7 +277,7 @@ void CtfFlag::InputToggle( inputdata_t &inputData )
 	else
 		InputEnable( inputData );
 }
-IMPLEMENT_NETWORKCLASS_ALIASED( tfFlag, DT_CtfFlag ) //Doesn't need the "C" in front of it? Mmmkay...
+IMPLEMENT_NETWORKCLASS_ALIASED( tfFlag, DT_CtfFlag ) //Doesn't need the "C" in front of it? Mmmmkay...
 //-------------------------------------------------------------------------
 
 BEGIN_NETWORK_TABLE( CtfFlag, DT_CtfFlag )

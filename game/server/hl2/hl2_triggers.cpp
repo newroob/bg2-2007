@@ -1109,6 +1109,16 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 
 	pFlag->PrintAlert( "%s Has Captured The %s Flag!", pPlayer->GetPlayerName(), pFlag->cFlagName );
 
+	//Do the log stuff.
+	IGameEvent * event = gameeventmanager->CreateEvent( "ctf_flag_capture" );
+	if ( event )
+	{
+		event->SetInt("userid", pPlayer->GetUserID() );
+			
+		gameeventmanager->FireEvent( event );
+	}
+	//
+
 	m_OnFlagCaptured.FireOutput( this, this ); //Fire the OnFlagCaptured output, set it last just in case.
 
 	pPlayer->e_CtfFlag = NULL; //Player no longer has the flag entity.

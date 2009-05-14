@@ -540,6 +540,22 @@ void CHudBG2::PlayCaptureSound( const Vector &origin, char sound[255] )
 	params.m_pSoundName = sound;
 	params.m_flSoundTime = 0.0f;
 	params.m_pOrigin = &origin;
+	/*if ( params.m_flVolume == NULL )
+	{
+		Msg("The volume params aren't being set right for direct .wav sounds \n");
+		params.m_flVolume = 0.8f;
+	}*/
+	if ( params.m_nChannel == NULL ) //Defualt to CHAN_AUTO for now.
+	{
+		//Msg("The channel params aren't being set right for direct .wav sounds \n");
+		params.m_nChannel = CHAN_AUTO;
+	}
+	if ( params.m_SoundLevel == NULL )
+	{
+		//Msg("The soundlevel params aren't being set right for direct .wav sounds \n");
+		params.m_SoundLevel = SNDLVL_60dB;
+	}
+
 
 	C_BaseEntity::EmitSound( filter, SOUND_FROM_WORLD, params );
 	//
@@ -561,6 +577,27 @@ void CHudBG2::MsgFunc_VCommSounds( bf_read &msg )
 void CHudBG2::PlayVCommSound( char snd[512], int playerindex )
 {
 	C_BasePlayer *pPlayer = UTIL_PlayerByIndex( playerindex );
-	pPlayer->EmitSound( snd );
+
+	if ( pPlayer ) //Just make sure.
+		pPlayer->EmitSound( snd );
+
+	/*if ( !pPlayer ) //Just make sure.
+		return;
+
+	CLocalPlayerFilter filter;
+	//CPASAttenuationFilter filter( pPlayer );
+
+	//This was to see if I could set up custom pitches on sounds, guess not.
+	EmitSound_t params;
+	params.m_pSoundName = snd;
+	params.m_flSoundTime = 0.0f;
+	params.m_pOrigin = &pPlayer->GetAbsOrigin();
+	params.m_nPitch = RandomInt( 92, 100 );
+	params.m_nFlags = SND_CHANGE_PITCH;
+	params.m_nChannel = CHAN_VOICE;
+	params.m_flVolume = 0.35f;
+
+	pPlayer->EmitSound( filter, SOUND_FROM_WORLD, params );
+	//*/
 }
 //

@@ -111,9 +111,12 @@ class CFlag : public CBaseAnimating
 			m_iNeutralFlagSkin,
 			m_iDisabledFlagSkin,
 			m_iSavedHUDSlot,     //This is for the flag enable/disable addon. The original Hud Slot value is stored here.
-			m_iFullCap;
+			m_iFullCap,
+			m_iCaptureSound;
 
 	float	m_flNextTeamBonus;
+
+	char *SoundFile;
 
 	string_t	m_sNeutralFlagModelName, //BG2 - These strings exist only for backwards compatibility and serve no other purpose. -HairyPotter
 				m_sDisabledFlagModelName,

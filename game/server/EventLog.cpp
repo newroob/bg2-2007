@@ -222,39 +222,52 @@ bool CEventLog::PrintPlayerEvent( IGameEvent *event )
 	}
 
 	//BG2 - These are extra events for HLSTATSX Support. As requested by Bonzo. - HairyPotter
+
 	else if ( !Q_strncmp( eventName, "round_win", Q_strlen("round_win")  ) )
 	{
 		const char *team = event->GetString("team" );
 
-		UTIL_LogPrintf( "The  \"%s\" team has won the round! \n", team );
+		UTIL_LogPrintf( "Team \"%s\" triggered \"round_win\"\n", team );
 		return true;
 	}
 	else if ( !Q_strncmp( eventName, "map_win", Q_strlen("map_win")  ) )
 	{
-		const char *winteam = event->GetString("winteam" );
-		const int winteamscore = event->GetInt("winteamscore" );
-		const int winteamdamage = event->GetInt("winteamdamage" );
-		const char *loseteam = event->GetString("loseteam" );
-		const int loseteamscore = event->GetInt("loseteamscore" );
-		const int loseteamdamage = event->GetInt("loseteamdamage" );
+		const char *team = event->GetString("team" );
 
-		UTIL_LogPrintf( "Team \"%s\" has defeated team \"%s\": \"%i\" to \"%i\". With damages: \"%i\" to \"%i\". \n", winteam, loseteam, winteamscore, loseteamscore, winteamdamage, loseteamdamage );
+		UTIL_LogPrintf( "Team \"%s\" triggered \"map_win\"\n", team );
 		return true;
 	}
 	else if ( !Q_strncmp( eventName, "flag_capture", Q_strlen("flag_capture")  ) )
 	{
 		const char *team = event->GetString("team" );
 
-		UTIL_LogPrintf( "Team \"%s\" captured a flag. \n", team);
+		UTIL_LogPrintf( "Team \"%s\" triggered \"flag_capture\"\n", team); //Only a team can be logged for regular flags, mostly because multiple people are often required to cap.
+		return true;
+	}
+	else if ( !Q_strncmp( eventName, "ctf_flag_capture", Q_strlen("ctf_flag_capture")  ) )
+	{
+		CTeam *team = pPlayer->GetTeam();
+
+		UTIL_LogPrintf( "\"%s<%i><%s><%s>\" triggered \"ctf_flag_capture\"\n", 
+					pPlayer->GetPlayerName(), 
+					userid, 
+					pPlayer->GetNetworkIDString(), 
+					team ? team->GetName() : ""); 
+
 		return true;
 	}
 	else if ( !Q_strncmp( eventName, "class_change", Q_strlen("class_change")  ) )
 	{
-		const char *name = event->GetString("name" );
 		const char *newclass = event->GetString("newclass" );
-		const char *team = event->GetString("team" );
+		//const char *team = event->GetString("team" );
+		CTeam *team = pPlayer->GetTeam();
 
-		UTIL_LogPrintf( "\"%s\" is going to fight as \"%s\" for team \"%s\".\n", name, newclass, team);
+		UTIL_LogPrintf( "\"%s<%i><%s><%s>\" changed role to \"%s\"\n", 
+					pPlayer->GetPlayerName(), 
+					userid, 
+					pPlayer->GetNetworkIDString(), 
+					team ? team->GetName() : "",
+					newclass);
 		return true;
 	}
 	//
@@ -288,7 +301,8 @@ bool CEventLog::Init()
 	//BG2 - New Events. -HairyPotter
 	ListenForGameEvent( "round_win" );
 	ListenForGameEvent( "map_win" );
-	ListenForGameEvent( "flag_win" );
+	ListenForGameEvent( "ctf_flag_capture" );
+	ListenForGameEvent( "flag_capture" );
 	ListenForGameEvent( "class_change" );
 	//
 

@@ -74,6 +74,8 @@ ConVar sv_simulatedbullets_overshoot_range( "sv_simulatedbullets_overshoot_range
 ConVar sv_simulatedbullets_overshoot_force( "sv_simulatedbullets_overshoot_force", "3", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO | FCVAR_CHEAT,
 		"How much stronger than gravity is the overshoot force at t=0?" );
 
+ConVar sv_bullettracers("sv_bullettracers", "1", FCVAR_NOTIFY | FCVAR_REPLICATED, "Do bullets draw tracers behind them?" );
+
 #define SWING_ATTEMPT_TIME 0.1
 
 ConVar sv_retracing_melee( "sv_retracing_melee", "1", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
@@ -337,7 +339,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		info.m_pAttacker = pPlayer;
 		info.m_iPlayerDamage = GetDamage( iAttack );
 		info.m_iDamage = -1;		//ancient chinese secret..
-		info.m_iTracerFreq = 1;		//always do tracers
+		info.m_iTracerFreq = sv_bullettracers.GetBool();		//always do tracers
 
 		// Fire the bullets, and force the first shot to be perfectly accurate
 		pPlayer->FireBullets( info );

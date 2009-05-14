@@ -1741,13 +1741,13 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 					flActualDamage = iPlayerDamage;
 				}
 #ifdef GAME_DLL
-				else if ( tr.m_pEnt->GetServerVehicle() )
+				/*else if ( tr.m_pEnt->GetServerVehicle() )
 				{
 					if ( tr.m_pEnt->GetServerVehicle()->GetPassenger() && tr.m_pEnt->GetServerVehicle()->GetPassenger()->IsPlayer() )
 					{
 						flActualDamage = iPlayerDamage;
 					}
-				}
+				}*/
 #endif
 			}
 

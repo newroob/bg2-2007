@@ -43,8 +43,8 @@ const float	PISTOL_RANGE = 40 * 3 * 12,		//40 yards
 const float BESS_FIRE_DAMAGE = 60.0;
 const float BESS_BAYONET_DAMAGE = 43.0;
 
-const float REVOL_FIRE_DAMAGE = 37.0;
-const float REVOL_BAYONET_DAMAGE = 40.0;
+const float REVOL_FIRE_DAMAGE = 58.0;
+const float REVOL_BAYONET_DAMAGE = 41.0;
 
 //BG2 - Tjoppen - roundoff errors makes me have to increase CHARLE_FIRE_DAMAGE by 0.5
 const float CHARLE_FIRE_DAMAGE = 58.0;//57.5;

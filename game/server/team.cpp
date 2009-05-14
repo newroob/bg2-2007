@@ -278,7 +278,7 @@ int CTeam::GetNumPlayers( void )
 //-----------------------------------------------------------------------------
 CBasePlayer *CTeam::GetPlayer( int iIndex )
 {
-	Assert( iIndex >= 0 && iIndex < m_aPlayers.Size() ); //Commented. -HairyPotter
+	Assert( iIndex >= 0 && iIndex < m_aPlayers.Size() );
 	return m_aPlayers[ iIndex ];
 }
 

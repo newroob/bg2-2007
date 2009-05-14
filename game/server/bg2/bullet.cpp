@@ -213,6 +213,8 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		return;	
 	}
 
+	//StopSound( entindex(), "Bullets.DefaultNearmiss" ); //We've hit something, stop the nearmiss sound.
+
 	if ( pOther->m_takedamage != DAMAGE_NO )
 	{
 		trace_t	tr;
@@ -438,10 +440,10 @@ void CBullet::BubbleThink( void )
 		}
 
 		//8 units "safety margin" to make sure we passed our victim's head
-		float	margin = 8,
-				headTolerance = 32,		//how close to the head must the bullet be?
-				desiredBacktrace = margin + speed * gpGlobals->frametime * 2;	//*2 due to frametime variations
-		if( !m_bHasPlayedNearmiss && (GetAbsOrigin() - m_vTrajStart).LengthSqr() > desiredBacktrace*desiredBacktrace )
+		/*float	margin = 8, 
+				headTolerance = 32,	//how close to the head must the bullet be?
+				desiredBacktrace = margin + speed * gpGlobals->frametime * 2;	//*2 due to frametime variations*/
+		if( !m_bHasPlayedNearmiss /*&& (GetAbsOrigin() - m_vTrajStart).LengthSqr() > desiredBacktrace*desiredBacktrace*/ )
 		{
 			//has gone desiredBacktrace units and not played nearmiss so far. trace backward
 			//find any player except the shooter who is within the margin and desiredBacktrace distance when projected
@@ -451,7 +453,6 @@ void CBullet::BubbleThink( void )
 			//re-normalize because overshoot messed it up
 			vecDir.NormalizeInPlace();
 
-			//Msg( "%f\t", vecDir.Length() );
 			for( int x = 1; x <= gpGlobals->maxClients; x++ )
 			{
 				CBasePlayer *pPlayer = UTIL_PlayerByIndex( x );
@@ -461,45 +462,22 @@ void CBullet::BubbleThink( void )
 					continue;
 
 				//distance along ray, behind the bullet
-				float d = vecDir.Dot(GetAbsOrigin() - pPlayer->EyePosition());
+				//float d = vecDir.Dot(GetAbsOrigin() - pPlayer->EyePosition());//
 
 				//Msg( "%i: %f < %f < %f\t", x, desiredBacktrace, d, margin );
 
-				if( d < margin || d > desiredBacktrace )
-					continue;
-
-				//Msg( "go on.. " );
+				//if( d < margin || d > desiredBacktrace )//
+				//	continue;//
 
 				//shortest distance to eyes from ray must be less than headTolerance
-				if( (GetAbsOrigin() - pPlayer->EyePosition()).LengthSqr() - d*d < headTolerance*headTolerance )
+				//if( (GetAbsOrigin() - pPlayer->EyePosition()).LengthSqr() - d*d < headTolerance*headTolerance )//
 				{
-					//this player's head is within the desired cylinder.. play the sound and make sure it doesn't
-					//play again for this bullet(to avoid HORRIBLE SOUNDS)
-
-					//FIXME: make me play correctly
-					//we might have to make some sort of clientside thing, since the server appearently is too stupid
-					//to be able to play a sound in a static point in space
-
-					/*const char *name =  "Bullets.DefaultNearmiss";
-					const char *name =  "BaseExplosionEffect.Sound";
-					CPASAttenuationFilter filter( this, name );
-					Vector soundOrigin = GetAbsOrigin() - vecDir * d;
-
-					new CSound();
-					//why does EmitSound want a Vector pointer? this seems unsafe. soundOrigin will go missing once
-					//its out of scope...
-					EmitSound( filter, entindex(), name, &soundOrigin );
-					//EmitSound( filter, entindex(), "BaseExplosionEffect.Sound", &soundOrigin );*/
-
 					//make sure only this player hears it
 					CSingleUserRecipientFilter filter( pPlayer );
-					EmitSound( filter, entindex(), "Bullets.DefaultNearmiss" );
-
+					EmitSound( filter, entindex(), "Bullets.DefaultNearmiss" ); //By using the entindex of the bullet itself, you're making IT play the sound, not the player. -HairyPotter
 					m_bHasPlayedNearmiss = true;
 
-					//Msg( "nearmiss!\n" );
-
-					break;
+					//break;
 				}
 			}
 

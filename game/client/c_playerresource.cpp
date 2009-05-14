@@ -129,7 +129,7 @@ const char *C_PlayerResource::GetPlayerName( int iIndex )
 	//BG2 - Commented. I don't even see how this could happen. I guess it's just out of sync so it returns errorname if the player doesn't exist?
 	if ( iIndex < 1 || iIndex > MAX_PLAYERS )
 	{
-		//Assert( false );
+		Assert( false );
 		return "ERRORNAME";
 	}
 	

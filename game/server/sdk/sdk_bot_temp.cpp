@@ -72,6 +72,7 @@ ConVar bot_forceclass( "bot_forceclass", "-1", 0, "Force bots to spawn as given 
 static ConVar bot_mimic( "bot_mimic", "0", 0, "Bot uses usercmd of player by index." );
 static ConVar bot_mimic_yaw_offset( "bot_mimic_yaw_offset", "0", 0, "Offsets the bot yaw." );
 ConVar bot_pause("bot_pause", "0", 0, "Stops the bot thinking cycle entirely." );
+ConVar bot_voicecomms("bot_voicecomms", "0", 0, "Allows bots to use voicecomm commands.");
 
 //ConVar bot_sendcmd( "bot_sendcmd", "", 0, "Forces bots to send the specified command." );
 
@@ -629,6 +630,7 @@ void Bot_SetForwardMovement( CSDKBot *pBot, CUserCmd &cmd )
 //-----------------------------------------------------------------------------
 // Run this Bot's AI for one frame.
 //-----------------------------------------------------------------------------
+char vcmd[512];
 void Bot_Think( CSDKBot *pBot )
 {
 	/*if( !pBot ) //These are figured out by bot_runall anyway.
@@ -641,6 +643,18 @@ void Bot_Think( CSDKBot *pBot )
 
 	CUserCmd cmd;
 	Q_memset( &cmd, 0, sizeof( cmd ) );
+
+
+	//For testing Voicecomms -HairyPotter
+	if ( bot_voicecomms.GetInt() && pBot->m_flNextVoice < gpGlobals->curtime )
+	{
+		Q_snprintf( vcmd, 512, "voicecomm %i\n", RandomInt(1,7)  );
+		CBaseEntity *ent = dynamic_cast< CBaseEntity * >( pBot->m_pPlayer );
+		engine->ClientCommand( ent->edict(), vcmd );
+		//engine->ClientCommand( pBot->m_pPlayer->edict(), UTIL_VarArgs( "voicecomm %i\n", RandomInt(1,7) ) );
+		Msg( vcmd );
+		pBot->m_flNextVoice = gpGlobals->curtime + 2.0f;
+	}
 
 	// Finally, override all this stuff if the bot is being forced to mimic a player.
 	if ( !Bot_RunMimicCommand( cmd ) )

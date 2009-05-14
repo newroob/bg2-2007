@@ -222,7 +222,7 @@ private:
 public:
 	void RestartRound();
 	void RespawnAll();
-	void WinSong( int team );
+	void WinSong( int team, bool m_bWonMap = false );
 	void RespawnWave();
 	void ResetFlags();
 	void UpdateFlags();

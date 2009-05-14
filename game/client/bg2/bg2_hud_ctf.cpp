@@ -176,11 +176,11 @@ void CHudCTFFlags::Paint()
 			case 0:
 				m_pIconBlank->DrawSelf( x_offset, 0, ColourWhite );
 				break;
-			case 1:
-				m_pIconRed->DrawSelf( x_offset, 0, ColourWhite );
-				break;
-			case 2:
+			case 1: //This flag is picked up by the brits... so it's actually the american flag.
 				m_pIconBlue->DrawSelf( x_offset, 0, ColourWhite );
+				break;
+			case 2: //This flag is picked up by the americans... so it's actually the british flag.
+				m_pIconRed->DrawSelf( x_offset, 0, ColourWhite );
 				break;
 			}
 			break;

@@ -235,7 +235,7 @@ void CHudVoiceStatus::Paint()
 	for( i = m_SpeakingList.Head(); i != m_SpeakingList.InvalidIndex(); i = m_SpeakingList.Next(i) )
 	{
 		int playerIndex = m_SpeakingList.Element(i);
-		bool bIsAlive = g_PR->IsAlive( playerIndex ); //Bg2 - Commented. -HairyPotter
+		//bool bIsAlive = g_PR->IsAlive( playerIndex );
 
 		Color c = g_PR->GetTeamColor( g_PR ? g_PR->GetTeam(playerIndex) : TEAM_UNASSIGNED );
 

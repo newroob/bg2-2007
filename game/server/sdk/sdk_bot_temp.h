@@ -25,7 +25,8 @@ public:
 	float			m_flSideMove,
 					m_flForwardMove,
 					m_flNextStrafeTime,
-					m_flNextTurnTime;
+					m_flNextTurnTime,
+					m_flNextVoice;
 
 	QAngle			m_ForwardAngle;
 	QAngle			m_LastAngles;
