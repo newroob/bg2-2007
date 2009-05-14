@@ -448,13 +448,13 @@ void CHL2MPRules::Think( void )
 			if (pAmericans->GetScore() < pBritish->GetScore())
 			{
 				ClientPrintAll( "British win!", true, true );
-				WinSong( TEAM_BRITISH );
+				WinSong( TEAM_BRITISH, true );
 			}
 
 			if (pAmericans->GetScore() > pBritish->GetScore())
 			{
 				ClientPrintAll( "Americans win!", true, true );
-				WinSong( TEAM_AMERICANS );
+				WinSong( TEAM_AMERICANS, true );
 			}
 
 			if (pAmericans->GetScore() == pBritish->GetScore())
