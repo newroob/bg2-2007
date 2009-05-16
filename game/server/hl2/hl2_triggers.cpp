@@ -1110,13 +1110,13 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 	pFlag->PrintAlert( "%s Has Captured The %s Flag!", pPlayer->GetPlayerName(), pFlag->cFlagName );
 
 	//Do the log stuff.
-	IGameEvent * event = gameeventmanager->CreateEvent( "ctf_flag_capture" );
-	if ( event )
-	{
-		event->SetInt("userid", pPlayer->GetUserID() );
+	CTeam *team = pPlayer->GetTeam();
 			
-		gameeventmanager->FireEvent( event );
-	}
+	UTIL_LogPrintf( "\"%s<%i><%s><%s>\" triggered \"ctf_flag_capture\"\n", 
+				pPlayer->GetPlayerName(), 
+				pPlayer->GetUserID(), 
+				pPlayer->GetNetworkIDString(), 
+				team ? team->GetName() : ""); 
 	//
 
 	m_OnFlagCaptured.FireOutput( this, this ); //Fire the OnFlagCaptured output, set it last just in case.

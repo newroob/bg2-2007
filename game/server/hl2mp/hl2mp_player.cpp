@@ -1284,14 +1284,12 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 	ClientPrinttTalkAll( str, HUD_BG2CLASSCHANGE  );
 	
 	//BG2 - Added for HlstatsX Support. -HairyPotter
-	IGameEvent * event = gameeventmanager->CreateEvent( "class_change" );
-	if ( event )
-	{
-		event->SetInt("userid", GetUserID() );
-		event->SetString("newclass", pClassName );
-			
-		gameeventmanager->FireEvent( event );
-	}
+	UTIL_LogPrintf( "\"%s<%i><%s><%s>\" changed role to \"%s\"\n", 
+				GetPlayerName(), 
+				GetUserID(), 
+				GetNetworkIDString(), 
+				team ? team->GetName() : "",
+				pClassName);
 	//
 
 	return true;

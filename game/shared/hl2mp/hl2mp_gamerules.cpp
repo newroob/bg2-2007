@@ -1697,26 +1697,16 @@ void CHL2MPRules::WinSong( int team, bool m_bWonMap )
 	if( g_Teams.Size() < NUM_TEAMS )	//in case teams haven't been inited or something
 		return;
 
+	const char *w_sTeam = team == TEAM_AMERICANS ? "Americans" : "British";
+
 	//This is a good place to do the round_win log stuff, since this function is pretty much called every time a team wins a map/round. -HairyPotter
 	if ( !m_bWonMap ) //So this is just an ordinary round.
-	{
-		IGameEvent * event = gameeventmanager->CreateEvent( "round_win" );
-		if ( event )
-		{
-			event->SetString("team", team == TEAM_AMERICANS ? "Americans" : "British" );
-			
-			gameeventmanager->FireEvent( event );
-		}
+	{	
+		UTIL_LogPrintf( "Team \"%s\" triggered \"round_win\"\n", w_sTeam );
 	}
 	else //Or it's the end of a map.
 	{
-		IGameEvent * event = gameeventmanager->CreateEvent( "map_win" );
-		if ( event )
-		{
-			event->SetString("team", team == TEAM_AMERICANS ? "Americans" : "British" );
-			
-			gameeventmanager->FireEvent( event );
-		}
+		UTIL_LogPrintf( "Team \"%s\" triggered \"map_win\"\n", w_sTeam );
 	}
 	//
 

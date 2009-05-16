@@ -537,13 +537,9 @@ void CFlag::Capture( int iTeam )
 	MessageEnd();
 
 	//BG2 - Added for HlstatsX Support. -HairyPotter
-	IGameEvent * event = gameeventmanager->CreateEvent( "flag_capture" );
-	if ( event )
-	{
-		event->SetString("team", iTeam == TEAM_AMERICANS ? "Americans" : "British" );
-			
-		gameeventmanager->FireEvent( event );
-	}
+	const char *team = iTeam == TEAM_AMERICANS ? "Americans" : "British";
+	//Only a team can be logged for regular flags, mostly because multiple people are often required to cap.
+	UTIL_LogPrintf( "Team \"%s\" triggered \"flag_capture\"\n", team); 
 	//
 
 	g_Teams[iTeam]->AddScore( m_iTeamBonus );
