@@ -58,7 +58,7 @@
 #include "nav_mesh.h"
 #include "env_zoom.h"
 #include "rumble_shared.h"
-//#include "GameStats.h"
+#include "GameStats.h"
 #include "npcevent.h"
 #include "datacache/imdlcache.h"
 #include "hintsystem.h"
@@ -609,7 +609,6 @@ CBasePlayer::CBasePlayer( )
 CBasePlayer::~CBasePlayer( )
 {
 	VPhysicsDestroyObject();
-	delete STRING(pl.netname); //BG2 - Ths fixes a memory leak in BG2. -HairyPotter
 }
 
 //-----------------------------------------------------------------------------
@@ -5273,14 +5272,14 @@ void CBasePlayer::VelocityPunch( const Vector &vecForce )
 		return false;
 
 	return true;
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Purpose: Put this player in a vehicle 
 //-----------------------------------------------------------------------------
 bool CBasePlayer::GetInVehicle( IServerVehicle *pVehicle, int nRole )
 {
-	Assert( NULL == m_hVehicle.Get() );
+	/*Assert( NULL == m_hVehicle.Get() );
 	Assert( nRole >= 0 );
 	
 	// Make sure we can enter the vehicle
@@ -5361,7 +5360,8 @@ bool CBasePlayer::GetInVehicle( IServerVehicle *pVehicle, int nRole )
 
 	OnVehicleStart();
 
-	return true;
+	return true;*/
+	return false;
 }
 
 
@@ -5370,7 +5370,7 @@ bool CBasePlayer::GetInVehicle( IServerVehicle *pVehicle, int nRole )
 //-----------------------------------------------------------------------------
 void CBasePlayer::LeaveVehicle( const Vector &vecExitPoint, const QAngle &vecExitAngles )
 {
-	if ( NULL == m_hVehicle.Get() )
+	/*if ( NULL == m_hVehicle.Get() )
 		return;
 
 	IServerVehicle *pVehicle = GetVehicle();
@@ -5433,8 +5433,8 @@ void CBasePlayer::LeaveVehicle( const Vector &vecExitPoint, const QAngle &vecExi
 	}
 
 	// Just cut all of the rumble effects. 
-	RumbleEffect( RUMBLE_STOP_ALL, 0, RUMBLE_FLAGS_NONE );
-}*/
+	RumbleEffect( RUMBLE_STOP_ALL, 0, RUMBLE_FLAGS_NONE );*/
+}
 //
 
 
@@ -6539,10 +6539,9 @@ void CBasePlayer::UpdateClientData( void )
 	// Let any global rules update the HUD, too
 	g_pGameRules->UpdateClientData( this );
 }
-//BG2 - Commented out all Rumble Effects. -HairyPotter
-/*void CBasePlayer::RumbleEffect( unsigned char index, unsigned char rumbleData, unsigned char rumbleFlags )
+void CBasePlayer::RumbleEffect( unsigned char index, unsigned char rumbleData, unsigned char rumbleFlags )
 {
-	if( !IsAlive() )
+	/*if( !IsAlive() )
 		return;
 
 	CSingleUserRecipientFilter filter( this );
@@ -6552,9 +6551,9 @@ void CBasePlayer::UpdateClientData( void )
 	WRITE_BYTE( index );
 	WRITE_BYTE( rumbleData );
 	WRITE_BYTE( rumbleFlags	);
-	MessageEnd();
-}*/
-//
+	MessageEnd();*/
+}
+
 void CBasePlayer::EnableControl(bool fControl)
 {
 	if (!fControl)

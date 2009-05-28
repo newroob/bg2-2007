@@ -419,7 +419,7 @@ public:
 
 	// JOHN:  sends custom messages if player HUD data has changed  (eg health, ammo)
 	virtual void			UpdateClientData( void );
-	//void					RumbleEffect( unsigned char index, unsigned char rumbleData, unsigned char rumbleFlags );
+	void					RumbleEffect( unsigned char index, unsigned char rumbleData, unsigned char rumbleFlags );
 	
 	// Player is moved across the transition by other means
 	virtual int				ObjectCaps( void ) { return BaseClass::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
@@ -487,10 +487,10 @@ public:
 	// Vehicles
 	//BG2 - Vehicles Removed. - HairyPotter
 	/*virtual bool			IsInAVehicle( void ) const;
-			bool			CanEnterVehicle( IServerVehicle *pVehicle, int nRole );
+			bool			CanEnterVehicle( IServerVehicle *pVehicle, int nRole );*/
 	virtual bool			GetInVehicle( IServerVehicle *pVehicle, int nRole );
 	virtual void			LeaveVehicle( const Vector &vecExitPoint = vec3_origin, const QAngle &vecExitAngles = vec3_angle );
-	int						GetVehicleAnalogControlBias() { return m_iVehicleAnalogBias; }
+	/*int						GetVehicleAnalogControlBias() { return m_iVehicleAnalogBias; }
 	void					SetVehicleAnalogControlBias( int bias ) { m_iVehicleAnalogBias = bias; }
 	
 	// override these for 
