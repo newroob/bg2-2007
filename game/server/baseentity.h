@@ -1417,6 +1417,7 @@ public:
 	// Add a discontinuity to a step
 	bool					AddStepDiscontinuity( float flTime, const Vector &vecOrigin, const QAngle &vecAngles );
 	int						GetFirstThinkTick();	// get first tick thinking on any context
+	bool m_bSpawnpointTaken; //BG2 - This will help with spawn point selections. -HairyPotter
 private:
 	// origin and angles to use in step calculations
 	virtual	Vector			GetStepOrigin( void ) const;

@@ -456,7 +456,7 @@ DECLARE_BG2_WEAPON( tomahawk )
 	m_Attackinfos[0].m_flAttackrate			= 1.4;//-0.7f;
 	m_Attackinfos[0].m_flRange				= TOMAHAWK_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
-	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_ATTACK;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = TOMAHAWK_RANGE;
@@ -498,20 +498,6 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
-
-	//secondary
-	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
-	m_Attackinfos[1].m_flDamage				= REVOL_BAYONET_DAMAGE;//60;
-	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;
-	m_Attackinfos[1].m_flRange				= REVOL_BAYONET_RANGE;
-	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
-	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
-	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
-
-	m_pBayonetDeathNotice = "brownbess_bayonet";
-
-	m_fMinRange2	= 0;
-	m_fMaxRange2	= BESS_BAYONET_RANGE;
 }
 
 #ifndef CLIENT_DLL
@@ -551,4 +537,33 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 
 #ifndef CLIENT_DLL
 MUSKET_ACTTABLE( brownbess_nobayo )
+#endif
+
+#ifdef CLIENT_DLL
+#define CWeaponbeltaxe C_Weaponbeltaxe
+#endif
+DECLARE_BG2_WEAPON( beltaxe )
+{
+	m_bReloadsSingly	= false;
+	m_bFiresUnderwater	= true;
+	m_bDontAutoreload	= true;
+
+	m_fHolsterTime = 0.75f;
+
+	//primary
+	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
+	m_Attackinfos[0].m_flDamage				= TOMAHAWK_DAMAGE;//60;
+	m_Attackinfos[0].m_flAttackrate			= 1.4;//-0.7f;
+	m_Attackinfos[0].m_flRange				= TOMAHAWK_RANGE;
+	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
+	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+
+	m_fMinRange1 = m_fMinRange2	= 0;
+	m_fMaxRange1 = m_fMaxRange2 = TOMAHAWK_RANGE;
+
+	//secondary
+	m_Attackinfos[1] = m_Attackinfos[0];
+}
+#ifndef CLIENT_DLL
+MELEE_ACTTABLE( beltaxe )
 #endif

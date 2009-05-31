@@ -290,6 +290,7 @@ void CHL2MP_Player::GiveDefaultItems( void )
 		case CLASS_SKIRMISHER:
 			//GiveNamedItem( "weapon_tomahawk" );
 			GiveNamedItem( "weapon_revolutionnaire" );
+			GiveNamedItem( "weapon_beltaxe" );
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Skirmishers. -HairyPotter
 			break;
 		}
@@ -1909,57 +1910,58 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 	player = edict();
 
 	//BG2 - Rewrote all of the stuff below. -HairyPotter
-	//if ( GetTeamNumber() == TEAM_AMERICANS )
 	switch ( GetTeamNumber() )
 	{
 		case TEAM_AMERICANS:
-			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_american" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
+			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_american" )) != NULL && !pSpot->m_bSpawnpointTaken )
 			{
 				CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
 				if ( pSpot && pSpawn->IsEnabled() )
 				{
 					CBaseEntity *ent = NULL;
-					bool IsTaken = false;
 					//32 world units seems... safe.. -HairyPotter
-					for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 /*128*/ ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
+					for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 					{
 						// Check to see if the ent is a player.
 						if ( ent->IsPlayer() && !(ent->edict() == player) )
 						{
-							IsTaken = true;
+							pSpot->m_bSpawnpointTaken = true; //So there's somebody in the way... let's say it's taken for now.
 							//Msg("Someone is in the way of the american spawn. \n");
 						}
 					}
-					if ( IsTaken ) //Retry?
+					if ( pSpot->m_bSpawnpointTaken ) //Somebody was in the way, retry?
 						continue;
 				
-					pSpot->AddEFlags( EFL_DORMANT );
+					//pSpot->AddEFlags( EFL_DORMANT );
+					pSpot->m_bSpawnpointTaken = true; //So we've passed all the requirements, the player will spawn here, so it's taken.
 					goto ReturnSpot; //Spawn. Also pretend this goto doesn't exist.
 				}
+
 			}
 			break;
 		case TEAM_BRITISH:
-			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_british" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
+			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_british" )) != NULL && !pSpot->m_bSpawnpointTaken  ) //Spawn cannot be taken already.
 			{
 				CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
 				if ( pSpot && pSpawn->IsEnabled() )
 				{
 					CBaseEntity *ent = NULL;
-					bool IsTaken = false;
+					//bool IsTaken = false;
 					//32 world units seems... safe.. -HairyPotter
 					for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 					{
 						// Check to see if the ent is a player.
 						if ( ent->IsPlayer() && !(ent->edict() == player) )
 						{	
-							IsTaken = true;
+							pSpot->m_bSpawnpointTaken = true; //So there's somebody in the way... let's say it's taken for now.
 							//Msg("Someone is in the way of the british spawn. \n");
 						}
 					}
-					if ( IsTaken ) //Retry?
+					if ( pSpot->m_bSpawnpointTaken ) //Somebody was in the way, retry?
 						continue;
 
-					pSpot->AddEFlags( EFL_DORMANT );
+					//pSpot->AddEFlags( EFL_DORMANT );
+					pSpot->m_bSpawnpointTaken = true; //So we've passed all the requirements, the player will spawn here, so it's taken.
 					goto ReturnSpot; //Spawn. Also pretend this goto doesn't exist.
 				}
 			}
@@ -1968,35 +1970,6 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 			return false;
 			break;
 	}
-	/*else if ( GetTeamNumber() == TEAM_BRITISH )
-	{
-		while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_british" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
-		{
-			CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
-			if ( pSpot && pSpawn->IsEnabled() )
-			{
-				CBaseEntity *ent = NULL;
-				bool IsTaken = false;
-				//32 world units seems... safe.. -HairyPotter
-				for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
-				{
-					// Check to see if the ent is a player.
-					if ( ent->IsPlayer() && !(ent->edict() == player) )
-					{	
-						IsTaken = true;
-						//Msg("Someone is in the way of the british spawn. \n");
-					}
-				}
-				if ( IsTaken ) //Retry?
-					continue;
-
-				pSpot->AddEFlags( EFL_DORMANT );
-				goto ReturnSpot; //Spawn.
-			}
-		}
-	}
-	else
-		return false;*/
 	//
 
 ReturnSpot:

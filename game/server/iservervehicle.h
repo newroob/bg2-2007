@@ -112,7 +112,7 @@ public:
 abstract_class IDrivableVehicle
 {
 public:
-	virtual CBaseEntity		*GetDriver( void ) = 0;
+	/*virtual CBaseEntity		*GetDriver( void ) = 0;
 
 	// Process movement
 	virtual void			ItemPostFrame( CBasePlayer *pPlayer ) = 0;
@@ -133,7 +133,7 @@ public:
 	virtual bool			AllowMidairExit( CBaseCombatCharacter *pPassenger, int nRole ) = 0;
 	virtual string_t		GetVehicleScriptName() = 0;
 
-	virtual bool			PassengerShouldReceiveDamage( CTakeDamageInfo &info ) = 0;
+	virtual bool			PassengerShouldReceiveDamage( CTakeDamageInfo &info ) = 0;*/
 };
 
 #endif // IVEHICLE_H

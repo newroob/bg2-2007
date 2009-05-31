@@ -225,6 +225,7 @@ typedef enum
 	ACT_VM_PULLBACK_LOW,
 	ACT_VM_THROW,
 	ACT_VM_PULLPIN,
+	ACT_VM_ATTACK,				//tomahawk attack
 	ACT_VM_PRIMARYATTACK,		// fire
 	ACT_VM_SECONDARYATTACK,		// alt. fire
 	ACT_VM_RELOAD,			

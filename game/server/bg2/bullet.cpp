@@ -156,6 +156,7 @@ void CBullet::Spawn( void )
 
 	SetModel( BOLT_MODEL );
 	SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_CUSTOM );
+	AddEffects( EF_NODRAW ); //We'll try having the bullets be invisible for now.
 	//UTIL_SetSize( this, -Vector(1,1,1), Vector(1,1,1) );
 	//SetSolid( SOLID_BBOX );
 	SetSolid( SOLID_VPHYSICS );

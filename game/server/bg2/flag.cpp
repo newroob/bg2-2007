@@ -536,12 +536,6 @@ void CFlag::Capture( int iTeam )
 		WRITE_STRING( SoundFile );
 	MessageEnd();
 
-	//BG2 - Added for HlstatsX Support. -HairyPotter
-	const char *team = iTeam == TEAM_AMERICANS ? "Americans" : "British";
-	//Only a team can be logged for regular flags, mostly because multiple people are often required to cap.
-	UTIL_LogPrintf( "Team \"%s\" triggered \"flag_capture\"\n", team); 
-	//
-
 	g_Teams[iTeam]->AddScore( m_iTeamBonus );
 	m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
 
@@ -590,6 +584,39 @@ void CFlag::Capture( int iTeam )
 
 		m_OnLosePoint.FireOutput( this, this );
 	}
+
+	//BG2 - Added for HlstatsX Support. -HairyPotter
+	const char *team = iTeam == TEAM_AMERICANS ? "Americans" : "British";
+	/*char *playerinfo = "";
+	char playerdata[256];
+	for ( int x = 0; x < MAX_PLAYERS; ++x )
+	{
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex( x );
+
+		if ( !pPlayer )
+			continue;
+
+		if ( m_vOverloadingPlayers.Find( pPlayer ) == -1 )
+			continue;
+
+		CTeam *Cteam = pPlayer->GetTeam();
+
+		Q_snprintf( playerdata, sizeof(playerdata), "(player \"%s<%i><%s><%s>\") ",
+				pPlayer->GetPlayerName(), 
+				pPlayer->GetUserID(), 
+				pPlayer->GetNetworkIDString(), 
+				Cteam ? Cteam->GetName() : "" );
+
+		strcat( playerinfo, playerdata );
+		Msg( playerdata );
+	}*/
+	//Only a team can be logged for regular flags, mostly because multiple people are often required to cap.
+	UTIL_LogPrintf( "Team \"%s\" triggered \"flag_capture\" (flagname \"%s\") (numplayers \"%i\") \n", team, m_sFlagName, m_iNearbyPlayers/*, playerinfo*/ ); 
+	//
+
+	// Team "Axis" triggered "captured_loc" (flagindex "2") (flagname "#map_flag_donner_center") (numplayers "3") (player "AcHtUnG!!!ScHaFeGrAnAtE@Wolli<2071><STEAM_0:0:8903247><Axis>") 
+	//(player "BlindShooter<2040><STEAM_0:0:15858923><Axis>") (player "XaL<2074><STEAM_0:0:11713542><Axis>")
+
 
 	ChangeTeam( iTeam );
 	//CFlagHandler::Update();
