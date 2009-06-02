@@ -58,17 +58,17 @@ const float PISTOLB_FIRE_DAMAGE = 40.0;
 
 const float KNIFE_DAMAGE = 30.0;
 const float SABRE_DAMAGE = 40.0; //38
-const float TOMAHAWK_DAMAGE = 45; 
+const float TOMAHAWK_DAMAGE = 43;  //45
 const float HIRSCHFAENGER_DAMAGE = KNIFE_DAMAGE;		//same damage as knife
 
 //BG2 - Tjoppen - own constants, interpreted from various places in the BG source
-const float BESS_BAYONET_RANGE = 90.0;
-const float REVOL_BAYONET_RANGE = 75.0;
-const float CHARLE_BAYONET_RANGE = 87.0;
+const float BESS_BAYONET_RANGE = 83.0; //90
+//const float REVOL_BAYONET_RANGE = 75.0;
+const float CHARLE_BAYONET_RANGE = 80.0; //87
 const float SABRE_RANGE = 57.0;
 const float HIRSCHFAENGER_RANGE = 57.0;
 const float KNIFE_RANGE = 52.0;
-const float TOMAHAWK_RANGE = 66.0;
+const float TOMAHAWK_RANGE = 55.0; //66
 
 #ifdef CLIENT_DLL
 #define CWeaponbrownbess C_Weaponbrownbess

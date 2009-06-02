@@ -587,35 +587,40 @@ void CFlag::Capture( int iTeam )
 
 	//BG2 - Added for HlstatsX Support. -HairyPotter
 	const char *team = iTeam == TEAM_AMERICANS ? "Americans" : "British";
-	/*char *playerinfo = "";
+	char playerinfo[3072];
 	char playerdata[256];
-	for ( int x = 0; x < MAX_PLAYERS; ++x )
+	CBasePlayer *pPlayer = NULL;
+	while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassname( pPlayer, "player" ))) != NULL )
 	{
-		CBasePlayer *pPlayer = UTIL_PlayerByIndex( x );
-
-		if ( !pPlayer )
+		if( !pPlayer->IsAlive() )	//dead players don't cap
 			continue;
 
-		if ( m_vOverloadingPlayers.Find( pPlayer ) == -1 )
-			continue;
+		if ( pPlayer->GetTeamNumber() != iTeam ) //Eliminate any possibility of an enemy getting logged as a flag capper.
+				continue;
 
-		CTeam *Cteam = pPlayer->GetTeam();
+		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
 
-		Q_snprintf( playerdata, sizeof(playerdata), "(player \"%s<%i><%s><%s>\") ",
-				pPlayer->GetPlayerName(), 
-				pPlayer->GetUserID(), 
-				pPlayer->GetNetworkIDString(), 
+		//if (!pHL2Player) //Let's just be sure.
+		//	continue;
+
+		if( m_vOverloadingPlayers.Find( pHL2Player ) != -1 ) //So we're actually overloading this flag.
+		{
+			CTeam *Cteam = pHL2Player->GetTeam();
+
+			//Get all the info from this player.
+			Q_snprintf( playerdata, sizeof(playerdata), "(player \"%s<%i><%s><%s>\") ",
+				pHL2Player->GetPlayerName(), 
+				pHL2Player->GetUserID(), 
+				pHL2Player->GetNetworkIDString(), 
 				Cteam ? Cteam->GetName() : "" );
+			//
 
-		strcat( playerinfo, playerdata );
-		Msg( playerdata );
-	}*/
+			strcat( playerinfo, playerdata );// Bunch it together with other play info so we can print out the final string.
+		}
+	}
 	//Only a team can be logged for regular flags, mostly because multiple people are often required to cap.
-	UTIL_LogPrintf( "Team \"%s\" triggered \"flag_capture\" (flagname \"%s\") (numplayers \"%i\") \n", team, m_sFlagName, m_iNearbyPlayers/*, playerinfo*/ ); 
+	UTIL_LogPrintf( "Team \"%s\" triggered \"flag_capture\" (flagname \"%s\") (numplayers \"%i\") %s\n", team, m_sFlagName, m_iNearbyPlayers, playerinfo ); 
 	//
-
-	// Team "Axis" triggered "captured_loc" (flagindex "2") (flagname "#map_flag_donner_center") (numplayers "3") (player "AcHtUnG!!!ScHaFeGrAnAtE@Wolli<2071><STEAM_0:0:8903247><Axis>") 
-	//(player "BlindShooter<2040><STEAM_0:0:15858923><Axis>") (player "XaL<2074><STEAM_0:0:11713542><Axis>")
 
 
 	ChangeTeam( iTeam );
@@ -683,8 +688,9 @@ void CFlag::ThinkCapped( void )
 				for ( int i = 1; i <= m_vTriggerAmericanPlayers.Count(); i++ )
 				{
 					pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
-					//if ( !pPlayer )
-					//	continue;
+
+					if ( !pPlayer )
+						continue;
 					
 					if( m_vOverloadingPlayers.Find( pPlayer ) == -1 )
 					{
@@ -703,8 +709,9 @@ void CFlag::ThinkCapped( void )
 				for ( int i = 1; i <= m_vTriggerBritishPlayers.Count(); i++ )
 				{
 					pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
-					//if ( !pPlayer )
-					//	continue;
+
+					if ( !pPlayer )
+						continue;
 
 					if( m_vOverloadingPlayers.Find( pPlayer ) == -1 )
 					{
