@@ -263,6 +263,13 @@ void CHudBG2::Paint()
 		HideShowAll(false);
 		return;
 	}
+	// Don't draw hud if we're using Iron Sights. -HairyPotter
+	if (wpn->m_bIsIronsighted)
+	{
+		HideShowAll(false);
+		return;
+	}
+	//
 
 	HideShowAll(true);
 

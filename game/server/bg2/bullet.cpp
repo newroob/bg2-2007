@@ -66,6 +66,9 @@
 #define BOLT_AIR_VELOCITY	14400
 #define BOLT_WATER_VELOCITY	1500
 
+//#define BULLET_TRACER "sprites/blueglow1.vmt"
+
+extern ConVar sv_bullettracers;
 
 #ifndef CLIENT_DLL
 
@@ -79,6 +82,7 @@ BEGIN_DATADESC( CBullet )
 	// Function Pointers
 	DEFINE_FUNCTION( BubbleThink ),
 	DEFINE_FUNCTION( BoltTouch ),
+	DEFINE_FIELD( m_pGlowTrail, FIELD_CLASSPTR ),
 
 	// These are recreated on reload, they don't need storage
 	//DEFINE_FIELD( m_pGlowSprite, FIELD_EHANDLE ),
@@ -156,7 +160,7 @@ void CBullet::Spawn( void )
 
 	SetModel( BOLT_MODEL );
 	SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_CUSTOM );
-	AddEffects( EF_NODRAW ); //We'll try having the bullets be invisible for now.
+	AddEffects( EF_NODRAW ); //We'll try having the bullets be invisible for now. -HairyPotter
 	//UTIL_SetSize( this, -Vector(1,1,1), Vector(1,1,1) );
 	//SetSolid( SOLID_BBOX );
 	SetSolid( SOLID_VPHYSICS );
@@ -170,6 +174,23 @@ void CBullet::Spawn( void )
 
 	// Make sure we're updated if we're underwater
 	UpdateWaterState();
+
+	/*if ( sv_bullettracers.GetInt() )
+	{
+		// Start up the eye trail
+		m_pGlowTrail = CSpriteTrail::SpriteTrailCreate( BULLET_TRACER, GetAbsOrigin(), false );
+	
+		if ( m_pGlowTrail != NULL )
+		{
+			m_pGlowTrail->FollowEntity( this );
+			//m_pGlowTrail->SetTransparency( kRenderTransAdd, 0, 0, 0, 255, kRenderFxNone );
+			//m_pGlowTrail->SetStartWidth( 25.0f );
+			//m_pGlowTrail->SetTextureResolution( 1.0f / ( 16.0f * 1.0f ) );
+			//m_pGlowTrail->SetEndWidth( 10.0f );
+			m_pGlowTrail->SetLifeTime( 3.0f );
+			m_pGlowTrail->TurnOn();
+		}
+	}*/
 
 	SetTouch( &CBullet::BoltTouch );
 
@@ -186,6 +207,8 @@ void CBullet::Spawn( void )
 void CBullet::Precache( void )
 {
 	PrecacheModel( BOLT_MODEL );
+
+	//PrecacheModel( BULLET_TRACER );
 
 	//BG2 - Tjoppen - Bullet.Hit*
 	//PrecacheScriptSound( "Bullet.HitWorld" );

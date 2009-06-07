@@ -153,6 +153,21 @@ public:
 	virtual bool			VisibleInWeaponSelection( void );
 	virtual bool			HasAmmo( void );
 
+	//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
+	//Funcs
+	bool					IsIronsighted( void );
+	void					ToggleIronsights( void ) { m_bIsIronsighted ? DisableIronsights() : EnableIronsights(); }
+	void					EnableIronsights( void );
+	void					DisableIronsights( void );
+
+	//Vars
+	Vector					GetIronsightPositionOffset( void ) const;
+	QAngle					GetIronsightAngleOffset( void ) const;
+	float					GetIronsightFOVOffset( void ) const;
+	CNetworkVar( bool, m_bIsIronsighted );
+	CNetworkVar( float, m_flIronsightedTime );
+	//
+
 	// Weapon Pickup For Player
 	virtual void			SetPickupTouch( void );
 	virtual void 			DefaultTouch( CBaseEntity *pOther );	// default weapon touch

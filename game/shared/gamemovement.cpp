@@ -2335,9 +2335,16 @@ bool CGameMovement::CheckJumpButton( void )
 		return false;		// in air, so no effect
 	}
 
-	//BG2 - Tjoppen - don't allow jumping while reloading
-	if( player->GetActiveWeapon() && player->GetActiveWeapon()->m_bInReload )
+	if( player->GetActiveWeapon() )
+	{
+		//BG2 - Tjoppen - don't allow jumping while reloading
+	if( player->GetActiveWeapon()->m_bInReload )
 		return false;
+
+	//BG2 - don't allow jumping while Iron Sighted - HairyPotter
+	if( player->GetActiveWeapon()->m_bIsIronsighted )
+		return false;
+	}
 
 #ifndef CLIENT_DLL
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );

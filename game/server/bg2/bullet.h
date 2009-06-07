@@ -57,7 +57,7 @@ protected:
 	//bool	CreateSprites( void );
 
 	//CHandle<CSprite>		m_pGlowSprite;
-	//CHandle<CSpriteTrail>	m_pGlowTrail;
+	CSpriteTrail *m_pGlowTrail;
 	
 	int		m_iDamage;
 	float	m_flDyingTime;	//BG2 - Tjoppen - bullets must die after a while. say ten seconds

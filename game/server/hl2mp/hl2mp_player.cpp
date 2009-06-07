@@ -181,6 +181,29 @@ void CHL2MP_Player::UpdateOnRemove( void )
 	BaseClass::UpdateOnRemove();
 }
 
+//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code base. -HairyPotter
+void CC_ToggleIronSights( void )
+{
+	CBasePlayer* pPlayer = UTIL_GetCommandClient();
+	if ( pPlayer == NULL )
+		return;
+ 
+	CBaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
+	if( pWeapon == NULL )
+		return;
+
+	if ( !pWeapon->GetWpnData().m_bWeaponHasSights ) //Don't use iron sights on certain weapons... like a sword. -HairyPotter
+		return;
+
+	if ( pWeapon->m_bInReload ) //Don't do iron sights when reloading...
+		return;
+ 
+	pWeapon->ToggleIronsights();
+}
+//
+ 
+static ConCommand toggle_ironsight("ironsights", CC_ToggleIronSights);
+
 void CHL2MP_Player::Precache( void )
 {
 	BaseClass::Precache();
@@ -630,9 +653,15 @@ void CHL2MP_Player::HandleSpeedChanges( void )
 	//BG2 - Draco - stamina changes speed
 	//float scale = 0.5f + 0.5f * expf( -0.01f * (float)(100 - GetHealth()) );
 	float scale = expf( -0.01f * (float)(100 - m_iStamina) );
-	
-	if( GetActiveWeapon() && GetActiveWeapon()->m_bInReload )
-		scale *= 0.5f;
+
+	if( GetActiveWeapon() )
+	{
+		if (GetActiveWeapon()->m_bIsIronsighted )
+			scale *= 0.3f;
+
+		if( GetActiveWeapon()->m_bInReload )
+			scale *= 0.5f;
+	}
 
 	if( m_nButtons & IN_WALK )
 		SetMaxSpeed( iSpeed2 * scale );
@@ -945,7 +974,10 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 				}
 				else
 				{
-					idealActivity = ACT_HL2MP_IDLE;
+					if ( GetActiveWeapon() && GetActiveWeapon()->m_bIsIronsighted ) //BG2 - This may need to be changed.. -HairyPotter
+						idealActivity = ACT_IDLE_ANGRY_AR2;
+					else
+						idealActivity = ACT_HL2MP_IDLE;
 				}
 			}
 		}

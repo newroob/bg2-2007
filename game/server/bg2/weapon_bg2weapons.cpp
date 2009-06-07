@@ -93,6 +93,12 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_Attackinfos[0].m_flCrouchStill		= 2.4f;
 	m_Attackinfos[0].m_flStandMoving		= 13.2f; //12.0f
 	m_Attackinfos[0].m_flStandStill			= 2.4f;
+	//Iron Sights. These values will probably be changed.
+	m_Attackinfos[0].m_flStandAimStill		= 2.0f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 2.4f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 1.8f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 2.4f;
+	//
 	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;

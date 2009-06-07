@@ -64,6 +64,42 @@ void CBaseViewModel::Precache( void )
 {
 }
 
+//BG2 -Added for Iron Sights Testing. Credits to Jorg for the code. -HairyPotter
+void CBaseViewModel::CalcIronsights( Vector &pos, QAngle &ang )
+{
+	//CBaseCombatWeapon *pWeapon = GetOwningWeapon();
+	CBaseCombatWeapon *pWeapon = m_hWeapon.Get();
+ 
+	if ( !pWeapon )
+		return;
+ 
+	//get delta time for interpolation
+	float delta( ( gpGlobals->curtime - pWeapon->m_flIronsightedTime ) / 0.4f ); //modify this value to adjust how fast the interpolation is
+	float exp = ( pWeapon->IsIronsighted() ) ? 
+		( delta > 1.0f ) ? 1.0f : delta : //normal blending
+		( delta > 1.0f ) ? 0.0f : 1.0f - delta; //reverse interpolation
+ 
+	if( exp == 0.0f ) //fully not ironsighted; save performance
+		return;
+ 
+	Vector newPos = pos;
+	QAngle newAng = ang;
+ 
+	Vector vForward, vRight, vUp, vOffset;
+	AngleVectors( newAng, &vForward, &vRight, &vUp );
+	vOffset = pWeapon->GetIronsightPositionOffset();
+ 
+	newPos += vForward * vOffset.x;
+	newPos += vRight * vOffset.y;
+	newPos += vUp * vOffset.z;
+	newAng += pWeapon->GetIronsightAngleOffset();
+	//fov is handled by CBaseCombatWeapon
+ 
+	pos += ( newPos - pos ) * exp;
+	ang += ( newAng - ang ) * exp;
+}
+//
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -380,7 +416,8 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 
 	CBaseCombatWeapon *pWeapon = m_hWeapon.Get();
 	//Allow weapon lagging
-	if ( pWeapon != NULL )
+	//if ( pWeapon != NULL )
+	if( pWeapon == NULL || !pWeapon->IsIronsighted() ) //
 	{
 #if defined( CLIENT_DLL )
 		if ( !prediction->InPrediction() )
@@ -402,6 +439,8 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 		vieweffects->ApplyShake( vmorigin, vmangles, 0.1 );	
 	}
 #endif
+
+	CalcIronsights( vmorigin, vmangles ); //BG2 -Added for Iron Sights Testing. Credits to Jorg for the code. -HairyPotter
 
 	SetLocalOrigin( vmorigin );
 	SetLocalAngles( vmangles );

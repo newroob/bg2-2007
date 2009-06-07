@@ -38,6 +38,37 @@
 
 #define HIDEWEAPON_THINK_CONTEXT			"BaseCombatWeapon_HideThink"
 
+//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
+/*ConVar viewmodel_adjust_forward( "viewmodel_adjust_forward", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_right( "viewmodel_adjust_right", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_up( "viewmodel_adjust_up", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_pitch( "viewmodel_adjust_pitch", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_yaw( "viewmodel_adjust_yaw", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_roll( "viewmodel_adjust_roll", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_fov( "viewmodel_adjust_fov", "0", FCVAR_REPLICATED );*/
+
+Vector CBaseCombatWeapon::GetIronsightPositionOffset( void ) const
+{
+	//if( viewmodel_adjust_enabled.GetBool() ) Out of the way, you!
+		//return Vector( viewmodel_adjust_forward.GetFloat(), viewmodel_adjust_right.GetFloat(), viewmodel_adjust_up.GetFloat() );
+	return GetWpnData().vecIronsightPosOffset; //Just do what the script says!
+}
+ 
+QAngle CBaseCombatWeapon::GetIronsightAngleOffset( void ) const
+{
+	//if( viewmodel_adjust_enabled.GetBool() ) Out of the way, you!
+		//return QAngle( viewmodel_adjust_pitch.GetFloat(), viewmodel_adjust_yaw.GetFloat(), viewmodel_adjust_roll.GetFloat() );
+	return GetWpnData().angIronsightAngOffset; //Just do what the script says!
+}
+ 
+float CBaseCombatWeapon::GetIronsightFOVOffset( void ) const
+{
+	//if( viewmodel_adjust_enabled.GetBool() ) Out of the way, you!
+		//return viewmodel_adjust_fov.GetFloat();
+	return GetWpnData().flIronsightFOVOffset; //Just do what the script says!
+}
+//
+
 extern bool UTIL_ItemCanBeTouchedByPlayer( CBaseEntity *pItem, CBasePlayer *pPlayer );
 
 CBaseCombatWeapon::CBaseCombatWeapon()
@@ -54,6 +85,11 @@ CBaseCombatWeapon::CBaseCombatWeapon()
 	m_bReloadsSingly	= false;
 	//BG2 - Tjoppen - default to no automatic reload
 	m_bDontAutoreload	= false;
+
+	//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
+	m_bIsIronsighted = false;
+	m_flIronsightedTime = 0.0f;
+	//
 
 	// Defaults to zero
 	m_nViewModelIndex	= 0;
@@ -586,6 +622,45 @@ void CBaseCombatWeapon::SetWeaponIdleTime( float time )
 float CBaseCombatWeapon::GetWeaponIdleTime( void )
 {
 	return m_flTimeWeaponIdle;
+}
+
+//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
+bool CBaseCombatWeapon::IsIronsighted( void )
+{
+	return ( m_bIsIronsighted  );
+}
+void CBaseCombatWeapon::EnableIronsights( void )
+{
+	if( m_bIsIronsighted )
+		return;
+ 
+	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+ 
+	if( !pOwner )
+		return;
+ 
+	if( pOwner->SetFOV( this, pOwner->GetDefaultFOV()+GetIronsightFOVOffset(), 1.0f, 0.3f ) ) //modify these values to adjust how fast the fov is applied
+	{
+		m_bIsIronsighted = true;
+		m_flIronsightedTime = gpGlobals->curtime;
+	}
+}
+ 
+void CBaseCombatWeapon::DisableIronsights( void )
+{
+	if( !m_bIsIronsighted )
+		return;
+ 
+	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+ 
+	if( !pOwner )
+		return;
+ 
+	if( pOwner->SetFOV( this, 0, 0.4f, 0.1f ) ) //modify these values to adjust how fast the fov is applied
+	{
+		m_bIsIronsighted = false;
+		m_flIronsightedTime = gpGlobals->curtime;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -1367,6 +1442,10 @@ Activity CBaseCombatWeapon::GetDrawActivity( void )
 bool CBaseCombatWeapon::Holster( CBaseCombatWeapon *pSwitchingTo )
 { 
 
+	//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
+	DisableIronsights();
+	//
+
 	CBaseCombatCharacter *pOwner = GetOwner();
 	//BG2 - Tjoppen - m_bCantAbortReload
 	if( m_bCantAbortReload && m_bInReload )
@@ -1870,6 +1949,11 @@ bool CBaseCombatWeapon::DefaultReload( int iClipSize1, int iClipSize2, int iActi
 	m_flNextPrimaryAttack = m_flNextSecondaryAttack = flSequenceEndTime;
 
 	m_bInReload = true;
+
+	//BG2 - Disable Iron sights on reload. -HairyPotter
+	if( m_bIsIronsighted )
+		DisableIronsights();
+	//
 
 	return true;
 }
@@ -2486,6 +2570,10 @@ BEGIN_NETWORK_TABLE(CBaseCombatWeapon, DT_BaseCombatWeapon)
 	SendPropModelIndex( SENDINFO(m_iWorldModelIndex) ),
 	SendPropInt( SENDINFO(m_iState ), 8, SPROP_UNSIGNED ),
 	SendPropEHandle( SENDINFO(m_hOwner) ),
+	//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
+	SendPropBool( SENDINFO( m_bIsIronsighted ) ),
+	SendPropFloat( SENDINFO( m_flIronsightedTime ) ),
+	//
 #else
 	RecvPropDataTable("LocalWeaponData", 0, 0, &REFERENCE_RECV_TABLE(DT_LocalWeaponData)),
 	RecvPropDataTable("LocalActiveWeaponData", 0, 0, &REFERENCE_RECV_TABLE(DT_LocalActiveWeaponData)),
@@ -2493,5 +2581,9 @@ BEGIN_NETWORK_TABLE(CBaseCombatWeapon, DT_BaseCombatWeapon)
 	RecvPropInt( RECVINFO(m_iWorldModelIndex)),
 	RecvPropInt( RECVINFO(m_iState )),
 	RecvPropEHandle( RECVINFO(m_hOwner ) ),
+	//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
+	RecvPropBool( RECVINFO( m_bIsIronsighted ) ),
+	RecvPropFloat( RECVINFO( m_flIronsightedTime ) ),
+	//
 #endif
 END_NETWORK_TABLE()

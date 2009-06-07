@@ -577,8 +577,14 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 	//float scale = 0.5f + 0.5f * expf( -0.01f * (float)(100 - GetHealth()) );
 	float scale = expf( -0.01f * (float)(100 - m_iStamina) );
 
-	if( GetActiveWeapon() && GetActiveWeapon()->m_bInReload )
-		scale *= 0.5f;
+	if( GetActiveWeapon() )
+	{
+		if (GetActiveWeapon()->m_bIsIronsighted )
+			scale *= 0.3f;
+
+		if( GetActiveWeapon()->m_bInReload )
+			scale *= 0.5f;
+	}
 
 	int iSpeed = 190;
 	int iSpeed2 = 150;

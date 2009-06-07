@@ -585,6 +585,8 @@ void CFlag::Capture( int iTeam )
 		m_OnLosePoint.FireOutput( this, this );
 	}
 
+#ifndef _DEBUG //For whatever reason, debug compiles crash on this code. We'll just omit this if we're debugging.
+
 	//BG2 - Added for HlstatsX Support. -HairyPotter
 	const char *team = iTeam == TEAM_AMERICANS ? "Americans" : "British";
 	char playerinfo[3072];
@@ -598,20 +600,17 @@ void CFlag::Capture( int iTeam )
 		if ( pPlayer->GetTeamNumber() != iTeam ) //Eliminate any possibility of an enemy getting logged as a flag capper.
 				continue;
 
-		CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+		//CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
 
-		//if (!pHL2Player) //Let's just be sure.
-		//	continue;
-
-		if( m_vOverloadingPlayers.Find( pHL2Player ) != -1 ) //So we're actually overloading this flag.
+		if( m_vOverloadingPlayers.Find( pPlayer ) != -1 ) //So we're actually overloading this flag.
 		{
-			CTeam *Cteam = pHL2Player->GetTeam();
+			CTeam *Cteam = pPlayer->GetTeam();
 
 			//Get all the info from this player.
 			Q_snprintf( playerdata, sizeof(playerdata), "(player \"%s<%i><%s><%s>\") ",
-				pHL2Player->GetPlayerName(), 
-				pHL2Player->GetUserID(), 
-				pHL2Player->GetNetworkIDString(), 
+				pPlayer->GetPlayerName(), 
+				pPlayer->GetUserID(), 
+				pPlayer->GetNetworkIDString(), 
 				Cteam ? Cteam->GetName() : "" );
 			//
 
@@ -619,9 +618,9 @@ void CFlag::Capture( int iTeam )
 		}
 	}
 	//Only a team can be logged for regular flags, mostly because multiple people are often required to cap.
-	UTIL_LogPrintf( "Team \"%s\" triggered \"flag_capture\" (flagname \"%s\") (numplayers \"%i\") %s\n", team, m_sFlagName, m_iNearbyPlayers, playerinfo ); 
+	UTIL_LogPrintf( "Team \"%s\" triggered \"flag_capture\" (flagname \"%s\") (numplayers \"%i\") %s\n", team, STRING( m_sFlagName.Get() ), m_iNearbyPlayers, playerinfo ); 
 	//
-
+#endif
 
 	ChangeTeam( iTeam );
 	//CFlagHandler::Update();

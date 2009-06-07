@@ -99,6 +99,12 @@ public:
 				m_flStandStill,
 				m_flCrouchMoving,
 				m_flCrouchStill,
+				// For iron sights. -HairyPotter
+				m_flStandAimStill,
+				m_flStandAimMoving,
+				m_flCrouchAimStill,
+				m_flCrouchAimMoving,
+				//
 				m_flConstantDamageRange,	//how long until we start losing damage?
 				m_flRelativeDrag;			//how does the drag on this bullet compare to a musket's?
 	};
@@ -186,19 +192,39 @@ public:
 
 		return m_Attackinfos[iAttack].m_vStandSpread * (moving ? 2.0f : 1.0f);*/
 
-		if( GetOwner() && (GetOwner()->GetFlags() & FL_DUCKING) )
+		if( GetOwner() && (GetOwner()->GetFlags() & FL_DUCKING) ) //we're crouching
 		{
-			if( moving )
-				return Cone( m_Attackinfos[iAttack].m_flCrouchMoving );
-			else
-				return Cone( m_Attackinfos[iAttack].m_flCrouchStill );
+			if( moving ) //we're moving.
+			{
+				if ( m_bIsIronsighted ) //So we're aiming... yet moving...
+					return Cone( m_Attackinfos[iAttack].m_flCrouchAimMoving );
+				else //Hip shot.
+					return Cone( m_Attackinfos[iAttack].m_flCrouchMoving );
+			}
+			else	//we're not moving.
+			{
+				if ( m_bIsIronsighted ) //So we're aiming...
+					return Cone( m_Attackinfos[iAttack].m_flCrouchAimStill );
+				else //Hip shot.
+					return Cone( m_Attackinfos[iAttack].m_flCrouchStill );
+			}
 		}
-		else
+		else //We're not crouching.
 		{
-			if( moving )
-				return Cone( m_Attackinfos[iAttack].m_flStandMoving );
-			else
-				return Cone( m_Attackinfos[iAttack].m_flStandStill );
+			if( moving ) //We're standing and moving.
+			{
+				if ( m_bIsIronsighted ) //So we're aiming...
+					return Cone( m_Attackinfos[iAttack].m_flStandAimMoving );
+				else //Hip shot.
+					return Cone( m_Attackinfos[iAttack].m_flStandMoving );
+			}
+			else // We're not moving.
+			{
+				if ( m_bIsIronsighted ) //So we're aiming...
+					return Cone( m_Attackinfos[iAttack].m_flStandAimStill );
+				else //Hip shot.
+					return Cone( m_Attackinfos[iAttack].m_flStandStill );
+			}
 		}
 	}
 

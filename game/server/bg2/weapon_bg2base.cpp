@@ -206,6 +206,9 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
 		return;
 
+	if ( m_bIsIronsighted ) //No melee with ironsights.
+		return;
+
 	m_iLastAttack = ATTACK_SECONDARY;
 
 	//store forward eye vector
