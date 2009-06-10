@@ -345,7 +345,11 @@ void ScreenToWorld( int mousex, int mousey, float fov,
 	dy = c_y - (float)mousey;
 
 	// Convert view plane distance
-	dist = c_x / tan( M_PI * scaled_fov / 360.0 );
+	//dist = c_x / tan( M_PI * scaled_fov / 360.0 );
+	//BG2 - This was added to fix the VS2008 compiler problem as noted on the Valve wiki. -HairyPotter
+	float dist_denom = tan( M_PI * scaled_fov / 360.0f ); 	 
+	dist = c_x / dist_denom;
+	//
 
 	// Decompose view angles
 	AngleVectors( vecRenderAngles, &vpn, &vright, &vup );
