@@ -2774,6 +2774,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\bg2\bg2_hud_ironsights.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\bg2\bg2_hud_main.cpp"
 					>
 					<FileConfiguration

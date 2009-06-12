@@ -41,6 +41,7 @@
 #include <vgui/ILocalize.h>
 #include <KeyValues.h>
 #include "c_baseplayer.h"
+#include "c_hl2mp_player.h"
 #include "c_team.h"
 #include "c_flag.h"
 
@@ -168,6 +169,13 @@ bool CHudFlags::ShouldDraw( void )
 
 	if ( !g_Flags.Count() ) //No flags? Die here. -HairyPotter
 		return false;
+
+	C_HL2MP_Player *pHL2Player = dynamic_cast<C_HL2MP_Player*>(C_HL2MP_Player::GetLocalPlayer());
+	C_BaseCombatWeapon *wpn = pHL2Player->GetActiveWeapon();
+	// Don't draw hud if we're using Iron Sights. -HairyPotter
+	if ( wpn && wpn->m_bIsIronsighted )
+		return false;
+	//
 
 	return CHudElement::ShouldDraw();
 }

@@ -417,7 +417,7 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 	CBaseCombatWeapon *pWeapon = m_hWeapon.Get();
 	//Allow weapon lagging
 	//if ( pWeapon != NULL )
-	if( pWeapon == NULL || !pWeapon->IsIronsighted() ) //
+	if( pWeapon != NULL && !pWeapon->IsIronsighted() ) //
 	{
 #if defined( CLIENT_DLL )
 		if ( !prediction->InPrediction() )
@@ -428,7 +428,7 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 		}
 	}
 	// Add model-specific bob even if no weapon associated (for head bob for off hand models)
-	AddViewModelBob( owner, vmorigin, vmangles );
+	AddViewModelBob( owner, vmorigin, vmangles ); //So this is the function that does the model movement when you move around.
 	// Add lag
 	CalcViewModelLag( vmorigin, vmangles, vmangoriginal );
 
@@ -442,7 +442,7 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 
 	CalcIronsights( vmorigin, vmangles ); //BG2 -Added for Iron Sights Testing. Credits to Jorg for the code. -HairyPotter
 
-	SetLocalOrigin( vmorigin );
+	SetLocalOrigin( Vector( vmorigin.x, vmorigin.y, vmorigin.z ) );
 	SetLocalAngles( vmangles );
 
 #endif
