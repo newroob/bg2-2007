@@ -24,7 +24,7 @@
 #include "tier0/memdbgon.h"
 
 //-----------------------------------------------------------------------------
-// Purpose: Draws the zoom screen
+// Purpose: 
 //-----------------------------------------------------------------------------
 class CHudIronsight : public vgui::Panel, public CHudElement
 {
@@ -42,14 +42,10 @@ protected:
 	virtual void Paint( void );
 
 private:
+
 	bool	m_bIronSights;
 	bool	m_bPainted;
 	float   m_flStartTime;
-
-	CPanelAnimationVarAliasType( float, m_flCircle1Radius, "Circle1Radius", "66", "proportional_float" );
-	CPanelAnimationVarAliasType( float, m_flCircle2Radius, "Circle2Radius", "74", "proportional_float" );
-	CPanelAnimationVarAliasType( float, m_flDashGap, "DashGap", "16", "proportional_float" );
-	CPanelAnimationVarAliasType( float, m_flDashHeight, "DashHeight", "4", "proportional_float" );
 
 	CMaterialReference m_Material;
 };
@@ -61,7 +57,7 @@ using namespace vgui;
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-CHudIronsight::CHudIronsight( const char *pElementName ) : CHudElement(pElementName), BaseClass(NULL, "HudZoom")
+CHudIronsight::CHudIronsight( const char *pElementName ) : CHudElement(pElementName), BaseClass(NULL, "HudIronsights")
 {
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
@@ -124,11 +120,11 @@ bool CHudIronsight::ShouldDraw( void )
 	{
 		bNeedsDraw = true;
 	}
-	else if ( m_bPainted )
+	/*else if ( m_bPainted )
 	{
 		// keep painting until state is finished
 		bNeedsDraw = true;
-	}
+	}*/
 
 	return ( bNeedsDraw && CHudElement::ShouldDraw() );
 }
@@ -141,7 +137,6 @@ void CHudIronsight::Paint( void )
 {
 	m_bPainted = false;
 
-	// see if we're zoomed any
 	//C_BaseHLPlayer *pPlayer = dynamic_cast<C_BaseHLPlayer *>(C_BasePlayer::GetLocalPlayer());
 	C_HL2MP_Player *pPlayer = dynamic_cast<C_HL2MP_Player*>(C_HL2MP_Player::GetLocalPlayer());
 	C_BaseCombatWeapon *wpn = pPlayer->GetActiveWeapon();
@@ -246,7 +241,8 @@ void CHudIronsight::Paint( void )
 	}
 
 	meshBuilder.End();
-	pMesh->Draw();
+	pMesh->Draw(); 
+
 
 	m_bPainted = true;
 }

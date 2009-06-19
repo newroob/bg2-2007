@@ -863,6 +863,8 @@ void C_HL2MPRagdoll::CreateHL2MPRagdoll( void )
 		
 	}
 
+	m_nSkin = pPlayer->m_nSkin; //BG2 - Set the proper skin for ragdolls. -HairyPotter
+
 	SetModelIndex( m_nModelIndex );
 
 	// Make us a ragdoll..

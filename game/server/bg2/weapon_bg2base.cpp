@@ -565,7 +565,7 @@ void CBaseBG2Weapon::Drop( const Vector &vecVelocity )
 void CBaseBG2Weapon::WeaponIdle( void )
 {
 	//See if we should idle high or low
-	if ( HasWeaponIdleTimeElapsed() ) 
+	if ( HasWeaponIdleTimeElapsed() && !m_bIsIronsighted ) //Don't do idle anims when aiming. -HairyPotter
 	{
 		if( m_iClip1 == 0 )
 			SendWeaponAnim( ACT_VM_IDLE_EMPTY );

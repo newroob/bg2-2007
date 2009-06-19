@@ -92,7 +92,7 @@ void CBaseViewModel::CalcIronsights( Vector &pos, QAngle &ang )
 	newPos += vForward * vOffset.x;
 	newPos += vRight * vOffset.y;
 	newPos += vUp * vOffset.z;
-	newAng += pWeapon->GetIronsightAngleOffset();
+	newAng += pWeapon->GetIronsightAngleOffset(); //This also handles the pitch...
 	//fov is handled by CBaseCombatWeapon
  
 	pos += ( newPos - pos ) * exp;

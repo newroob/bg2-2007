@@ -60,7 +60,7 @@ ConVar sv_restartround( "sv_restartround", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_americanscore( "mp_americanscore", "0", FCVAR_GAMEDLL /*| FCVAR_NOTIFY*/ | FCVAR_CHEAT );
 ConVar mp_britishscore( "mp_britishscore", "0", FCVAR_GAMEDLL /*| FCVAR_NOTIFY*/ | FCVAR_CHEAT  );
 ConVar mp_autobalanceteams( "mp_autobalanceteams", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY );
-ConVar mp_autobalancetolerance( "mp_autobalancetolerance", "3", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar mp_autobalancetolerance( "mp_autobalancetolerance", "2", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_timeleft( "mp_timeleft", "0", FCVAR_GAMEDLL, "Set this to the amount time you want the round to be. (In Minutes)"); //1200
 
 //BG2 - Draco - End
@@ -545,7 +545,7 @@ void CHL2MPRules::Think( void )
 	//=========================
 	//Auto Team Balance
 	//=========================
-	if (mp_autobalanceteams.GetInt() == 1)
+	/*if (mp_autobalanceteams.GetInt() == 1) //If we're balancing teams on AttemptJoin... is there really a need to think about it again? -HairyPotter
 	{
 		//use the right sum to find diff, I don't like negative numbers...
 		int iAutoTeamBalanceTeamDiff = 0;
@@ -588,7 +588,7 @@ void CHL2MPRules::Think( void )
 			}
 		}
 		//well, if we aren't even now, there's always next think...
-	}
+	}*/
 	//=========================
 	//Restart Round
 	//=========================

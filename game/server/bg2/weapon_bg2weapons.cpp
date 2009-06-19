@@ -50,8 +50,8 @@ const float REVOL_BAYONET_DAMAGE = 41.0;
 const float CHARLE_FIRE_DAMAGE = 58.0;//57.5;
 const float CHARLE_BAYONET_DAMAGE = 41.0;
 
-const float PENNY_FIRE_DAMAGE = 57.3;
-const float JAEGER_FIRE_DAMAGE = 60.0;
+const float PENNY_FIRE_DAMAGE = 60.0;
+const float JAEGER_FIRE_DAMAGE = 63.0;
 
 const float PISTOLA_FIRE_DAMAGE = 40.0;
 const float PISTOLB_FIRE_DAMAGE = 40.0;
@@ -90,14 +90,14 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 12.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 2.4f;
+	m_Attackinfos[0].m_flCrouchStill		= 3.6f; //2.4
 	m_Attackinfos[0].m_flStandMoving		= 13.2f; //12.0f
-	m_Attackinfos[0].m_flStandStill			= 2.4f;
+	m_Attackinfos[0].m_flStandStill			= 3.6f; //2.4
 	//Iron Sights. These values will probably be changed.
-	m_Attackinfos[0].m_flStandAimStill		= 2.0f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 2.4f;
-	m_Attackinfos[0].m_flCrouchAimStill		= 1.8f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 2.4f;
+	m_Attackinfos[0].m_flStandAimStill		= 2.4f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 3.0f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.4f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -145,9 +145,15 @@ DECLARE_BG2_WEAPON( charleville )
 	m_Attackinfos[0].m_flRecoil				= 0.6;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 11.5f;
-	m_Attackinfos[0].m_flCrouchStill		= 2.2f;
+	m_Attackinfos[0].m_flCrouchStill		= 3.4f;
 	m_Attackinfos[0].m_flStandMoving		= 12.7f; //11.5f;
-	m_Attackinfos[0].m_flStandStill			= 2.2f;
+	m_Attackinfos[0].m_flStandStill			= 3.4f;
+	//Iron Sights. These values will probably be changed.
+	m_Attackinfos[0].m_flStandAimStill		= 2.2f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 3.0f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.2f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	//
 	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
@@ -195,10 +201,16 @@ DECLARE_BG2_WEAPON( jaeger )
 	m_Attackinfos[0].m_flRecoil				= 0.9;
 	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 10.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 0.83f;
+	m_Attackinfos[0].m_flCrouchStill		= 2.4f; //0.83
 	m_Attackinfos[0].m_flStandMoving		= 11.0f; //8.0f
-	m_Attackinfos[0].m_flStandStill			= 2.0f;
-	m_Attackinfos[0].m_flConstantDamageRange= 25.0 * 36.0;	//25 yards
+	m_Attackinfos[0].m_flStandStill			= 3.0f; //2.0
+	//Iron Sights. These values will probably be changed.
+	m_Attackinfos[0].m_flStandAimStill		= 2.0f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 4.0f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 0.83f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	//
+	m_Attackinfos[0].m_flConstantDamageRange= 30.0 * 36.0;	//25 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 0.75;			//rifle
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
@@ -234,10 +246,16 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_Attackinfos[0].m_flRecoil				= 1.0;
 	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 10.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 0.75f;
+	m_Attackinfos[0].m_flCrouchStill		= 2.3f; //0.75
 	m_Attackinfos[0].m_flStandMoving		= 12.0f; //8.0f
-	m_Attackinfos[0].m_flStandStill			= 1.75f;
-	m_Attackinfos[0].m_flConstantDamageRange= 25.0 * 36.0;	//25 yards
+	m_Attackinfos[0].m_flStandStill			= 3.0f; //1.75
+	//Iron Sights. These values will probably be changed.
+	m_Attackinfos[0].m_flStandAimStill		= 1.75f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 3.8f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 0.75f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	//
+	m_Attackinfos[0].m_flConstantDamageRange= 30.0 * 36.0;	//25 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 0.75;			//rifle
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
@@ -270,9 +288,9 @@ DECLARE_BG2_WEAPON( pistol_a )
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= PISTOL_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 7.5f;
-	m_Attackinfos[0].m_flCrouchStill		= 6.0f; //5.0f
+	m_Attackinfos[0].m_flCrouchStill		= 6.0f;
 	m_Attackinfos[0].m_flStandMoving		= 9.0f;
-	m_Attackinfos[0].m_flStandStill			= 6.0f; //7.0f
+	m_Attackinfos[0].m_flStandStill			= 6.0f; 
 	m_Attackinfos[0].m_flConstantDamageRange= 15.0 * 36.0;	//15 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 1.25;			//pistol
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
@@ -306,9 +324,9 @@ DECLARE_BG2_WEAPON( pistol_b )
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= PISTOL_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 7.5f;
-	m_Attackinfos[0].m_flCrouchStill		= 6.0f; //5.0f
+	m_Attackinfos[0].m_flCrouchStill		= 6.0f;
 	m_Attackinfos[0].m_flStandMoving		= 9.0f;
-	m_Attackinfos[0].m_flStandStill			= 6.0f; //7.0f
+	m_Attackinfos[0].m_flStandStill			= 6.0f; 
 	m_Attackinfos[0].m_flConstantDamageRange= 15.0 * 36.0;	//15 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 1.25;			//pistol
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
@@ -495,10 +513,16 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 12.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 2.4f;
+	m_Attackinfos[0].m_flCrouchStill		= 3.4f;  //2.4
 	m_Attackinfos[0].m_flStandMoving		= 13.2f; //12.0f
-	m_Attackinfos[0].m_flStandStill			= 2.4f;
-	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
+	m_Attackinfos[0].m_flStandStill			= 3.4f; //2.4
+	//Iron Sights. These values will probably be changed.
+	m_Attackinfos[0].m_flStandAimStill		= 2.0f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 3.5f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.0f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 3.5f;
+	//
+	m_Attackinfos[0].m_flConstantDamageRange= 25.0 * 36.0;	//20 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 
@@ -530,9 +554,15 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 12.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 2.4f;
+	m_Attackinfos[0].m_flCrouchStill		= 3.6f; //2.4
 	m_Attackinfos[0].m_flStandMoving		= 13.2f; //12.0f
-	m_Attackinfos[0].m_flStandStill			= 2.4f;
+	m_Attackinfos[0].m_flStandStill			= 3.6f; //2.4
+	//Iron Sights.
+	m_Attackinfos[0].m_flStandAimStill		= 2.4f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 3.0f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.4f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	//
 	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;

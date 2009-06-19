@@ -199,6 +199,7 @@ void CC_ToggleIronSights( void )
 		return;
  
 	pWeapon->ToggleIronsights();
+	//
 }
 //
  
@@ -1248,26 +1249,43 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 	//BG2 - Tjoppen - don't bother with checking balance if we're just changing class, not team.
 	//					CHL2MPRules::Think() will make sure the teams are kept balanced.
 	//					We want to allow people to change class even if their team is too big.
-	if( mp_autobalanceteams.GetInt() == 1 && GetTeamNumber() != iTeam )
+	if( mp_autobalanceteams.GetInt() == 1 && GetTeamNumber() != iTeam ) //So the team we're attempting to join is different from our current team.
 	{
-		int iAutoTeamBalanceTeamDiff,
-			iAutoTeamBalanceBiggerTeam;
-		
-		if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers())
+
+		//Initialize just in case.
+		int iAutoTeamBalanceTeamDiff = 0,
+			iAutoTeamBalanceBiggerTeam = NULL,
+			iNumAmericans = pAmericans->GetNumPlayers(), //
+			iNumBritish = pBritish->GetNumPlayers(); //
+
+		switch ( GetTeamNumber () ) //Our current team now, but we're changing teams..
 		{
-			iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) + 1);
+			case TEAM_AMERICANS:
+				iNumAmericans -= 1; //-1 because we plan on leaving.
+				break;
+			case TEAM_BRITISH:
+				iNumBritish -= 1;
+				break;
+		}
+		
+		//if (pAmericans->GetNumPlayers() > pBritish->GetNumPlayers()) //So there are more Americans than British.
+		if ( iNumAmericans > iNumBritish )
+		{
+			//iAutoTeamBalanceTeamDiff = ((pAmericans->GetNumPlayers() - pBritish->GetNumPlayers()) ); //+ 1
+			iAutoTeamBalanceTeamDiff = iNumAmericans - iNumBritish;
 			iAutoTeamBalanceBiggerTeam = TEAM_AMERICANS;
 		}
-		else
+		else //More british than Americans.
 		{
-			iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) + 1);
+			//iAutoTeamBalanceTeamDiff = ((pBritish->GetNumPlayers() - pAmericans->GetNumPlayers()) ); //+ 1
+			iAutoTeamBalanceTeamDiff = iNumBritish - iNumAmericans;
 			iAutoTeamBalanceBiggerTeam = TEAM_BRITISH;
 		}
-
-		if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == iTeam))
+		if ((iAutoTeamBalanceTeamDiff >= mp_autobalancetolerance.GetInt()) && (iAutoTeamBalanceBiggerTeam == iTeam)) 
 		{
 			//BG2 - Tjoppen - TODO: usermessage this
-			ClientPrint( this, HUD_PRINTCENTER, "There are too many players in this team\n" );
+			//char *sTeamName = iTeam == TEAM_AMERICANS ? "American" : "British";
+			ClientPrint( this, HUD_PRINTCENTER, "There are too many players on this team!\n" );
 			return false;
 		}
 	}
@@ -1280,7 +1298,7 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 		!(GetTeamNumber() == iTeam && m_iClass == iClass) )
 	{
 		//BG2 - Tjoppen - TODO: usermessage this
-		ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team\n" );
+		ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team!\n" );
 		return false;
 	} 
 
@@ -1645,21 +1663,22 @@ END_SEND_TABLE()
 void CHL2MP_Player::CreateRagdollEntity( void )
 {
 	//BG2 - Tjoppen - here's where we put code for multiple ragdolls
-	if ( m_hRagdoll )
+	if ( m_hRagdoll ) //One already exists.. remove it.
 	{
 		UTIL_RemoveImmediate( m_hRagdoll );
 		m_hRagdoll = NULL;
 	}
 
 	// If we already have a ragdoll, don't make another one.
-	CHL2MPRagdoll *pRagdoll = dynamic_cast< CHL2MPRagdoll* >( m_hRagdoll.Get() );
+	//CHL2MPRagdoll *pRagdoll = dynamic_cast< CHL2MPRagdoll* >( m_hRagdoll.Get() );// This makes no sense? We just removed our ragdoll.. 
+																				   // Now we're trying to cast to it?
 	
 	//BG2 - Tjoppen - here's another place where we put code for multiple ragdolls
-	if ( !pRagdoll )
-	{
+	//if ( !pRagdoll )
+	//{
 		// create a new one
-		pRagdoll = dynamic_cast< CHL2MPRagdoll* >( CreateEntityByName( "hl2mp_ragdoll" ) );
-	}
+		CHL2MPRagdoll *pRagdoll = dynamic_cast< CHL2MPRagdoll* >( CreateEntityByName( "hl2mp_ragdoll" ) );
+	//}
 
 	if ( pRagdoll )
 	{
@@ -1769,7 +1788,7 @@ void CHL2MP_Player::Event_Killed( const CTakeDamageInfo &info )
 	// because we still want to transmit to the clients in our PVS.
 	//BG2 - Tjoppen - reenable spectators - no dead bodies raining from the sky
 	if( GetTeamNumber() > TEAM_SPECTATOR )
-	CreateRagdollEntity();
+		CreateRagdollEntity();
 
 	RemoveSelfFromFlags();
 
@@ -1942,58 +1961,57 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 	player = edict();
 
 	//BG2 - Rewrote all of the stuff below. -HairyPotter
+	//if ( GetTeamNumber() == TEAM_AMERICANS )
 	switch ( GetTeamNumber() )
 	{
 		case TEAM_AMERICANS:
-			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_american" )) != NULL && !pSpot->m_bSpawnpointTaken )
+			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_american" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
 			{
 				CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
 				if ( pSpot && pSpawn->IsEnabled() )
 				{
 					CBaseEntity *ent = NULL;
+					bool IsTaken = false;
 					//32 world units seems... safe.. -HairyPotter
-					for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
+					for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 /*128*/ ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 					{
 						// Check to see if the ent is a player.
 						if ( ent->IsPlayer() && !(ent->edict() == player) )
 						{
-							pSpot->m_bSpawnpointTaken = true; //So there's somebody in the way... let's say it's taken for now.
+							IsTaken = true;
 							//Msg("Someone is in the way of the american spawn. \n");
 						}
 					}
-					if ( pSpot->m_bSpawnpointTaken ) //Somebody was in the way, retry?
+					if ( IsTaken ) //Retry?
 						continue;
 				
-					//pSpot->AddEFlags( EFL_DORMANT );
-					pSpot->m_bSpawnpointTaken = true; //So we've passed all the requirements, the player will spawn here, so it's taken.
+					pSpot->AddEFlags( EFL_DORMANT );
 					goto ReturnSpot; //Spawn. Also pretend this goto doesn't exist.
 				}
-
 			}
 			break;
 		case TEAM_BRITISH:
-			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_british" )) != NULL && !pSpot->m_bSpawnpointTaken  ) //Spawn cannot be taken already.
+			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_british" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
 			{
 				CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
 				if ( pSpot && pSpawn->IsEnabled() )
 				{
 					CBaseEntity *ent = NULL;
-					//bool IsTaken = false;
+					bool IsTaken = false;
 					//32 world units seems... safe.. -HairyPotter
 					for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 					{
 						// Check to see if the ent is a player.
 						if ( ent->IsPlayer() && !(ent->edict() == player) )
 						{	
-							pSpot->m_bSpawnpointTaken = true; //So there's somebody in the way... let's say it's taken for now.
+							IsTaken = true;
 							//Msg("Someone is in the way of the british spawn. \n");
 						}
 					}
-					if ( pSpot->m_bSpawnpointTaken ) //Somebody was in the way, retry?
+					if ( IsTaken ) //Retry?
 						continue;
 
-					//pSpot->AddEFlags( EFL_DORMANT );
-					pSpot->m_bSpawnpointTaken = true; //So we've passed all the requirements, the player will spawn here, so it's taken.
+					pSpot->AddEFlags( EFL_DORMANT );
 					goto ReturnSpot; //Spawn. Also pretend this goto doesn't exist.
 				}
 			}
