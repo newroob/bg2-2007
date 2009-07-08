@@ -137,7 +137,6 @@ bool CEventLog::PrintPlayerEvent( IGameEvent *event )
 		if ( pPlayer == pAttacker && pPlayer )  
 		{  
 
-#ifdef HL2MP
 			UTIL_LogPrintf( "\"%s<%i><%s><%s>\" committed suicide with \"%s\"\n",  
 							pPlayer->GetPlayerName(),
 							userid,
@@ -145,22 +144,16 @@ bool CEventLog::PrintPlayerEvent( IGameEvent *event )
 							team ? team->GetName() : "",
 							weapon
 							);
-#else
-			UTIL_LogPrintf( "\"%s<%i><%s><%s>\" committed suicide with \"%s\"\n",  
-							pPlayer->GetPlayerName(),
-							userid,
-							pPlayer->GetNetworkIDString(),
-							team ? team->GetName() : "",
-							pAttacker->GetClassname()
-							);
-#endif
+
 		}
 		else if ( pAttacker )
 		{
 			CTeam *attackerTeam = pAttacker->GetTeam();
 
-#ifdef HL2MP
-			UTIL_LogPrintf( "\"%s<%i><%s><%s>\" killed \"%s<%i><%s><%s>\" with \"%s\"\n",  
+			//BG2 - Display killer and victim positions in log files for HLStatsX support. -HairyPotter
+			Vector APos = pAttacker->GetAbsOrigin(), VPos = pPlayer->GetAbsOrigin();
+
+			UTIL_LogPrintf( "\"%s<%i><%s><%s>\" killed \"%s<%i><%s><%s>\" with \"%s\" (attacker_position \"%i %i %i\" ) (victim_position \"%i %i %i\" )\n",  
 							pAttacker->GetPlayerName(),
 							attackerid,
 							pAttacker->GetNetworkIDString(),
@@ -169,20 +162,14 @@ bool CEventLog::PrintPlayerEvent( IGameEvent *event )
 							userid,
 							pPlayer->GetNetworkIDString(),
 							team ? team->GetName() : "",
-							weapon
+							weapon,
+							RoundFloatToInt( APos.x ),
+							RoundFloatToInt( APos.y ),
+							RoundFloatToInt( APos.z ),
+							RoundFloatToInt( VPos.x ),
+							RoundFloatToInt( VPos.y ),
+							RoundFloatToInt( VPos.z )
 							);
-#else
-			UTIL_LogPrintf( "\"%s<%i><%s><%s>\" killed \"%s<%i><%s><%s>\"\n",  
-							pAttacker->GetPlayerName(),
-							attackerid,
-							pAttacker->GetNetworkIDString(),
-							attackerTeam ? attackerTeam->GetName() : "",
-							pPlayer->GetPlayerName(),
-							userid,
-							pPlayer->GetNetworkIDString(),
-							team ? team->GetName() : ""
-							);								
-#endif
 		}
 		else
 		{  

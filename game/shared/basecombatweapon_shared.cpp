@@ -51,21 +51,21 @@ Vector CBaseCombatWeapon::GetIronsightPositionOffset( void ) const
 {
 	//if( viewmodel_adjust_enabled.GetBool() ) Out of the way, you!
 		//return Vector( viewmodel_adjust_forward.GetFloat(), viewmodel_adjust_right.GetFloat(), viewmodel_adjust_up.GetFloat() );
-	return GetWpnData().vecIronsightPosOffset; //Just do what the script says!
+	return vecIronsightPosOffset; //Just do what the script says!
 }
  
 QAngle CBaseCombatWeapon::GetIronsightAngleOffset( void ) const
 {
 	//if( viewmodel_adjust_enabled.GetBool() ) Out of the way, you!
 		//return QAngle( viewmodel_adjust_pitch.GetFloat(), viewmodel_adjust_yaw.GetFloat(), viewmodel_adjust_roll.GetFloat() );
-	return GetWpnData().angIronsightAngOffset; //Just do what the script says!
+	return angIronsightAngOffset; //Just do what the script says!
 }
  
 float CBaseCombatWeapon::GetIronsightFOVOffset( void ) const
 {
 	//if( viewmodel_adjust_enabled.GetBool() ) Out of the way, you!
 		//return viewmodel_adjust_fov.GetFloat();
-	return GetWpnData().flIronsightFOVOffset; //Just do what the script says!
+	return flIronsightFOVOffset; //Just do what the script says!
 }
 //
 

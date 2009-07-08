@@ -339,31 +339,6 @@ extern ConVar hud_fastswitch;
 
 void FileWeaponInfo_t::Parse( KeyValues *pKeyValuesData, const char *szWeaponName )
 {
-
-	//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
-	KeyValues *pSights = pKeyValuesData->FindKey( "IronSight" );
-	if (pSights)
-	{
-		vecIronsightPosOffset.x		= pSights->GetFloat( "forward", 0.0f );
-		vecIronsightPosOffset.y		= pSights->GetFloat( "right", 0.0f );
-		vecIronsightPosOffset.z		= pSights->GetFloat( "up", 0.0f );
- 
-		angIronsightAngOffset[PITCH]	= pSights->GetFloat( "pitch", 0.0f );
-		angIronsightAngOffset[YAW]		= pSights->GetFloat( "yaw", 0.0f );
-		angIronsightAngOffset[ROLL]		= pSights->GetFloat( "roll", 0.0f );
- 
-		flIronsightFOVOffset		= pSights->GetFloat( "fov", 0.0f );
-		m_bWeaponHasSights = true; //Some weapons have iron sights...
-	}
-	else
-	{
-		vecIronsightPosOffset = vec3_origin;
-		angIronsightAngOffset.Init();
-		flIronsightFOVOffset = 0.0f;
-		m_bWeaponHasSights = false; //Others do not.
-	}
-	//
-
 	// Okay, we tried at least once to look this up...
 	bParsedScript = true;
 

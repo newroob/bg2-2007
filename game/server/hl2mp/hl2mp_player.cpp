@@ -192,7 +192,7 @@ void CC_ToggleIronSights( void )
 	if( pWeapon == NULL )
 		return;
 
-	if ( !pWeapon->GetWpnData().m_bWeaponHasSights ) //Don't use iron sights on certain weapons... like a sword. -HairyPotter
+	if ( !pWeapon->m_bWeaponHasSights ) //Don't use iron sights on certain weapons... like a sword. -HairyPotter
 		return;
 
 	if ( pWeapon->m_bInReload ) //Don't do iron sights when reloading...
@@ -474,23 +474,24 @@ void CHL2MP_Player::Spawn(void)
 	SetPlayerUnderwater(false);
 
 	//BG2 - Put the speed handler into spawn so flag weight works, among other things. -HairyPotter
+	//5 speed added to all classes.
 	switch (m_iClass)
 	{
 		case CLASS_INFANTRY:
-			iSpeed = 190;
+			iSpeed = 195;
 			iSpeed2 = 120;
 			break;
 		case CLASS_OFFICER:
-			iSpeed = 220;
+			iSpeed = 225;
 			iSpeed2 = 140;
 			break;
 		case CLASS_SNIPER:
-			iSpeed = 200;
+			iSpeed = 205;
 			iSpeed2 = 130;
 			break;
 		case CLASS_SKIRMISHER:
-			iSpeed = 195;
-			iSpeed2 = 130;
+			iSpeed = 200;
+			iSpeed2 = 140;
 			break;
 	}
 	//

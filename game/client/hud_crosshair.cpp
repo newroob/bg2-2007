@@ -85,8 +85,14 @@ bool CHudCrosshair::ShouldDraw( void )
 		return false;
 
 	C_BaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
-	if ( pWeapon && !pWeapon->ShouldDrawCrosshair() )
-		return false;
+	if ( pWeapon )
+	{
+		if ( pWeapon->m_bIsIronsighted ) //No crosshair in Iron Sights. -HairyPotter
+			return false;
+
+		if ( !pWeapon->ShouldDrawCrosshair() )
+			return false;
+	}
 
 	/* disabled to avoid assuming it's an HL2 player.
 	// suppress crosshair in zoom.

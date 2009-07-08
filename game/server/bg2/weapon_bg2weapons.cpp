@@ -83,6 +83,19 @@ DECLARE_BG2_WEAPON( brownbess )
 
 	m_fHolsterTime = 0.75f;
 
+	//Iron sights viewmodel settings.
+	vecIronsightPosOffset.x		= -17.25; //forward
+	vecIronsightPosOffset.y		= -7.75; //right
+	vecIronsightPosOffset.z		= 6.8; //up
+ 
+	angIronsightAngOffset[PITCH]	= -0.1;
+	angIronsightAngOffset[YAW]		= 0;
+	angIronsightAngOffset[ROLL]		= 0;
+	flIronsightFOVOffset		= 0;
+
+	m_bWeaponHasSights = true; 
+	//
+
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= BESS_FIRE_DAMAGE;//75;
@@ -137,6 +150,19 @@ DECLARE_BG2_WEAPON( charleville )
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
+
+	//Iron sights viewmodel settings.
+	vecIronsightPosOffset.x		= -18.25; //forward
+	vecIronsightPosOffset.y		= -7.90; //right
+	vecIronsightPosOffset.z		= 7.0; //up
+ 
+	angIronsightAngOffset[PITCH]	= 0;
+	angIronsightAngOffset[YAW]		= 0;
+	angIronsightAngOffset[ROLL]		= 0;
+	flIronsightFOVOffset		= 0;
+
+	m_bWeaponHasSights = true; 
+	//
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
@@ -194,6 +220,19 @@ DECLARE_BG2_WEAPON( jaeger )
 
 	m_fHolsterTime = 0.75f;
 
+	//Iron sights viewmodel settings.
+	vecIronsightPosOffset.x		= -17.55; //forward
+	vecIronsightPosOffset.y		= -7.64; //right
+	vecIronsightPosOffset.z		= 7.15; //up
+ 
+	angIronsightAngOffset[PITCH]	= 0;
+	angIronsightAngOffset[YAW]		= 0.14;
+	angIronsightAngOffset[ROLL]		= 0;
+	flIronsightFOVOffset		= 0;
+
+	m_bWeaponHasSights = true; 
+	//
+
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= JAEGER_FIRE_DAMAGE;//75;
@@ -239,6 +278,19 @@ DECLARE_BG2_WEAPON( pennsylvania )
 
 	m_fHolsterTime = 0.75f;
 
+	//Iron sights viewmodel settings.
+	vecIronsightPosOffset.x		= -17.15; //forward
+	vecIronsightPosOffset.y		= -8.05; //right
+	vecIronsightPosOffset.z		= 6.7; //up
+ 
+	angIronsightAngOffset[PITCH]	= 0;
+	angIronsightAngOffset[YAW]		= 0;
+	angIronsightAngOffset[ROLL]		= 0;
+	flIronsightFOVOffset		= 0;
+
+	m_bWeaponHasSights = true; 
+	//
+
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= PENNY_FIRE_DAMAGE;//75;
@@ -281,6 +333,8 @@ DECLARE_BG2_WEAPON( pistol_a )
 
 	m_fHolsterTime = 0.50f;
 
+	m_bWeaponHasSights = false; 
+
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= PISTOLA_FIRE_DAMAGE;//75;
@@ -316,6 +370,8 @@ DECLARE_BG2_WEAPON( pistol_b )
 	m_bDontAutoreload	= true;
 
 	m_fHolsterTime = 0.50f;
+
+	m_bWeaponHasSights = false; 
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
@@ -353,6 +409,8 @@ DECLARE_BG2_WEAPON( sabre_a )
 
 	m_fHolsterTime = 0.50f;
 
+	m_bWeaponHasSights = false; 
+
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
 	m_Attackinfos[0].m_flDamage				= SABRE_DAMAGE;//60;
@@ -382,6 +440,8 @@ DECLARE_BG2_WEAPON( sabre_b )
 	m_bDontAutoreload	= true;
 
 	m_fHolsterTime = 0.50f;
+
+	m_bWeaponHasSights = false; 
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
@@ -413,6 +473,8 @@ DECLARE_BG2_WEAPON( knife )
 
 	m_fHolsterTime = 0.75f;
 
+	m_bWeaponHasSights = false; 
+
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
 	m_Attackinfos[0].m_flDamage				= KNIFE_DAMAGE;//60;
@@ -442,6 +504,8 @@ DECLARE_BG2_WEAPON( hirschf )
 	m_bDontAutoreload	= true;
 
 	m_fHolsterTime = 0.75f;
+
+	m_bWeaponHasSights = false; 
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
@@ -474,6 +538,8 @@ DECLARE_BG2_WEAPON( tomahawk )
 
 	m_fHolsterTime = 0.75f;
 
+	m_bWeaponHasSights = false; 
+
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
 	m_Attackinfos[0].m_flDamage				= TOMAHAWK_DAMAGE;//60;
@@ -505,6 +571,19 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
+
+	//Iron sights viewmodel settings.
+	vecIronsightPosOffset.x		= -19.90; //forward
+	vecIronsightPosOffset.y		= -7.90; //right
+	vecIronsightPosOffset.z		= 6.72; //up
+ 
+	angIronsightAngOffset[PITCH]	= -0.36;
+	angIronsightAngOffset[YAW]		= 0;
+	angIronsightAngOffset[ROLL]		= 0;
+	flIronsightFOVOffset		= 0;
+
+	m_bWeaponHasSights = true; 
+	//
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
@@ -547,6 +626,19 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 
 	m_fHolsterTime = 0.75f;
 
+	//Iron sights viewmodel settings.
+	vecIronsightPosOffset.x		= -17.25; //forward
+	vecIronsightPosOffset.y		= -7.75; //right
+	vecIronsightPosOffset.z		= 6.8; //up
+ 
+	angIronsightAngOffset[PITCH]	= -0.25;
+	angIronsightAngOffset[YAW]		= 0;
+	angIronsightAngOffset[ROLL]		= 0;
+	flIronsightFOVOffset		= 0;
+
+	m_bWeaponHasSights = true; 
+	//
+
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
 	m_Attackinfos[0].m_flDamage				= BESS_FIRE_DAMAGE;//75;
@@ -585,6 +677,8 @@ DECLARE_BG2_WEAPON( beltaxe )
 	m_bDontAutoreload	= true;
 
 	m_fHolsterTime = 0.75f;
+
+	m_bWeaponHasSights = false; 
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
