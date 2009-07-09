@@ -340,7 +340,8 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Snipers. -HairyPotter
 			break;
 		case CLASS_SKIRMISHER:
-			GiveNamedItem( "weapon_brownbess_nobayo", 1 ); //So the native skin is set to 1 (2 in HLMV since 0 is default in the code)
+			//GiveNamedItem( "weapon_brownbess_nobayo", 1 ); //So the native skin is set to 1 (2 in HLMV since 0 is default in the code)
+			GiveNamedItem( "weapon_brownbess_nobayo" );
 			GiveNamedItem( "weapon_tomahawk" );
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Skirmishers. -HairyPotter
 			break;

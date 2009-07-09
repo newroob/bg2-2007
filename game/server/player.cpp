@@ -887,7 +887,6 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 
 		SetLastHitGroup( ptr->hitgroup );
 
-		
 		//BG2 - Tjoppen - some Msg()'s here..
 		switch ( ptr->hitgroup )
 		{
@@ -1626,12 +1625,14 @@ int CBasePlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 	{
 		event->SetInt("userid", GetUserID() );
 		event->SetInt("health", max(0, m_iHealth) );
+		event->SetInt("damage", info.GetDamage() );
 		event->SetInt("priority", 5 );	// HLTV event priority, not transmitted
 
 		if ( attacker->IsPlayer() )
 		{
 			CBasePlayer *player = ToBasePlayer( attacker );
 			event->SetInt("attacker", player->GetUserID() ); // hurt by other player
+			event->SetString("weapon", player->GetActiveWeapon()->GetDeathNoticeName() );
 		}
 		else
 		{

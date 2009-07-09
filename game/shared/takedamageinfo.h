@@ -48,6 +48,7 @@ public:
 	void			SubtractDamage( float flSubtractAmount );
 
 	float			GetBaseDamage() const;
+
 	bool			BaseDamageIsValid() const;
 
 	Vector			GetDamageForce() const;
@@ -175,7 +176,6 @@ inline float CTakeDamageInfo::GetDamage() const
 {
 	return m_flDamage;
 }
-
 inline void CTakeDamageInfo::SetDamage( float flDamage )
 {
 	m_flDamage = flDamage;
