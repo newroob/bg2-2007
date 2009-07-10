@@ -817,10 +817,6 @@ public:
 	float					m_fLerpTime;		// users cl_interp
 	bool					m_bLagCompensation;	// user wants lag compenstation
 	bool					m_bPredictWeapons; //  user has client side predicted weapons
-
-	//BG2 - Used by the CTF mode trigger. -HairyPotter
-	CBaseEntity *e_CtfFlag;
-	//
 	
 	float		GetDeathTime( void ) { return m_flDeathTime; }
 

@@ -71,6 +71,8 @@ BEGIN_DATADESC( CTriggerWeaponDissolve )
 
 END_DATADESC()
 
+extern ConVar sv_ctf_capturestyle;
+
 //-----------------------------------------------------------------------------
 // Destructor
 //-----------------------------------------------------------------------------
@@ -1045,83 +1047,100 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 		return;
 
 	//Defines
-	//Yeah, all this is needed. If an entity has a parent, you have to go through the parent to get to that entity. Figures.
 	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther );
-	CtfFlag *pFlag = dynamic_cast< CtfFlag* >( pPlayer->e_CtfFlag );
+	CtfFlag *pFlag = NULL;
+	bool m_bHomeFlagTaken = false;
 
-	//if ( !pPlayer->IsAlive() ) //Still alive?
-	//	return;
-
-	if ( !pFlag ) //Player doesn't have a flag. Just die.
+	if ( !pPlayer )
 		return;
 
-	if ( pFlag->GetParent() == NULL ) //Does the flag not have a parent for whatever reason? Maybe it was reset while a player had it?
-	{
-		pPlayer->e_CtfFlag = NULL; //Player no longer has the flag entity, if he ever had it.
+	if ( !pPlayer->IsAlive() ) //Still alive?
 		return;
-	}
 
-	int TeamNumber = pPlayer->GetTeamNumber();
-	//
-	//For team affected by the trigger.
-	switch( m_iAffectedTeam )
+	if ( sv_ctf_capturestyle.GetInt() > 1 ) 
 	{
-		case 0:
-			iTeam = TeamNumber;
-			break;
-		case 1:
-			iTeam = TEAM_BRITISH;
-			break;
-		case 2:
-			iTeam = TEAM_AMERICANS;
-			break;
+		while( (pFlag = dynamic_cast<CtfFlag*>( gEntList.FindEntityByClassname( pFlag, "ctf_flag" ) )) != NULL )
+		{
+			if ( pFlag->iTeam == pPlayer->GetTeamNumber() ) //This flag is an enemy flag, we want the player's team's flag.
+				continue;
+
+			if ( pFlag->GetAbsOrigin() != pFlag->FlagOrigin ) //This flag belongs to the player's team. Is it at home?
+				m_bHomeFlagTaken = true;
+		}
 	}
 
-	if ( TeamNumber != iTeam ) //Isn't for this team. Die.
-		return;
-	//
 
-	//Assuming we've made it thus far, you're probably carrying a flag that belongs to the enemy. Go ahead and cap it.
-	pFlag->PlaySound( GetAbsOrigin(), m_iSound ); //Play the capture sound.
-
-	pFlag->ResetFlag();
-
-	g_Teams[TeamNumber]->AddScore( m_iTeamBonus ); //Adds the team score bonus.
-	pPlayer->IncrementFragCount( m_iPlayerBonus ); //Give the player the points.
-
-	//For the player speed difference.
-	switch( pPlayer->m_iClass )
+	while( (pFlag = dynamic_cast<CtfFlag*>( gEntList.FindEntityByClassname( pFlag, "ctf_flag" ) )) != NULL )
 	{
-		case CLASS_INFANTRY:
-			pPlayer->iSpeed = pPlayer->iSpeed + pFlag->m_iFlagWeight; 
-			break;
-		case CLASS_OFFICER:
-			pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.6);
-			break;
-		case CLASS_SNIPER:
-			pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.2);
-			break;
-		case CLASS_SKIRMISHER:
-			pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.1);
-			break;
-	}
-	//
+		if ( pFlag->GetParent() && pFlag->GetParent() == pPlayer) //So the flag has a parent.. and it's the player who touched the trigger.
+		{
+			int TeamNumber = pPlayer->GetTeamNumber();
 
-	pFlag->PrintAlert( "%s Has Captured The %s Flag!", pPlayer->GetPlayerName(), pFlag->cFlagName );
+			//For team affected by the trigger.
+			switch( m_iAffectedTeam )
+			{
+				case 0:
+					iTeam = TeamNumber;
+					break;
+				case 1:
+					iTeam = TEAM_BRITISH;
+					break;
+				case 2:
+					iTeam = TEAM_AMERICANS;
+					break;
+			}
 
-	//Do the log stuff.
-	CTeam *team = pPlayer->GetTeam();
+			if ( TeamNumber != iTeam ) //Trigger isn't for this player's team. Die.
+				return;
+			//
+
+			if ( m_bHomeFlagTaken ) //The player's team's flag is taken. So we cannot cap an enemy flag.
+			{
+				ClientPrint( pPlayer, HUD_PRINTCENTER, "Your team's flag must be at home before you can capture an enemy flag!\n" ); //Let the player know.
+					return; //Die here.
+			}
+
+			//Assuming we've made it thus far, you're probably carrying a flag that belongs to the enemy. Go ahead and cap it.
+			pFlag->PlaySound( GetAbsOrigin(), m_iSound ); //Play the capture sound.
+
+			pFlag->ResetFlag();
+
+			g_Teams[TeamNumber]->AddScore( m_iTeamBonus ); //Adds the team score bonus.
+			pPlayer->IncrementFragCount( m_iPlayerBonus ); //Give the player the points.
+
+			//For the player speed difference.
+			switch( pPlayer->m_iClass )
+			{
+				case CLASS_INFANTRY:
+					pPlayer->iSpeed = pPlayer->iSpeed + pFlag->m_iFlagWeight; 
+					break;
+				case CLASS_OFFICER:
+					pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.6);
+					break;
+				case CLASS_SNIPER:
+					pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.2);
+					break;
+				case CLASS_SKIRMISHER:
+					pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.1);
+					break;
+			}
+			//
+
+			pFlag->PrintAlert( "%s Has Captured The %s Flag!", pPlayer->GetPlayerName(), pFlag->cFlagName );
+
+			//Do the log stuff.
+			CTeam *team = pPlayer->GetTeam();
 			
-	UTIL_LogPrintf( "\"%s<%i><%s><%s>\" triggered \"ctf_flag_capture\"\n", 
-				pPlayer->GetPlayerName(), 
-				pPlayer->GetUserID(), 
-				pPlayer->GetNetworkIDString(), 
-				team ? team->GetName() : ""); 
-	//
+			UTIL_LogPrintf( "\"%s<%i><%s><%s>\" triggered \"ctf_flag_capture\"\n", 
+						pPlayer->GetPlayerName(), 
+						pPlayer->GetUserID(), 
+						pPlayer->GetNetworkIDString(), 
+						team ? team->GetName() : ""); 
+			//
 
-	m_OnFlagCaptured.FireOutput( this, this ); //Fire the OnFlagCaptured output, set it last just in case.
-
-	pPlayer->e_CtfFlag = NULL; //Player no longer has the flag entity.
+			m_OnFlagCaptured.FireOutput( this, this ); //Fire the OnFlagCaptured output, set it last just in case.
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------

@@ -1626,6 +1626,7 @@ int CBasePlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 		event->SetInt("userid", GetUserID() );
 		event->SetInt("health", max(0, m_iHealth) );
 		event->SetInt("damage", info.GetDamage() );
+		event->SetInt("hitgroup", LastHitGroup() );
 		event->SetInt("priority", 5 );	// HLTV event priority, not transmitted
 
 		if ( attacker->IsPlayer() )

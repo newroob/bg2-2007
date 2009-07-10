@@ -2280,10 +2280,12 @@ void CHL2MP_Player::RemoveSelfFromFlags( void )
 		pFlag->m_vOverloadingPlayers.FindAndRemove( this );
 
 	//Also have the player drop CTF Flags if they are holding one. -HairyPotter
-	CtfFlag *ctfFlag = dynamic_cast< CtfFlag* >( e_CtfFlag );  //So the player ent has the flag ent stored...
-	if ( ctfFlag ) //It exists....
-		ctfFlag->DropFlag();  //DropFlag() takes care of the rest.
-	//
+	CtfFlag *ctfFlag = NULL;
+	while( (ctfFlag = dynamic_cast<CtfFlag*>( gEntList.FindEntityByClassname( ctfFlag, "ctf_flag" ) )) != NULL )
+	{
+		if ( ctfFlag->GetParent() && ctfFlag->GetParent() == this )
+			ctfFlag->DropFlag(); 
+	}
 }
 
 //BG2 - Tjoppen - HACKHACK: no more weapon_physcannon

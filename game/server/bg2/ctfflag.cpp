@@ -152,7 +152,6 @@ void CtfFlag::Think( void )
 			//
 
 			//Assuming you've passed all the checks, you deserve to pick up the flag. So run the code below.
-			pPlayer->e_CtfFlag = this;	//So the capture trigger will know which flag is being captured.
 			SetModel( "models/other/flag_nopole.mdl" ); //Something I came up with. Since it doesn't look lik the player is actually holding the flag, just have it work like an indicator.
 			SetAbsAngles( pPlayer->GetAbsAngles() + QAngle( 0,180,0 ) ); // Make sure the flag is flying with the player model, not against it.
 			SetAbsOrigin( pPlayer->GetAbsOrigin() + Vector( 0,0,25 ) );	//Keeps the flag out of the player's FOV, also raises it so it doesn't look like it's stuck in the player's grill.

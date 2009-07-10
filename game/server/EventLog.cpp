@@ -208,7 +208,7 @@ bool CEventLog::PrintPlayerEvent( IGameEvent *event )
 		return true;
 	}
 	//BG2 - Added for more HlStatsX support. - HairyPotter
-	else if ( !Q_strncmp( eventName, "player_hurt", Q_strlen("player_hurt") ) )
+	/*else if ( !Q_strncmp( eventName, "player_hurt", Q_strlen("player_hurt") ) )
 	{
 		const int attackerid = event->GetInt( "attacker" );
 		const int damage = event->GetInt( "damage" );
@@ -247,7 +247,7 @@ bool CEventLog::PrintPlayerEvent( IGameEvent *event )
 		}
 
 		return true;
-	}
+	}*/
 	//
 				   
 // ignored events
