@@ -120,9 +120,9 @@ void CClassButton::OnCursorEntered( void )
 		case 4: //Skirmisher
 			{
 				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
-					ResolveLocalizedPath( "#BG2_InfoHTML_A_Rif_Path", pANSIPath, sizeof pANSIPath ); //Changeme - HairyPotter
+					ResolveLocalizedPath( "#BG2_InfoHTML_A_Ski_Path", pANSIPath, sizeof pANSIPath );
 				else if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
-					ResolveLocalizedPath( "#BG2_InfoHTML_B_Rif_Path", pANSIPath, sizeof pANSIPath ); //Changeme - HairyPotter
+					ResolveLocalizedPath( "#BG2_InfoHTML_B_Ski_Path", pANSIPath, sizeof pANSIPath );
 				else
 					return;
 			}
