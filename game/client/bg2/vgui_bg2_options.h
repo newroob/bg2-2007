@@ -19,7 +19,8 @@ extern ConVar	cl_crosshair,
 				cl_flagstatusdetail,
 
 				cl_hitverif,
-				cl_winmusic;
+				cl_winmusic,
+				hud_takesshots;
 
 
 class CBG2OptionsPanel : public vgui::Frame
@@ -58,8 +59,8 @@ class CBG2OptionsPanel : public vgui::Frame
 			cl_winmusic.SetValue( m_pWinmusicCheckButton->IsSelected() );
 			cl_capturesounds.SetValue( m_pCaptureSoundsCheckButton->IsSelected() );
 			cl_vcommsounds.SetValue( m_pVCommSoundsCheckButton->IsSelected() );
+			hud_takesshots.SetValue( m_pScreenShotCheckButton->IsSelected() );
 			hud_showtargetid.SetValue( m_pShowNamesCheckButton->IsSelected() );
-
 		}
 
 		BaseClass::OnCommand( command );
@@ -94,6 +95,7 @@ class CBG2OptionsPanel : public vgui::Frame
 		m_pWinmusicCheckButton->SetSelected( cl_winmusic.GetBool() );
 		m_pCaptureSoundsCheckButton->SetSelected( cl_capturesounds.GetBool() );
 		m_pVCommSoundsCheckButton->SetSelected( cl_vcommsounds.GetBool() );
+		m_pScreenShotCheckButton->SetSelected( hud_takesshots.GetBool() );
 		m_pShowNamesCheckButton->SetSelected( hud_showtargetid.GetBool() );
 	}
 
@@ -151,6 +153,9 @@ class CBG2OptionsPanel : public vgui::Frame
 		m_pVCommSoundsCheckButton = new vgui::CheckButton( this, "VCommSoundsCheckButton", "" );
 		m_pVCommSoundsCheckButton->AddActionSignalTarget( this );
 
+		m_pScreenShotCheckButton = new vgui::CheckButton( this, "ScreenShotCheckButton", "" );
+		m_pScreenShotCheckButton->AddActionSignalTarget( this );
+
 		m_pShowNamesCheckButton = new vgui::CheckButton( this, "ShowNamesCheckButton", "" );
 		m_pShowNamesCheckButton->AddActionSignalTarget( this );
 
@@ -193,7 +198,8 @@ class CBG2OptionsPanel : public vgui::Frame
 						*m_pCaptureSoundsCheckButton,
 						*m_pVCommSoundsCheckButton,
 						*m_pShowNamesCheckButton,
-						*m_pWinmusicCheckButton;
+						*m_pWinmusicCheckButton,
+						*m_pScreenShotCheckButton;
 
 protected:
 	//virtual void OnCommand(const char *pCommand);

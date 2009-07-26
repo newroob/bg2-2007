@@ -76,7 +76,8 @@ class CHudChat;
 
 static vgui::HContext s_hVGuiContext = DEFAULT_VGUI_CONTEXT;
 
-ConVar cl_drawhud( "cl_drawhud","1", 0, "Enable the rendering of the hud" );
+ConVar cl_drawhud( "cl_drawhud","1", 0, "Enable the rendering of the hud." );
+ConVar hud_takesshots( "hud_takesshots", "0", FCVAR_ARCHIVE, "Enable screenshots of scores after map end.");
 
 extern ConVar v_viewmodel_fov;
 
@@ -166,6 +167,16 @@ static void __MsgFunc_VGUIMenu( bf_read &msg )
 	}
 
 	gViewPortInterface->ShowPanel( viewport, bShow );
+
+	//BG2 - HACKHACK - This function is used when the server tells a client to view one of the panels right?
+	//It looks like PANEL_SCOREBOARD is only fired under one condition... a map win. So rather than sending more data
+	//over the network to tell a client to take a screenshot of the scoreboard.. we'll just crutch off this. 
+	//IF WE EVER DECIDE TO SHOW THE SCOREBOARD TO CLIENTS BEFORE MAP WINS, WE WILL HAVE TO REVISE THIS. -HairyPotter
+	if ( Q_strcmp(panelname, PANEL_SCOREBOARD) == 0 )
+	{
+		if ( hud_takesshots.GetInt() )
+			engine->ClientCmd( "jpeg" );
+	}
 }
 
 //-----------------------------------------------------------------------------
