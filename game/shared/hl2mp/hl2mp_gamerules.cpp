@@ -37,6 +37,7 @@
 //BG2 - Draco
 #include "triggers.h"
 #include "../bg2/flag.h"
+#include "../bg2/bg2_maptriggers.h"
 //BG2 - Tjoppen - #includes
 #include "sdk/sdk_bot_temp.h"
 
@@ -61,7 +62,7 @@ ConVar mp_americanscore( "mp_americanscore", "0", FCVAR_GAMEDLL /*| FCVAR_NOTIFY
 ConVar mp_britishscore( "mp_britishscore", "0", FCVAR_GAMEDLL /*| FCVAR_NOTIFY*/ | FCVAR_CHEAT  );
 ConVar mp_autobalanceteams( "mp_autobalanceteams", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_autobalancetolerance( "mp_autobalancetolerance", "2", FCVAR_GAMEDLL | FCVAR_NOTIFY );
-ConVar mp_timeleft( "mp_timeleft", "0", FCVAR_GAMEDLL, "Set this to the amount time you want the round to be. (In Minutes)"); //1200
+ConVar mp_timeleft( "mp_timeleft", "0", FCVAR_GAMEDLL, "");
 
 //BG2 - Draco - End
 //BG2 - Tjoppen - mp_winbonus
@@ -242,8 +243,6 @@ char *sTeamNames[] =
 	//BG2 - Tjoppen - team names...
 	"Americans",	//combine team color is blue..
 	"British",		//.. and rebel is red. no need to mess around with that
-	/*"Combine",
-	"Rebels",*/
 };
 
 CHL2MPRules::CHL2MPRules()
@@ -289,7 +288,6 @@ CHL2MPRules::CHL2MPRules()
 	//
 	mp_britishscore.SetValue(0);
 	mp_americanscore.SetValue(0);
-	m_fAdditionTime = 0;
 	//m_fEndRoundTime = -1;
 	m_fNextFlagUpdate = 0;
 	//m_iWaveTime = 0;
@@ -439,6 +437,8 @@ void CHL2MPRules::Think( void )
 
 	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
 	CTeam *pBritish = g_Teams[TEAM_BRITISH];
+	CMapTrigger *BG2Trigger = NULL;
+
 	void ClientPrintAll( char *str, bool printfordeadplayers, bool forcenextclientprintall );
 	if ( g_fGameOver )   // someone else quit the game already
 	{
@@ -449,17 +449,26 @@ void CHL2MPRules::Think( void )
 			{
 				ClientPrintAll( "British win!", true, true );
 				WinSong( TEAM_BRITISH, true );
+
+				while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+					BG2Trigger->BritishMapWin();
 			}
 
 			if (pAmericans->GetScore() > pBritish->GetScore())
 			{
 				ClientPrintAll( "Americans win!", true, true );
 				WinSong( TEAM_AMERICANS, true );
+
+				while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+					BG2Trigger->AmericanMapWin();
 			}
 
 			if (pAmericans->GetScore() == pBritish->GetScore())
 			{
 				ClientPrintAll( "Draw!", true, true );
+
+				while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+					BG2Trigger->Draw();
 			}
 		}
 
@@ -494,7 +503,7 @@ void CHL2MPRules::Think( void )
 		}
 
 		// check to see if we should change levels now
-		if ( (m_flIntermissionEndTime + m_fAdditionTime) < gpGlobals->curtime )
+		if ( m_flIntermissionEndTime < gpGlobals->curtime )
 		{
 			m_bHasDoneWinSong = false;
 			ChangeLevel(); // intermission is over
@@ -503,7 +512,7 @@ void CHL2MPRules::Think( void )
 		return;
 	}
 
-	float flTimeLimit = GetMapRemainingTime()/*mp_timelimit.GetFloat() * 60*/; //BG2 - Fix'd. -HairyPotter
+	float flTimeLimit = GetMapRemainingTime();
 	float flFragLimit = fraglimit.GetFloat();
 
 	if ( flTimeLimit != 0 && gpGlobals->curtime >= flTimeLimit )
@@ -529,7 +538,7 @@ void CHL2MPRules::Think( void )
 	//=========================
 	//Time Left
 	//=========================
-	mp_timeleft.SetValue(((flTimeLimit + m_fAdditionTime) - gpGlobals->curtime));
+	mp_timeleft.SetValue((flTimeLimit - gpGlobals->curtime)); //timeleft works just as well..
 
 	//=========================
 	//Score Cvars
@@ -617,7 +626,6 @@ void CHL2MPRules::Think( void )
 			pPlayer->ResetFragCount();//...for cap points...
 			pPlayer->ResetDeathCount();//...and damage
 		}
-		m_fAdditionTime += gpGlobals->curtime;
 		RestartRound();	//BG2 - Tjoppen - restart round
 	}
 	
@@ -721,17 +729,29 @@ void CHL2MPRules::Think( void )
 					m_fLastRespawnWave = gpGlobals->curtime;
 				}
 
+				CMapTrigger *BG2Trigger = NULL;
+
 				if( m_iTDMTeamThatWon == 2 )
 				{
 					//british
 					WinSong( TEAM_BRITISH);
+
+					while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+						BG2Trigger->BritishRoundWin();
 				}
 				else if( m_iTDMTeamThatWon == 1 )
 				{
 					//americans
 					WinSong( TEAM_AMERICANS );
+
+					while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+						BG2Trigger->AmericanRoundWin();
 				}
-				//else it was a draw, so play no music
+				else
+				{
+					while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+						BG2Trigger->Draw();
+				}
 			}
 		}
 	}
@@ -763,7 +783,7 @@ void CHL2MPRules::Think( void )
 #endif
 }
 
-void CHL2MPRules::GoToIntermission( void )
+void CHL2MPRules::GoToIntermission( void ) //Just for reference.. this fires whenever the map is won. -HairyPotter
 {
 #ifndef CLIENT_DLL
 	if ( g_fGameOver )
@@ -1160,7 +1180,9 @@ void CHL2MPRules::ClientSettingsChanged( CBasePlayer *pPlayer )
 	if ( pHL2Player == NULL )
 		return;
 
-	const char *pCurrentModel = modelinfo->GetModelName( pPlayer->GetModel() );
+	//BG2 - The only thing cl_playermodel does at this point is change your team when you change the value. What's the point? 
+	//Just use the class selection menu like everyone else so we can skim more shit off. -HairyPotter
+	/*const char *pCurrentModel = modelinfo->GetModelName( pPlayer->GetModel() );
 	const char *szModelName = engine->GetClientConVarValue( engine->IndexOfEdict( pPlayer->edict() ), "cl_playermodel" );
 
 	//If we're different.
@@ -1198,7 +1220,7 @@ void CHL2MPRules::ClientSettingsChanged( CBasePlayer *pPlayer )
 		{
 			pHL2Player->ChangeTeam( TEAM_BRITISH );
 		}
-	}
+	}*/
 	if ( sv_report_client_settings.GetInt() == 1 )
 	{
 		UTIL_LogPrintf( "\"%s\" cl_cmdrate = \"%s\"\n", pHL2Player->GetPlayerName(), engine->GetClientConVarValue( pHL2Player->entindex(), "cl_cmdrate" ));
@@ -1827,12 +1849,26 @@ void CHL2MPRules::ResetFlags( void )
 		if (pFlag->HasSpawnFlags( CFlag_START_DISABLED ))
 		{
 			pFlag->m_bActive = false;
-			pFlag->m_nSkin = 2;
+			//pFlag->m_nSkin = 2;
 		}
 		else
 		{
 			pFlag->m_bActive = true;
 		}
+		//Also set the flag's starting team for each round. -HairyPotter
+		switch ( pFlag->m_iStartingTeam )
+		{
+			case 1:
+				pFlag->ChangeTeam( TEAM_AMERICANS );
+				break;
+			case 2:
+				pFlag->ChangeTeam( TEAM_BRITISH );
+				break;
+			default:
+				pFlag->ChangeTeam( TEAM_UNASSIGNED );
+				break;
+		}
+		//
 #endif // CLIENT_DLL
 	}
 }
@@ -1840,6 +1876,8 @@ void CHL2MPRules::ResetFlags( void )
 void CHL2MPRules::UpdateFlags( void )
 {
 	CBaseEntity *pEntity = NULL;
+
+	CMapTrigger *BG2Trigger = NULL;
 	
 	int	american_flags = 0,
 		british_flags = 0,
@@ -1880,18 +1918,20 @@ void CHL2MPRules::UpdateFlags( void )
 				british_flags++;
 			break;
 		default:
-			if ( FullCap == 0 )
+			//if ( FullCap == 0 )
 				neutral_flags++;
 			break;
 		}
+
+		//So the flag is set to be capped by this team.
 		switch(pFlag->m_iForTeam)
 		{
 			case 0:
-				if ( FullCap == 0 )
-				{
+				//if ( FullCap == 0 )
+				//{
 					foramericans++;
 					forbritish++;
-				}
+				//}
 				break;
 			case 1:
 				if ( FullCap == 1 || FullCap == 0 )
@@ -1902,11 +1942,11 @@ void CHL2MPRules::UpdateFlags( void )
 					forbritish++;
 				break;
 			default://assume both
-				if ( FullCap == 0 )
-				{
+				//if ( FullCap == 0 )
+				//{
 					foramericans++;
 					forbritish++;
-				}
+				//}
 				break;
 		}
 	}
@@ -1926,6 +1966,10 @@ void CHL2MPRules::UpdateFlags( void )
 			g_Teams[TEAM_AMERICANS]->AddScore( mp_winbonus.GetInt() );
 			RestartRound();
 			WinSong( TEAM_AMERICANS );
+
+			while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+				BG2Trigger->AmericanRoundWin();
+
 			//do not cause two simultaneous round restarts..
 			m_bIsRestartingRound = false;
 			m_flNextRoundRestart = gpGlobals->curtime + 1;
@@ -1937,6 +1981,10 @@ void CHL2MPRules::UpdateFlags( void )
 			g_Teams[TEAM_BRITISH]->AddScore( mp_winbonus.GetInt() );
 			RestartRound();
 			WinSong( TEAM_BRITISH );
+
+			while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+				BG2Trigger->BritishRoundWin();
+
 			//do not cause two simultaneous round restarts..
 			m_bIsRestartingRound = false;
 			m_flNextRoundRestart = gpGlobals->curtime + 1;
@@ -1951,6 +1999,10 @@ void CHL2MPRules::UpdateFlags( void )
 			//Msg( "draw\n" );
 			ClientPrintAll( "This round became a draw", true );
 			RestartRound();
+
+			while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+				BG2Trigger->Draw();
+
 			//do not cause two simultaneous round restarts..
 			m_bIsRestartingRound = false;
 			m_flNextRoundRestart = gpGlobals->curtime + 1;
@@ -1965,6 +2017,10 @@ void CHL2MPRules::UpdateFlags( void )
 			g_Teams[TEAM_BRITISH]->AddScore( mp_winbonus.GetInt() );
 			RestartRound();
 			WinSong( TEAM_BRITISH);
+
+			while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+				BG2Trigger->BritishRoundWin();
+
 			//do not cause two simultaneous round restarts..
 			m_bIsRestartingRound = false;
 			m_flNextRoundRestart = gpGlobals->curtime + 1;
@@ -1979,6 +2035,10 @@ void CHL2MPRules::UpdateFlags( void )
 			g_Teams[TEAM_AMERICANS]->AddScore( mp_winbonus.GetInt() );
 			RestartRound();
 			WinSong( TEAM_AMERICANS );
+
+			while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+				BG2Trigger->AmericanRoundWin();
+
 			//do not cause two simultaneous round restarts..
 			m_bIsRestartingRound = false;
 			m_flNextRoundRestart = gpGlobals->curtime + 1;

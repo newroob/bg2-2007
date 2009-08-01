@@ -44,7 +44,8 @@ BEGIN_PREDICTION_DATA( C_HL2MP_Player )
 	//DEFINE_PRED_FIELD( m_fIsWalking, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 END_PREDICTION_DATA()
 
-static ConVar cl_playermodel( "cl_playermodel", "none", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Default Player Model");
+//BG2 - Models are set by the server through the class selection menu. -HairyPotter
+//static ConVar cl_playermodel( "cl_playermodel", "none", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Default Player Model");
 
 void SpawnBlood (Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
 
@@ -597,7 +598,7 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 			iSpeed2 = 120;
 			break;
 		case CLASS_OFFICER:
-			iSpeed = 225;
+			iSpeed = 220;
 			iSpeed2 = 140;
 			break;
 		case CLASS_SNIPER:

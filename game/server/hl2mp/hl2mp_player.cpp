@@ -483,7 +483,7 @@ void CHL2MP_Player::Spawn(void)
 			iSpeed2 = 120;
 			break;
 		case CLASS_OFFICER:
-			iSpeed = 225;
+			iSpeed = 220;
 			iSpeed2 = 140;
 			break;
 		case CLASS_SNIPER:
@@ -2049,11 +2049,11 @@ ReturnSpot:
 	return pSpot;
 }
 
-CON_COMMAND( timeleft, "prints the time remaining in the match" )
+CON_COMMAND( timeleft, "Prints the time remaining in the round." )
 {
 	CHL2MP_Player *pPlayer = ToHL2MPPlayer( UTIL_GetCommandClient() );
 
-	int iTimeRemaining = (int)HL2MPRules()->GetMapRemainingTime();
+	int iTimeRemaining = ((int)HL2MPRules()->GetMapRemainingTime() - gpGlobals->curtime);
     
 	if ( iTimeRemaining == 0 )
 	{

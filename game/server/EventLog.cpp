@@ -207,47 +207,6 @@ bool CEventLog::PrintPlayerEvent( IGameEvent *event )
 					);
 		return true;
 	}
-	//BG2 - Added for more HlStatsX support. - HairyPotter
-	/*else if ( !Q_strncmp( eventName, "player_hurt", Q_strlen("player_hurt") ) )
-	{
-		const int attackerid = event->GetInt( "attacker" );
-		const int damage = event->GetInt( "damage" );
-		const char *weapon = event->GetString( "weapon" );
-
-		CBasePlayer *pAttacker = UTIL_PlayerByUserId( attackerid );
-		CTeam *team = pPlayer->GetTeam();
-
-		if ( pPlayer == pAttacker && pPlayer )  
-		{  
-
-			UTIL_LogPrintf( "\"%s<%i><%s><%s>\" hurt self with \"world\"\n",  
-							pPlayer->GetPlayerName(),
-							userid,
-							pPlayer->GetNetworkIDString(),
-							team ? team->GetName() : ""
-							);
-
-		}
-		else if ( pAttacker )
-		{
-			UTIL_LogPrintf( "\"%s<%i><%s><%s>\" hurt \"%s<%i><%s><%s>\" with \"%s\" (damage \"%i\") (health \"%i\") (hitgroup \"%i\")\n",
-							pAttacker->GetPlayerName(),
-							attackerid,
-							pAttacker->GetNetworkIDString(),
-							pAttacker->GetTeam() ? pAttacker->GetTeam()->GetName() : "",
-							pPlayer->GetPlayerName(), 
-							userid,
-							pPlayer->GetNetworkIDString(),
-							team ? team->GetName() : "",
-							weapon,
-							damage,
-							pPlayer->m_iHealth,
-							pPlayer->LastHitGroup()
-							);
-		}
-
-		return true;
-	}*/
 	//
 				   
 // ignored events

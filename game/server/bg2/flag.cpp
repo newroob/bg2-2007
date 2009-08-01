@@ -48,6 +48,7 @@
 //BG2 - Tjoppen - just make these global so we can reset them
 float	flNextClientPrintAll = 0;
 bool	bNextClientPrintAllForce = false;
+extern bool		g_fGameOver;
 
 void ClientPrintAll( char *str, bool printfordeadplayers, bool forcenextclientprintall )
 {
@@ -144,6 +145,21 @@ void CFlag::InputToggle( inputdata_t &inputData )
 		InputEnable( inputData );
 }
 
+void CFlag::InputForceCap( inputdata_t &inputData )
+{
+	int m_iForceCap = inputData.value.Int();
+
+	switch( m_iForceCap )
+	{
+		case 1:
+			Capture( TEAM_AMERICANS );
+			break;
+		case 2:
+			Capture( TEAM_BRITISH );
+			break;
+	}
+}
+
 void CFlag::Spawn( void )
 {
 	Precache( );
@@ -182,12 +198,24 @@ void CFlag::Spawn( void )
 	if (HasSpawnFlags( CFlag_START_DISABLED ))
 	{
 		m_bActive = false;
-		m_nSkin = GetDisabledSkin();
+		//m_nSkin = GetDisabledSkin(); Disabled flags are invisible anyway.
 	}
 	else
 	{
 		m_bActive = true;
-		ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
+		//ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
+		switch( m_iStartingTeam ) //The team that gets the flag at the start of the map.
+		{
+			case 1:
+				ChangeTeam( TEAM_AMERICANS );
+				break;
+			case 2:
+				ChangeTeam( TEAM_BRITISH );
+				break;
+			default:
+				ChangeTeam( TEAM_UNASSIGNED );
+				break;
+		}
 	}
 
 	m_iRequestingCappers = TEAM_UNASSIGNED;
@@ -265,52 +293,55 @@ void CFlag::Think( void )
 
 
 	//award any time bonii
-	switch( GetTeamNumber() )
+	if ( !g_fGameOver ) //The game hasn't ended yet, keep adding points to the team.
 	{
-		case TEAM_AMERICANS:
-			if (m_iTeamBonusInterval != 0)
-			{
-				if ((m_flNextTeamBonus <= gpGlobals->curtime) && (m_iForTeam != 1))
+		switch( GetTeamNumber() )
+		{
+			case TEAM_AMERICANS:
+				if (m_iTeamBonusInterval != 0)
 				{
-					g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
-					m_flNextTeamBonus += m_iTeamBonusInterval;
+					if ((m_flNextTeamBonus <= gpGlobals->curtime) && (m_iForTeam != 1))
+					{
+						g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
+						m_flNextTeamBonus += m_iTeamBonusInterval;
+					}
 				}
-			}
-			break;
-		case TEAM_BRITISH:
-			if (m_iTeamBonusInterval != 0)
-			{
-				if ((m_flNextTeamBonus <= gpGlobals->curtime) && (m_iForTeam != 2))
+				break;
+			case TEAM_BRITISH:
+				if (m_iTeamBonusInterval != 0)
 				{
-					g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
-					m_flNextTeamBonus += m_iTeamBonusInterval;
+					if ((m_flNextTeamBonus <= gpGlobals->curtime) && (m_iForTeam != 2))
+					{
+						g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
+						m_flNextTeamBonus += m_iTeamBonusInterval;
+					}
 				}
-			}
-			break;
-		default:
-			switch (m_iForTeam)
-			{
-				case 1://amer
-					if (m_iTeamBonusInterval != 0)
-					{
-						if (m_flNextTeamBonus <= gpGlobals->curtime)
+				break;
+			default:
+				switch (m_iForTeam)
+				{
+					case 1://amer
+						if (m_iTeamBonusInterval != 0)
 						{
-							g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
-							m_flNextTeamBonus += m_iTeamBonusInterval;
+							if (m_flNextTeamBonus <= gpGlobals->curtime)
+							{
+								g_Teams[TEAM_BRITISH]->AddScore( m_iTeamBonus );
+								m_flNextTeamBonus += m_iTeamBonusInterval;
+							}
 						}
-					}
-					break;
-				case 2://brit
-					if (m_iTeamBonusInterval != 0)
-					{
-						if (m_flNextTeamBonus <= gpGlobals->curtime)
+						break;
+					case 2://brit
+						if (m_iTeamBonusInterval != 0)
 						{
-							g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
-							m_flNextTeamBonus += m_iTeamBonusInterval;
+							if (m_flNextTeamBonus <= gpGlobals->curtime)
+							{
+								g_Teams[TEAM_AMERICANS]->AddScore( m_iTeamBonus );
+								m_flNextTeamBonus += m_iTeamBonusInterval;
+							}
 						}
-					}
-					break;
-			}
+						break;
+				}
+		}
 	}
 
 	if (m_bIsParent)
@@ -744,6 +775,18 @@ void CFlag::ThinkCapped( void )
 		m_iNearbyPlayers = m_vOverloadingPlayers.Count();
 	}
 }
+void CFlag::ResetFlag( void )
+{
+	switch( m_iStartingTeam ) //The team that gets the flag at the start of the map.
+	{
+		case 1:
+			ChangeTeam( TEAM_AMERICANS );
+			break;
+		case 2:
+			ChangeTeam( TEAM_BRITISH );
+			break;
+	}
+}
 
 void CFlag::ChangeTeam( int iTeamNum )
 {
@@ -858,6 +901,7 @@ BEGIN_DATADESC( CFlag )
 
 	DEFINE_KEYFIELD( m_iCapturePlayers, FIELD_INTEGER, "CapturePlayers" ),
 	DEFINE_KEYFIELD( m_flCaptureRadius, FIELD_FLOAT, "CaptureRadius" ),
+	DEFINE_KEYFIELD( m_iStartingTeam, FIELD_INTEGER, "StartingTeam" ),
 	DEFINE_KEYFIELD( m_flCaptureTime, FIELD_FLOAT, "CaptureTime" ),
 	DEFINE_KEYFIELD( m_iTeamBonus, FIELD_INTEGER, "TeamBonus" ),
 	DEFINE_KEYFIELD( m_iTeamBonusInterval, FIELD_INTEGER, "TeamBonusInterval" ),
@@ -888,6 +932,7 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "Toggle", InputToggle ),
+	DEFINE_INPUTFUNC( FIELD_INTEGER, "ForceCap", InputForceCap ),
 
 	//BG2 - SaintGreg - Output functions similar to BG's
 	DEFINE_OUTPUT( m_OnAmericanStartCapture, "OnAmericanStartCapture" ),

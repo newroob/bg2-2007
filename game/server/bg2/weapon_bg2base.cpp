@@ -368,7 +368,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		pPlayer->SetSuitUpdate( "!HEV_AMO0", FALSE, 0 ); 
 	}*/
 
-	m_fNextHolster = gpGlobals->curtime + 0.50f; //Keep people from switching weapons right after shooting.
+	m_fNextHolster = gpGlobals->curtime + 0.3f; //Keep people from switching weapons right after shooting.
 
 	return 15;
 }

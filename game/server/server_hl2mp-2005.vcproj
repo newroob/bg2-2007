@@ -3611,6 +3611,14 @@
 				Name="BG2"
 				>
 				<File
+					RelativePath=".\bg2\bg2_maptriggers.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\bg2\bg2_maptriggers.h"
+					>
+				</File>
+				<File
 					RelativePath=".\bg2\bullet.cpp"
 					>
 					<FileConfiguration

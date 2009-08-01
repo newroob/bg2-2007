@@ -194,7 +194,6 @@ public:
 	//BG2 - Draco - Start
 	CNetworkVar( float, m_fLastRespawnWave );
 	float m_fNextGameReset;
-	float m_fAdditionTime;
 	//float m_fEndRoundTime;	//use m_fLastRespawnWave + mp_respawntime.GetFloat() instead
 	float m_fNextFlagUpdate;
 	//BG2 - Draco - End

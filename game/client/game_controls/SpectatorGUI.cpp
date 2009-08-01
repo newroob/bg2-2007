@@ -680,12 +680,12 @@ void CSpectatorGUI::UpdateTimer()
 	C_Team *pBrit = GetGlobalTeam(TEAM_BRITISH);
 
 	szText[64] = 0;
-	_snwprintf ( szText, sizeof( szText ), L"British : %d\n", pBrit ? pBrit->Get_Score() : 0 );	//BG2 - Tjoppen - avoid NULL
-	SetLabelText("TERScoreLabel",szText);
+	_snwprintf ( szText, sizeof( szText ), L"%s %d\n", g_pVGuiLocalize->Find("#BG2_Spec_British_Score"), pBrit ? pBrit->Get_Score() : 0 );	//BG2 - Tjoppen - avoid NULL
+	SetLabelText("BritishScoreLabel",szText);
 
 	szText[64] = 0;
-	_snwprintf ( szText, sizeof( szText ), L"Americans : %d\n", pAmer ? pAmer->Get_Score() : 0 );//BG2 - Tjoppen - avoid NULL
-	SetLabelText("CTScoreLabel",szText);
+	_snwprintf ( szText, sizeof( szText ), L"%s %d\n", g_pVGuiLocalize->Find("#BG2_Spec_American_Score"), pAmer ? pAmer->Get_Score() : 0 );//BG2 - Tjoppen - avoid NULL
+	SetLabelText("AmericanScoreLabel",szText);
 }
 
 static void ForwardSpecCmdToServer( const CCommand &args )

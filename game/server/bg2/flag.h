@@ -101,6 +101,7 @@ class CFlag : public CBaseAnimating
 	void InputEnable( inputdata_t &inputData );
 	void InputDisable( inputdata_t &inputData );
 	void InputToggle( inputdata_t &inputData );
+	void InputForceCap( inputdata_t &inputData );
 
 
 	int		m_iTeamBonus,
@@ -112,7 +113,8 @@ class CFlag : public CBaseAnimating
 			m_iDisabledFlagSkin,
 			m_iSavedHUDSlot,     //This is for the flag enable/disable addon. The original Hud Slot value is stored here.
 			m_iFullCap,
-			m_iCaptureSound;
+			m_iCaptureSound,
+			m_iStartingTeam;
 
 	float	m_flNextTeamBonus;
 
@@ -181,5 +183,6 @@ public:
 	void ThinkCapped( void );
 	void Capture( int iTeam );	//let iTeam have this flag now..
 	void ChangeTeam( int iTeamNum );
+	void ResetFlag( void );
 	virtual int UpdateTransmitState();
 };
