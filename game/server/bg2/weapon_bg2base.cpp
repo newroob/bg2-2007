@@ -343,6 +343,12 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		info.m_iPlayerDamage = GetDamage( iAttack );
 		info.m_iDamage = -1;		//ancient chinese secret..
 		info.m_iTracerFreq = sv_bullettracers.GetBool();		//always do tracers
+		
+		//hitscan arc bullet
+		info.m_bArc = true;
+		info.m_flMuzzleVelocity = 14400;
+		info.m_flRelativeDrag = m_Attackinfos[iAttack].m_flRelativeDrag;
+		info.m_flConstantDamageRange = m_Attackinfos[iAttack].m_flConstantDamageRange;
 
 		// Fire the bullets, and force the first shot to be perfectly accurate
 		pPlayer->FireBullets( info );

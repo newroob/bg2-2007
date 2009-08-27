@@ -1537,6 +1537,95 @@ public:
 typedef CTraceFilterSimpleList CBulletsTraceFilter;
 #endif
 
+//BG2 - Tjoppen - hitscan arc bullets
+float BG2_TraceArc( const FireBulletsInfo_t &info, const Vector &vecDir, unsigned int mask, ITraceFilter *filter, trace_t *tr )
+{
+	//this function replaces CBullet so that no actual physical bullets are generated
+	//this means there's no need to create a bullet entity which sometimes sends players flying through the air
+	//it seems Source isn't made for handling objects moving near the speed of sound :)
+	//a damage modifier is returned, based on final distance and velocity
+	const float dt = 0.01;
+	const float tmax = 3;
+
+	//initial position and velocity
+	Vector pos = info.m_vecSrc;
+	Vector oldpos;
+	Vector vel = vecDir * info.m_flMuzzleVelocity;
+
+	extern	ConVar	sv_simulatedbullets_drag,
+					sv_simulatedbullets_overshoot_range,
+					sv_simulatedbullets_overshoot_force,
+					sv_gravity;
+
+	float tmax_overshoot = sv_simulatedbullets_overshoot_range.GetFloat() * 36.f / info.m_flMuzzleVelocity;
+	float z_vel_offset = 0;
+	float z_pos_offset = 0;
+
+	//do simple linear traces along the arc
+	//stop if too much "time" passes or if the shot exceeds m_flDistance
+	for( float t = 0; t < tmax && pos.DistTo(info.m_vecSrc) < info.m_flDistance; t += dt )
+	{
+		float lift = 0, grav;
+		//calculate acceleration due to drag, lift and gravity
+		//drag works in the opposite direction of velocity
+		Vector acc = vel * -(vel.Length() * info.m_flRelativeDrag * sv_simulatedbullets_drag.GetFloat());
+
+		//we model lift due to bullet backspin as an exponentially decaying upward force
+		if( sv_simulatedbullets_overshoot_force.GetFloat() > 0 )
+		{
+			lift = sv_gravity.GetFloat() * sv_simulatedbullets_overshoot_force.GetFloat() * pow( 3, -t / tmax_overshoot );
+			acc.z += lift;
+		}
+
+		//lastly subtract gravity
+		grav = -sv_gravity.GetFloat();
+		acc.z += grav;
+
+		//update velocity and position
+		vel += acc*dt;
+		oldpos = pos;
+		pos += vel*dt;
+
+		z_vel_offset += (lift + grav) * dt;
+		z_pos_offset += z_vel_offset * dt;
+
+		Vector delta = pos - info.m_vecSrc;
+		Msg( "lift: %f, grav: %f, z_vel_offset: %f, z_pos_offset: %.2f (%.2f m), distance: %.2f (%.2f m)\n", lift, grav, z_vel_offset, z_pos_offset, z_pos_offset * 0.0254, pos.DistTo(info.m_vecSrc), pos.DistTo(info.m_vecSrc) * 0.0254 );
+
+		//trace from oldpos to pos an see if we hit something
+		AI_TraceLine(oldpos, pos, mask, filter, tr);
+
+		if( tr->DidHit() )
+		{
+			//we hit something
+			//TODO: take info.m_flConstantDamageRange into consideration
+			//TODO: modify tr->start & endpos
+			Msg( "tr->DidHit(): %f s, %f units\n", t, pos.DistTo(info.m_vecSrc) );
+
+			//make up reasonable startpos and fraction
+			tr->startpos = info.m_vecSrc;
+			tr->fraction = tr->endpos.DistTo(info.m_vecSrc) / info.m_flDistance;
+
+			//return proper damage modifier
+			if( tr->endpos.DistTo(info.m_vecSrc) < info.m_flConstantDamageRange )
+				return 1;
+			else
+			{
+				float v = vel.Length();
+				float m = v*v / (info.m_flMuzzleVelocity*info.m_flMuzzleVelocity);
+
+				//make sure we don't end up with modifier > 1 if velocity increased
+				return m > 1 ? 1 : m;
+			}
+		}
+	}
+
+	Msg( "hit nothing\n" );
+
+	return 0;
+}
+//
+
 void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 {
 	static int	tracerCount;
@@ -1655,6 +1744,14 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 
 		vecEnd = info.m_vecSrc + vecDir * info.m_flDistance;
 
+		//BG2 - Tjoppen - hitscan arc bullets
+		float damageFactor = 1;
+		if( info.m_bArc )
+		{
+			damageFactor = BG2_TraceArc( info, vecDir, MASK_SHOT, &traceFilter, &tr );
+		}
+		else
+		//
 		if( IsPlayer() && info.m_iShots > 1 && iShot % 2 )
 		{
 			// Half of the shotgun pellets are hulls that make it easier to hit targets with the shotgun.
@@ -1763,25 +1860,9 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 
 			if ( !bHitWater || ((info.m_nFlags & FIRE_BULLETS_DONT_HIT_UNDERWATER) == 0) )
 			{
-
-				//BG2 - Tjoppen - damage ramps based on range
-
-				float factor = (tr.startpos - tr.endpos).Length() / info.m_flDistance;
-
-				//start ramping down to 0% after 50% range covered, if we should
-				/*if( factor < 0.5f )
-					factor = 1.0f;								//full power
-				else
-					factor = max( 0.0f, 2.0f - 2.0f*factor );	//clamp to be no less than zero. just in case.*/
-				//start ramping down to 0% after 50% range covered, if we should
-				if( factor > 0.5f )
-					factor = 1.0f;								//full power - So we're doing full damage.
-				else if (factor < 0.1f)							//So we're pretty far away, do less damage.
-					factor = 0;
-				else											//Let's just clamp at 0 just in case something fubars.
-					factor = 0.65f;
-
-				flActualDamage *= factor;
+				//BG2 - Tjoppen - damage based on range
+				Msg( "damageFactor = %f, flActualDamage: %f -> %f\n", damageFactor , flActualDamage, flActualDamage*damageFactor );
+				flActualDamage *= damageFactor;
 				//
 
 				// Damage specified by function parameter
