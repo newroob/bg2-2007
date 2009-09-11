@@ -265,8 +265,11 @@ void CHL2MP_Player::GiveAllItems( void )
 	CBasePlayer::GiveAmmo( 32,	"357" );
 	
 	//BG2 - Tjoppen - impulse 101
-	//GiveNamedItem( "weapon_revolutionnaire" );
 	GiveNamedItem( "weapon_brownbess" );
+	GiveNamedItem( "weapon_revolutionnaire" );
+	GiveNamedItem( "weapon_brownbess_nobayo" );
+	GiveNamedItem( "weapon_beltaxe" );
+	GiveNamedItem( "weapon_tomahawk" );
 	GiveNamedItem( "weapon_charleville" );
 	GiveNamedItem( "weapon_pennsylvania" );
 	GiveNamedItem( "weapon_jaeger" );
@@ -971,6 +974,9 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 					}
 					else
 					*/
+					if ( GetActiveWeapon() && GetActiveWeapon()->m_bIsIronsighted ) //BG2 - This may need to be changed.. -HairyPotter
+						idealActivity = ACT_WALK_AIM_AR2;
+					else
 					{
 						idealActivity = ACT_HL2MP_RUN;
 					}

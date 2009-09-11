@@ -587,24 +587,5 @@ void CHudBG2::PlayVCommSound( char snd[512], int playerindex )
 
 	if ( pPlayer ) //Just make sure.
 		pPlayer->EmitSound( snd );
-
-	/*if ( !pPlayer ) //Just make sure.
-		return;
-
-	CLocalPlayerFilter filter;
-	//CPASAttenuationFilter filter( pPlayer );
-
-	//This was to see if I could set up custom pitches on sounds, guess not.
-	EmitSound_t params;
-	params.m_pSoundName = snd;
-	params.m_flSoundTime = 0.0f;
-	params.m_pOrigin = &pPlayer->GetAbsOrigin();
-	params.m_nPitch = RandomInt( 92, 100 );
-	params.m_nFlags = SND_CHANGE_PITCH;
-	params.m_nChannel = CHAN_VOICE;
-	params.m_flVolume = 0.35f;
-
-	pPlayer->EmitSound( filter, SOUND_FROM_WORLD, params );
-	//*/
 }
 //

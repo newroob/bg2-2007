@@ -813,7 +813,8 @@ void C_HL2MPRagdoll::CreateHL2MPRagdoll( void )
 		// move my current model instance to the ragdoll's so decals are preserved.
 		pPlayer->SnatchModelInstance( this );
 
-		m_nSkin = pPlayer->m_nSkin; //BG2 - Set the proper skin for ragdolls. -HairyPotter
+		if ( pPlayer->m_nSkin != NULL )
+			m_nSkin = pPlayer->m_nSkin; //BG2 - Set the proper skin for ragdolls. -HairyPotter
 
 		VarMapping_t *varMap = GetVarMapping();
 

@@ -66,9 +66,12 @@
 #define BOLT_AIR_VELOCITY	14400
 #define BOLT_WATER_VELOCITY	1500
 
-//#define BULLET_TRACER "sprites/blueglow1.vmt"
+//#define BULLET_TRACER "sprites/laser.vmt" //Pew Pew "sprites/laser.vmt"
 
-extern ConVar sv_bullettracers;
+/*extern ConVar sv_bullettracers;
+ConVar teststart("teststart", "0.8f", 0);
+ConVar testend("testend", "0.8f", 0);
+ConVar testlife("testlife", "0.07f", 0);*/
 
 #ifndef CLIENT_DLL
 
@@ -82,11 +85,8 @@ BEGIN_DATADESC( CBullet )
 	// Function Pointers
 	DEFINE_FUNCTION( BubbleThink ),
 	DEFINE_FUNCTION( BoltTouch ),
-	DEFINE_FIELD( m_pGlowTrail, FIELD_CLASSPTR ),
 
-	// These are recreated on reload, they don't need storage
-	//DEFINE_FIELD( m_pGlowSprite, FIELD_EHANDLE ),
-	//DEFINE_FIELD( m_pGlowTrail, FIELD_EHANDLE ),
+	DEFINE_FIELD( m_pGlowTrail, FIELD_EHANDLE ),
 
 END_DATADESC()
 
@@ -125,9 +125,9 @@ CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles
 //-----------------------------------------------------------------------------
 CBullet::~CBullet( void )
 {
-	/*if ( m_pGlowSprite )
+	/*if ( m_pGlowTrail )
 	{
-		UTIL_Remove( m_pGlowSprite );
+		UTIL_Remove( m_pGlowTrail );
 	}*/
 }
 
@@ -175,32 +175,27 @@ void CBullet::Spawn( void )
 	// Make sure we're updated if we're underwater
 	UpdateWaterState();
 
-	/*if ( sv_bullettracers.GetInt() )
-	{
-		// Start up the eye trail
-		m_pGlowTrail = CSpriteTrail::SpriteTrailCreate( BULLET_TRACER, GetAbsOrigin(), false );
-	
-		if ( m_pGlowTrail != NULL )
-		{
-			m_pGlowTrail->FollowEntity( this );
-			//m_pGlowTrail->SetTransparency( kRenderTransAdd, 0, 0, 0, 255, kRenderFxNone );
-			//m_pGlowTrail->SetStartWidth( 25.0f );
-			//m_pGlowTrail->SetTextureResolution( 1.0f / ( 16.0f * 1.0f ) );
-			//m_pGlowTrail->SetEndWidth( 10.0f );
-			m_pGlowTrail->SetLifeTime( 3.0f );
-			m_pGlowTrail->TurnOn();
-		}
-	}*/
-
 	SetTouch( &CBullet::BoltTouch );
 
 	SetThink( &CBullet::BubbleThink );
 	SetNextThink( gpGlobals->curtime );//+ 0.01f );
-	
-	//CreateSprites();
 
-	// Make us glow until we've hit the wall
-	//m_nSkin = BOLT_SKIN_GLOW;
+	// Start up the eye trail
+	//These tracers work.. sorta.. but we're just going to omit them for now.
+	/*if ( sv_bullettracers.GetBool() )
+	{
+		m_pGlowTrail = CSpriteTrail::SpriteTrailCreate( BULLET_TRACER, GetLocalOrigin(), false );
+
+		if ( m_pGlowTrail != NULL )
+		{
+			m_pGlowTrail->FollowEntity( this );
+			m_pGlowTrail->SetTransparency( kRenderTransAdd, 255, 255, 255, 90, kRenderFxNone );																				
+			m_pGlowTrail->SetStartWidth( teststart.GetFloat() );
+			m_pGlowTrail->SetEndWidth( testend.GetFloat() );
+			m_pGlowTrail->SetLifeTime( testlife.GetFloat() );
+		}
+	}*/
+	
 }
 
 

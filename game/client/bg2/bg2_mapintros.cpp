@@ -87,12 +87,12 @@ void CBG2MapPreview::OnTick()
 {
 	if ( engine->IsDrawingLoadingImage()  ) //This should suffice.
 	{
-		/*const char *mapname = IGameSystem::MapName();
-		if ( mapname )
-		Error("Drawing loading screen for %s. This is a good thing. \n", mapname);*/
+		//const char *mapname = engine->GetLevelName();//IGameSystem::MapName();
+
+		//if ( mapname )
+		//	Error("Drawing loading screen for %s. This is a good thing. \n", mapname);
 	}
 }
-
 void CBG2MapPreview::Paint( void )
 {
 	if ( !IsCurrentViewAccessAllowed() )

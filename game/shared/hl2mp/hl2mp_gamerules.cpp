@@ -133,14 +133,15 @@ LINK_ENTITY_TO_CLASS( hl2mp_gamerules, CHL2MPGameRulesProxy );
 IMPLEMENT_NETWORKCLASS_ALIASED( HL2MPGameRulesProxy, DT_HL2MPGameRulesProxy )
 
 static HL2MPViewVectors g_HL2MPViewVectors(
-	Vector( 0, 0, 64 ),       //VEC_VIEW (m_vView) 
+	Vector( 0, 0, 60 ),       //VEC_VIEW (m_vView) //BG2 - This was 64, but the BG2 models are slightly smaller I guess.. 
+							  //so let's lower it slightly. -HairyPotter
 							  
 	Vector(-16, -16, 0 ),	  //VEC_HULL_MIN (m_vHullMin)
 	Vector( 16,  16,  72 ),	  //VEC_HULL_MAX (m_vHullMax)
 							  					
 	Vector(-16, -16, 0 ),	  //VEC_DUCK_HULL_MIN (m_vDuckHullMin)
 	Vector( 16,  16,  36 ),	  //VEC_DUCK_HULL_MAX	(m_vDuckHullMax)
-	Vector( 0, 0, 28 ),		  //VEC_DUCK_VIEW		(m_vDuckView)
+	Vector( 0, 0, 36 ),		  //VEC_DUCK_VIEW		(m_vDuckView) //BG2 - Raise this from 28.. it almost looks like you're proned. -HairyPotter
 							  					
 	Vector(-10, -10, -10 ),	  //VEC_OBS_HULL_MIN	(m_vObsHullMin)
 	Vector( 10,  10,  10 ),	  //VEC_OBS_HULL_MAX	(m_vObsHullMax)
@@ -554,7 +555,7 @@ void CHL2MPRules::Think( void )
 	//=========================
 	//Auto Team Balance
 	//=========================
-	/*if (mp_autobalanceteams.GetInt() == 1) //If we're balancing teams on AttemptJoin... is there really a need to think about it again? -HairyPotter
+	if (mp_autobalanceteams.GetInt() == 1) //If we're balancing teams on AttemptJoin... is there really a need to think about it again? -HairyPotter
 	{
 		//use the right sum to find diff, I don't like negative numbers...
 		int iAutoTeamBalanceTeamDiff = 0;
@@ -597,7 +598,7 @@ void CHL2MPRules::Think( void )
 			}
 		}
 		//well, if we aren't even now, there's always next think...
-	}*/
+	}
 	//=========================
 	//Restart Round
 	//=========================
@@ -1252,7 +1253,7 @@ int CHL2MPRules::PlayerRelationship( CBaseEntity *pPlayer, CBaseEntity *pTarget 
 const char *CHL2MPRules::GetGameDescription( void )
 { 
 	//BG2 - Tjoppen - our game descriptions - putting the current version number in these might be a good idea
-	return "Battle Grounds 2 1.5b";
+	return "Battle Grounds 2 1.5a";
 	// 
 } 
 
@@ -1907,31 +1908,39 @@ void CHL2MPRules::UpdateFlags( void )
 		if ( FullCap == 3) //we're not doing full caps on this flag. 0 = normal, 1 = Americans Fullcap, 2 = Brits Fullcap, 3 = No Fullcap.
 			continue;
 
+
 		switch( pFlag->GetTeamNumber() )
 		{
-		case TEAM_AMERICANS:
-			if ( FullCap == 1 || FullCap == 0 )
+			case TEAM_AMERICANS:
 				american_flags++;
-			break;
-		case TEAM_BRITISH:
-			if ( FullCap == 2 || FullCap == 0 )
+				break;
+			case TEAM_BRITISH:
 				british_flags++;
-			break;
-		default:
-			//if ( FullCap == 0 )
+				break;
+			default:
 				neutral_flags++;
-			break;
+				break;
 		}
+		
 
 		//So the flag is set to be capped by this team.
 		switch(pFlag->m_iForTeam)
 		{
 			case 0:
-				//if ( FullCap == 0 )
-				//{
-					foramericans++;
-					forbritish++;
-				//}
+				switch( FullCap )
+				{
+					case 0:
+						foramericans++;
+						forbritish++;
+						break;
+					case 1:
+						foramericans++;
+						break;
+					case 2:
+						forbritish++;
+						break;
+
+				}
 				break;
 			case 1:
 				if ( FullCap == 1 || FullCap == 0 )
@@ -1942,17 +1951,26 @@ void CHL2MPRules::UpdateFlags( void )
 					forbritish++;
 				break;
 			default://assume both
-				//if ( FullCap == 0 )
-				//{
-					foramericans++;
-					forbritish++;
-				//}
+				switch( FullCap )
+				{
+					case 0:
+						foramericans++;
+						forbritish++;
+						break;
+					case 1:
+						foramericans++;
+						break;
+					case 2:
+						forbritish++;
+						break;
+
+				}
 				break;
 		}
 	}
 
-	/*Msg( "american_flags = %i\n", american_flags );
-	Msg( "british_flags = %i\n", british_flags );
+	/*Msg( "american_flags = %i & foramericans flags = %i\n", american_flags, foramericans );
+	Msg( "british_flags = %i & forbritish flags = %i\n", british_flags, forbritish );
 	Msg( "neutral_flags = %i\n", neutral_flags );*/
 
 	if( !american_flags && !british_flags && !neutral_flags )
@@ -2009,7 +2027,7 @@ void CHL2MPRules::UpdateFlags( void )
 			return;
 		}
 
-		if ( american_flags <= 0 )
+		if ( american_flags <= 0 && (forbritish - british_flags) == 0)
 		{
 			//british win
 			//Msg( "british win\n" );
@@ -2027,7 +2045,7 @@ void CHL2MPRules::UpdateFlags( void )
 			return;
 		}
 
-		if ( british_flags <= 0 )
+		if ( british_flags <= 0 && (foramericans - american_flags) == 0)
 		{
 			//americans win
 			//Msg( "americans win\n" );

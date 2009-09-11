@@ -1590,7 +1590,7 @@ float BG2_TraceArc( const FireBulletsInfo_t &info, const Vector &vecDir, unsigne
 		z_pos_offset += z_vel_offset * dt;
 
 		Vector delta = pos - info.m_vecSrc;
-		Msg( "lift: %f, grav: %f, z_vel_offset: %f, z_pos_offset: %.2f (%.2f m), distance: %.2f (%.2f m)\n", lift, grav, z_vel_offset, z_pos_offset, z_pos_offset * 0.0254, pos.DistTo(info.m_vecSrc), pos.DistTo(info.m_vecSrc) * 0.0254 );
+		//Msg( "lift: %f, grav: %f, z_vel_offset: %f, z_pos_offset: %.2f (%.2f m), distance: %.2f (%.2f m)\n", lift, grav, z_vel_offset, z_pos_offset, z_pos_offset * 0.0254, pos.DistTo(info.m_vecSrc), pos.DistTo(info.m_vecSrc) * 0.0254 );
 
 		//trace from oldpos to pos an see if we hit something
 		AI_TraceLine(oldpos, pos, mask, filter, tr);
@@ -1600,27 +1600,27 @@ float BG2_TraceArc( const FireBulletsInfo_t &info, const Vector &vecDir, unsigne
 			//we hit something
 			//TODO: take info.m_flConstantDamageRange into consideration
 			//TODO: modify tr->start & endpos
-			Msg( "tr->DidHit(): %f s, %f units\n", t, pos.DistTo(info.m_vecSrc) );
+			//Msg( "tr->DidHit(): %f s, %f units\n", t, pos.DistTo(info.m_vecSrc) );
 
 			//make up reasonable startpos and fraction
 			tr->startpos = info.m_vecSrc;
 			tr->fraction = tr->endpos.DistTo(info.m_vecSrc) / info.m_flDistance;
 
 			//return proper damage modifier
-			if( tr->endpos.DistTo(info.m_vecSrc) < info.m_flConstantDamageRange )
+			/*if( tr->endpos.DistTo(info.m_vecSrc) < info.m_flConstantDamageRange )
 				return 1;
 			else
-			{
+			{*/
 				float v = vel.Length();
 				float m = v*v / (info.m_flMuzzleVelocity*info.m_flMuzzleVelocity);
 
 				//make sure we don't end up with modifier > 1 if velocity increased
 				return m > 1 ? 1 : m;
-			}
+			//}
 		}
 	}
 
-	Msg( "hit nothing\n" );
+	//Msg( "hit nothing\n" );
 
 	return 0;
 }
@@ -1861,7 +1861,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 			if ( !bHitWater || ((info.m_nFlags & FIRE_BULLETS_DONT_HIT_UNDERWATER) == 0) )
 			{
 				//BG2 - Tjoppen - damage based on range
-				Msg( "damageFactor = %f, flActualDamage: %f -> %f\n", damageFactor , flActualDamage, flActualDamage*damageFactor );
+				//Msg( "damageFactor = %f, flActualDamage: %f -> %f\n", damageFactor , flActualDamage, flActualDamage*damageFactor );
 				flActualDamage *= damageFactor;
 				//
 

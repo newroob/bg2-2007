@@ -323,6 +323,13 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	if( sv_simulatedbullets.GetBool() )
 	{
 #ifndef CLIENT_DLL
+
+		//This code will force the bullet ent to spawn out of the player's first-person view. (Still comes out of the face in thirdperson though)
+		Vector forward, right;
+		pPlayer->EyeVectors( &forward, &right, NULL );
+		vecSrc = vecSrc + Vector ( 0 , 0 , -4 ) + right * 2 + forward * 16;
+		//
+
 		CShotManipulator Manipulator( vecAiming );
 		Vector vecDir = Manipulator.ApplySpread( sv_perfectaim.GetInt() == 0 ? GetSpread( iAttack ) : vec3_origin );
 
@@ -342,7 +349,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		info.m_pAttacker = pPlayer;
 		info.m_iPlayerDamage = GetDamage( iAttack );
 		info.m_iDamage = -1;		//ancient chinese secret..
-		info.m_iTracerFreq = sv_bullettracers.GetBool();		//always do tracers
+		info.m_iTracerFreq = sv_bullettracers.GetBool();	
 		
 		//hitscan arc bullet
 		info.m_bArc = true;

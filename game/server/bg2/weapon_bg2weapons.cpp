@@ -622,7 +622,7 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 	m_bFiresUnderwater	= true;
 	m_bDontAutoreload	= true;
 
-	m_bCantAbortReload	= false;
+	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
 
