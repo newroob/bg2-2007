@@ -596,7 +596,7 @@ struct FireBulletsInfo_t
 #endif
 		m_bPrimaryAttack = true;
 
-		//BG2 - Tjoppen - stuff for hitscan arc bullet
+		//BG2 - Tjoppen - stuff for arcscan bullet
 		m_bArc = false;
 		//
 	}
@@ -618,7 +618,7 @@ struct FireBulletsInfo_t
 		m_flDamageForceScale = 1.0f;
 		m_bPrimaryAttack = bPrimaryAttack;
 
-		//BG2 - Tjoppen - stuff for hitscan arc bullet
+		//BG2 - Tjoppen - stuff for arcscan bullet
 		m_bArc = false;
 		//
 	}
@@ -638,7 +638,7 @@ struct FireBulletsInfo_t
 	CBaseEntity *m_pAdditionalIgnoreEnt;
 	bool m_bPrimaryAttack;
 
-	//BG2 - Tjoppen - stuff for hitscan arc bullets
+	//BG2 - Tjoppen - stuff for arcscan bullets
 	bool m_bArc;
 	float m_flMuzzleVelocity;		//typically 14400 = 1200 fps ~= 365 m/s
 	float m_flRelativeDrag;			//drag = m_flRelativeDrag * sv_simulatedbullets_drag

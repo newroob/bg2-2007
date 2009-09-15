@@ -62,8 +62,11 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar sv_simulatedbullets( "sv_simulatedbullets", "1", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
+ConVar sv_simulatedbullets( "sv_simulatedbullets", "0", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
 		"EXPERIMENTAL!\nWhen non-zero, makes all firearms shoot \"real\" bullets.");
+
+ConVar sv_arcscanbullets( "sv_arcscanbullets", "1", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
+		"Like regular hitscan bullets, only traced along the same arc a sv_simulatedbullets bullet would take.");
 
 ConVar sv_simulatedbullets_drag( "sv_simulatedbullets_drag", "0.00003", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO | FCVAR_CHEAT,
 		"Tweak this value to affect how fast the speed and thus damage of bullets drop off with distance.\n\tLower values => more damage over distance" );
@@ -206,9 +209,6 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
 		return;
 
-	if ( m_bIsIronsighted ) //No melee with ironsights.
-		return;
-
 	m_iLastAttack = ATTACK_SECONDARY;
 
 	//store forward eye vector
@@ -324,11 +324,8 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	{
 #ifndef CLIENT_DLL
 
-		//This code will force the bullet ent to spawn out of the player's first-person view. (Still comes out of the face in thirdperson though)
-		Vector forward, right;
-		pPlayer->EyeVectors( &forward, &right, NULL );
-		vecSrc = vecSrc + Vector ( 0 , 0 , -4 ) + right * 2 + forward * 16;
-		//
+		//Move bullets up slightly so players can shoot over windowcills etc. properly
+		vecSrc.z += 2;
 
 		CShotManipulator Manipulator( vecAiming );
 		Vector vecDir = Manipulator.ApplySpread( sv_perfectaim.GetInt() == 0 ? GetSpread( iAttack ) : vec3_origin );
@@ -351,8 +348,8 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		info.m_iDamage = -1;		//ancient chinese secret..
 		info.m_iTracerFreq = sv_bullettracers.GetBool();	
 		
-		//hitscan arc bullet
-		info.m_bArc = true;
+		//arcscan bullet
+		info.m_bArc = sv_arcscanbullets.GetBool();
 		info.m_flMuzzleVelocity = 14400;
 		info.m_flRelativeDrag = m_Attackinfos[iAttack].m_flRelativeDrag;
 		info.m_flConstantDamageRange = m_Attackinfos[iAttack].m_flConstantDamageRange;
@@ -498,6 +495,9 @@ int CBaseBG2Weapon::Swing( int iAttack, bool bDoEffects )
 	// Try a ray
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 	if ( !pOwner )
+		return 0;
+
+	if ( m_bIsIronsighted ) //No melee with ironsights.
 		return 0;
 
 	if( GetAttackType(iAttack) == ATTACKTYPE_STAB )

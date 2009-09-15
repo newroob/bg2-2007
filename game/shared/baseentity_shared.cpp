@@ -1537,7 +1537,7 @@ public:
 typedef CTraceFilterSimpleList CBulletsTraceFilter;
 #endif
 
-//BG2 - Tjoppen - hitscan arc bullets
+//BG2 - Tjoppen - arcscan bullets
 float BG2_TraceArc( const FireBulletsInfo_t &info, const Vector &vecDir, unsigned int mask, ITraceFilter *filter, trace_t *tr )
 {
 	//this function replaces CBullet so that no actual physical bullets are generated
@@ -1607,16 +1607,16 @@ float BG2_TraceArc( const FireBulletsInfo_t &info, const Vector &vecDir, unsigne
 			tr->fraction = tr->endpos.DistTo(info.m_vecSrc) / info.m_flDistance;
 
 			//return proper damage modifier
-			/*if( tr->endpos.DistTo(info.m_vecSrc) < info.m_flConstantDamageRange )
+			if( tr->endpos.DistTo(info.m_vecSrc) < info.m_flConstantDamageRange )
 				return 1;
 			else
-			{*/
+			{
 				float v = vel.Length();
 				float m = v*v / (info.m_flMuzzleVelocity*info.m_flMuzzleVelocity);
 
 				//make sure we don't end up with modifier > 1 if velocity increased
 				return m > 1 ? 1 : m;
-			//}
+			}
 		}
 	}
 
@@ -1744,7 +1744,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 
 		vecEnd = info.m_vecSrc + vecDir * info.m_flDistance;
 
-		//BG2 - Tjoppen - hitscan arc bullets
+		//BG2 - Tjoppen - arcscan bullets
 		float damageFactor = 1;
 		if( info.m_bArc )
 		{

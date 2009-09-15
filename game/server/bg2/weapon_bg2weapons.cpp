@@ -34,9 +34,10 @@
 
 #include "weapon_bg2base.h"
 
-const float	PISTOL_RANGE = 40 * 3 * 12,		//40 yards
-			MUSKET_RANGE = 175 * 3 * 12,	//175 yards
-			RIFLE_RANGE = 195 * 3 * 12;		//195 yards
+const float	LONG_RANGE = 1000 * 3 * 12,		//since damage decreases with range, we can pick a very long range for all weapons, say 1000 yards
+			PISTOL_RANGE = LONG_RANGE,		//40 * 3 * 12,		//40 yards
+			MUSKET_RANGE = LONG_RANGE,		//175 * 3 * 12,	//175 yards
+			RIFLE_RANGE = LONG_RANGE;		//195 * 3 * 12;		//195 yards
 
 //BG2 - Tjoppen - these constants from weapon_data.h @ BG 1.0F RC14
 // damage values for each attack on each weapon
