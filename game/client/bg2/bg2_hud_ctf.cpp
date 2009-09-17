@@ -53,6 +53,7 @@ private:
 					*m_pIconBlue;
 
 	vgui::Label * m_pLabelFlag[MAX_FLAGS]; 
+	vgui::Label	*m_pLabelCarrier;	
 
 };
 
@@ -82,6 +83,13 @@ CHudCTFFlags::CHudCTFFlags( const char *pElementName ) :
 		m_pLabelFlag[i]->SetFgColor( ColourWhite );
 		m_pLabelFlag[i]->SetVisible(false);
 	}
+
+	m_pLabelCarrier = new vgui::Label( this, "RoundState_warmup", "");
+	m_pLabelCarrier->SetPaintBackgroundEnabled( false );
+	m_pLabelCarrier->SetPaintBorderEnabled( false );
+	m_pLabelCarrier->SizeToContents();
+	m_pLabelCarrier->SetContentAlignment( vgui::Label::a_west );
+	m_pLabelCarrier->SetFgColor( ColourWhite );
 
 	m_pIconBlank = m_pIconRed = m_pIconBlue;
 }
@@ -225,7 +233,22 @@ void CHudCTFFlags::Paint()
 
 			m_pLabelFlag[i]->SetFgColor( Color(r,g,b,255) );
 			m_pLabelFlag[i]->SetVisible(true);
-
 		}
+
+		if ( g_CtfFlags[i]->GetMoveParent() && g_CtfFlags[i]->GetMoveParent() == pPlayer )
+		{
+			int ystart = GetTall() - 140; //Place this just above the LMS indicator.
+			int w,h;
+
+			m_pLabelCarrier->SetText( g_pVGuiLocalize->Find("#CTF"));
+			m_pLabelCarrier->SizeToContents();
+			m_pLabelCarrier->GetSize( w, h );
+			m_pLabelCarrier->SetPos( 5, ystart - 1.3*h);
+			m_pLabelCarrier->SetFgColor( ColourWhite );
+			m_pLabelCarrier->SetVisible( true );
+			//Msg("You are carrying a flag! \n");
+		}
+		else 
+			m_pLabelCarrier->SetVisible( false );
 	}
 }
