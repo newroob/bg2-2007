@@ -121,7 +121,7 @@ const char *g_ppszRandomCitizenModels[] =
 	"models/player/british/jager/jager.mdl",
 	"models/player/british/medium_b/medium_b.mdl",
 	"models/player/british/light_b/light_b.mdl",
-	"models/player/mohawk.mdl",
+	"models/player/british/mohawk/mohawk.mdl",
 };
 
 const char *g_ppszRandomCombineModels[] =
@@ -1165,6 +1165,7 @@ void CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
 		{
 		case CLASS_INFANTRY:
 			SetModel("models/player/american/heavy_a/heavy_a.mdl");
+			m_nSkin = RandomInt(0, 3);
 			break;
 		case CLASS_OFFICER:
 			SetModel("models/player/american/light_a/light_a.mdl");
@@ -1183,16 +1184,18 @@ void CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
 		{
 		case CLASS_INFANTRY:
 			SetModel("models/player/british/medium_b/medium_b.mdl");
-			m_nSkin = RandomInt(0, 1);
+			m_nSkin = RandomInt(0, 8);
 			break;
 		case CLASS_OFFICER:
 			SetModel("models/player/british/light_b/light_b.mdl");
 			break;
 		case CLASS_SNIPER:
 			SetModel("models/player/british/jager/jager.mdl");
+			m_nSkin = RandomInt(0, 1);
 			break;
 		case CLASS_SKIRMISHER:
-			SetModel("models/player/mohawk.mdl"); //CAN WE PLEASE ORGANIZE THE PLAYER MODELS?
+			SetModel("models/player/british/mohawk/mohawk.mdl"); //CAN WE PLEASE ORGANIZE THE PLAYER MODELS?
+			m_nSkin = RandomInt(0, 1);
 			break;
 		}
 		break;
