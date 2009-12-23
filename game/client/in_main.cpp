@@ -685,6 +685,43 @@ void ClassMenu( void )
 		gViewPortInterface->ShowPanel( PANEL_COMM2, false );
 	}
 }
+void WeaponMenu( void )
+{
+	if( gViewPortInterface )
+	{
+		CClassMenu *panel = dynamic_cast<CClassMenu*>( gViewPortInterface->FindPanelByName( PANEL_CLASSES ) );
+		C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+
+		if( !pPlayer )
+			return;
+
+		if( pPlayer->GetTeamNumber() <= TEAM_SPECTATOR && !panel->IsInClassMenu() )
+		{
+			internalCenterPrint->Print( "You can\'t select a weapon before selecting team and class." );
+			return;		//spectators/unassigned don't select class
+		}
+
+		if( panel )
+		{
+			//toggle
+			if( panel->IsInClassMenu() )
+			{
+				//hide!
+				panel->ShowPanel( false );
+			}
+			else
+			{
+				//make sure we're visible and change buttons
+				panel->ShowPanel( true );
+				panel->m_iTeamSelection = pPlayer->GetTeamNumber();
+				panel->ToggleButtons( 3 );
+			}
+		}
+
+		gViewPortInterface->ShowPanel( PANEL_COMM, false );
+		gViewPortInterface->ShowPanel( PANEL_COMM2, false );
+	}
+}
 
 void CommMenu( void )
 {
@@ -1645,6 +1682,7 @@ static ConCommand togglescores("togglescores", ToggleScores);
 //BG2 - Tjoppen - make vgui stuff into proper commands that can be issued via console
 static ConCommand teammenu("teammenu", TeamMenu);
 static ConCommand classmenu("classmenu", ClassMenu);
+static ConCommand weaponmenu("weaponmenu", WeaponMenu);
 static ConCommand commmenu(PANEL_COMM, CommMenu);
 static ConCommand commmenu2(PANEL_COMM2, CommMenu2);
 //

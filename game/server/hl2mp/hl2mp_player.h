@@ -174,7 +174,9 @@ public:
 
 private:
 	//int		m_iClass;			//BG2 - Tjoppen - class system
-	int		m_iNextClass;		//BG2 - Tjoppen - which class will we become on our next respawn?
+	int		m_iNextClass,	//BG2 - Tjoppen - which class will we become on our next respawn?
+			m_iGunKit,
+			m_iAmmoKit;		
 	float	m_flNextVoicecomm,	//BG2 - Tjoppen - voice comms
 			m_flNextGlobalVoicecomm;	//BG2 - Tjoppen - only battlecries for now
 	float	m_fNextStamRegen;	//BG2 - Draco - stamina regen timer

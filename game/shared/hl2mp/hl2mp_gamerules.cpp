@@ -58,6 +58,7 @@ extern ConVar mp_chattime;
 ConVar mp_respawnstyle( "mp_respawnstyle", "1", FCVAR_REPLICATED | FCVAR_NOTIFY );	//0 = regular dm, 1 = waves, 2 = rounds
 ConVar mp_respawntime( "mp_respawntime", "14", FCVAR_REPLICATED | FCVAR_NOTIFY );
 ConVar sv_restartround( "sv_restartround", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar sv_restartmap( "sv_restartmap", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_americanscore( "mp_americanscore", "0", FCVAR_GAMEDLL /*| FCVAR_NOTIFY*/ | FCVAR_CHEAT );
 ConVar mp_britishscore( "mp_britishscore", "0", FCVAR_GAMEDLL /*| FCVAR_NOTIFY*/ | FCVAR_CHEAT  );
 ConVar mp_autobalanceteams( "mp_autobalanceteams", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY );
@@ -429,6 +430,44 @@ void CHL2MPRules::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 #endif
 }
 
+#ifndef CLIENT_DLL
+//BG2 - This should handle all the score settings after each round, and also fire any triggers and play win music. -HairyPotter
+void CHL2MPRules::HandleScores( int iTeam, int iScore, char *cText, bool bRestart )
+{
+	CMapTrigger *BG2Trigger = NULL;
+
+	while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+	{
+		switch ( iTeam )
+		{
+		case TEAM_AMERICANS:
+			BG2Trigger->AmericanMapWin();
+			break;
+		case TEAM_BRITISH:
+			BG2Trigger->BritishMapWin();
+			break;
+		default: //Assume a draw
+			BG2Trigger->Draw();
+			break;
+		}
+	}
+	if ( bRestart )
+	{
+		RestartRound();
+		//do not cause two simultaneous round restarts..
+		m_bIsRestartingRound = false;
+		m_flNextRoundRestart = gpGlobals->curtime + 1;
+	}
+
+	if ( iScore > 0 )
+		g_Teams[iTeam]->AddScore( iScore );
+
+	WinSong( iTeam, true );
+	ClientPrintAll( cText, true, true );
+}
+//
+#endif
+
 void CHL2MPRules::Think( void )
 {
 
@@ -438,7 +477,6 @@ void CHL2MPRules::Think( void )
 
 	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
 	CTeam *pBritish = g_Teams[TEAM_BRITISH];
-	CMapTrigger *BG2Trigger = NULL;
 
 	void ClientPrintAll( char *str, bool printfordeadplayers, bool forcenextclientprintall );
 	if ( g_fGameOver )   // someone else quit the game already
@@ -448,28 +486,20 @@ void CHL2MPRules::Think( void )
 			m_bHasDoneWinSong = true;
 			if (pAmericans->GetScore() < pBritish->GetScore())
 			{
-				ClientPrintAll( "British win!", true, true );
-				WinSong( TEAM_BRITISH, true );
-
-				while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
-					BG2Trigger->BritishMapWin();
+				//British Win
+				HandleScores( TEAM_BRITISH, 0, "British win!", false );
 			}
 
 			if (pAmericans->GetScore() > pBritish->GetScore())
 			{
-				ClientPrintAll( "Americans win!", true, true );
-				WinSong( TEAM_AMERICANS, true );
-
-				while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
-					BG2Trigger->AmericanMapWin();
+				//Americans Win
+				HandleScores( TEAM_AMERICANS, 0, "Americans win!", false );
 			}
 
 			if (pAmericans->GetScore() == pBritish->GetScore())
 			{
-				ClientPrintAll( "Draw!", true, true );
-
-				while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
-					BG2Trigger->Draw();
+				//Draw!
+				HandleScores( -1, 0, "Draw!", false );
 			}
 		}
 
@@ -489,16 +519,20 @@ void CHL2MPRules::Think( void )
 			for( int x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
 			{
 				CBasePlayer *pPlayer = g_Teams[TEAM_AMERICANS]->GetPlayer( x );
+				if ( !pPlayer )
+					continue;
 				m_iAmericanDmg += pPlayer->DeathCount();
 			}
 			for( int x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
 			{
 				CBasePlayer *pPlayer = g_Teams[TEAM_BRITISH]->GetPlayer( x );
+				if ( !pPlayer )
+					continue;
 				m_iBritishDmg += pPlayer->DeathCount();
 			}
 
-			UTIL_LogPrintf("***American Scores*** DAMAGE: %i   SCORE: %i   \n", m_iAmericanDmg, mp_americanscore.GetInt() );
-			UTIL_LogPrintf("***British Scores*** DAMAGE: %i   SCORE: %i   \n", m_iBritishDmg, mp_britishscore.GetInt() );
+			UTIL_LogPrintf("American Scores: DAMAGE: %i   SCORE: %i   \n", m_iAmericanDmg, mp_americanscore.GetInt() );
+			UTIL_LogPrintf("British Scores: DAMAGE: %i   SCORE: %i   \n", m_iBritishDmg, mp_britishscore.GetInt() );
 
 			m_bHasLoggedScores = true; //Don't do it again.
 		}
@@ -582,7 +616,7 @@ void CHL2MPRules::Think( void )
 				case TEAM_BRITISH:
 					iAutoTeamBalancePlayerToSwitchIndex = random->RandomInt( 0, (pBritish->GetNumPlayers() - 1) );
 					pPlayer = pBritish->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex);
-					if (!pPlayer->IsAlive())
+					if (pPlayer && !pPlayer->IsAlive()) //Let's try to avoid null pointers.
 					{
 						pPlayer->ChangeTeam(TEAM_AMERICANS);
 					}
@@ -590,7 +624,7 @@ void CHL2MPRules::Think( void )
 				case TEAM_AMERICANS:
 					iAutoTeamBalancePlayerToSwitchIndex = random->RandomInt( 0, (pAmericans->GetNumPlayers() - 1) );
 					pPlayer = pAmericans->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex);
-					if (!pPlayer->IsAlive())
+					if (pPlayer && !pPlayer->IsAlive()) //Let's try to avoid null pointers.
 					{
 						pPlayer->ChangeTeam(TEAM_BRITISH);
 					}
@@ -600,17 +634,20 @@ void CHL2MPRules::Think( void )
 		//well, if we aren't even now, there's always next think...
 	}
 	//=========================
-	//Restart Round
+	//Restart Round/Map
 	//=========================
-	if (sv_restartround.GetInt() > 0)
+	if (sv_restartmap.GetInt() > 0)
 	{
-		m_fNextGameReset = gpGlobals->curtime + sv_restartround.GetInt();
-		sv_restartround.SetValue(0);
+		m_fNextGameReset = gpGlobals->curtime + sv_restartmap.GetInt();
+		sv_restartmap.SetValue(0);
 	}
 	//now if the time was set we can check for it, above zero means we are restarting
 	if ((m_fNextGameReset > 0) &&(m_fNextGameReset <= gpGlobals->curtime))
 	{
 		m_fNextGameReset = 0;//dont reset again
+
+		//CleanUpMap();
+
 		//reset scores...
 		pAmericans->SetScore(0);//...for teams...
 		pBritish->SetScore(0);
@@ -618,16 +655,46 @@ void CHL2MPRules::Think( void )
 		for( x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
 		{
 			CBasePlayer *pPlayer = g_Teams[TEAM_AMERICANS]->GetPlayer( x );
+			if ( !pPlayer )
+				continue;
+
 			pPlayer->ResetFragCount();//...for cap points...
 			pPlayer->ResetDeathCount();//...and damage
 		}
 		for( x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
 		{
 			CBasePlayer *pPlayer = g_Teams[TEAM_BRITISH]->GetPlayer( x );
+			if ( !pPlayer )
+				continue;
+
 			pPlayer->ResetFragCount();//...for cap points...
 			pPlayer->ResetDeathCount();//...and damage
 		}
 		RestartRound();	//BG2 - Tjoppen - restart round
+
+		//Reset the map and wave times...
+		if (mp_respawntime.GetInt() > 0)
+		{
+			m_fLastRespawnWave = gpGlobals->curtime;
+		}
+		m_flGameStartTime = gpGlobals->curtime;
+		//
+	}
+
+	if (sv_restartround.GetInt() > 0)
+	{
+		m_fNextRoundReset = gpGlobals->curtime + sv_restartround.GetInt();
+		sv_restartround.SetValue(0);
+	}
+	if ((m_fNextRoundReset > 0) && ( m_fNextRoundReset <= gpGlobals->curtime))
+	{
+		m_fNextRoundReset = 0;//dont reset again
+		RestartRound();	//BG2 - restart round
+
+		if (mp_respawntime.GetInt() > 0)
+		{
+			m_fLastRespawnWave = gpGlobals->curtime;
+		}
 	}
 	
 	//=========================
@@ -656,6 +723,7 @@ void CHL2MPRules::Think( void )
 		for( x = 0; x < pBritish->GetNumPlayers(); x++ )
 			if( pBritish->GetPlayer(x)->IsAlive() )
 				alivebritish++;
+
 		//Tjoppen - End
 		//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed
 		//wins
@@ -667,27 +735,22 @@ void CHL2MPRules::Think( void )
 				m_flNextRoundRestart = gpGlobals->curtime + 5;
 				m_bIsRestartingRound = true;
 				
-				if((aliveamericans > 0) && (alivebritish > 0))
+				if((aliveamericans > 0) && (alivebritish > 0)) //Both teams have players left alive..
 				{
 					if (aliveamericans > alivebritish)
 					{
 						ClientPrintAll( "Out of time! Americans win!", true, true );
-						m_iTDMTeamThatWon = 1;
-						pAmericans->AddScore( 1 );
-						//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+						m_iTDMTeamThatWon = TEAM_AMERICANS;
 					}
 					else if (aliveamericans < alivebritish)
 					{
 						ClientPrintAll( "Out of time! British win!", true, true );
-						m_iTDMTeamThatWon = 2;
-						pBritish->AddScore( 1 );
-						//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+						m_iTDMTeamThatWon = TEAM_BRITISH;
 					}
 					else
 					{
 						ClientPrintAll( "Out of time! Draw!", true, true );
-						m_iTDMTeamThatWon = 0;
-						//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+						m_iTDMTeamThatWon = -1;
 					}
 				}
 
@@ -695,63 +758,39 @@ void CHL2MPRules::Think( void )
 				{
 					//draw
 					ClientPrintAll( "This round became a draw!", true, true );
-					m_iTDMTeamThatWon = 0;
-					//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
+					m_iTDMTeamThatWon = -1;
 				}
 				else if( aliveamericans == 0 )
 				{
 					//british
-					pBritish->AddScore( 1 );
-					m_iTDMTeamThatWon = 2;
+					m_iTDMTeamThatWon = TEAM_BRITISH;
 					ClientPrintAll( "The British won this round!", true, true );
-					//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 				}
 				else if( alivebritish == 0 )
 				{
 					//americans
-					pAmericans->AddScore( 1 );
-					m_iTDMTeamThatWon = 1;
+					m_iTDMTeamThatWon = TEAM_AMERICANS;
 					ClientPrintAll( "The Americans won this round!", true, true );
-					//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 				}
 			}
 			else if( m_flNextRoundRestart < gpGlobals->curtime )
-			{
-				m_bIsRestartingRound = false;
-				m_flNextRoundRestart = gpGlobals->curtime + 1;	//don't check for dead players for
-																//one second to debounce with respect
-																//to any non-spawned players
+			{			
+				switch ( m_iTDMTeamThatWon )
+				{
+					case TEAM_AMERICANS:
+						HandleScores( TEAM_AMERICANS, 1, "", true );
+						break;
+					case TEAM_BRITISH:
+						HandleScores( TEAM_BRITISH, 1, "", true );
+						break;
+					default:
+						HandleScores( NULL, 0, "", true );
+						break;
+				}
 
-				RestartRound();	//reset spawns, flags and players
-				
 				if (mp_respawntime.GetInt() > 0)
 				{
-					//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 					m_fLastRespawnWave = gpGlobals->curtime;
-				}
-
-				CMapTrigger *BG2Trigger = NULL;
-
-				if( m_iTDMTeamThatWon == 2 )
-				{
-					//british
-					WinSong( TEAM_BRITISH);
-
-					while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
-						BG2Trigger->BritishRoundWin();
-				}
-				else if( m_iTDMTeamThatWon == 1 )
-				{
-					//americans
-					WinSong( TEAM_AMERICANS );
-
-					while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
-						BG2Trigger->AmericanRoundWin();
-				}
-				else
-				{
-					while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
-						BG2Trigger->Draw();
 				}
 			}
 		}
@@ -768,10 +807,10 @@ void CHL2MPRules::Think( void )
 
 	if ( flFragLimit )
 	{
-		CTeam *pCombine = g_Teams[TEAM_AMERICANS];
-		CTeam *pRebels = g_Teams[TEAM_BRITISH];
+		CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
+		CTeam *pBritish = g_Teams[TEAM_BRITISH];
 
-		if ( pCombine->GetScore() >= flFragLimit || pRebels->GetScore() >= flFragLimit )
+		if ( pAmericans->GetScore() >= flFragLimit || pBritish->GetScore() >= flFragLimit )
 		{
 			GoToIntermission();
 			return;
@@ -1407,18 +1446,14 @@ void CHL2MPRules::RestartGame()
 
 	// Respawn entities (glass, doors, etc..)
 
-	CTeam *pRebels = GetGlobalTeam( TEAM_BRITISH );
-	CTeam *pCombine = GetGlobalTeam( TEAM_AMERICANS );
+	CTeam *pBritish = GetGlobalTeam( TEAM_BRITISH );
+	CTeam *pAmericans = GetGlobalTeam( TEAM_AMERICANS );
 
-	if ( pRebels )
-	{
-		pRebels->SetScore( 0 );
-	}
+	if ( pAmericans )
+		pAmericans->SetScore( 0 );
 
-	if ( pCombine )
-	{
-		pCombine->SetScore( 0 );
-	}
+	if ( pBritish )
+		pBritish->SetScore( 0 );
 
 	m_flIntermissionEndTime = 0;
 	m_flRestartGameTime = 0.0;		
@@ -1682,7 +1717,7 @@ void CHL2MPRules::RespawnAll()
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_AMERICANS]->GetPlayer( x ) );
 
 		if( !pPlayer )
-			break;
+			continue;
 
 		pPlayer->Spawn();
 
@@ -1699,7 +1734,7 @@ void CHL2MPRules::RespawnAll()
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
 
 		if( !pPlayer )
-			break;
+			continue;
 
 		pPlayer->Spawn();
 
@@ -1710,9 +1745,6 @@ void CHL2MPRules::RespawnAll()
 			pPlayer->m_hRagdoll = NULL;
 		}
 	}
-
-	/*HL2MPRules()->m_bIsRestartingRound = false;
-	HL2MPRules()->m_flNextRoundRestart = gpGlobals->curtime + 1;*/
 }
 
 void CHL2MPRules::WinSong( int team, bool m_bWonMap )
@@ -1753,7 +1785,7 @@ void CHL2MPRules::WinSong( int team, bool m_bWonMap )
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_AMERICANS]->GetPlayer( x ) );
 
 		if( !pPlayer )
-			break;
+			continue;
 
 		if( pSound )
 		{
@@ -1768,7 +1800,7 @@ void CHL2MPRules::WinSong( int team, bool m_bWonMap )
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
 
 		if( !pPlayer )
-			break;
+			continue;
 
 		if( pSound )
 		{
@@ -1789,7 +1821,7 @@ void CHL2MPRules::RespawnWave()
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_AMERICANS]->GetPlayer( x ) );
 
 		if( !pPlayer )
-			break;
+			continue;
 
 		if( pPlayer->IsAlive() )
 			continue;
@@ -1802,7 +1834,7 @@ void CHL2MPRules::RespawnWave()
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
 		
 		if( !pPlayer )
-			break;
+			continue;
 
 		if( pPlayer->IsAlive() )
 			continue;
@@ -1878,7 +1910,7 @@ void CHL2MPRules::UpdateFlags( void )
 {
 	CBaseEntity *pEntity = NULL;
 
-	CMapTrigger *BG2Trigger = NULL;
+	//CMapTrigger *BG2Trigger = NULL;
 	
 	int	american_flags = 0,
 		british_flags = 0,
@@ -1980,32 +2012,12 @@ void CHL2MPRules::UpdateFlags( void )
 	{
 		if( (foramericans - american_flags) == 0 && foramericans != 0 )
 		{
-			ClientPrintAll( "The Americans won this round!", true );
-			g_Teams[TEAM_AMERICANS]->AddScore( mp_winbonus.GetInt() );
-			RestartRound();
-			WinSong( TEAM_AMERICANS );
-
-			while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
-				BG2Trigger->AmericanRoundWin();
-
-			//do not cause two simultaneous round restarts..
-			m_bIsRestartingRound = false;
-			m_flNextRoundRestart = gpGlobals->curtime + 1;
+			HandleScores( TEAM_AMERICANS, mp_winbonus.GetInt(), "The Americans won this round!", true );
 			return;
 		}
 		if( (forbritish - british_flags) == 0 && forbritish != 0 )
 		{
-			ClientPrintAll( "The British won this round!", true );
-			g_Teams[TEAM_BRITISH]->AddScore( mp_winbonus.GetInt() );
-			RestartRound();
-			WinSong( TEAM_BRITISH );
-
-			while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
-				BG2Trigger->BritishRoundWin();
-
-			//do not cause two simultaneous round restarts..
-			m_bIsRestartingRound = false;
-			m_flNextRoundRestart = gpGlobals->curtime + 1;
+			HandleScores( TEAM_BRITISH, mp_winbonus.GetInt(), "The British won this round!", true );
 			return;
 		}
 	}
@@ -2014,16 +2026,8 @@ void CHL2MPRules::UpdateFlags( void )
 		if( american_flags <= 0 && british_flags <= 0 )
 		{
 			//draw
+			HandleScores( NULL, 0, "This round became a draw", true );
 			//Msg( "draw\n" );
-			ClientPrintAll( "This round became a draw", true );
-			RestartRound();
-
-			while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
-				BG2Trigger->Draw();
-
-			//do not cause two simultaneous round restarts..
-			m_bIsRestartingRound = false;
-			m_flNextRoundRestart = gpGlobals->curtime + 1;
 			return;
 		}
 
@@ -2031,17 +2035,7 @@ void CHL2MPRules::UpdateFlags( void )
 		{
 			//british win
 			//Msg( "british win\n" );
-			ClientPrintAll( "The British won this round!", true );
-			g_Teams[TEAM_BRITISH]->AddScore( mp_winbonus.GetInt() );
-			RestartRound();
-			WinSong( TEAM_BRITISH);
-
-			while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
-				BG2Trigger->BritishRoundWin();
-
-			//do not cause two simultaneous round restarts..
-			m_bIsRestartingRound = false;
-			m_flNextRoundRestart = gpGlobals->curtime + 1;
+			HandleScores( TEAM_BRITISH, mp_winbonus.GetInt(), "The British won this round!", true );
 			return;
 		}
 
@@ -2049,17 +2043,7 @@ void CHL2MPRules::UpdateFlags( void )
 		{
 			//americans win
 			//Msg( "americans win\n" );
-			ClientPrintAll( "The Americans won this round!", true );
-			g_Teams[TEAM_AMERICANS]->AddScore( mp_winbonus.GetInt() );
-			RestartRound();
-			WinSong( TEAM_AMERICANS );
-
-			while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
-				BG2Trigger->AmericanRoundWin();
-
-			//do not cause two simultaneous round restarts..
-			m_bIsRestartingRound = false;
-			m_flNextRoundRestart = gpGlobals->curtime + 1;
+			HandleScores( TEAM_AMERICANS, mp_winbonus.GetInt(), "The Americans won this round!", true );
 			return;
 		}
 	}

@@ -18,6 +18,7 @@
 #include <vgui_controls/Frame.h>
 #include <vgui_controls/Button.h>
 #include <vgui_controls/ComboBox.h>
+#include <vgui_controls/ToggleButton.h>
 
 #include <game/client/iviewport.h>
 
@@ -72,6 +73,41 @@ private:
 	int m_iCommand;
 };
 
+class COkayButton : public vgui::Button
+{
+public:
+	DECLARE_CLASS_SIMPLE( COkayButton, vgui::Button );
+
+	COkayButton(Panel *parent, const char *panelName, const char *text) : Button( parent, panelName, text ) { }
+
+	void SetCommand( int command, bool ammo = false );
+	void OnMousePressed(vgui::MouseCode code);
+	void OnCursorEntered( void );
+	void PerformCommand( void );
+};
+
+class CWeaponButton : public vgui::ToggleButton
+{
+public:
+	DECLARE_CLASS_SIMPLE( CWeaponButton, vgui::ToggleButton );
+
+	CWeaponButton(Panel *parent, const char *panelName, const char *text) : ToggleButton( parent, panelName, text ) {  }
+
+	void OnMousePressed(vgui::MouseCode code);
+	void OnCursorEntered( void );
+};
+
+class CAmmoButton : public vgui::ToggleButton
+{
+public:
+	DECLARE_CLASS_SIMPLE( CAmmoButton, vgui::ToggleButton );
+
+	CAmmoButton(Panel *parent, const char *panelName, const char *text) : ToggleButton( parent, panelName, text ) {  }
+
+	void OnMousePressed(vgui::MouseCode code);
+	void OnCursorEntered( void );
+};
+
 class CClassMenu : public vgui::Frame, public IViewPortPanel
 {
 	DECLARE_CLASS_SIMPLE( CClassMenu, vgui::Frame );
@@ -103,12 +139,25 @@ public:
 					*m_pSpectateButton,
 					*m_pAutoassignButton;
 
+	CWeaponButton	*m_pGunButton1,
+					*m_pGunButton2,
+					*m_pGunButton3;
+
+	CAmmoButton		*m_pAmmoButton1,
+					*m_pAmmoButton2,
+					*m_pAmmoButton3;
+
+	COkayButton		*m_pOK;
+
 	vgui::HTML		*m_pInfoHTML;
 
-	int m_iTeamSelection;
+	int m_iTeamSelection,
+		m_iClassSelection;
 
 	void OnThink();
 	void UpdateClassButtonText( CClassButton *pButton, int iClass, const char *pPrefix );
+	void UpdateAmmoButtonText( int iTeam, int iClass );
+	void UpdateWeaponButtonText( int iTeam, int iClass );
 	void ToggleButtons(int iShowScreen);
 
 	//being in classmenu mode means we must be visible aswell
@@ -131,16 +180,20 @@ private:
 	int				m_iInfantryKey,
 					m_iOfficerKey,
 					m_iSniperKey,
-					m_iSkirmisherKey,
-					m_iSpectateKey;
+					m_iSkirmisherKey;
 
 	CClassButton	*m_pCancelButton;
 	int				m_iCancelKey,
 
 					teammenu,
 					classmenu,
+					weaponmenu,
 					commmenu,
 					commmenu2;
+public:
+
+	int m_iGunType;
+	int m_iAmmoType;
 };
 
 #endif // CLASSMENU_H

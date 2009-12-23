@@ -156,6 +156,11 @@ CHL2MP_Player::CHL2MP_Player() : m_PlayerAnimState( this )
     m_bEnterObserver = false;
 	m_bReady = false;
 
+	//BG2 - Default weapon kits. -Hairypotter
+	m_iGunKit = 1;
+	m_iAmmoKit = 1;
+	//
+
 	BaseClass::ChangeTeam( 0 );
 	
 	//UseClientSideAnimation();
@@ -301,7 +306,15 @@ void CHL2MP_Player::GiveDefaultItems( void )
 		switch( m_iClass )
 		{
 		case CLASS_INFANTRY:
-			GiveNamedItem( "weapon_charleville" );
+			switch ( m_iGunKit )
+			{
+				case 1:
+					GiveNamedItem( "weapon_charleville" );
+					break;
+				case 2:
+					GiveNamedItem( "weapon_american_brownbess" );
+					break;
+			}
 			CBasePlayer::SetAmmoCount( 36,	GetAmmoDef()->Index("357")); //Default ammo for Infantry. -HairyPotter
 			break;
 		case CLASS_OFFICER:
@@ -316,7 +329,18 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			break;
 		case CLASS_SKIRMISHER:
 			//GiveNamedItem( "weapon_tomahawk" );
-			GiveNamedItem( "weapon_revolutionnaire" );
+			switch ( m_iGunKit )
+			{
+				case 1:
+					GiveNamedItem( "weapon_revolutionnaire" );
+					break;
+				case 2:
+					GiveNamedItem( "weapon_fowler" );
+					break;
+				case 3:
+					GiveNamedItem( "weapon_american_brownbess_nobayo" );
+					break;
+			}
 			GiveNamedItem( "weapon_beltaxe" );
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Skirmishers. -HairyPotter
 			break;
@@ -338,7 +362,15 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			CBasePlayer::SetAmmoCount( 12,	GetAmmoDef()->Index("357")); //Default ammo for Officers. -HairyPotter
 			break;
 		case CLASS_SNIPER:
-			GiveNamedItem( "weapon_jaeger" );
+			switch ( m_iGunKit )
+			{
+				case 1:
+					GiveNamedItem( "weapon_jaeger" );
+					break;
+				case 2:
+					GiveNamedItem( "weapon_longpattern" );
+					break;
+			}
 			GiveNamedItem( "weapon_hirschf" );
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Snipers. -HairyPotter
 			break;
@@ -1475,6 +1507,12 @@ bool CHL2MP_Player::ClientCommand( const CCommand &args )
 {
 
 	const char *cmd = args[0];
+	if ( FStrEq( cmd, "kit" ) && args.ArgC() > 2 )
+	{
+		m_iGunKit = atoi( args[ 1 ] );
+		m_iAmmoKit = atoi( args[ 2 ] );
+		return true;
+	}
 	//BG2 - Tjoppen - class selection
 	if ( FStrEq( cmd, "heavy_a" ) )
 	{
@@ -1496,7 +1534,7 @@ bool CHL2MP_Player::ClientCommand( const CCommand &args )
 		AttemptJoin( TEAM_AMERICANS, CLASS_SKIRMISHER, "Militia" ); //TODO - HairyPotter
 		return true;
 	}
-	if ( FStrEq( cmd, "medium_b" ) )
+	else if ( FStrEq( cmd, "medium_b" ) )
 	{
 		AttemptJoin( TEAM_BRITISH, CLASS_INFANTRY, "Royal Infantry" );
 		return true;

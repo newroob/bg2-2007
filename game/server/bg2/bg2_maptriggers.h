@@ -45,6 +45,10 @@ class CMapTrigger : public CBaseAnimating
 	COutputEvent m_OnBritishWinMap;
 	COutputEvent m_OnDraw;
 
+	void InputForceAmericanWinRound( inputdata_t &inputData );
+	void InputForceBritishWinRound( inputdata_t &inputData );
+	void InputForceDrawRound( inputdata_t &inputData );
+
 public:
 
 	void AmericanRoundWin( void );

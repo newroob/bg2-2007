@@ -175,6 +175,9 @@ public:
 	void	ManageObjectRelocation( void );
 	void    CheckChatForReadySignal( CHL2MP_Player *pPlayer, const char *chatmsg );
 	const char *GetChatFormat( bool bTeamOnly, CBasePlayer *pPlayer );
+
+	//BG2 - This should handle all the score settings after each round, and also fire any triggers and play win music. -HairyPotter
+	void HandleScores( int iTeam, int iScore, char *cText, bool bRestart );
 #else
 	//BG2 - Skillet - List of player ragdolls
 	CUtlVector<C_HL2MPRagdoll*> m_hRagdollList;
@@ -187,13 +190,13 @@ public:
 
 	void PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info );
 
-	
 	//bool	IsTeamplay( void ) { return m_bTeamPlayEnabled;	} //BG2 - Don't need it anymore. Always assume teamplay, because BG2 requires it anyway. -HairyPotter
 	void	CheckAllPlayersReady( void );
 
 	//BG2 - Draco - Start
 	CNetworkVar( float, m_fLastRespawnWave );
 	float m_fNextGameReset;
+	float m_fNextRoundReset;
 	//float m_fEndRoundTime;	//use m_fLastRespawnWave + mp_respawntime.GetFloat() instead
 	float m_fNextFlagUpdate;
 	//BG2 - Draco - End
