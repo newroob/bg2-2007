@@ -236,6 +236,10 @@ CBasePlayer *FindClosestEnemy( CSDKBot *pBot, bool insight )
 	for( int x = 0; x < pTeam->GetNumPlayers(); x++ )
 	{
 		CBasePlayer *pEnemy = pTeam->GetPlayer(x);
+
+		if ( !pEnemy )
+			continue; 
+
 		if( !pEnemy->IsAlive() )
 			continue;
 
@@ -283,6 +287,10 @@ CBasePlayer *FindClosestFriend( CSDKBot *pBot, bool insight, float *pdist )
 	for( int x = 0; x < pTeam->GetNumPlayers(); x++ )
 	{
 		CBasePlayer *pEnemy = pTeam->GetPlayer(x);
+
+		if ( !pEnemy )
+			continue; 
+
 		if( !pEnemy->IsAlive() )
 			continue;
 

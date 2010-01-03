@@ -393,6 +393,7 @@ void CHL2MPRules::ResetMap()
 	filter.AddKeep("player_manager");
 	filter.AddKeep("player");
 	filter.AddKeep("flag");
+	filter.AddKeep("ctf_flag");
 	CBaseEntity *pEnt;
 	CBaseEntity *tmpEnt;
 	// find the first entity in the entity list

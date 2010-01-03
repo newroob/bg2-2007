@@ -38,33 +38,44 @@
 
 #define HIDEWEAPON_THINK_CONTEXT			"BaseCombatWeapon_HideThink"
 
+#define TWEAK_IRONSIGHTS //BG2 - Comment this out for final release.
+
 //BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
-/*ConVar viewmodel_adjust_forward( "viewmodel_adjust_forward", "0", FCVAR_REPLICATED );
+#if defined( TWEAK_IRONSIGHTS )
+ConVar viewmodel_adjust_enabled( "viewmodel_adjust_enabled", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_forward( "viewmodel_adjust_forward", "0", FCVAR_REPLICATED );
 ConVar viewmodel_adjust_right( "viewmodel_adjust_right", "0", FCVAR_REPLICATED );
 ConVar viewmodel_adjust_up( "viewmodel_adjust_up", "0", FCVAR_REPLICATED );
 ConVar viewmodel_adjust_pitch( "viewmodel_adjust_pitch", "0", FCVAR_REPLICATED );
 ConVar viewmodel_adjust_yaw( "viewmodel_adjust_yaw", "0", FCVAR_REPLICATED );
 ConVar viewmodel_adjust_roll( "viewmodel_adjust_roll", "0", FCVAR_REPLICATED );
-ConVar viewmodel_adjust_fov( "viewmodel_adjust_fov", "0", FCVAR_REPLICATED );*/
+ConVar viewmodel_adjust_fov( "viewmodel_adjust_fov", "0", FCVAR_REPLICATED );
+#endif
 
 Vector CBaseCombatWeapon::GetIronsightPositionOffset( void ) const
 {
-	//if( viewmodel_adjust_enabled.GetBool() ) Out of the way, you!
-		//return Vector( viewmodel_adjust_forward.GetFloat(), viewmodel_adjust_right.GetFloat(), viewmodel_adjust_up.GetFloat() );
+#if defined( TWEAK_IRONSIGHTS )
+	if( viewmodel_adjust_enabled.GetBool() ) //Out of the way, you!
+		return Vector( viewmodel_adjust_forward.GetFloat(), viewmodel_adjust_right.GetFloat(), viewmodel_adjust_up.GetFloat() );
+#endif
 	return vecIronsightPosOffset; //Just do what the script says!
 }
  
 QAngle CBaseCombatWeapon::GetIronsightAngleOffset( void ) const
 {
-	//if( viewmodel_adjust_enabled.GetBool() ) Out of the way, you!
-		//return QAngle( viewmodel_adjust_pitch.GetFloat(), viewmodel_adjust_yaw.GetFloat(), viewmodel_adjust_roll.GetFloat() );
+#if defined( TWEAK_IRONSIGHTS )
+	if( viewmodel_adjust_enabled.GetBool() ) //Out of the way, you!
+		return QAngle( viewmodel_adjust_pitch.GetFloat(), viewmodel_adjust_yaw.GetFloat(), viewmodel_adjust_roll.GetFloat() );
+#endif
 	return angIronsightAngOffset; //Just do what the script says!
 }
  
 float CBaseCombatWeapon::GetIronsightFOVOffset( void ) const
 {
-	//if( viewmodel_adjust_enabled.GetBool() ) Out of the way, you!
-		//return viewmodel_adjust_fov.GetFloat();
+#if defined( TWEAK_IRONSIGHTS )
+	if( viewmodel_adjust_enabled.GetBool() ) //Out of the way, you!
+		return viewmodel_adjust_fov.GetFloat();
+#endif
 	return flIronsightFOVOffset; //Just do what the script says!
 }
 //
@@ -1428,6 +1439,19 @@ selects and deploys each weapon as you pass it. (sjb)
 bool CBaseCombatWeapon::Deploy( )
 {
 	MDLCACHE_CRITICAL_SECTION();
+
+#if defined( TWEAK_IRONSIGHTS )
+	//BG2 - This is here to help test the viewmodel settings for Ironsights. -HairyPotter
+	viewmodel_adjust_forward.SetValue( vecIronsightPosOffset.x ); //Forward
+	viewmodel_adjust_right.SetValue( vecIronsightPosOffset.y ); //Right
+	viewmodel_adjust_up.SetValue( vecIronsightPosOffset.z ); //Up
+	viewmodel_adjust_pitch.SetValue( angIronsightAngOffset[PITCH] );
+	viewmodel_adjust_yaw.SetValue( angIronsightAngOffset[YAW] );
+	viewmodel_adjust_roll.SetValue( angIronsightAngOffset[ROLL] );
+	viewmodel_adjust_fov.SetValue( flIronsightFOVOffset );
+	//
+#endif
+
 	return DefaultDeploy( (char*)GetViewModel(), (char*)GetWorldModel(), GetDrawActivity(), (char*)GetAnimPrefix() );
 }
 
@@ -1441,7 +1465,6 @@ Activity CBaseCombatWeapon::GetDrawActivity( void )
 //-----------------------------------------------------------------------------
 bool CBaseCombatWeapon::Holster( CBaseCombatWeapon *pSwitchingTo )
 { 
-
 	//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
 	DisableIronsights();
 	//

@@ -96,7 +96,7 @@ DECLARE_BG2_WEAPON( brownbess )
 	angIronsightAngOffset[PITCH]	= -0.1;
 	angIronsightAngOffset[YAW]		= 0;
 	angIronsightAngOffset[ROLL]		= 0;
-	flIronsightFOVOffset		= 0;
+	flIronsightFOVOffset		= -2.5;
 
 	m_bWeaponHasSights = true; 
 	//
@@ -164,7 +164,7 @@ DECLARE_BG2_WEAPON( charleville )
 	angIronsightAngOffset[PITCH]	= 0;
 	angIronsightAngOffset[YAW]		= 0;
 	angIronsightAngOffset[ROLL]		= 0;
-	flIronsightFOVOffset		= 0;
+	flIronsightFOVOffset		= -2.5;
 
 	m_bWeaponHasSights = true; 
 	//
@@ -233,7 +233,7 @@ DECLARE_BG2_WEAPON( jaeger )
 	angIronsightAngOffset[PITCH]	= 0;
 	angIronsightAngOffset[YAW]		= 0.14;
 	angIronsightAngOffset[ROLL]		= 0;
-	flIronsightFOVOffset		= 0;
+	flIronsightFOVOffset		= -2.5;
 
 	m_bWeaponHasSights = true; 
 	//
@@ -284,14 +284,14 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_fHolsterTime = 0.75f;
 
 	//Iron sights viewmodel settings.
-	vecIronsightPosOffset.x		= -17.15; //forward
-	vecIronsightPosOffset.y		= -8.05; //right
-	vecIronsightPosOffset.z		= 6.7; //up
+	vecIronsightPosOffset.x		= -18.25; //forward
+	vecIronsightPosOffset.y		= -7.9; //right
+	vecIronsightPosOffset.z		= 6.8; //up
  
 	angIronsightAngOffset[PITCH]	= 0;
-	angIronsightAngOffset[YAW]		= 0;
+	angIronsightAngOffset[YAW]		= 0.1;
 	angIronsightAngOffset[ROLL]		= 0;
-	flIronsightFOVOffset		= 0;
+	flIronsightFOVOffset		= -3;
 
 	m_bWeaponHasSights = true; 
 	//
@@ -585,7 +585,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	angIronsightAngOffset[PITCH]	= -0.36;
 	angIronsightAngOffset[YAW]		= 0;
 	angIronsightAngOffset[ROLL]		= 0;
-	flIronsightFOVOffset		= 0;
+	flIronsightFOVOffset		= -2.5;
 
 	m_bWeaponHasSights = true; 
 	//
@@ -639,7 +639,7 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 	angIronsightAngOffset[PITCH]	= -0.25;
 	angIronsightAngOffset[YAW]		= 0;
 	angIronsightAngOffset[ROLL]		= 0;
-	flIronsightFOVOffset		= 0;
+	flIronsightFOVOffset		= -2.5;
 
 	m_bWeaponHasSights = true; 
 	//
@@ -717,14 +717,14 @@ DECLARE_BG2_WEAPON( fowler )
 	m_fHolsterTime = 0.75f;
 
 	//Iron sights viewmodel settings.
-	vecIronsightPosOffset.x		= -17.25; //forward
-	vecIronsightPosOffset.y		= -7.75; //right
-	vecIronsightPosOffset.z		= 6.8; //up
+	vecIronsightPosOffset.x		= -20.0; //forward
+	vecIronsightPosOffset.y		= -8.2; //right
+	vecIronsightPosOffset.z		= 7.43; //up
  
-	angIronsightAngOffset[PITCH]	= -0.1;
-	angIronsightAngOffset[YAW]		= 0;
+	angIronsightAngOffset[PITCH]	= -0.45;
+	angIronsightAngOffset[YAW]		= 0.1;
 	angIronsightAngOffset[ROLL]		= 0;
-	flIronsightFOVOffset		= 0;
+	flIronsightFOVOffset		= -2.5;
 
 	m_bWeaponHasSights = true; 
 	//
@@ -771,14 +771,14 @@ DECLARE_BG2_WEAPON( longpattern )
 	m_fHolsterTime = 0.75f;
 
 	//Iron sights viewmodel settings.
-	vecIronsightPosOffset.x		= -17.25; //forward
-	vecIronsightPosOffset.y		= -7.75; //right
-	vecIronsightPosOffset.z		= 6.8; //up
+	vecIronsightPosOffset.x		= -17.0; //forward
+	vecIronsightPosOffset.y		= -7.8; //right
+	vecIronsightPosOffset.z		= 6.6; //up
  
-	angIronsightAngOffset[PITCH]	= -0.1;
-	angIronsightAngOffset[YAW]		= 0;
+	angIronsightAngOffset[PITCH]	= -0.6;
+	angIronsightAngOffset[YAW]		= 0.3;
 	angIronsightAngOffset[ROLL]		= 0;
-	flIronsightFOVOffset		= 0;
+	flIronsightFOVOffset		= -2.5;
 
 	m_bWeaponHasSights = true; 
 	//
@@ -832,7 +832,7 @@ DECLARE_BG2_WEAPON( american_brownbess )
 	angIronsightAngOffset[PITCH]	= -0.1;
 	angIronsightAngOffset[YAW]		= 0;
 	angIronsightAngOffset[ROLL]		= 0;
-	flIronsightFOVOffset		= 0;
+	flIronsightFOVOffset		= -2.5;
 
 	m_bWeaponHasSights = true; 
 	//
@@ -900,7 +900,7 @@ DECLARE_BG2_WEAPON( american_brownbess_nobayo )
 	angIronsightAngOffset[PITCH]	= -0.25;
 	angIronsightAngOffset[YAW]		= 0;
 	angIronsightAngOffset[ROLL]		= 0;
-	flIronsightFOVOffset		= 0;
+	flIronsightFOVOffset		= -2.5;
 
 	m_bWeaponHasSights = true; 
 	//
