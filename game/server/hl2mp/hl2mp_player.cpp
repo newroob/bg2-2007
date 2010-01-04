@@ -314,6 +314,9 @@ void CHL2MP_Player::GiveDefaultItems( void )
 				case 2:
 					GiveNamedItem( "weapon_american_brownbess" );
 					break;
+				default: //In case we get the wrong number or something...
+					GiveNamedItem( "weapon_charleville" );
+					break;
 			}
 			CBasePlayer::SetAmmoCount( 36,	GetAmmoDef()->Index("357")); //Default ammo for Infantry. -HairyPotter
 			break;
@@ -339,6 +342,9 @@ void CHL2MP_Player::GiveDefaultItems( void )
 					break;
 				case 3:
 					GiveNamedItem( "weapon_american_brownbess_nobayo" );
+					break;
+				default: //In case we get the wrong number or something...
+					GiveNamedItem( "weapon_revolutionnaire" );
 					break;
 			}
 			GiveNamedItem( "weapon_beltaxe" );
@@ -369,6 +375,9 @@ void CHL2MP_Player::GiveDefaultItems( void )
 					break;
 				case 2:
 					GiveNamedItem( "weapon_longpattern" );
+					break;
+				default: //In case we get the wrong number or something...
+					GiveNamedItem( "weapon_jaeger" );
 					break;
 			}
 			GiveNamedItem( "weapon_hirschf" );
@@ -1374,7 +1383,7 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 	//This bit of code needs to be run AFTER the team change... if it changed.
 	char str[512];
 	CTeam *team = GetTeam();
-	Q_snprintf( str, 512, "%s is going to fight as %s for the %s\n", GetPlayerName(), pClassName, /*iTeam == TEAM_AMERICANS ? "Americans" : "British"*/ team->GetName() );
+	Q_snprintf( str, 512, "%s is going to fight as %s for the %s\n", GetPlayerName(), pClassName, team->GetName() );
 	ClientPrinttTalkAll( str, HUD_BG2CLASSCHANGE  );
 	
 	//BG2 - Added for HlstatsX Support. -HairyPotter
@@ -1513,8 +1522,60 @@ bool CHL2MP_Player::ClientCommand( const CCommand &args )
 		m_iAmmoKit = atoi( args[ 2 ] );
 		return true;
 	}
+	if ( FStrEq( cmd, "class" ) && args.ArgC() > 2 )
+	{
+		//Eh.. it's a little messy, but it seems a bit more efficent to just use a switch here rather than comparing strings over and over.
+		switch ( atoi( args[ 1 ] ) ) //Team
+		{
+			case TEAM_BRITISH:
+				switch ( atoi( args[ 2 ] ) ) //Class
+				{
+					case CLASS_INFANTRY:
+						AttemptJoin( TEAM_BRITISH, CLASS_INFANTRY, "Royal Infantry" );
+						break;
+					case CLASS_OFFICER:
+						AttemptJoin( TEAM_BRITISH, CLASS_OFFICER, "a Royal Commander" );
+						break;
+					case CLASS_SNIPER:
+						AttemptJoin( TEAM_BRITISH, CLASS_SNIPER, "a Jaeger" );
+						break;
+					case CLASS_SKIRMISHER:
+						AttemptJoin( TEAM_BRITISH, CLASS_SKIRMISHER, "a Native" );
+						break;
+					default:
+						Msg("Class selection invalid. \n");
+						return false;
+				}
+				break;
+			case TEAM_AMERICANS:
+				switch ( atoi( args[ 2 ] ) ) //Class
+				{
+					case CLASS_INFANTRY:
+						AttemptJoin( TEAM_AMERICANS, CLASS_INFANTRY, "a Continental Soldier" );
+						break;
+					case CLASS_OFFICER:
+						AttemptJoin( TEAM_AMERICANS, CLASS_OFFICER, "a Continental Officer" );
+						break;
+					case CLASS_SNIPER:
+						AttemptJoin( TEAM_AMERICANS, CLASS_SNIPER, "a Frontiersman" );
+						break;
+					case CLASS_SKIRMISHER:
+						AttemptJoin( TEAM_AMERICANS, CLASS_SKIRMISHER, "Militia" );
+						break;
+					default:
+						Msg("Class selection invalid. \n");
+						return false;
+				}
+				break;
+			default:
+				Msg("Team selection invalid. \n");
+				return false;
+		}
+		return true;
+	}
+
 	//BG2 - Tjoppen - class selection
-	if ( FStrEq( cmd, "heavy_a" ) )
+	/*if ( FStrEq( cmd, "heavy_a" ) )
 	{
 		AttemptJoin( TEAM_AMERICANS, CLASS_INFANTRY, "a Continental Soldier" );
 		return true;
@@ -1531,7 +1592,7 @@ bool CHL2MP_Player::ClientCommand( const CCommand &args )
 	}
 	else if ( FStrEq( cmd, "skirm_a" ) )
 	{
-		AttemptJoin( TEAM_AMERICANS, CLASS_SKIRMISHER, "Militia" ); //TODO - HairyPotter
+		AttemptJoin( TEAM_AMERICANS, CLASS_SKIRMISHER, "Militia" );
 		return true;
 	}
 	else if ( FStrEq( cmd, "medium_b" ) )
@@ -1553,7 +1614,7 @@ bool CHL2MP_Player::ClientCommand( const CCommand &args )
 	{
 		AttemptJoin( TEAM_BRITISH, CLASS_SKIRMISHER, "a Native" );
 		return true;
-	}
+	}*/
 	//BG2 - Tjoppen - voice comms
 	else if( FStrEq( cmd, "voicecomm" ) && args.ArgC() > 1 )
 	{

@@ -676,7 +676,7 @@ void ClassMenu( void )
 			{
 				//make sure we're visible and change buttons
 				panel->ShowPanel( true );
-				panel->m_iTeamSelection = pPlayer->GetTeamNumber();
+				//panel->m_iTeamSelection = pPlayer->GetTeamNumber();
 				panel->ToggleButtons( 2 );
 			}
 		}
@@ -713,7 +713,7 @@ void WeaponMenu( void )
 			{
 				//make sure we're visible and change buttons
 				panel->ShowPanel( true );
-				panel->m_iTeamSelection = pPlayer->GetTeamNumber();
+				//panel->m_iTeamSelection = pPlayer->GetTeamNumber();
 				panel->ToggleButtons( 3 );
 			}
 		}

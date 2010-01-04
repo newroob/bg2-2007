@@ -19,6 +19,7 @@
 #include <vgui_controls/Button.h>
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/ToggleButton.h>
+#include <vgui_controls/CheckButton.h>
 
 #include <game/client/iviewport.h>
 
@@ -114,7 +115,7 @@ class CClassMenu : public vgui::Frame, public IViewPortPanel
 
 public:
 	CClassMenu( IViewPort *pViewPort );
-	~CClassMenu() {}
+	~CClassMenu();
 
 	virtual const char *GetName( void ) { return PANEL_CLASSES; }
 	virtual void SetData(KeyValues *data);
@@ -147,6 +148,8 @@ public:
 					*m_pAmmoButton2,
 					*m_pAmmoButton3;
 
+	vgui::CheckButton		*m_pQuickJoinCheckButton;
+
 	COkayButton		*m_pOK;
 
 	vgui::HTML		*m_pInfoHTML;
@@ -161,7 +164,8 @@ public:
 	void ToggleButtons(int iShowScreen);
 
 	//being in classmenu mode means we must be visible aswell
-	bool IsInClassMenu( void ) { return m_pInfantryButton->IsVisible() && IsVisible(); }
+	//Kind of a hack here with the weapon kit selection. I mean.. there's always going to be at least 1 ammo selection.. so yeah..
+	bool IsInClassMenu( void ) { return m_pInfantryButton->IsVisible() && IsVisible() || m_pAmmoButton1->IsVisible(); }
 
 	void ShowFile( const char *filename );
 
@@ -180,7 +184,8 @@ private:
 	int				m_iInfantryKey,
 					m_iOfficerKey,
 					m_iSniperKey,
-					m_iSkirmisherKey;
+					m_iSkirmisherKey,
+					m_iOkayKey;
 
 	CClassButton	*m_pCancelButton;
 	int				m_iCancelKey,
@@ -191,9 +196,6 @@ private:
 					commmenu,
 					commmenu2;
 public:
-
-	int m_iGunType;
-	int m_iAmmoType;
 };
 
 #endif // CLASSMENU_H
