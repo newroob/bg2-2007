@@ -37,6 +37,7 @@
 //BG2 - Draco
 #include "triggers.h"
 #include "../bg2/flag.h"
+#include "../bg2/ctfflag.h"
 #include "../bg2/bg2_maptriggers.h"
 //BG2 - Tjoppen - #includes
 #include "sdk/sdk_bot_temp.h"
@@ -1879,7 +1880,6 @@ void CHL2MPRules::ResetFlags( void )
 		pFlag->m_vOverloadingPlayers.RemoveAll();
 		pFlag->m_iNearbyPlayers = 0;
 
-#ifndef CLIENT_DLL
 		if (pFlag->HasSpawnFlags( CFlag_START_DISABLED ))
 		{
 			pFlag->m_bActive = false;
@@ -1903,8 +1903,18 @@ void CHL2MPRules::ResetFlags( void )
 				break;
 		}
 		//
-#endif // CLIENT_DLL
 	}
+
+	//BG2 - Reset CTF Flags as well. -HairyPotter
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "ctf_flag" )) != NULL )
+	{
+		CtfFlag *pFlag = dynamic_cast<CtfFlag*>(pEntity);
+		if( !pFlag )
+			continue;
+
+		pFlag->ResetFlag(); //It's just that easy.
+	}
+	//
 }
 
 void CHL2MPRules::UpdateFlags( void )
