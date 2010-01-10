@@ -2,7 +2,7 @@
 
 //velocity will converge to around (E(|GetDrift()|) / -DROPOFF) for small timeDeltas
 //where E(x) is the expected value of x, since it's brownian
-#define DROPOFF	-24.0f	//exponential dropoff rate of velocity
+extern ConVar cl_smoke_speed_dropoff;
 
 class CBG2SmokeEmitter : public CSimpleEmitter
 {
@@ -75,7 +75,7 @@ void CBG2SmokeEmitter::UpdateVelocity( SimpleParticle *pParticle, float timeDelt
 	}
 
 	//slow down...
-	pParticle->m_vecVelocity *= expf( DROPOFF * timeDelta );
+	pParticle->m_vecVelocity *= expf( -cl_smoke_speed_dropoff.GetFloat() * timeDelta );
 
 	//..and drift upwards and sideways as dictated by GetDrift
 	pParticle->m_vecVelocity += GetDrift() * timeDelta;
