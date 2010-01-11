@@ -359,7 +359,18 @@ void CHL2MP_Player::GiveDefaultItems( void )
 		switch( m_iClass )
 		{
 		case CLASS_INFANTRY:
-			GiveNamedItem( "weapon_brownbess" );
+			switch ( m_iGunKit )
+			{
+				case 1:
+					GiveNamedItem( "weapon_brownbess" );
+					break;
+				case 2:
+					GiveNamedItem( "weapon_longpattern" );
+					break;
+				default: //In case we get the wrong number or something...
+					GiveNamedItem( "weapon_brownbess" );
+					break;
+			}
 			CBasePlayer::SetAmmoCount( 36,	GetAmmoDef()->Index("357")); //Default ammo for Infantry. -HairyPotter
 			break;
 		case CLASS_OFFICER:
@@ -368,24 +379,24 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			CBasePlayer::SetAmmoCount( 12,	GetAmmoDef()->Index("357")); //Default ammo for Officers. -HairyPotter
 			break;
 		case CLASS_SNIPER:
-			switch ( m_iGunKit )
-			{
-				case 1:
-					GiveNamedItem( "weapon_jaeger" );
-					break;
-				case 2:
-					GiveNamedItem( "weapon_longpattern" );
-					break;
-				default: //In case we get the wrong number or something...
-					GiveNamedItem( "weapon_jaeger" );
-					break;
-			}
 			GiveNamedItem( "weapon_hirschf" );
+			GiveNamedItem( "weapon_jaeger" );
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Snipers. -HairyPotter
 			break;
 		case CLASS_SKIRMISHER:
 			//GiveNamedItem( "weapon_brownbess_nobayo", 1 ); //So the native skin is set to 1 (2 in HLMV since 0 is default in the code)
-			GiveNamedItem( "weapon_brownbess_nobayo" );
+			switch ( m_iGunKit )
+			{
+				case 1:
+					GiveNamedItem( "weapon_brownbess_nobayo" );
+					break;
+				case 2:
+					GiveNamedItem( "weapon_longpattern_nobayo" );
+					break;
+				default: //In case we get the wrong number or something...
+					GiveNamedItem( "weapon_brownbess_nobayo" );
+					break;
+			}
 			GiveNamedItem( "weapon_tomahawk" );
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Skirmishers. -HairyPotter
 			break;

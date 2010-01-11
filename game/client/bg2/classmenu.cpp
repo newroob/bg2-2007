@@ -824,17 +824,17 @@ void CClassMenu::UpdateWeaponButtonText( int iTeam, int iClass )
 					break;
 				case CLASS_INFANTRY:
 					m_pWeaponButton1->SetText( "1. Brownbess" );
-					m_pWeaponButton2->SetVisible( false );
+					m_pWeaponButton2->SetText( "2. Longpattern" );
 					m_pWeaponButton3->SetVisible( false );
 					break;
 				case CLASS_SNIPER:
 					m_pWeaponButton1->SetText( "1. Jaeger Rifle + Hirschfanger" );
-					m_pWeaponButton2->SetText( "2. Longpattern + Hirschfanger" );
+					m_pWeaponButton2->SetVisible( false );
 					m_pWeaponButton3->SetVisible( false );
 					break;
 				case CLASS_SKIRMISHER:
 					m_pWeaponButton1->SetText( "1. Brownbess + Tomahawk" );
-					m_pWeaponButton2->SetVisible( false );
+					m_pWeaponButton2->SetText( "2. Longpattern + Tomahawk" );
 					m_pWeaponButton3->SetVisible( false );
 					break;
 				default:

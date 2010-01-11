@@ -68,6 +68,7 @@ const float HIRSCHFAENGER_DAMAGE = KNIFE_DAMAGE;		//same damage as knife
 
 //BG2 - Tjoppen - own constants, interpreted from various places in the BG source
 const float BESS_BAYONET_RANGE = 83.0; //90
+const float LONGPATTERN_BAYONET_RANGE = 80.0;
 //const float REVOL_BAYONET_RANGE = 75.0;
 const float CHARLE_BAYONET_RANGE = 80.0; //87
 const float SABRE_RANGE = 57.0;
@@ -805,11 +806,80 @@ DECLARE_BG2_WEAPON( longpattern )
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
+
+	//secondary
+	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
+	m_Attackinfos[1].m_flDamage				= BESS_BAYONET_DAMAGE;//60;
+	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;
+	m_Attackinfos[1].m_flRange				= LONGPATTERN_BAYONET_RANGE;
+	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
+	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
+	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
+
+	m_pBayonetDeathNotice = "brownbess_bayonet";
+
+	m_fMinRange2	= 0;
+	m_fMaxRange2	= LONGPATTERN_BAYONET_RANGE;
 }
 
 #ifndef CLIENT_DLL
 MUSKET_ACTTABLE( longpattern )
 #endif
+
+#ifdef CLIENT_DLL
+#define CWeaponlongpattern_nobayo C_Weaponlongpattern_nobayo
+#endif
+DECLARE_BG2_WEAPON( longpattern_nobayo )
+{
+	m_bReloadsSingly	= false;
+	m_bFiresUnderwater	= true;
+	m_bDontAutoreload	= true;
+
+	m_bCantAbortReload	= true;
+
+	m_fHolsterTime = 0.75f;
+
+	//Iron sights viewmodel settings.
+	vecIronsightPosOffset.x		= -17.0; //forward
+	vecIronsightPosOffset.y		= -7.8; //right
+	vecIronsightPosOffset.z		= 6.6; //up
+ 
+	angIronsightAngOffset[PITCH]	= -0.6;
+	angIronsightAngOffset[YAW]		= 0.3;
+	angIronsightAngOffset[ROLL]		= 0;
+	flIronsightFOVOffset		= -2.5;
+
+	m_bWeaponHasSights = true; 
+	//
+
+	//primary
+	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
+	m_Attackinfos[0].m_flDamage				= LONGPATTERN_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_flAttackrate			= 1.0;
+	m_Attackinfos[0].m_flRecoil				= 0.7;
+	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
+	m_Attackinfos[0].m_flCrouchMoving		= 12.0f;
+	m_Attackinfos[0].m_flCrouchStill		= 3.6f; //2.4
+	m_Attackinfos[0].m_flStandMoving		= 13.2f; //12.0f
+	m_Attackinfos[0].m_flStandStill			= 3.6f; //2.4
+	//Iron Sights. These values will probably be changed.
+	m_Attackinfos[0].m_flStandAimStill		= 2.4f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 3.0f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.4f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	//
+	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
+	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
+	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+
+	m_fMinRange1	= 0;
+	m_fMaxRange1	= MUSKET_RANGE;
+}
+
+#ifndef CLIENT_DLL
+MUSKET_ACTTABLE( longpattern_nobayo )
+#endif
+
 
 #ifdef CLIENT_DLL
 #define CWeaponamerican_brownbess C_Weaponamerican_brownbess

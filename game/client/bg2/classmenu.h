@@ -140,9 +140,9 @@ public:
 					*m_pSpectateButton,
 					*m_pAutoassignButton;
 
-	CWeaponButton	*m_pGunButton1,
-					*m_pGunButton2,
-					*m_pGunButton3;
+	CWeaponButton	*m_pWeaponButton1,
+					*m_pWeaponButton2,
+					*m_pWeaponButton3;
 
 	CAmmoButton		*m_pAmmoButton1,
 					*m_pAmmoButton2,
@@ -185,6 +185,8 @@ private:
 					m_iOfficerKey,
 					m_iSniperKey,
 					m_iSkirmisherKey,
+					m_iSlot5Key,
+					m_iSlot6Key,
 					m_iOkayKey;
 
 	CClassButton	*m_pCancelButton;
