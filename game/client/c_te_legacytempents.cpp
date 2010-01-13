@@ -3108,30 +3108,30 @@ void CTempEnts::MuzzleFlash_357_Player( ClientEntityHandle_t hEntity, int attach
 //==================================================
 
 //BG2 - Tjoppen - client smoke cvars
-ConVar cl_smoke_muzzle_length( "cl_smoke_muzzle_length", "100", FCVAR_ARCHIVE, "Length of forward smoke cone when created" );
-ConVar cl_smoke_muzzle_count( "cl_smoke_muzzle_count", "6", FCVAR_ARCHIVE, "Number of 'puff' sprites along the length of the smoke cone" );
+ConVar cl_smoke_muzzle_length( "cl_smoke_muzzle_length", "120", FCVAR_ARCHIVE, "Length of forward smoke cone when created" );
+ConVar cl_smoke_muzzle_count( "cl_smoke_muzzle_count", "11", FCVAR_ARCHIVE, "Number of 'puff' sprites along the length of the smoke cone" );
 ConVar cl_smoke_muzzle_material( "cl_smoke_muzzle_material", "particle/particle_musketsmoke", FCVAR_ARCHIVE, "Material to use for smoke puffs" );
-ConVar cl_smoke_muzzle_lifetime_min( "cl_smoke_muzzle_lifetime_min", "7.5", FCVAR_ARCHIVE, "Minimum lifetime of smoke puffs" );
-ConVar cl_smoke_muzzle_lifetime_max( "cl_smoke_muzzle_lifetime_max", "11.5", FCVAR_ARCHIVE, "Maximum lifetime of smoke puffs" );
-ConVar cl_smoke_muzzle_speed( "cl_smoke_muzzle_speed", "1000", FCVAR_ARCHIVE, "Initial speed of smoke in forward direction" );
+ConVar cl_smoke_muzzle_lifetime_min( "cl_smoke_muzzle_lifetime_min", "1", FCVAR_ARCHIVE, "Minimum lifetime of smoke puffs" );
+ConVar cl_smoke_muzzle_lifetime_max( "cl_smoke_muzzle_lifetime_max", "15", FCVAR_ARCHIVE, "Maximum lifetime of smoke puffs" );
+ConVar cl_smoke_muzzle_speed( "cl_smoke_muzzle_speed", "20000", FCVAR_ARCHIVE, "Initial speed of smoke in forward direction" );
 ConVar cl_smoke_muzzle_size_start( "cl_smoke_muzzle_size_start", "10", FCVAR_ARCHIVE, "Size of smoke puff nearest the muzzle" );
-ConVar cl_smoke_muzzle_size_end( "cl_smoke_muzzle_size_end", "30", FCVAR_ARCHIVE, "Size of smoke puff furthest away from the muzzle" );
+ConVar cl_smoke_muzzle_size_end( "cl_smoke_muzzle_size_end", "28", FCVAR_ARCHIVE, "Size of smoke puff furthest away from the muzzle" );
 
-ConVar cl_smoke_flashpan_length( "cl_smoke_flashpan_length", "36", FCVAR_ARCHIVE, "Length of upward smoke cone when created" );
-ConVar cl_smoke_flashpan_count( "cl_smoke_flashpan_count", "3", FCVAR_ARCHIVE, "Number of 'puff' sprites along the length of the smoke cone" );
+ConVar cl_smoke_flashpan_length( "cl_smoke_flashpan_length", "20", FCVAR_ARCHIVE, "Length of upward smoke cone when created" );
+ConVar cl_smoke_flashpan_count( "cl_smoke_flashpan_count", "8", FCVAR_ARCHIVE, "Number of 'puff' sprites along the length of the smoke cone" );
 ConVar cl_smoke_flashpan_material( "cl_smoke_flashpan_material", "particle/particle_musketsmoke", FCVAR_ARCHIVE, "Material to use for smoke puffs" );
-ConVar cl_smoke_flashpan_lifetime_min( "cl_smoke_flashpan_lifetime_min", "6", FCVAR_ARCHIVE, "Minimum lifetime of smoke puffs" );
-ConVar cl_smoke_flashpan_lifetime_max( "cl_smoke_flashpan_lifetime_max", "7", FCVAR_ARCHIVE, "Maximum lifetime of smoke puffs" );
-ConVar cl_smoke_flashpan_speed( "cl_smoke_flashpan_speed", "200", FCVAR_ARCHIVE, "Initial speed of smoke in upward direction" );
-ConVar cl_smoke_flashpan_size_start( "cl_smoke_flashpan_size_start", "1", FCVAR_ARCHIVE, "Size of smoke puff nearest the flashpan" );
-ConVar cl_smoke_flashpan_size_end( "cl_smoke_flashpan_size_end", "5", FCVAR_ARCHIVE, "Size of smoke puff furthest away from the flashpan" );
+ConVar cl_smoke_flashpan_lifetime_min( "cl_smoke_flashpan_lifetime_min", "1", FCVAR_ARCHIVE, "Minimum lifetime of smoke puffs" );
+ConVar cl_smoke_flashpan_lifetime_max( "cl_smoke_flashpan_lifetime_max", "5", FCVAR_ARCHIVE, "Maximum lifetime of smoke puffs" );
+ConVar cl_smoke_flashpan_speed( "cl_smoke_flashpan_speed", "1000", FCVAR_ARCHIVE, "Initial speed of smoke in upward direction" );
+ConVar cl_smoke_flashpan_size_start( "cl_smoke_flashpan_size_start", "4", FCVAR_ARCHIVE, "Size of smoke puff nearest the flashpan" );
+ConVar cl_smoke_flashpan_size_end( "cl_smoke_flashpan_size_end", "8", FCVAR_ARCHIVE, "Size of smoke puff furthest away from the flashpan" );
 
 ConVar cl_smoke_owner_velocity_bonus( "cl_smoke_owner_velocity_bonus", "0.25", FCVAR_ARCHIVE, "Amount of extra velocity to take from player to add to smoke. Setting too high (> 0.5) looks silly" );
-ConVar cl_smoke_opacity_start( "cl_smoke_opacity_start", "255", FCVAR_ARCHIVE, "Initial opacity of smoke" );
-ConVar cl_smoke_opacity_end( "cl_smoke_opacity_end", "128", FCVAR_ARCHIVE, "Final opacity of smoke, before dying" );
-ConVar cl_smoke_size_expansion( "cl_smoke_size_expansion", "25", FCVAR_ARCHIVE, "Ratio between initial and final smoke size" );
-ConVar cl_smoke_rotation( "cl_smoke_rotation", "2.5", FCVAR_ARCHIVE, "Rotation speed of sprites" );
-ConVar cl_smoke_speed_dropoff( "cl_smoke_speed_dropoff", "24", FCVAR_ARCHIVE, "Smoke speed drops off to drift speed at a rate of expf(-dropoff * dt) each dt" );
+ConVar cl_smoke_opacity_start( "cl_smoke_opacity_start", "115", FCVAR_ARCHIVE, "Initial opacity of smoke" );
+ConVar cl_smoke_opacity_end( "cl_smoke_opacity_end", "0", FCVAR_ARCHIVE, "Final opacity of smoke, before dying" );
+ConVar cl_smoke_size_expansion( "cl_smoke_size_expansion", "3", FCVAR_ARCHIVE, "Ratio between initial and final smoke size" );
+ConVar cl_smoke_rotation( "cl_smoke_rotation", "99", FCVAR_ARCHIVE, "Rotation speed of sprites" );
+ConVar cl_smoke_speed_dropoff( "cl_smoke_speed_dropoff", "999999", FCVAR_ARCHIVE, "Smoke speed drops off to drift speed at a rate of expf(-dropoff * dt) each dt" );
 //
 
 //BG2 - Tjoppen - shared muzzleflash function(both first- and thirdperson)
