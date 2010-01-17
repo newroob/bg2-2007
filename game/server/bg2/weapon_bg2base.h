@@ -131,6 +131,7 @@ public:
 	//works out the accuracy cone, so we can use cones of varying sizes
 	Vector Cone(float flConeSize)
 	{
+		//sin(1/2) - see VECTOR_CONE_1DEGREES
 		const double flBaseSize = 0.008725;
 		float flCone = (float)flBaseSize * flConeSize;
 
@@ -177,10 +178,10 @@ public:
 					* random->RandomFloat( 0.97f, 1.03f );	//+-3% dmg*/
 	}
 
-	Vector	GetSpread( int iAttack )
+	float	GetAccuracy( int iAttack )
 	{
 		if( iAttack == ATTACK_NONE )
-			return vec3_origin;
+			return 0.0f;
 
 		bool moving = false;
 		if( GetOwner() && GetOwner()->GetLocalVelocity().Length() > 10.0f ||
@@ -197,16 +198,16 @@ public:
 			if( moving ) //we're moving.
 			{
 				if ( m_bIsIronsighted ) //So we're aiming... yet moving...
-					return Cone( m_Attackinfos[iAttack].m_flCrouchAimMoving );
+					return m_Attackinfos[iAttack].m_flCrouchAimMoving;
 				else //Hip shot.
-					return Cone( m_Attackinfos[iAttack].m_flCrouchMoving );
+					return m_Attackinfos[iAttack].m_flCrouchMoving;
 			}
 			else	//we're not moving.
 			{
 				if ( m_bIsIronsighted ) //So we're aiming...
-					return Cone( m_Attackinfos[iAttack].m_flCrouchAimStill );
+					return m_Attackinfos[iAttack].m_flCrouchAimStill;
 				else //Hip shot.
-					return Cone( m_Attackinfos[iAttack].m_flCrouchStill );
+					return m_Attackinfos[iAttack].m_flCrouchStill;
 			}
 		}
 		else //We're not crouching.
@@ -214,16 +215,16 @@ public:
 			if( moving ) //We're standing and moving.
 			{
 				if ( m_bIsIronsighted ) //So we're aiming...
-					return Cone( m_Attackinfos[iAttack].m_flStandAimMoving );
+					return m_Attackinfos[iAttack].m_flStandAimMoving;
 				else //Hip shot.
-					return Cone( m_Attackinfos[iAttack].m_flStandMoving );
+					return m_Attackinfos[iAttack].m_flStandMoving;
 			}
 			else // We're not moving.
 			{
 				if ( m_bIsIronsighted ) //So we're aiming...
-					return Cone( m_Attackinfos[iAttack].m_flStandAimStill );
+					return m_Attackinfos[iAttack].m_flStandAimStill;
 				else //Hip shot.
-					return Cone( m_Attackinfos[iAttack].m_flStandStill );
+					return m_Attackinfos[iAttack].m_flStandStill;
 			}
 		}
 	}
@@ -284,6 +285,11 @@ public:
 	float m_fNextHolster;
 	float m_fHolsterTime;
 	//
+
+	//values related to internal ballistics
+	float	m_flInternalSpread;	//accuracy-agnostic spread
+	float	m_flMuzzleVelocity;
+	int		m_iNumShot;
 
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();

@@ -58,6 +58,7 @@
 #include "weapon_hl2mpbasehlmpcombatweapon.h"
 #include "effect_dispatch_data.h"
 #include "bullet.h"
+#include "shot_manipulator.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -320,6 +321,9 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	Vector vecSrc		= pPlayer->Weapon_ShootPosition();
 	Vector vecAiming	= pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );	
 
+	CShotManipulator manipulator( vecAiming );
+	Vector vecShooting	= manipulator.ApplySpread( sv_perfectaim.GetInt() == 0 ? Cone( GetAccuracy( iAttack ) ) : vec3_origin );
+
 	if( sv_simulatedbullets.GetBool() )
 	{
 #ifndef CLIENT_DLL
@@ -327,30 +331,32 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		//Move bullets up slightly so players can shoot over windowcills etc. properly
 		vecSrc.z += 2;
 
-		CShotManipulator Manipulator( vecAiming );
-		Vector vecDir = Manipulator.ApplySpread( sv_perfectaim.GetInt() == 0 ? GetSpread( iAttack ) : vec3_origin );
+		CShotManipulator manipulator2( vecShooting );
 
-		QAngle angDir;
-		VectorAngles( vecDir, angDir );
+		for( int x = 0; x < m_iNumShot; x++ )
+		{
+			Vector vecDir = manipulator2.ApplySpread( Cone( m_flInternalSpread ) );
 
-		CBullet::BulletCreate( vecSrc, angDir, GetDamage(iAttack),
-								m_Attackinfos[iAttack].m_flConstantDamageRange,
-								m_Attackinfos[iAttack].m_flRelativeDrag, pPlayer, pPlayer->GetActiveWeapon() );
+			QAngle angDir;
+			VectorAngles( vecDir, angDir );
+
+			CBullet::BulletCreate( vecSrc, angDir, GetDamage(iAttack) / m_iNumShot,
+									m_Attackinfos[iAttack].m_flConstantDamageRange,
+									m_Attackinfos[iAttack].m_flRelativeDrag, pPlayer, pPlayer->GetActiveWeapon() );
+		}
 #endif
 	}
 	else
 	{
-		FireBulletsInfo_t info( 1, vecSrc, vecAiming,
-								sv_perfectaim.GetInt() == 0 ? GetSpread( iAttack ) : vec3_origin,
-								GetRange( iAttack ), m_iPrimaryAmmoType );
+		FireBulletsInfo_t info( m_iNumShot, vecSrc, vecShooting, Cone( m_flInternalSpread ), GetRange( iAttack ), m_iPrimaryAmmoType );
 		info.m_pAttacker = pPlayer;
-		info.m_iPlayerDamage = GetDamage( iAttack );
+		info.m_iPlayerDamage = GetDamage( iAttack ) / m_iNumShot;
 		info.m_iDamage = -1;		//ancient chinese secret..
 		info.m_iTracerFreq = sv_bullettracers.GetBool();	
 		
 		//arcscan bullet
 		info.m_bArc = sv_arcscanbullets.GetBool();
-		info.m_flMuzzleVelocity = 14400;
+		info.m_flMuzzleVelocity = m_flMuzzleVelocity;
 		info.m_flRelativeDrag = m_Attackinfos[iAttack].m_flRelativeDrag;
 		info.m_flConstantDamageRange = m_Attackinfos[iAttack].m_flConstantDamageRange;
 
