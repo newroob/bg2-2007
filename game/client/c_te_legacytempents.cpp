@@ -3112,7 +3112,7 @@ ConVar cl_smoke_muzzle_length( "cl_smoke_muzzle_length", "120", FCVAR_ARCHIVE, "
 ConVar cl_smoke_muzzle_count( "cl_smoke_muzzle_count", "11", FCVAR_ARCHIVE, "Number of 'puff' sprites along the length of the smoke cone" );
 ConVar cl_smoke_muzzle_material( "cl_smoke_muzzle_material", "particle/particle_musketsmoke", FCVAR_ARCHIVE, "Material to use for smoke puffs" );
 ConVar cl_smoke_muzzle_lifetime_min( "cl_smoke_muzzle_lifetime_min", "1", FCVAR_ARCHIVE, "Minimum lifetime of smoke puffs" );
-ConVar cl_smoke_muzzle_lifetime_max( "cl_smoke_muzzle_lifetime_max", "15", FCVAR_ARCHIVE, "Maximum lifetime of smoke puffs" );
+ConVar cl_smoke_muzzle_lifetime_max( "cl_smoke_muzzle_lifetime_max", "18", FCVAR_ARCHIVE, "Maximum lifetime of smoke puffs" );
 ConVar cl_smoke_muzzle_speed( "cl_smoke_muzzle_speed", "20000", FCVAR_ARCHIVE, "Initial speed of smoke in forward direction" );
 ConVar cl_smoke_muzzle_size_start( "cl_smoke_muzzle_size_start", "10", FCVAR_ARCHIVE, "Size of smoke puff nearest the muzzle" );
 ConVar cl_smoke_muzzle_size_end( "cl_smoke_muzzle_size_end", "28", FCVAR_ARCHIVE, "Size of smoke puff furthest away from the muzzle" );
@@ -3127,7 +3127,7 @@ ConVar cl_smoke_flashpan_size_start( "cl_smoke_flashpan_size_start", "4", FCVAR_
 ConVar cl_smoke_flashpan_size_end( "cl_smoke_flashpan_size_end", "8", FCVAR_ARCHIVE, "Size of smoke puff furthest away from the flashpan" );
 
 ConVar cl_smoke_owner_velocity_bonus( "cl_smoke_owner_velocity_bonus", "0.25", FCVAR_ARCHIVE, "Amount of extra velocity to take from player to add to smoke. Setting too high (> 0.5) looks silly" );
-ConVar cl_smoke_opacity_start( "cl_smoke_opacity_start", "115", FCVAR_ARCHIVE, "Initial opacity of smoke" );
+ConVar cl_smoke_opacity_start( "cl_smoke_opacity_start", "45", FCVAR_ARCHIVE, "Initial opacity of smoke" );
 ConVar cl_smoke_opacity_end( "cl_smoke_opacity_end", "0", FCVAR_ARCHIVE, "Final opacity of smoke, before dying" );
 ConVar cl_smoke_size_expansion( "cl_smoke_size_expansion", "3", FCVAR_ARCHIVE, "Ratio between initial and final smoke size" );
 ConVar cl_smoke_rotation( "cl_smoke_rotation", "99", FCVAR_ARCHIVE, "Rotation speed of sprites" );
