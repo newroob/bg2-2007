@@ -266,7 +266,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	m_bLastAttackStab = false;
 
 	// Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
 
 	if ( !pPlayer )
 	{
@@ -319,10 +319,30 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		m_iClip1--;
 
 	Vector vecSrc		= pPlayer->Weapon_ShootPosition();
-	Vector vecAiming	= pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );	
+	Vector vecAiming	= pPlayer->CBasePlayer::GetAutoaimVector( AUTOAIM_5DEGREES );	
 
 	CShotManipulator manipulator( vecAiming );
 	Vector vecShooting	= manipulator.ApplySpread( sv_perfectaim.GetInt() == 0 ? Cone( GetAccuracy( iAttack ) ) : vec3_origin );
+
+	//figure out how many balls we should fire based on the player's current ammo kit
+	int numActualShot = 1;
+	
+	switch( pPlayer->GetCurrentAmmoKit() )
+	{
+	default:
+	case AMMO_KIT_BALL:
+		numActualShot = 1;
+		break;
+	case AMMO_KIT_BUCKSHOT:
+		numActualShot = m_iNumShot;
+		break;
+	}
+
+	//be a bit paranoid in case m_iNumShot is set to some crazy value
+	if( numActualShot <= 0 )
+		numActualShot = 1;
+	else if( numActualShot > 30 )
+		numActualShot = 30;
 
 	if( sv_simulatedbullets.GetBool() )
 	{
@@ -333,14 +353,14 @@ int CBaseBG2Weapon::Fire( int iAttack )
 
 		CShotManipulator manipulator2( vecShooting );
 
-		for( int x = 0; x < m_iNumShot; x++ )
+		for( int x = 0; x < numActualShot; x++ )
 		{
 			Vector vecDir = manipulator2.ApplySpread( Cone( m_flInternalSpread ) );
 
 			QAngle angDir;
 			VectorAngles( vecDir, angDir );
 
-			CBullet::BulletCreate( vecSrc, angDir, GetDamage(iAttack) / m_iNumShot,
+			CBullet::BulletCreate( vecSrc, angDir, GetDamage(iAttack) / numActualShot,
 									m_Attackinfos[iAttack].m_flConstantDamageRange,
 									m_Attackinfos[iAttack].m_flRelativeDrag, pPlayer, pPlayer->GetActiveWeapon() );
 		}
@@ -348,9 +368,9 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	}
 	else
 	{
-		FireBulletsInfo_t info( m_iNumShot, vecSrc, vecShooting, Cone( m_flInternalSpread ), GetRange( iAttack ), m_iPrimaryAmmoType );
+		FireBulletsInfo_t info( numActualShot, vecSrc, vecShooting, Cone( m_flInternalSpread ), GetRange( iAttack ), m_iPrimaryAmmoType );
 		info.m_pAttacker = pPlayer;
-		info.m_iPlayerDamage = GetDamage( iAttack ) / m_iNumShot;
+		info.m_iPlayerDamage = GetDamage( iAttack ) / numActualShot;
 		info.m_iDamage = -1;		//ancient chinese secret..
 		info.m_iTracerFreq = sv_bullettracers.GetBool();	
 		

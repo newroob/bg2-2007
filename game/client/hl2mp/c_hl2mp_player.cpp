@@ -34,8 +34,9 @@ IMPLEMENT_CLIENTCLASS_DT(C_HL2MP_Player, DT_HL2MP_Player, CHL2MP_Player)
 	//BG2 - Tjoppen - send stamina via C_HL2MP_Player <=> DT_HL2MP_Player <=> CHL2MP_Player
 	RecvPropInt( RECVINFO( m_iStamina) ),
 	//
-	//BG2 - Tjoppen - m_iClass is a network var
+	//BG2 - Tjoppen - m_iClass and m_iCurrentAmmoKit are network vars
 	RecvPropInt( RECVINFO( m_iClass ) ), 
+	RecvPropInt( RECVINFO( m_iCurrentAmmoKit ) ), 
 	//
 END_RECV_TABLE()
 

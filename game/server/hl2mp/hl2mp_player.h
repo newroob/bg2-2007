@@ -172,14 +172,18 @@ public:
 	const char* GetHitgroupPainSound( int hitgroup, int team );
 	void		HandleVoicecomm( int comm );
 
+	int GetCurrentAmmoKit( void) { return m_iCurrentAmmoKit; }
+
 private:
-	//int		m_iClass;			//BG2 - Tjoppen - class system
-	int		m_iNextClass,	//BG2 - Tjoppen - which class will we become on our next respawn?
+	CNetworkVar( int, m_iCurrentAmmoKit );	//BG2 - Tjoppen - we need to copy m_iAmmoKit when spawned so players can't change current load by typing "kit ..."
+
+	//int		m_iClass;					//BG2 - Tjoppen - class system
+	int		m_iNextClass,					//BG2 - Tjoppen - which class will we become on our next respawn?
 			m_iGunKit,
-			m_iAmmoKit;		
-	float	m_flNextVoicecomm,	//BG2 - Tjoppen - voice comms
-			m_flNextGlobalVoicecomm;	//BG2 - Tjoppen - only battlecries for now
-	float	m_fNextStamRegen;	//BG2 - Draco - stamina regen timer
+			m_iAmmoKit;
+	float	m_flNextVoicecomm,				//BG2 - Tjoppen - voice comms
+			m_flNextGlobalVoicecomm;		//BG2 - Tjoppen - only battlecries for now
+	float	m_fNextStamRegen;				//BG2 - Draco - stamina regen timer
 
 public:
 	CBaseEntity	*m_pIntermission;	//follow that info_intermission!
@@ -200,10 +204,18 @@ public:
 };
 
 //BG2 - Tjoppen - class system
-#define	CLASS_INFANTRY	0
-#define	CLASS_OFFICER	1
-#define	CLASS_SNIPER	2
+#define	CLASS_INFANTRY		0
+#define	CLASS_OFFICER		1
+#define	CLASS_SNIPER		2
 #define	CLASS_SKIRMISHER	3
+//
+
+//BG2 - Tjoppen - ammo kit definitions
+#define AMMO_KIT_BALL		0
+#define AMMO_KIT_BUCKSHOT	1
+//BG2 - Tjoppen - Note: We can save one bit on m_iCurrentAmmoKit if we restrict ourselves to only two ammy types for now
+#define AMMO_KIT_RESERVED1	2
+#define AMMO_KIT_RESERVED2	3
 //
 
 inline CHL2MP_Player *ToHL2MPPlayer( CBaseEntity *pEntity )

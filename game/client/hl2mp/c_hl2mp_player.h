@@ -82,9 +82,11 @@ public:
 	//CNetworkVar( int, m_iStamina );	//doesn't have to be a CNetworkVar appearently
 	int		m_iStamina;		//yeah it's a public integer, big woop, wanna fight about it?
 
-	int		GetClass( void )	{ return m_iClass; }
+	int		GetClass( void )			{ return m_iClass; }
+	int		GetCurrentAmmoKit( void )	{ return m_iCurrentAmmoKit; }
 private:
 	int		m_iClass;
+	int		m_iCurrentAmmoKit;
 	//
 	//BG@ - Draco - Rewards
 	//BG2 - Tjoppen - rewards put on hold
@@ -139,11 +141,19 @@ private:
 };
 
 //BG2 - Tjoppen - class system
-	#define	CLASS_INFANTRY	0
-	#define	CLASS_OFFICER	1
-	#define	CLASS_SNIPER	2
-	#define	CLASS_SKIRMISHER	3
-	//
+#define	CLASS_INFANTRY		0
+#define	CLASS_OFFICER		1
+#define	CLASS_SNIPER		2
+#define	CLASS_SKIRMISHER	3
+//
+
+//BG2 - Tjoppen - ammo kit definitions
+#define AMMO_KIT_BALL		0
+#define AMMO_KIT_BUCKSHOT	1
+//BG2 - Tjoppen - Note: We can save one bit on m_iCurrentAmmoKit if we restrict ourselves to only two ammy types for now
+#define AMMO_KIT_RESERVED1	2
+#define AMMO_KIT_RESERVED2	3
+//
 
 inline C_HL2MP_Player *ToHL2MPPlayer( CBaseEntity *pEntity )
 {

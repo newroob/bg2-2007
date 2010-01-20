@@ -995,7 +995,7 @@ void COkayButton::PerformCommand( void )
 		return;
 
 	int m_iGunType = 1,
-		m_iAmmoType = 1;
+		m_iAmmoType = AMMO_KIT_BALL;
 
 	pThisMenu->ToggleButtons( 1 ); 
 	GetParent()->SetVisible( false );
@@ -1009,14 +1009,15 @@ void COkayButton::PerformCommand( void )
 	if ( pThisMenu->m_pWeaponButton3->IsSelected() )
 		m_iGunType = 3;
 
+	//Note: use AMMO_KIT_* instead of magic numbers
 	if ( pThisMenu->m_pAmmoButton1->IsSelected() )
-		m_iAmmoType = 1;
+		m_iAmmoType = AMMO_KIT_BALL;
 
 	if ( pThisMenu->m_pAmmoButton2->IsSelected() )
-		m_iAmmoType = 2;
+		m_iAmmoType = AMMO_KIT_BUCKSHOT;
 
 	if ( pThisMenu->m_pAmmoButton3->IsSelected() )
-		m_iAmmoType = 3;
+		m_iAmmoType = AMMO_KIT_RESERVED1;
 
 	char cmd[64];
 	Q_snprintf( cmd, sizeof( cmd ), "kit %i %i \n", m_iGunType, m_iAmmoType );

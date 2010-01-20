@@ -99,8 +99,9 @@ IMPLEMENT_SERVERCLASS_ST(CHL2MP_Player, DT_HL2MP_Player)
 	//BG2 - Tjoppen - send stamina via C_HL2MP_Player <=> DT_HL2MP_Player <=> CHL2MP_Player
 	SendPropInt( SENDINFO( m_iStamina ), 7, SPROP_UNSIGNED ),	//0 <= stamina <= 100, 7 bits enough
 	//
-	//BG2 - Tjoppen - m_iClass is a network var
-	SendPropInt( SENDINFO( m_iClass), 2, SPROP_UNSIGNED ),	//BG2 - Tjoppen - remember: max four classes or increase this
+	//BG2 - Tjoppen - m_iClass and m_iCurrentAmmoKit are network vars
+	SendPropInt( SENDINFO( m_iClass ), 2, SPROP_UNSIGNED ),			//BG2 - Tjoppen - remember: max four classes or increase this
+	SendPropInt( SENDINFO( m_iCurrentAmmoKit ), 2, SPROP_UNSIGNED ),//BG2 - Tjoppen - remember: max four ammo kits or increase this
 	//
 	//BG2 - Tjoppen - rewards put on hold
 	/*SendPropInt( SENDINFO( m_iOfficerReward), 7, SPROP_UNSIGNED ),	//BG2 - Draco - Rewards
@@ -158,7 +159,7 @@ CHL2MP_Player::CHL2MP_Player() : m_PlayerAnimState( this )
 
 	//BG2 - Default weapon kits. -Hairypotter
 	m_iGunKit = 1;
-	m_iAmmoKit = 1;
+	m_iCurrentAmmoKit = m_iAmmoKit = AMMO_KIT_BALL;
 	//
 
 	BaseClass::ChangeTeam( 0 );
@@ -300,6 +301,9 @@ void CHL2MP_Player::GiveDefaultItems( void )
 	CBasePlayer::GiveAmmo( 1,	"grenade" );
 	CBasePlayer::GiveAmmo( 6,	"Buckshot");*/
 	//CBasePlayer::GiveAmmo( 24,	"357", true );
+
+	//remember which ammo kit we spawned with
+	m_iCurrentAmmoKit = m_iAmmoKit;
 	
 	if( GetTeam()->GetTeamNumber() == TEAM_AMERICANS )	//Americans
 	{
