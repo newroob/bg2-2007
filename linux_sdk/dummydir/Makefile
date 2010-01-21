@@ -16,21 +16,20 @@ MOD_PROJ=../../game/server/server_hl2mp-2005.vcproj
 MOD_CONFIG="Server(HL2MP)_ReleaseWin32"
 
 # the directory the base binaries (tier0_i486.so, etc) are located
-GAME_DIR=../../../linux-deps/libs/
+GAME_DIR=$(SOURCE_DIR)/lib/linux/
 
 # the path to your mods directory
 # set this so that 'make install' or 'make installrelease' will copy your binary over automatically.
 MOD_DIR=$(GAME_DIR)/bg2-svn
 
-# compiler options (gcc 3.4.6 recommended, 4.2 will compile, but CTF will not work right - HairyPotter)
-CC=gcc-3.4
-CPLUS=g++-3.4
-CLINK=gcc-3.4
-CPP_LIB="/usr/lib/gcc/i486-linux-gnu/3.4.6/libstdc++.a /usr/lib/gcc/i486-linux-gnu/3.4.6/libgcc_eh.a"
+# compiler options 3.4.6 or 4.2.4 will work nicely.
+CC=gcc-4.2
+CPLUS=g++-4.2
+CLINK=gcc-4.2
+CPP_LIB="/usr/lib/gcc/i486-linux-gnu/4.2.4/libstdc++.a /usr/lib/gcc/i486-linux-gnu/4.2.4/libgcc_eh.a"
 
-# GCC 4.2.2 optimization flags, if you're using anything below, don't use these!
-OPTFLAGS= -O2 -fomit-frame-pointer
-#Omitting the frame pointer makes debugging impossible, but frees a register and reduces binary size. A complete win for speed. -HairyPotter
+# GCC 4.2.4 optimization flags, if you're using anything below, don't use these!
+OPTFLAGS= -O2
 
 # put any compiler flags you want passed here
 USER_CFLAGS=
@@ -41,9 +40,9 @@ LIBFILES= \
   $(SOURCE_DIR)/lib/linux/choreoobjects_486.a \
   $(SOURCE_DIR)/lib/linux/particles_486.a \
   $(SOURCE_DIR)/lib/linux/dmxloader_486.a \
-  tier0_i486.so \
-  vstdlib_i486.so \
-  steam_api_i486.so \
+  $(SOURCE_DIR)/lib/linux/tier0_i486.so \
+  $(SOURCE_DIR)/lib/linux/vstdlib_i486.so \
+  $(SOURCE_DIR)/lib/linux/steam_api_i486.so \
   $(SOURCE_DIR)/lib/linux/tier3_486.a \
   $(SOURCE_DIR)/lib/linux/tier2_486.a \
   $(SOURCE_DIR)/lib/linux/tier1_486.a \
@@ -76,8 +75,7 @@ SOURCE_DIR=../..
 
 # the CPU target for the build, must be i486 for now
 ARCH=i486
-ARCH_CFLAGS=-mtune=i686 -march=i686 -mfpmath=sse -mmmx -msse -pipe
-#What modern CPU doesn't have SSE or MMX? Besides.. you need those instructions to run SRCDS anyway. -HairyPotter
+ARCH_CFLAGS=-mtune=pentium3 -march=pentium3 -pipe
 
 # -fpermissive is so gcc 3.4.x doesn't complain about some template stuff
 BASE_CFLAGS=-DVPROF_LEVEL=1 -DSWDS -D_LINUX -DLINUX -DNDEBUG -fpermissive -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp

@@ -10,7 +10,7 @@
 #include "team.h"
 #include "engine/IEngineSound.h"
 
-ConVar sv_ctf_flagweight ("sv_ctf_flagweight", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL, "How much speed does carrying this flag drain?");
+//ConVar sv_ctf_flagweight ("sv_ctf_flagweight", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL, "How much speed does carrying this flag drain?");
 ConVar sv_ctf_returnstyle ("sv_ctf_returnstyle", "1", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Which way is a flag returned? Setting this to '2' will allow teams to return their own flags when they touch them.");
 ConVar sv_ctf_capturestyle ("sv_ctf_capturestyle", "1", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Which way is a flag captured Setting this to '2' will not allow you to pick up a flag if your own is not at home.");
 ConVar sv_ctf_flagalerts ("sv_ctf_flagalerts", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Print out flag notifications to hud?");
@@ -220,14 +220,14 @@ void CtfFlag::ReturnFlag( void )
 	ResetFlag();
 	m_OnReturned.FireOutput( this, this ); //Fire the OnReturned output.
 }
-void CtfFlag::ResetFlag()
+void CtfFlag::ResetFlag( void )
 {
+	SetParent ( NULL );
+	m_bFlagIsDropped = false;
+	m_bIsCarried = false;
 	SetModel( "models/other/flag.mdl" );
 	SetAbsOrigin( FlagOrigin );
 	SetAbsAngles( FlagAngle );
-	m_bFlagIsDropped = false;
-	m_bIsCarried = false;
-	SetParent ( NULL );
 }
 void CtfFlag::PlaySound( Vector origin, int sound )
 {
