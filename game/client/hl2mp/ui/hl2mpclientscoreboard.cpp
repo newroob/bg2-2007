@@ -612,6 +612,11 @@ int CHL2MPClientScoreBoardDialog::GetSectionFromTeamNumber( int teamNumber )
 //-----------------------------------------------------------------------------
 bool CHL2MPClientScoreBoardDialog::GetPlayerScoreInfo(int playerIndex, KeyValues *kv)
 {
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+
+	if ( !pPlayer )
+		return false;
+
 	kv->SetInt("playerIndex", playerIndex);
 	kv->SetInt("team", g_PR->GetTeam( playerIndex ) );
 	kv->SetString("name", g_PR->GetPlayerName(playerIndex) );
@@ -623,7 +628,7 @@ bool CHL2MPClientScoreBoardDialog::GetPlayerScoreInfo(int playerIndex, KeyValues
 	}
 	else
 	{
-		if( playerIndex == C_BasePlayer::GetLocalPlayer()->entindex() )
+		if( playerIndex == pPlayer->entindex() )
 			kv->SetInt("deaths", g_PR->GetDeaths( playerIndex ) );
 		else
 			kv->SetString("deaths", "" );

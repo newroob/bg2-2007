@@ -230,7 +230,6 @@ public:
 	DECLARE_CLASS( CBasePlayer, CBaseCombatCharacter );
 protected:
 	// HACK FOR BOTS
-	friend class CBotManager;
 	static edict_t *s_PlayerEdict; // must be set before calling constructor
 public:
 	DECLARE_DATADESC();

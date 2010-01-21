@@ -426,6 +426,11 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	// and the actual pressed key, and compare those..
 //	int iLastTrappedKey = engine->GetLastPressedEngineKey();	// the enginekey version of the code param
 
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+
+	if ( !pPlayer )
+		return;
+
 	MouseCode code2 = MOUSE_LEFT;	//for faking mouse presses
 	if( code == m_iInfantryKey )
 	{
@@ -528,7 +533,7 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 			m_pViewPort->ShowPanel( PANEL_COMM, false );
 			m_pViewPort->ShowPanel( PANEL_COMM2, false );
 		}
-		else if( !IsInClassMenu() && C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR )
+		else if( !IsInClassMenu() && pPlayer->GetTeamNumber() <= TEAM_SPECTATOR )
 		{
 			internalCenterPrint->Print( "You can\'t select class before selecting team" );
 			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
@@ -548,7 +553,7 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 			m_pViewPort->ShowPanel( PANEL_COMM, false );
 			m_pViewPort->ShowPanel( PANEL_COMM2, false );
 		}
-		else if( !IsInClassMenu() && C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR )
+		else if( !IsInClassMenu() && pPlayer->GetTeamNumber() <= TEAM_SPECTATOR )
 		{
 			internalCenterPrint->Print( "You can\'t select a weapon before choosing a team and class." );
 			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
@@ -562,7 +567,7 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	}
 	else if( code == commmenu )
 	{
-		if ( !C_BasePlayer::GetLocalPlayer()->IsAlive() ) //Make sure the player is on a team and alive to use voicecomms. -HairyPotter
+		if ( !pPlayer->IsAlive() ) //Make sure the player is on a team and alive to use voicecomms. -HairyPotter
 			return;
 
 		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
@@ -573,7 +578,7 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	}
 	else if( code == commmenu2 )
 	{
-		if ( !C_BasePlayer::GetLocalPlayer()->IsAlive() ) //Make sure the player is on a team and alive to use voicecomms. -HairyPotter
+		if ( !pPlayer->IsAlive() ) //Make sure the player is on a team and alive to use voicecomms. -HairyPotter
 			return;
 
 		m_pViewPort->ShowPanel( PANEL_CLASSES, false );

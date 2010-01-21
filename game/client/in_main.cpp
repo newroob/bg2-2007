@@ -725,10 +725,15 @@ void WeaponMenu( void )
 
 void CommMenu( void )
 {
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+
+	if( !pPlayer )
+		return;
+
 	if( gViewPortInterface )
 	{
-		if ( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR || 
-			!C_BasePlayer::GetLocalPlayer()->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
+		if ( pPlayer->GetTeamNumber() <= TEAM_SPECTATOR || 
+			!pPlayer->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
 			return;
 
 		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_COMM );
@@ -747,10 +752,15 @@ void CommMenu2( void )
 {
 	bool EnforceOfficerForCommenu2( void );
 
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+
+	if ( !pPlayer )
+		return;
+
 	if( gViewPortInterface /*&& EnforceOfficerForCommenu2()*/ )
 	{
-		if ( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR || 
-			!C_BasePlayer::GetLocalPlayer()->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
+		if ( pPlayer->GetTeamNumber() <= TEAM_SPECTATOR || 
+			!pPlayer->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
 			return;
 
 		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_COMM2 );

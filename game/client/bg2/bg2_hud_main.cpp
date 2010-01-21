@@ -484,7 +484,7 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 	const char *hitgroupname = HitgroupName( hitgroup );
 
 	//BG2 - Tjoppen - TODO: localize
-	if( C_BasePlayer::GetLocalPlayer()->entindex() == victim )
+	if( C_BasePlayer::GetLocalPlayer() && C_BasePlayer::GetLocalPlayer()->entindex() == victim )
 	{
 		//I'm the victim here!
 		if( hitgroupname )

@@ -121,6 +121,11 @@ void CCommMenu2::OnKeyCodePressed(KeyCode code)
 	// and the actual pressed key, and compare those..
 	int iLastTrappedKey = /*engine->GetLastPressedEngineKey()*/code;	// the enginekey version of the code param
 
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+
+	if ( !pPlayer )
+		return;
+
 #define ifkey( index, index2 ) if( iLastTrappedKey == slot##index ) { engine->ServerCmd( "voicecomm " #index2 ); ShowPanel( false ); }
 			ifkey( 1, 9 )
 	else	ifkey( 2, 10 )
@@ -147,7 +152,7 @@ void CCommMenu2::OnKeyCodePressed(KeyCode code)
 	}
 	else if( iLastTrappedKey == classmenu )
 	{
-		if( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() > TEAM_SPECTATOR )
+		if( pPlayer->GetTeamNumber() > TEAM_SPECTATOR )
 		{
 			m_pViewPort->ShowPanel( PANEL_CLASSES, true );
 
@@ -168,8 +173,8 @@ void CCommMenu2::OnKeyCodePressed(KeyCode code)
 	}
 	else if( iLastTrappedKey == commmenu )
 	{
-		if ( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR || 
-			!C_BasePlayer::GetLocalPlayer()->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
+		if ( pPlayer->GetTeamNumber() <= TEAM_SPECTATOR || 
+			!pPlayer->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
 			return;
 
 		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
@@ -180,8 +185,8 @@ void CCommMenu2::OnKeyCodePressed(KeyCode code)
 	}
 	else if( iLastTrappedKey == commmenu2 )
 	{
-		if ( C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR || 
-			!C_BasePlayer::GetLocalPlayer()->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
+		if ( pPlayer->GetTeamNumber() <= TEAM_SPECTATOR || 
+			!pPlayer->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
 			return;
 
 		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
