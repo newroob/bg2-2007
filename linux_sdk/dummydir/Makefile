@@ -40,9 +40,9 @@ LIBFILES= \
   $(SOURCE_DIR)/lib/linux/choreoobjects_486.a \
   $(SOURCE_DIR)/lib/linux/particles_486.a \
   $(SOURCE_DIR)/lib/linux/dmxloader_486.a \
-  $(SOURCE_DIR)/lib/linux/tier0_i486.so \
-  $(SOURCE_DIR)/lib/linux/vstdlib_i486.so \
-  $(SOURCE_DIR)/lib/linux/steam_api_i486.so \
+  tier0_i486.so \
+  vstdlib_i486.so \
+  steam_api_i486.so \
   $(SOURCE_DIR)/lib/linux/tier3_486.a \
   $(SOURCE_DIR)/lib/linux/tier2_486.a \
   $(SOURCE_DIR)/lib/linux/tier1_486.a \
