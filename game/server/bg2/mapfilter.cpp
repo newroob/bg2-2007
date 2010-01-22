@@ -2,14 +2,43 @@
 #include "baseentity.h"
 #include "mapfilter.h"
  
+/*static const char *s_PreserveEnts[] =
+{
+	"env_soundscape_proxy",
+	"env_fog_controller",
+	"event_queue_saveload_proxy",
+	"info_map_parameters",
+	"point_viewcontrol",
+	"sky_camera",
+	"", // END Marker
+};*/
+
 // Constructor
 CMapEntityFilter::CMapEntityFilter() 
 {
-	/*keepList			= new CUtlSortVector<const char *>( StrLessThan );
-	keepTargetnameList	= new CUtlSortVector<const char *>( StrLessThan );
 	
 	//BG2 - Tjoppen - mapfilter_excluder related logic. also make sure we keep them by adding to the list
+	//Just call these once, here.
 	AddKeep( "mapfilter_excluder" );
+	AddKeep( "hl2mp_gamerules" );
+	AddKeep( "worldspawn" );
+	AddKeep( "ambient_generic" );
+	AddKeep( "player" );
+	AddKeep( "soundent" );
+	AddKeep( "env_soundscape" );
+	AddKeep( "env_soundscape_triggerable" );
+	AddKeep( "env_sun" );
+	AddKeep( "flag" );
+	AddKeep( "ctf_flag" );
+	AddKeep( "env_wind" );
+	AddKeep( "viewmodel" );
+	AddKeep( "predicted_viewmodel" );
+	AddKeep( "player_manager" );
+	AddKeep( "team_manager" );
+	AddKeep( "scene_manager" );
+	AddKeep( "trigger_soundscape" );
+	AddKeep( "shadow_control" );
+	//
 
 	CMapEntityFilterExcluder *pExcluder = NULL;
 
@@ -20,41 +49,78 @@ CMapEntityFilter::CMapEntityFilter()
 			AddTargetnameKeep( STRING( pExcluder->m_sClassOrTargetName ) );
 		else
 			AddKeep( STRING( pExcluder->m_sClassOrTargetName ) );
-	}*/
+	}
 	
 }
  
 // Deconstructor
 CMapEntityFilter::~CMapEntityFilter() 
 {
-	//delete keepList; //This. -HairyPotter
+	keepList.Purge();
+	keepTargetnameList.Purge();
 }
  
 // [bool] ShouldCreateEntity [char]
 // Purpose   : Used to check if the passed in entity is on our stored list
 // Arguments : The classname of an entity 
 // Returns   : Boolean value - if we have it stored, we return false.
- 
+
 bool CMapEntityFilter::ShouldCreateEntity( const char *pClassname ) 
-{
-	//Check if the entity is in our keep list.
-/*	if( keepList->Find( pClassname ) >= 0 ) //Fix this stuff. -HairyPotter
+{ 
+	//This is used for the mapfilter_excluder added in hammer.
+	for ( int x = 0; x < keepList.Count(); x++ )
+	{
+		if ( !Q_stricmp( keepList[x], pClassname ) )
+			return false;
+	}
+
+	//This takes care of the spawns and weapons through casting & also handles "pTargetnames"
+	CBaseEntity *pEnt = gEntList.FindEntityByClassname( NULL, pClassname );
+	if ( pEnt && !ShouldCreateEntity( pEnt ) )
 		return false;
-	else
-		return true;*/
-	return false;
+	//
+
+	return true;
 }
 
 //BG2 - Tjoppen - targetname version
-bool CMapEntityFilter::ShouldCreateEntity( const char *pClassname, const char *pTargetname ) 
-{
-	//BG2 - Tjoppen - check both lists
-	/*if( (pClassname && keepList->Find( pClassname ) >= 0) || 
-			(pTargetname && keepTargetnameList->Find( pTargetname ) >= 0) ) //This. - HairyPotter
+//If it's NOT in the list, we should return true.
+/*bool CMapEntityFilter::ShouldCreateEntity( const char *pClassname, const char *pTargetname )  
+{ 
+	for ( int x = 0; x < keepList.Count(); x++ )
+	{
+		if ( !Q_stricmp( keepList[x], pClassname ) )
+			return false;
+	}
+	for ( int x = 0; x < keepTargetnameList.Count(); x++ )
+	{
+		if ( !Q_stricmp( keepTargetnameList[x], pTargetname ) )
+			return false;
+	}
+
+	return true;
+}*/
+//Ent version.
+bool CMapEntityFilter::ShouldCreateEntity( CBaseEntity *pEnt )  
+{ 
+	//Skip common castable ents.
+	//All Defines.
+	CBaseHL2MPCombatWeapon *Weapon = dynamic_cast<CBaseHL2MPCombatWeapon *>( pEnt );
+	CSpawnPoint *Spot = dynamic_cast<CSpawnPoint *>( pEnt );
+
+	if ( Spot || Weapon && Weapon->GetPlayerOwner() )
 		return false;
-	else
-		return true;*/ 
-	return false;
+	//
+
+	const char *pTargetname = STRING( pEnt->GetEntityName() );
+
+	for ( int x = 0; x < keepTargetnameList.Count(); x++ )
+	{
+		if ( !Q_stricmp( keepTargetnameList[x], pTargetname ) )
+			return false;
+	}
+
+	return true;
 }
  
 // [CBaseEntity] CreateNextEntity [char]
@@ -74,13 +140,13 @@ CBaseEntity* CMapEntityFilter::CreateNextEntity( const char *pClassname )
  
 void CMapEntityFilter::AddKeep( const char *sz) 
 {
-	//keepList->Insert(sz); //This. -HairyPotter
+	keepList.AddToTail(sz);
 }
 
 //BG2 - Tjoppen - AddTargetnameKeep. same as AddKeep, but for targetnames
 void CMapEntityFilter::AddTargetnameKeep( const char *sz) 
 {
-	//keepTargetnameList->Insert(sz); //This. -HairyPotter
+	keepTargetnameList.AddToTail(sz);
 }
 
 //BG2 - Tjoppen - CMapEntityFilterExcluder

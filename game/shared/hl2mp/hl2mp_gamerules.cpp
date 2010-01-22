@@ -14,8 +14,6 @@
 #ifdef CLIENT_DLL
 	#include "c_hl2mp_player.h"
 #else
-
-	#include "bg2/mapfilter.h" //For BG2.
 	#include "eventqueue.h"
 	#include "player.h"
 	#include "gamerules.h"
@@ -28,17 +26,18 @@
 	#include "voice_gamemgr.h"
 	#include "iscorer.h"
 	#include "hl2mp_player.h"
-	#include "weapon_hl2mpbasehlmpcombatweapon.h"
 	#include "team.h"
 	#include "voice_gamemgr.h"
 	#include "hl2mp_gameinterface.h"
 	#include "hl2mp_cvars.h"
+	#include "soundscape_system.h"
 
 //BG2 - Draco
 #include "triggers.h"
+#include "../bg2/bg2_maptriggers.h"
 #include "../bg2/flag.h"
 #include "../bg2/ctfflag.h"
-#include "../bg2/bg2_maptriggers.h"
+#include "bg2/mapfilter.h" 
 //BG2 - Tjoppen - #includes
 #include "sdk/sdk_bot_temp.h"
 
@@ -154,51 +153,6 @@ static HL2MPViewVectors g_HL2MPViewVectors(
 	Vector( 16,  16,  60 )	  //VEC_CROUCH_TRACE_MAX (m_vCrouchTraceMax)
 );
 
-static const char *s_PreserveEnts[] =
-{
-	"ai_network",
-	"ai_hint",
-	"hl2mp_gamerules",
-	"team_manager",
-	"player_manager",
-	"env_soundscape",
-	"env_soundscape_proxy",
-	"env_soundscape_triggerable",
-	"env_sun",
-	"env_wind",
-	"env_fog_controller",
-	"func_brush",
-	"func_wall",
-	"func_buyzone",
-	"func_illusionary",
-	"infodecal",
-	"info_projecteddecal",
-	"info_node",
-	"info_target",
-	"info_node_hint",
-	"info_player_deathmatch",
-	"info_player_combine",
-	"info_player_rebel",
-	"info_map_parameters",
-	"keyframe_rope",
-	"move_rope",
-	"info_ladder",
-	"player",
-	"point_viewcontrol",
-	"scene_manager",
-	"shadow_control",
-	"sky_camera",
-	"soundent",
-	"trigger_soundscape",
-	"viewmodel",
-	"predicted_viewmodel",
-	"worldspawn",
-	"point_devshot_camera",
-	"", // END Marker
-};
-
-
-
 #ifdef CLIENT_DLL
 	void RecvProxy_HL2MPRules( const RecvProp *pProp, void **pOut, void *pData, int objectID )
 	{
@@ -276,7 +230,7 @@ CHL2MPRules::CHL2MPRules()
 	g_CurBotNumber = 1;
 	for( int x = 0; x < MAX_PLAYERS; x++ )
 	{
-		gBots[x].m_pPlayer = NULL;
+		//gBots[x].m_pPlayer = NULL;
 		//gBots[x].m_bInuse = false;
 	}
 
@@ -384,37 +338,21 @@ void CHL2MPRules::ResetMap()
 {
 #ifndef CLIENT_DLL
 	CMapEntityFilter filter;
-	filter.AddKeep("worldspawn");
-	filter.AddKeep("soundent");
-	filter.AddKeep("hl2mp_gamerules");
-	filter.AddKeep("scene_manager");
-	filter.AddKeep("predicted_viewmodel");
-	filter.AddKeep("team_manager");
-	filter.AddKeep("event_queue_saveload_proxy");
-	filter.AddKeep("player_manager");
-	filter.AddKeep("player");
-	filter.AddKeep("flag");
-	filter.AddKeep("ctf_flag");
+	
 	CBaseEntity *pEnt;
-	CBaseEntity *tmpEnt;
 	// find the first entity in the entity list
 	pEnt = gEntList.FirstEnt();
 	// as long as we've got a valid pointer, keep looping through the list
-	while (pEnt != NULL) {
-		//BG2 - Tjoppen - also pass on targetname
-		if( filter.ShouldCreateEntity( pEnt->GetClassname(), STRING(pEnt->GetEntityName()) ) )
-		{
-			// if we don't need to keep the entity, we remove it from the list
-			tmpEnt = gEntList.NextEnt (pEnt);
+	while ( pEnt ) 
+	{
+		if( filter.ShouldCreateEntity( pEnt->GetClassname() ) )
+		{ 
+			//It's not in the "keep" list, so remove the ent.
 			UTIL_Remove (pEnt);
-			pEnt = tmpEnt;
+			//Msg("Removed %s \n", pEnt->GetClassname());
 		}	
-		else
-		{
-			// if we need to keep it, we move on to the next entity
-			pEnt = gEntList.NextEnt (pEnt);
-		}
-	} 
+		pEnt = gEntList.NextEnt (pEnt);
+	}
     // force the entities we've set to be removed to actually be removed
     gEntList.CleanupDeleteList();
 	// with any unrequired entities removed, we use MapEntity_ParseAllEntities to reparse the map entities
@@ -644,11 +582,9 @@ void CHL2MPRules::Think( void )
 		sv_restartmap.SetValue(0);
 	}
 	//now if the time was set we can check for it, above zero means we are restarting
-	if ((m_fNextGameReset > 0) &&(m_fNextGameReset <= gpGlobals->curtime))
+	if ((m_fNextGameReset > 0) &&( m_fNextGameReset <= gpGlobals->curtime))
 	{
 		m_fNextGameReset = 0;//dont reset again
-
-		//CleanUpMap();
 
 		//reset scores...
 		pAmericans->SetScore(0);//...for teams...
@@ -718,13 +654,19 @@ void CHL2MPRules::Think( void )
 
 		int aliveamericans = 0, x = 0;
 		for( ; x < pAmericans->GetNumPlayers(); x++ )
-			if( pAmericans->GetPlayer(x)->IsAlive() )
+		{
+			CBasePlayer *pPlayer = pAmericans->GetPlayer( x );
+			if( pPlayer && pPlayer->IsAlive() )
 				aliveamericans++;
+		}
 
 		int alivebritish = 0;
 		for( x = 0; x < pBritish->GetNumPlayers(); x++ )
-			if( pBritish->GetPlayer(x)->IsAlive() )
+		{
+			CBasePlayer *pPlayer = pBritish->GetPlayer( x );
+			if( pPlayer && pPlayer->IsAlive() )
 				alivebritish++;
+		}
 
 		//Tjoppen - End
 		//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed
@@ -1426,8 +1368,6 @@ void CHL2MPRules::RestartGame()
 		Warning( "Trying to set a NaN game start time\n" );
 		m_flGameStartTime.GetForModify() = 0.0f;
 	}
-
-	CleanUpMap();
 	
 	// now respawn all players
 	for (int i = 1; i <= gpGlobals->maxClients; i++ )
@@ -1471,103 +1411,6 @@ void CHL2MPRules::RestartGame()
 
 		gameeventmanager->FireEvent( event );
 	}
-}
-
-void CHL2MPRules::CleanUpMap()
-{
-	// Recreate all the map entities from the map data (preserving their indices),
-	// then remove everything else except the players.
-
-	// Get rid of all entities except players.
-	CBaseEntity *pCur = gEntList.FirstEnt();
-	while ( pCur )
-	{
-		CBaseHL2MPCombatWeapon *pWeapon = dynamic_cast< CBaseHL2MPCombatWeapon* >( pCur );
-		// Weapons with owners don't want to be removed..
-		if ( pWeapon )
-		{
-			if ( !pWeapon->GetPlayerOwner() )
-			{
-				UTIL_Remove( pCur );
-			}
-		}
-		// remove entities that has to be restored on roundrestart (breakables etc)
-		/*else if ( !FindInList( s_PreserveEnts, pCur->GetClassname() ) )
-		{
-			UTIL_Remove( pCur );
-		}*/
-
-		pCur = gEntList.NextEnt( pCur );
-	}
-
-	// Really remove the entities so we can have access to their slots below.
-	gEntList.CleanupDeleteList();
-
-	// Cancel all queued events, in case a func_bomb_target fired some delayed outputs that
-	// could kill respawning CTs
-	g_EventQueue.Clear();
-
-	// Now reload the map entities.
-	class CHL2MPMapEntityFilter : public IMapEntityFilter
-	{
-	public:
-		virtual bool ShouldCreateEntity( const char *pClassname )
-		{
-			// Don't recreate the preserved entities.
-			/*if ( !FindInList( s_PreserveEnts, pClassname ) )
-			{
-				return true;
-			}
-			else
-			{*/
-				// Increment our iterator since it's not going to call CreateNextEntity for this ent.
-				if ( m_iIterator != g_MapEntityRefs.InvalidIndex() )
-					m_iIterator = g_MapEntityRefs.Next( m_iIterator );
-
-				return false;
-			//}
-		}
-
-
-		virtual CBaseEntity* CreateNextEntity( const char *pClassname )
-		{
-			if ( m_iIterator == g_MapEntityRefs.InvalidIndex() )
-			{
-				// This shouldn't be possible. When we loaded the map, it should have used 
-				// CCSMapLoadEntityFilter, which should have built the g_MapEntityRefs list
-				// with the same list of entities we're referring to here.
-				Assert( false );
-				return NULL;
-			}
-			else
-			{
-				CMapEntityRef &ref = g_MapEntityRefs[m_iIterator];
-				m_iIterator = g_MapEntityRefs.Next( m_iIterator );	// Seek to the next entity.
-
-				if ( ref.m_iEdict == -1 || engine->PEntityOfEntIndex( ref.m_iEdict ) )
-				{
-					// Doh! The entity was delete and its slot was reused.
-					// Just use any old edict slot. This case sucks because we lose the baseline.
-					return CreateEntityByName( pClassname );
-				}
-				else
-				{
-					// Cool, the slot where this entity was is free again (most likely, the entity was 
-					// freed above). Now create an entity with this specific index.
-					return CreateEntityByName( pClassname, ref.m_iEdict );
-				}
-			}
-		}
-
-	public:
-		int m_iIterator; // Iterator into g_MapEntityRefs.
-	};
-	CHL2MPMapEntityFilter filter;
-	filter.m_iIterator = g_MapEntityRefs.Head();
-
-	// DO NOT CALL SPAWN ON info_node ENTITIES!
-
-	MapEntity_ParseAllEntities( engine->GetMapEntitiesString(), &filter, true );
 }
 
 void CHL2MPRules::CheckChatForReadySignal( CHL2MP_Player *pPlayer, const char *chatmsg )

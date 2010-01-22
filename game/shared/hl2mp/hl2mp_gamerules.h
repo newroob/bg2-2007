@@ -159,7 +159,6 @@ public:
 	const HL2MPViewVectors* GetHL2MPViewVectors() const;
 
 	float GetMapRemainingTime();
-	void CleanUpMap();
 	void CheckRestartGame();
 	void RestartGame();
 	

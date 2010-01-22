@@ -1,6 +1,10 @@
 #include "cbase.h"
 #include "mapentities.h"
 #include "UtlSortVector.h"
+// These are mostly for the casting in ShouldCreateEntity( ent )
+#include "bg2/spawnpoint.h"
+#include "weapon_hl2mpbasehlmpcombatweapon.h"
+//
  
 #ifndef CMAPENTITYFILTER_H
 #define CMAPENTITYFILTER_H
@@ -24,7 +28,8 @@ public:
 	
 	// used to check if we should reset an entity or not
 	virtual bool ShouldCreateEntity( const char *pClassname );
-	bool ShouldCreateEntity( const char *pClassname, const char *pTargetname );
+	//bool ShouldCreateEntity( const char *pClassname, const char *pTargetname );
+	bool ShouldCreateEntity( CBaseEntity *pEnt );
 	// creates the next entity in our stored list.
 	virtual CBaseEntity* CreateNextEntity( const char *pClassname );
 	// add an entity to our list
@@ -34,8 +39,8 @@ public:
  
 private:
 	// our list of entities to keep
-//	CUtlSortVector<const char*>		*keepList,
-//									*keepTargetnameList;	//BG2 - Tjoppen - keepTargetnameList
+	CUtlVector< const char * >	keepList,
+								keepTargetnameList;	//BG2 - Tjoppen - keepTargetnameList
 };
 
 //BG2 - Tjoppen - CMapEntityFilterExcluder
