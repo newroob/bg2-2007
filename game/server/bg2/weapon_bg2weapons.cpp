@@ -43,18 +43,24 @@ const float	LONG_RANGE = 1000 * 3 * 12,		//since damage decreases with range, we
 // damage values for each attack on each weapon
 const float BESS_FIRE_DAMAGE = 60.0;
 const float BESS_BAYONET_DAMAGE = 43.0;
+const float BESS_BAYONET_RANGE = 83.0; //90
 
 const float REVOL_FIRE_DAMAGE = 58.0;
-const float REVOL_BAYONET_DAMAGE = 41.0;
+//const float REVOL_BAYONET_DAMAGE = 41.0;
+//const float REVOL_BAYONET_RANGE = 75.0;
 
 //BG2 - Tjoppen - roundoff errors makes me have to increase CHARLE_FIRE_DAMAGE by 0.5
 const float CHARLE_FIRE_DAMAGE = 58.0;//57.5;
 const float CHARLE_BAYONET_DAMAGE = 41.0;
+const float CHARLE_BAYONET_RANGE = 80.0; //87
 
 const float PENNY_FIRE_DAMAGE = 60.0;
 
-const float LONGPATTERN_FIRE_DAMAGE = 60.0;
-const float FOWLER_FIRE_DAMAGE = 60.0;
+const float LONGPATTERN_FIRE_DAMAGE = 62.0;
+const float LONGPATTERN_BAYONET_DAMAGE = 45.0;
+const float LONGPATTERN_BAYONET_RANGE = 86.0;
+
+const float FOWLER_FIRE_DAMAGE = 56.0;
 
 const float JAEGER_FIRE_DAMAGE = 63.0;
 
@@ -67,10 +73,6 @@ const float TOMAHAWK_DAMAGE = 43;  //45
 const float HIRSCHFAENGER_DAMAGE = KNIFE_DAMAGE;		//same damage as knife
 
 //BG2 - Tjoppen - own constants, interpreted from various places in the BG source
-const float BESS_BAYONET_RANGE = 83.0; //90
-const float LONGPATTERN_BAYONET_RANGE = 80.0;
-//const float REVOL_BAYONET_RANGE = 75.0;
-const float CHARLE_BAYONET_RANGE = 80.0; //87
 const float SABRE_RANGE = 57.0;
 const float HIRSCHFAENGER_RANGE = 57.0;
 const float KNIFE_RANGE = 52.0;
@@ -623,15 +625,15 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
-	m_Attackinfos[0].m_flCrouchMoving		= 12.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 3.4f;  //2.4
-	m_Attackinfos[0].m_flStandMoving		= 13.2f; //12.0f
-	m_Attackinfos[0].m_flStandStill			= 3.4f; //2.4
+	m_Attackinfos[0].m_flCrouchMoving		= 11.3f;
+	m_Attackinfos[0].m_flCrouchStill		= 3.2f;  //2.4
+	m_Attackinfos[0].m_flStandMoving		= 12.5f; //12.0f
+	m_Attackinfos[0].m_flStandStill			= 3.2f; //2.4
 	//Iron Sights. These values will probably be changed.
-	m_Attackinfos[0].m_flStandAimStill		= 2.0f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 3.5f;
-	m_Attackinfos[0].m_flCrouchAimStill		= 2.0f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 3.5f;
+	m_Attackinfos[0].m_flStandAimStill		= 2.15f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 2.95f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.15f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 2.95f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= 25.0 * 36.0;	//20 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -770,15 +772,15 @@ DECLARE_BG2_WEAPON( fowler )
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
-	m_Attackinfos[0].m_flCrouchMoving		= 10.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 1.6f; //2.4
-	m_Attackinfos[0].m_flStandMoving		= 11.2f; //12.0f
-	m_Attackinfos[0].m_flStandStill			= 1.6f; //2.4
+	m_Attackinfos[0].m_flCrouchMoving		= 12.1f;
+	m_Attackinfos[0].m_flCrouchStill		= 3.5f; //2.4
+	m_Attackinfos[0].m_flStandMoving		= 13.3f; //12.0f
+	m_Attackinfos[0].m_flStandStill			= 3.4f; //2.4
 	//Iron Sights. These values will probably be changed.
-	m_Attackinfos[0].m_flStandAimStill		= 0.4f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 1.0f;
-	m_Attackinfos[0].m_flCrouchAimStill		= 0.4f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 1.0f;
+	m_Attackinfos[0].m_flStandAimStill		= 2.2f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 2.7f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.2f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 2.7f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -787,9 +789,9 @@ DECLARE_BG2_WEAPON( fowler )
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
 
-	m_flInternalSpread = 2.0f;
+	m_flInternalSpread = 6.95f;	//4 m spread at 33 m -> (4 / 2) / 33 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 6;
+	m_iNumShot = 15;
 }
 
 #ifndef CLIENT_DLL
@@ -847,8 +849,8 @@ DECLARE_BG2_WEAPON( longpattern )
 
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
-	m_Attackinfos[1].m_flDamage				= BESS_BAYONET_DAMAGE;//60;
-	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;
+	m_Attackinfos[1].m_flDamage				= LONGPATTERN_BAYONET_DAMAGE;//60;
+	m_Attackinfos[1].m_flAttackrate			= 1.3f;//-0.7f;
 	m_Attackinfos[1].m_flRange				= LONGPATTERN_BAYONET_RANGE;
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
@@ -959,15 +961,15 @@ DECLARE_BG2_WEAPON( american_brownbess )
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
-	m_Attackinfos[0].m_flCrouchMoving		= 12.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 3.6f; //2.4
-	m_Attackinfos[0].m_flStandMoving		= 13.2f; //12.0f
-	m_Attackinfos[0].m_flStandStill			= 3.6f; //2.4
+	m_Attackinfos[0].m_flCrouchMoving		= 12.1f;
+	m_Attackinfos[0].m_flCrouchStill		= 3.7f; //2.4
+	m_Attackinfos[0].m_flStandMoving		= 13.3f; //12.0f
+	m_Attackinfos[0].m_flStandStill			= 3.7f; //2.4
 	//Iron Sights. These values will probably be changed.
-	m_Attackinfos[0].m_flStandAimStill		= 2.4f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 3.0f;
-	m_Attackinfos[0].m_flCrouchAimStill		= 2.4f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	m_Attackinfos[0].m_flStandAimStill		= 2.5f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 3.1f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.5f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 3.1f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
