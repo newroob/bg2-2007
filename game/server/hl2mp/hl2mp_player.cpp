@@ -312,14 +312,15 @@ void CHL2MP_Player::GiveDefaultItems( void )
 		case CLASS_INFANTRY:
 			switch ( m_iGunKit )
 			{
+				default: //In case we get the wrong number or something...
 				case 1:
 					GiveNamedItem( "weapon_charleville" );
 					break;
 				case 2:
 					GiveNamedItem( "weapon_american_brownbess" );
 					break;
-				default: //In case we get the wrong number or something...
-					GiveNamedItem( "weapon_charleville" );
+				case 3:
+					GiveNamedItem( "weapon_revolutionnaire" );
 					break;
 			}
 			CBasePlayer::SetAmmoCount( 36,	GetAmmoDef()->Index("357")); //Default ammo for Infantry. -HairyPotter
@@ -338,17 +339,12 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			//GiveNamedItem( "weapon_tomahawk" );
 			switch ( m_iGunKit )
 			{
+				default: //In case we get the wrong number or something...
 				case 1:
-					GiveNamedItem( "weapon_revolutionnaire" );
-					break;
-				case 2:
 					GiveNamedItem( "weapon_fowler" );
 					break;
-				case 3:
+				case 2:
 					GiveNamedItem( "weapon_american_brownbess_nobayo" );
-					break;
-				default: //In case we get the wrong number or something...
-					GiveNamedItem( "weapon_revolutionnaire" );
 					break;
 			}
 			GiveNamedItem( "weapon_beltaxe" );
@@ -365,14 +361,12 @@ void CHL2MP_Player::GiveDefaultItems( void )
 		case CLASS_INFANTRY:
 			switch ( m_iGunKit )
 			{
+				default: //In case we get the wrong number or something...
 				case 1:
 					GiveNamedItem( "weapon_brownbess" );
 					break;
 				case 2:
 					GiveNamedItem( "weapon_longpattern" );
-					break;
-				default: //In case we get the wrong number or something...
-					GiveNamedItem( "weapon_brownbess" );
 					break;
 			}
 			CBasePlayer::SetAmmoCount( 36,	GetAmmoDef()->Index("357")); //Default ammo for Infantry. -HairyPotter
@@ -383,22 +377,23 @@ void CHL2MP_Player::GiveDefaultItems( void )
 			CBasePlayer::SetAmmoCount( 12,	GetAmmoDef()->Index("357")); //Default ammo for Officers. -HairyPotter
 			break;
 		case CLASS_SNIPER:
-			GiveNamedItem( "weapon_hirschf" );
 			GiveNamedItem( "weapon_jaeger" );
+			GiveNamedItem( "weapon_hirschf" );
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Snipers. -HairyPotter
 			break;
 		case CLASS_SKIRMISHER:
 			//GiveNamedItem( "weapon_brownbess_nobayo", 1 ); //So the native skin is set to 1 (2 in HLMV since 0 is default in the code)
 			switch ( m_iGunKit )
 			{
+				default: //In case we get the wrong number or something...
 				case 1:
 					GiveNamedItem( "weapon_brownbess_nobayo" );
 					break;
 				case 2:
 					GiveNamedItem( "weapon_longpattern_nobayo" );
 					break;
-				default: //In case we get the wrong number or something...
-					GiveNamedItem( "weapon_brownbess_nobayo" );
+				case 3:
+					GiveNamedItem( "weapon_brownbess_carbine" );
 					break;
 			}
 			GiveNamedItem( "weapon_tomahawk" );

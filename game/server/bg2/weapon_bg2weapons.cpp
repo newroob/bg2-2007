@@ -46,8 +46,8 @@ const float BESS_BAYONET_DAMAGE = 43.0;
 const float BESS_BAYONET_RANGE = 83.0; //90
 
 const float REVOL_FIRE_DAMAGE = 58.0;
-//const float REVOL_BAYONET_DAMAGE = 41.0;
-//const float REVOL_BAYONET_RANGE = 75.0;
+const float REVOL_BAYONET_DAMAGE = 41.0;
+const float REVOL_BAYONET_RANGE = 75.0;
 
 //BG2 - Tjoppen - roundoff errors makes me have to increase CHARLE_FIRE_DAMAGE by 0.5
 const float CHARLE_FIRE_DAMAGE = 58.0;//57.5;
@@ -642,6 +642,20 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
 
+	//secondary
+	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
+	m_Attackinfos[1].m_flDamage				= REVOL_BAYONET_DAMAGE;
+	m_Attackinfos[1].m_flAttackrate			= 1.0f;
+	m_Attackinfos[1].m_flRange				= REVOL_BAYONET_RANGE;
+	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
+	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
+	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
+
+	m_pBayonetDeathNotice = "revolutionnaire_bayonet";
+
+	m_fMinRange2	= 0;
+	m_fMaxRange2	= REVOL_BAYONET_RANGE;
+
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
 	m_iNumShot = 1;
@@ -1057,4 +1071,76 @@ DECLARE_BG2_WEAPON( american_brownbess_nobayo )
 
 #ifndef CLIENT_DLL
 MUSKET_ACTTABLE( american_brownbess_nobayo )
+#endif
+
+#ifdef CLIENT_DLL 
+#define CWeaponbrownbess_carbine C_Weaponbrownbess_carbine
+#endif
+DECLARE_BG2_WEAPON( brownbess_carbine )
+{
+	m_bReloadsSingly	= false;
+	m_bFiresUnderwater	= true;
+	m_bDontAutoreload	= true;
+
+	m_bCantAbortReload	= true;
+
+	m_fHolsterTime = 0.75f;
+
+	//Iron sights viewmodel settings.
+	vecIronsightPosOffset.x		= -17.25; //forward
+	vecIronsightPosOffset.y		= -7.75; //right
+	vecIronsightPosOffset.z		= 6.8; //up
+ 
+	angIronsightAngOffset[PITCH]	= -0.25;
+	angIronsightAngOffset[YAW]		= 0;
+	angIronsightAngOffset[ROLL]		= 0;
+	flIronsightFOVOffset		= -2.5;
+
+	m_bWeaponHasSights = true; 
+	//
+
+	//primary
+	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
+	m_Attackinfos[0].m_flDamage				= BESS_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_flAttackrate			= 1.0;
+	m_Attackinfos[0].m_flRecoil				= 0.7;
+	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
+	m_Attackinfos[0].m_flCrouchMoving		= 12.0f;
+	m_Attackinfos[0].m_flCrouchStill		= 3.6f;
+	m_Attackinfos[0].m_flStandMoving		= 13.2f;
+	m_Attackinfos[0].m_flStandStill			= 3.6f;
+	//Iron Sights.
+	m_Attackinfos[0].m_flStandAimStill		= 2.4f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 3.0f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.4f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	//
+	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
+	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
+	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+
+	m_fMinRange1	= 0;
+	m_fMaxRange1	= MUSKET_RANGE;
+
+	//secondary
+	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
+	m_Attackinfos[1].m_flDamage				= BESS_BAYONET_DAMAGE;//60;
+	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;
+	m_Attackinfos[1].m_flRange				= BESS_BAYONET_RANGE;
+	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
+	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
+	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
+
+	m_pBayonetDeathNotice = "brownbess_bayonet";
+
+	m_fMinRange2	= 0;
+	m_fMaxRange2	= BESS_BAYONET_RANGE;
+
+	m_flInternalSpread = 0.0f;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_iNumShot = 1;
+}
+
+#ifndef CLIENT_DLL
+MUSKET_ACTTABLE( brownbess_carbine )
 #endif

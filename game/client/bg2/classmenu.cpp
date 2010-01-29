@@ -799,7 +799,7 @@ void CClassMenu::UpdateWeaponButtonText( int iTeam, int iClass )
 				case CLASS_INFANTRY:
 					m_pWeaponButton1->SetText( "1. Charleville" );
 					m_pWeaponButton2->SetText( "2. American Brownbess" );
-					m_pWeaponButton3->SetVisible( false );
+					m_pWeaponButton3->SetText( "3. Revolutionnaire" );
 					break;
 				case CLASS_SNIPER:
 					m_pWeaponButton1->SetText( "1. Pennsylvania Longrifle + Knife" );
@@ -807,9 +807,9 @@ void CClassMenu::UpdateWeaponButtonText( int iTeam, int iClass )
 					m_pWeaponButton3->SetVisible( false );
 					break;
 				case CLASS_SKIRMISHER: 
-					m_pWeaponButton1->SetText( "1. Revolutionnaire + BeltAxe" );
-					m_pWeaponButton2->SetText( "2. Fowler + BeltAxe" );
-					m_pWeaponButton3->SetText( "3. American Brownbess + BeltAxe" );
+					m_pWeaponButton1->SetText( "1. Fowler + BeltAxe" );
+					m_pWeaponButton2->SetText( "2. American Brownbess + BeltAxe" );
+					m_pWeaponButton3->SetVisible( false );
 					break;
 				default:
 					m_pWeaponButton1->SetVisible( false );
@@ -840,7 +840,7 @@ void CClassMenu::UpdateWeaponButtonText( int iTeam, int iClass )
 				case CLASS_SKIRMISHER:
 					m_pWeaponButton1->SetText( "1. Brownbess + Tomahawk" );
 					m_pWeaponButton2->SetText( "2. Longpattern + Tomahawk" );
-					m_pWeaponButton3->SetVisible( false );
+					m_pWeaponButton3->SetText( "3. Brownbess carbine (temporarily)" );
 					break;
 				default:
 					m_pWeaponButton1->SetVisible( false );
