@@ -100,7 +100,7 @@ IMPLEMENT_SERVERCLASS_ST(CHL2MP_Player, DT_HL2MP_Player)
 	SendPropInt( SENDINFO( m_iStamina ), 7, SPROP_UNSIGNED ),	//0 <= stamina <= 100, 7 bits enough
 	//
 	//BG2 - Tjoppen - m_iClass and m_iCurrentAmmoKit are network vars
-	SendPropInt( SENDINFO( m_iClass ), 2, SPROP_UNSIGNED ),			//BG2 - Tjoppen - remember: max four classes or increase this
+	SendPropInt( SENDINFO( m_iClass ), 3, SPROP_UNSIGNED ),			//BG2 - Tjoppen - remember: max eight classes per team or increase this
 	SendPropInt( SENDINFO( m_iCurrentAmmoKit ), 2, SPROP_UNSIGNED ),//BG2 - Tjoppen - remember: max four ammo kits or increase this
 	//
 	//BG2 - Tjoppen - rewards put on hold
@@ -123,6 +123,7 @@ const char *g_ppszRandomCitizenModels[] =
 	"models/player/british/medium_b/medium_b.mdl",
 	"models/player/british/light_b/light_b.mdl",
 	"models/player/british/mohawk/mohawk.mdl",
+	"models/player/british/loyalist/loyalist.mdl",
 };
 
 const char *g_ppszRandomCombineModels[] =
@@ -309,6 +310,7 @@ void CHL2MP_Player::GiveDefaultItems( void )
 	{
 		switch( m_iClass )
 		{
+		default:
 		case CLASS_INFANTRY:
 			switch ( m_iGunKit )
 			{
@@ -358,6 +360,7 @@ void CHL2MP_Player::GiveDefaultItems( void )
 	{
 		switch( m_iClass )
 		{
+		default:
 		case CLASS_INFANTRY:
 			switch ( m_iGunKit )
 			{
@@ -392,13 +395,13 @@ void CHL2MP_Player::GiveDefaultItems( void )
 				case 2:
 					GiveNamedItem( "weapon_longpattern_nobayo" );
 					break;
-				case 3:
-					GiveNamedItem( "weapon_brownbess_carbine" );
-					break;
 			}
 			GiveNamedItem( "weapon_tomahawk" );
 			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //Default ammo for Skirmishers. -HairyPotter
 			break;
+		case CLASS_LIGHT_INFANTRY:
+			GiveNamedItem( "weapon_brownbess_carbine" );
+			CBasePlayer::SetAmmoCount( 24,	GetAmmoDef()->Index("357")); //BG2 - Tjoppen - Default ammo for light infantry
 		}
 		
 		//Weapon_Switch( Weapon_OwnsThisType( "weapon_brownbess" ) );
@@ -547,6 +550,10 @@ void CHL2MP_Player::Spawn(void)
 		case CLASS_SKIRMISHER:
 			iSpeed = 200;
 			iSpeed2 = 140;
+			break;
+		case CLASS_LIGHT_INFANTRY:
+			iSpeed = 198;
+			iSpeed2 = 130;
 			break;
 	}
 	//
@@ -1214,6 +1221,7 @@ void CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
 	case TEAM_AMERICANS:
 		switch( classid )
 		{
+		default:
 		case CLASS_INFANTRY:
 			SetModel("models/player/american/heavy_a/heavy_a.mdl");
 			m_nSkin = RandomInt(0, 3);
@@ -1233,6 +1241,7 @@ void CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
 	case TEAM_BRITISH:
 		switch( classid )
 		{
+		default:
 		case CLASS_INFANTRY:
 			SetModel("models/player/british/medium_b/medium_b.mdl");
 			m_nSkin = RandomInt(0, 8);
@@ -1248,6 +1257,8 @@ void CHL2MP_Player::PlayermodelTeamClass( int team, int classid )
 			SetModel("models/player/british/mohawk/mohawk.mdl"); //CAN WE PLEASE ORGANIZE THE PLAYER MODELS?
 			m_nSkin = RandomInt(0, 1);
 			break;
+		case CLASS_LIGHT_INFANTRY:
+			SetModel("models/player/british/loyalist/loyalist.mdl");
 		}
 		break;
 	default: //default model
@@ -1447,6 +1458,9 @@ void CHL2MP_Player::HandleVoicecomm( int comm )
 					return;
 				pClassString = "Rif"; //We'll use infantry sounds for the Militia class.. for now.
 				break;
+			case CLASS_LIGHT_INFANTRY:
+				pClassString = "Rif"; //same thing here..
+				break;
 			default:
 				return;
 		}
@@ -1552,6 +1566,9 @@ bool CHL2MP_Player::ClientCommand( const CCommand &args )
 					case CLASS_SKIRMISHER:
 						AttemptJoin( TEAM_BRITISH, CLASS_SKIRMISHER, "a Native" );
 						break;
+					case CLASS_LIGHT_INFANTRY:
+						AttemptJoin( TEAM_BRITISH, CLASS_LIGHT_INFANTRY, "Light Infantry" );
+						break;
 					default:
 						Msg("Class selection invalid. \n");
 						return false;
@@ -1583,48 +1600,6 @@ bool CHL2MP_Player::ClientCommand( const CCommand &args )
 		}
 		return true;
 	}
-
-	//BG2 - Tjoppen - class selection
-	/*if ( FStrEq( cmd, "heavy_a" ) )
-	{
-		AttemptJoin( TEAM_AMERICANS, CLASS_INFANTRY, "a Continental Soldier" );
-		return true;
-	}
-	else if ( FStrEq( cmd, "light_a" ) )
-	{
-		AttemptJoin( TEAM_AMERICANS, CLASS_OFFICER, "a Continental Officer" );
-		return true;
-	}
-	else if ( FStrEq( cmd, "medium_a" ) )
-	{
-		AttemptJoin( TEAM_AMERICANS, CLASS_SNIPER, "a Frontiersman" );
-		return true;
-	}
-	else if ( FStrEq( cmd, "skirm_a" ) )
-	{
-		AttemptJoin( TEAM_AMERICANS, CLASS_SKIRMISHER, "Militia" );
-		return true;
-	}
-	else if ( FStrEq( cmd, "medium_b" ) )
-	{
-		AttemptJoin( TEAM_BRITISH, CLASS_INFANTRY, "Royal Infantry" );
-		return true;
-	}
-	else if ( FStrEq( cmd, "light_b" ) )
-	{
-		AttemptJoin( TEAM_BRITISH, CLASS_OFFICER, "a Royal Commander" );
-		return true;
-	}
-	else if ( FStrEq( cmd, "heavy_b" ) )
-	{
-		AttemptJoin( TEAM_BRITISH, CLASS_SNIPER, "a Jaeger" );
-		return true;
-	}
-	else if ( FStrEq( cmd, "skirm_b" ) )
-	{
-		AttemptJoin( TEAM_BRITISH, CLASS_SKIRMISHER, "a Native" );
-		return true;
-	}*/
 	//BG2 - Tjoppen - voice comms
 	else if( FStrEq( cmd, "voicecomm" ) && args.ArgC() > 1 )
 	{

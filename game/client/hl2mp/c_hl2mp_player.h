@@ -141,10 +141,11 @@ private:
 };
 
 //BG2 - Tjoppen - class system
-#define	CLASS_INFANTRY		0
-#define	CLASS_OFFICER		1
-#define	CLASS_SNIPER		2
-#define	CLASS_SKIRMISHER	3
+#define	CLASS_INFANTRY			0
+#define	CLASS_OFFICER			1
+#define	CLASS_SNIPER			2
+#define	CLASS_SKIRMISHER		3
+#define	CLASS_LIGHT_INFANTRY	4
 //
 
 //BG2 - Tjoppen - ammo kit definitions

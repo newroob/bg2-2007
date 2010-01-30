@@ -172,6 +172,9 @@ void CtfFlag::Think( void )
 				case CLASS_SKIRMISHER:
 					pPlayer->iSpeed = pPlayer->iSpeed - (m_iFlagWeight * 1.1);
 					break;
+				case CLASS_LIGHT_INFANTRY:
+					pPlayer->iSpeed = pPlayer->iSpeed - (m_iFlagWeight * 1.05);
+					break;
 			}
 			//
 			m_bFlagIsDropped = false; //So it doesn't return while you're carrying it!

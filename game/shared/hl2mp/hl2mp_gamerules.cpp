@@ -102,7 +102,9 @@ extern CBaseEntity	 *g_pLastRebelSpawn;*/
 	ConVar mp_limit_rif_b_##size( "mp_limit_rif_b_"#size, "-1", CVAR_FLAGS,\
 									"Max number of Jägers on " sizename " maps" );\
 	ConVar mp_limit_ski_b_##size( "mp_limit_ski_b_"#size, "-1", CVAR_FLAGS,\
-									"Max number of Natives on " sizename " maps" );
+									"Max number of Natives on " sizename " maps" );\
+	ConVar mp_limit_linf_b_##size("mp_limit_linf_b_"#size, "-1", CVAR_FLAGS,\
+									"Max number of Light infantry on " sizename " maps" );
 
 //as you can see, the macro is a shorthand and should also help avoid misspellings and such that are
 //usually common with repetitive stuff like this
@@ -1930,6 +1932,7 @@ int CHL2MPRules::GetLimitTeamClass( int iTeam, int iClass )
 		case CLASS_OFFICER: return mp_limit_off_b_##size.GetInt();\
 		case CLASS_SNIPER: return mp_limit_rif_b_##size.GetInt();\
 		case CLASS_SKIRMISHER: return mp_limit_ski_b_##size.GetInt();\
+		case CLASS_LIGHT_INFANTRY: return mp_limit_linf_b_##size.GetInt();\
 		default: return -1;}\
 	default: return -1;}
 

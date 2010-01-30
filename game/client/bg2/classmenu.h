@@ -133,7 +133,8 @@ public:
 	CClassButton	*m_pInfantryButton,
 					*m_pOfficerButton,
 					*m_pSkirmisherButton,
-					*m_pSniperButton;
+					*m_pSniperButton,
+					*m_pLightInfantryButton;
 
 	CTeamButton		*m_pBritishButton,
 					*m_pAmericanButton,
@@ -185,7 +186,7 @@ private:
 					m_iOfficerKey,
 					m_iSniperKey,
 					m_iSkirmisherKey,
-					m_iSlot5Key,
+					m_iLightInfantryKey,
 					m_iSlot6Key,
 					m_iOkayKey;
 

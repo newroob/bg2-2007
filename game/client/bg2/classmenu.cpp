@@ -110,7 +110,7 @@ void CClassButton::OnCursorEntered( void )
 	if ( !pThisMenu )
 		return;
 
-	char pANSIPath[512];
+	char pANSIPath[512] = "readme.txt";	//a default value that doesn't risk crashes in case of missing resource files
 
 	//BG2 - Make it a switch for great justice. -HairyPotter
 	switch ( m_iCommand )
@@ -151,6 +151,15 @@ void CClassButton::OnCursorEntered( void )
 					ResolveLocalizedPath( "#BG2_InfoHTML_A_Ski_Path", pANSIPath, sizeof pANSIPath );
 				else //if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
 					ResolveLocalizedPath( "#BG2_InfoHTML_B_Ski_Path", pANSIPath, sizeof pANSIPath );
+				//else
+					//return;
+			}
+			break;
+		case CLASS_LIGHT_INFANTRY:
+			{
+				//only british have light infantry
+				if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+					ResolveLocalizedPath( "#BG2_InfoHTML_B_Linf_Path", pANSIPath, sizeof pANSIPath );
 				//else
 					//return;
 			}
@@ -207,8 +216,6 @@ void CTeamButton::OnMousePressed(MouseCode code)
 		return;
 	}
 
-	pThisMenu->ToggleButtons(2);
-	
 	if( m_iCommand == -1 )
 	{
 		//autoassign
@@ -227,6 +234,8 @@ void CTeamButton::OnMousePressed(MouseCode code)
 	}
 
 	PerformCommand();
+
+	pThisMenu->ToggleButtons(2);
 }
 
 void CTeamButton::OnCursorEntered( void )
@@ -277,7 +286,7 @@ void CTeamButton::PerformCommand( void )
 //-----------------------------------------------------------------------------
 CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 {
-	m_iInfantryKey = m_iOfficerKey = m_iSniperKey = m_iSkirmisherKey = m_iCancelKey = m_iSlot5Key = m_iSlot6Key =
+	m_iInfantryKey = m_iOfficerKey = m_iSniperKey = m_iSkirmisherKey = m_iCancelKey = m_iSlot6Key = 
 	teammenu = classmenu = commmenu = commmenu2 = weaponmenu = -1; //Default all of these to -1
 		
 	m_pViewPort = pViewPort;
@@ -304,6 +313,7 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pOfficerButton = new CClassButton( this, "OfficerButton", "2. Officer(in code)" );
 	m_pSniperButton = new CClassButton( this, "RiflemanButton", "3. Rifleman(in code)" );
 	m_pSkirmisherButton = new CClassButton( this, "SkirmisherButton", "4. Skirmisher(in code)" );
+	m_pLightInfantryButton = new CClassButton( this, "LightInfantryButton", "5. Light infantry(in code)" );
 
 	m_pQuickJoinCheckButton = new vgui::CheckButton( this, "QuickJoinCheckButton", "" );
 
@@ -335,6 +345,7 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pOfficerButton->SetCommand( CLASS_OFFICER );
 	m_pSniperButton->SetCommand( CLASS_SNIPER );
 	m_pSkirmisherButton->SetCommand( CLASS_SKIRMISHER );
+	m_pLightInfantryButton->SetCommand( CLASS_LIGHT_INFANTRY );
 
 	char pANSIPath[512];
 	ResolveLocalizedPath( "#BG2_InfoHTML_Blank_Path", pANSIPath, sizeof pANSIPath );
@@ -375,11 +386,13 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 	m_pOfficerButton->MakeReadyForUse();
 	m_pSniperButton->MakeReadyForUse();
 	m_pSkirmisherButton->MakeReadyForUse();
+	m_pLightInfantryButton->MakeReadyForUse();
 
 	m_pInfantryButton->SetBgColor( BLACK_BAR_COLOR );
 	m_pOfficerButton->SetBgColor( BLACK_BAR_COLOR );
 	m_pSniperButton->SetBgColor( BLACK_BAR_COLOR );
 	m_pSkirmisherButton->SetBgColor( BLACK_BAR_COLOR );
+	m_pLightInfantryButton->SetBgColor( BLACK_BAR_COLOR );
 
 	// For weapons and ammo selection menu.. -HairyPotter
 	m_pAmmoButton1->MakeReadyForUse();
@@ -403,6 +416,7 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 	m_pOfficerButton->SetBgColor( BLACK_BAR_COLOR );
 	m_pSniperButton->SetBgColor( BLACK_BAR_COLOR );
 	m_pSkirmisherButton->SetBgColor( BLACK_BAR_COLOR );
+	m_pLightInfantryButton->SetBgColor( BLACK_BAR_COLOR );
 
 	m_pCancelButton->MakeReadyForUse();
 	m_pCancelButton->SetBgColor( BLACK_BAR_COLOR );
@@ -488,14 +502,21 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 			m_pAmmoButton1->OnMousePressed( code2 );
 		}
 	}
-	else if( code == m_iSlot5Key ) //This is used only for
+	else if( code == m_iLightInfantryKey )
 	{
-		if ( m_pAmmoButton2->IsVisible() )
+		if( m_pSpectateButton->IsVisible() ) //fifth
+			m_pSpectateButton->OnMousePressed( code2 );
+
+		else if( m_pLightInfantryButton->IsVisible() )
+		{
+			m_pLightInfantryButton->OnMousePressed( code2 );
+		}
+		else if ( m_pAmmoButton2->IsVisible() )
 		{
 			m_pAmmoButton2->OnMousePressed( code2 );
 		}
 	}
-	else if( code == m_iSlot6Key )
+	else if( code == m_iSlot6Key ) //This is used only for
 	{
 		if ( m_pAmmoButton3->IsVisible() )
 		{
@@ -631,8 +652,8 @@ void CClassMenu::Update( void )
 	if( m_iOfficerKey < 0 ) m_iOfficerKey = gameuifuncs->GetButtonCodeForBind( "slot2" );
 	if( m_iSniperKey < 0 ) m_iSniperKey = gameuifuncs->GetButtonCodeForBind( "slot3" );
 	if( m_iSkirmisherKey < 0 ) m_iSkirmisherKey = gameuifuncs->GetButtonCodeForBind( "slot4" );
+	if( m_iLightInfantryKey < 0 ) m_iLightInfantryKey = gameuifuncs->GetButtonCodeForBind( "slot5" );
 	//Below are for ammo selection only.
-	if( m_iSlot5Key < 0 ) m_iSlot5Key = gameuifuncs->GetButtonCodeForBind( "slot5" );
 	if( m_iSlot6Key < 0 ) m_iSlot6Key = gameuifuncs->GetButtonCodeForBind( "slot6" );
 	//
 
@@ -685,6 +706,8 @@ void CClassMenu::OnThink()
 
 	UpdateClassButtonText( m_pSkirmisherButton, CLASS_SKIRMISHER, 
 			m_iTeamSelection == TEAM_AMERICANS ? "4. Militia" : "4. Native" );
+
+	UpdateClassButtonText( m_pLightInfantryButton, CLASS_LIGHT_INFANTRY, "5. Light Infantry" );
 
 	UpdateWeaponButtonText( m_iTeamSelection, m_iClassSelection );
 	UpdateAmmoButtonText( m_iTeamSelection, m_iClassSelection );
@@ -772,6 +795,11 @@ void CClassMenu::UpdateAmmoButtonText( int iTeam, int iClass )
 					m_pAmmoButton2->SetText( "5. Coded in later.." );
 					m_pAmmoButton3->SetText( "6. Coded in later.." );
 					break;
+				case CLASS_LIGHT_INFANTRY:
+					m_pAmmoButton1->SetText( "4. Coded in later.." );
+					m_pAmmoButton2->SetText( "5. Coded in later.." );
+					m_pAmmoButton3->SetText( "6. Coded in later.." );
+					break;
 				default:
 					m_pAmmoButton1->SetVisible( false );
 					m_pAmmoButton2->SetVisible( false );
@@ -840,7 +868,12 @@ void CClassMenu::UpdateWeaponButtonText( int iTeam, int iClass )
 				case CLASS_SKIRMISHER:
 					m_pWeaponButton1->SetText( "1. Brownbess + Tomahawk" );
 					m_pWeaponButton2->SetText( "2. Longpattern + Tomahawk" );
-					m_pWeaponButton3->SetText( "3. Brownbess carbine (temporarily)" );
+					m_pWeaponButton3->SetVisible( false );
+					break;
+				case CLASS_LIGHT_INFANTRY:
+					m_pWeaponButton1->SetText( "1. Brownbess carbine" );
+					m_pWeaponButton2->SetVisible( false );
+					m_pWeaponButton3->SetVisible( false );
 					break;
 				default:
 					m_pWeaponButton1->SetVisible( false );
@@ -882,6 +915,7 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pInfantryButton->SetVisible(false);
 			m_pSniperButton->SetVisible(false);
 			m_pSkirmisherButton->SetVisible(false);
+			m_pLightInfantryButton->SetVisible(false);
 			m_pWeaponButton1->SetVisible(false);
 			m_pWeaponButton2->SetVisible(false);
 			m_pWeaponButton3->SetVisible(false);
@@ -902,6 +936,7 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pInfantryButton->SetVisible(true);
 			m_pSniperButton->SetVisible(true);
 			m_pSkirmisherButton->SetVisible(true);
+			m_pLightInfantryButton->SetVisible(m_iTeamSelection == TEAM_BRITISH);
 			m_pWeaponButton1->SetVisible(false);
 			m_pWeaponButton2->SetVisible(false);
 			m_pWeaponButton3->SetVisible(false);
@@ -923,6 +958,7 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pInfantryButton->SetVisible(false);
 			m_pSniperButton->SetVisible(false);
 			m_pSkirmisherButton->SetVisible(false);
+			m_pLightInfantryButton->SetVisible(false);
 			m_pWeaponButton1->SetVisible(true);
 			m_pWeaponButton2->SetVisible(true);
 			m_pWeaponButton3->SetVisible(true);
