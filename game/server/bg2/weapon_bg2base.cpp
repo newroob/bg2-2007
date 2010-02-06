@@ -326,15 +326,18 @@ int CBaseBG2Weapon::Fire( int iAttack )
 
 	//figure out how many balls we should fire based on the player's current ammo kit
 	int numActualShot = 1;
+	float flDamage = 0;
 	
 	switch( pPlayer->GetCurrentAmmoKit() )
 	{
 	default:
 	case AMMO_KIT_BALL:
 		numActualShot = 1;
+		flDamage = GetDamage( iAttack );
 		break;
 	case AMMO_KIT_BUCKSHOT:
 		numActualShot = m_iNumShot;
+		flDamage = m_flDamagePerShot;
 		break;
 	}
 
@@ -360,7 +363,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 			QAngle angDir;
 			VectorAngles( vecDir, angDir );
 
-			CBullet::BulletCreate( vecSrc, angDir, GetDamage(iAttack) / numActualShot,
+			CBullet::BulletCreate( vecSrc, angDir, flDamage,
 									m_Attackinfos[iAttack].m_flConstantDamageRange,
 									m_Attackinfos[iAttack].m_flRelativeDrag, pPlayer, pPlayer->GetActiveWeapon() );
 		}
@@ -370,7 +373,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	{
 		FireBulletsInfo_t info( numActualShot, vecSrc, vecShooting, Cone( m_flInternalSpread ), GetRange( iAttack ), m_iPrimaryAmmoType );
 		info.m_pAttacker = pPlayer;
-		info.m_iPlayerDamage = GetDamage( iAttack ) / numActualShot;
+		info.m_iPlayerDamage = flDamage;
 		info.m_iDamage = -1;		//ancient chinese secret..
 		info.m_iTracerFreq = sv_bullettracers.GetBool();	
 		

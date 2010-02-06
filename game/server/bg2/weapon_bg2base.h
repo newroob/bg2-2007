@@ -290,6 +290,7 @@ public:
 	float	m_flInternalSpread;	//accuracy-agnostic spread
 	float	m_flMuzzleVelocity;
 	int		m_iNumShot;
+	float	m_flDamagePerShot;
 
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();

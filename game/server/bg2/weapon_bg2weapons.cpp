@@ -60,7 +60,9 @@ const float LONGPATTERN_FIRE_DAMAGE = 62.0;
 const float LONGPATTERN_BAYONET_DAMAGE = 45.0;
 const float LONGPATTERN_BAYONET_RANGE = 86.0;
 
-const float FOWLER_FIRE_DAMAGE = 56.0;
+const float FOWLER_FIRE_DAMAGE = 56.0;	//damage per ball
+const float FOWLER_SHOT_DAMAGE = 7.0;	//damage per shot. base is 7*10 = 70. gut shot (HIT_STOMACH_DMG) -> 70*1.75 = 122.5
+const int   FOWLER_NUM_SHOT = 10;
 
 const float JAEGER_FIRE_DAMAGE = 63.0;
 
@@ -805,7 +807,8 @@ DECLARE_BG2_WEAPON( fowler )
 
 	m_flInternalSpread = 6.95f;	//4 m spread at 33 m -> (4 / 2) / 33 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 15;
+	m_iNumShot = FOWLER_NUM_SHOT;
+	m_flDamagePerShot = FOWLER_SHOT_DAMAGE;
 }
 
 #ifndef CLIENT_DLL
