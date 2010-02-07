@@ -92,6 +92,11 @@ private:
 	vgui::Label *m_pLabelDamageVerificator,
 				*m_pLabelLMS;		//BG2 - Tjoppen - TODO: remove this when hintbox works correctly
 
+	float	m_flLastMessage;
+	int		m_iLastAttacker;
+	int		m_iLastVictim;
+	float	m_flTotalDamage;
+
 	const char* HitgroupName( int hitgroup );
 
 	float m_flExpireTime;
@@ -122,6 +127,7 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_Health = NULL;
 
 	m_flExpireTime = 0;
+	m_flTotalDamage = 0;
 
 	Color ColourWhite( 255, 255, 255, 255 );
 
@@ -445,12 +451,13 @@ ConVar cl_vcommsounds("cl_vcommsounds", "1", FCVAR_ARCHIVE, "Allow voice comm so
 
 void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 {
-	int attacker, victim, hitgroup, damage;
+	int attacker, victim, hitgroup;
+	float damage;
 
 	attacker	= msg.ReadByte();
 	victim		= msg.ReadByte();
 	hitgroup	= msg.ReadByte();
-	damage		= msg.ReadShort();
+	damage		= 0.01 * (unsigned)msg.ReadShort();	//un-scale damage
 
 	C_HL2MP_Player *pAttacker = dynamic_cast<C_HL2MP_Player*>(UTIL_PlayerByIndex( attacker ));
 	C_HL2MP_Player *pVictim = dynamic_cast<C_HL2MP_Player*>(UTIL_PlayerByIndex( victim ));
@@ -475,7 +482,7 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 	if( cl_hitverif.GetInt() == 0 || (cl_hitverif.GetInt() == 2 && pWeapon->m_iLastAttackType == C_BaseBG2Weapon::ATTACKTYPE_FIREARM) )
 		return;
 
-	//Msg( "MsgFunc_HitVerif: %i %i %i %i\n", attacker, victim, hitgroup, damage );
+	//Msg( "MsgFunc_HitVerif: %i %i %i %f\n", attacker, victim, hitgroup, damage );
 
 	player_info_t sAttackerInfo, sVictimInfo;
 	engine->GetPlayerInfo( attacker, &sAttackerInfo );
@@ -484,22 +491,37 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 	char txt[512];
 	const char *hitgroupname = HitgroupName( hitgroup );
 
+	//accumulate partial HitVerif messages within a small time window
+	//this makes buckshot damage display correctly with and without simulated bullets
+	if( m_flLastMessage > gpGlobals->curtime - 0.5 && m_iLastAttacker == attacker && m_iLastVictim == victim )
+	{
+		m_flTotalDamage += damage;
+	}
+	else
+	{
+		m_flTotalDamage = damage;
+		m_iLastAttacker = attacker;
+		m_iLastVictim = victim;
+	}
+
+	m_flLastMessage = gpGlobals->curtime;
+
 	//BG2 - Tjoppen - TODO: localize
 	if( C_BasePlayer::GetLocalPlayer()->entindex() == victim )
 	{
 		//I'm the victim here!
 		if( hitgroupname )
-			sprintf( txt, "You were hit in the %s by %s for %i points of damage", hitgroupname, sAttackerInfo.name, damage );
+			sprintf( txt, "You were hit in the %s by %s for %i points of damage", hitgroupname, sAttackerInfo.name, (int)m_flTotalDamage );
 		else
-			sprintf( txt, "You were hit by %s for %i points of damage", sAttackerInfo.name, damage );
+			sprintf( txt, "You were hit by %s for %i points of damage", sAttackerInfo.name, (int)m_flTotalDamage );
 	}
 	else
 	{
 		//got one!
 		if( hitgroupname )
-			sprintf( txt, "You hit %s in the %s for %i points of damage", sVictimInfo.name, hitgroupname, damage );
+			sprintf( txt, "You hit %s in the %s for %i points of damage", sVictimInfo.name, hitgroupname, (int)m_flTotalDamage );
 		else
-			sprintf( txt, "You hit %s for %i points of damage", sVictimInfo.name, damage );
+			sprintf( txt, "You hit %s for %i points of damage", sVictimInfo.name, (int)m_flTotalDamage );
 	}
 
 	m_pLabelDamageVerificator->SetText( txt );

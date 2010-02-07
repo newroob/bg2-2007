@@ -943,10 +943,10 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 			recpfilter.MakeReliable();
 
 			UserMessageBegin( recpfilter, "HitVerif" );
-				WRITE_BYTE( pAttacker->entindex() );	//attacker id
-				WRITE_BYTE( pVictim->entindex() );		//victim id
-				WRITE_BYTE( ptr->hitgroup );			//where?
-				WRITE_SHORT( (int)floorf(info.GetDamage()) );	//damage
+				WRITE_BYTE( pAttacker->entindex() );			//attacker id
+				WRITE_BYTE( pVictim->entindex() );				//victim id
+				WRITE_BYTE( ptr->hitgroup );					//where?
+				WRITE_SHORT( (int)(info.GetDamage() * 100) );	//damage - scale up for better tallying accuracy due to truncation
 			MessageEnd();
 
 			//BG2 - Tjoppen - serverside blood
