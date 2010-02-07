@@ -96,11 +96,6 @@ ConVar mp_disable_firearms( "mp_disable_firearms", "0", FCVAR_NOTIFY | FCVAR_REP
 ConVar sv_show_damages("sv_show_damages", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Allow people to view enemy damages in scoreboard?");
 ConVar sv_show_enemy_names("sv_show_enemy_names", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Allow people to view enemy names in crosshair?");
 
-
-#ifdef CLIENT_DLL
-int m_iLastAttackType = 0, Shot = 0; //BG2 - For the hitverif. Keep it local. -HairyPotter
-#endif
-
 //-----------------------------------------------------------------------------
 // CBaseBG2Weapon
 //-----------------------------------------------------------------------------
@@ -163,7 +158,6 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 	int drain = 0;
 //BG2 - Pretend this doesn't exist. -HairyPotter
 #ifdef CLIENT_DLL
-	Shot = ATTACKTYPE_FIREARM;
 	m_iLastAttackType = GetAttackType(ATTACK_PRIMARY);
 #endif
 //
@@ -219,7 +213,6 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 
 //BG2 - Pretend this doesn't exist. -HairyPotter
 #ifdef CLIENT_DLL
-	Shot = ATTACKTYPE_FIREARM;
 	m_iLastAttackType = GetAttackType(ATTACK_SECONDARY);
 #endif
 //
@@ -441,7 +434,8 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )
 		//WeaponSound( MELEE_HIT );
 		if( pHitEntity->IsPlayer() )
 		{
-			WeaponSound( MELEE_HIT );
+			//play miss sound until client gets HitVerif and overrides with MELEE_HIT
+			WeaponSound( SPECIAL1 );
 #ifndef CLIENT_DLL
 			ImpactEffect( traceHit );
 #endif

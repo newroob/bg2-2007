@@ -39,6 +39,7 @@
 #include "hl2mp_gamerules.h"
 //BG2 - Tjoppen - #includes
 #include "engine/IEngineSound.h"
+#include "../server/bg2/weapon_bg2base.h"
 //
 
 // hintbox header
@@ -446,30 +447,33 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 {
 	int attacker, victim, hitgroup, damage;
 
-	//if( !cl_hitverif.GetBool() )
-	//	return;
-	extern int m_iLastAttackType, Shot;
-	switch (cl_hitverif.GetInt())
-	{
-		case 0:
-			return;
-			break;
-		case 1:
-			break;
-		case 2:
-			if ( m_iLastAttackType == Shot ) //BG2 - HACKHACK, No firearm damages displayed. -HairyPotter
-				return;
-			break;
-		case 3:
-			if ( m_iLastAttackType != Shot ) //BG2 - HACKHACK, No melee damages displayed. -HairyPotter
-				return;
-			break;
-	}
-
 	attacker	= msg.ReadByte();
 	victim		= msg.ReadByte();
 	hitgroup	= msg.ReadByte();
 	damage		= msg.ReadShort();
+
+	C_HL2MP_Player *pAttacker = dynamic_cast<C_HL2MP_Player*>(UTIL_PlayerByIndex( attacker ));
+	C_HL2MP_Player *pVictim = dynamic_cast<C_HL2MP_Player*>(UTIL_PlayerByIndex( victim ));
+	C_BaseBG2Weapon *pWeapon = dynamic_cast<C_BaseBG2Weapon*>(pAttacker->GetActiveWeapon());
+
+	if( !pAttacker || !pVictim || !pWeapon || !C_BasePlayer::GetLocalPlayer() )
+		return;
+
+	//play melee hit sound if attacker's last attack was a melee attack
+	//note: hit sound should always be played, regardless of what cl_hitverif is set to
+	//in other words: don't mess up the order of these tests
+	if( pWeapon->m_iLastAttackType == C_BaseBG2Weapon::ATTACKTYPE_STAB || pWeapon->m_iLastAttackType == C_BaseBG2Weapon::ATTACKTYPE_SLASH )
+	{
+		pWeapon->WeaponSound( MELEE_HIT );
+
+		//cl_hitverif 3 -> don't display melee hits
+		if( cl_hitverif.GetInt() == 3 )
+			return;
+	}
+
+	//cl_hitverif 0 -> don't display any hits, while 2 -> don't display shot hits
+	if( cl_hitverif.GetInt() == 0 || (cl_hitverif.GetInt() == 2 && pWeapon->m_iLastAttackType == C_BaseBG2Weapon::ATTACKTYPE_FIREARM) )
+		return;
 
 	//Msg( "MsgFunc_HitVerif: %i %i %i %i\n", attacker, victim, hitgroup, damage );
 
@@ -477,14 +481,11 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 	engine->GetPlayerInfo( attacker, &sAttackerInfo );
 	engine->GetPlayerInfo( victim, &sVictimInfo );
 
-	if( !C_BasePlayer::GetLocalPlayer() )
-		return;
-
 	char txt[512];
 	const char *hitgroupname = HitgroupName( hitgroup );
 
 	//BG2 - Tjoppen - TODO: localize
-	if( C_BasePlayer::GetLocalPlayer() && C_BasePlayer::GetLocalPlayer()->entindex() == victim )
+	if( C_BasePlayer::GetLocalPlayer()->entindex() == victim )
 	{
 		//I'm the victim here!
 		if( hitgroupname )

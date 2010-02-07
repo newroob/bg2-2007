@@ -292,6 +292,10 @@ public:
 	int		m_iNumShot;
 	float	m_flDamagePerShot;
 
+#ifdef CLIENT_DLL
+	int		m_iLastAttackType;	//used for HitVerif stuff
+#endif
+
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
 
