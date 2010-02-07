@@ -61,8 +61,8 @@ const float LONGPATTERN_BAYONET_DAMAGE = 45.0;
 const float LONGPATTERN_BAYONET_RANGE = 86.0;
 
 const float FOWLER_FIRE_DAMAGE = 56.0;	//damage per ball
-const float FOWLER_SHOT_DAMAGE = 7.0;	//damage per shot. base is 7*10 = 70. gut shot (HIT_STOMACH_DMG) -> 70*1.75 = 122.5
-const int   FOWLER_NUM_SHOT = 10;
+const float FOWLER_SHOT_DAMAGE = 4.0;	//damage per shot. base is 18*4 = 72. gut shot (HIT_STOMACH_DMG) -> 72*1.75 = 126
+const int   FOWLER_NUM_SHOT = 18;
 
 const float JAEGER_FIRE_DAMAGE = 63.0;
 
@@ -147,7 +147,7 @@ DECLARE_BG2_WEAPON( brownbess )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL
@@ -219,7 +219,7 @@ DECLARE_BG2_WEAPON( charleville )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL
@@ -281,7 +281,7 @@ DECLARE_BG2_WEAPON( jaeger )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL
@@ -343,7 +343,7 @@ DECLARE_BG2_WEAPON( pennsylvania )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL
@@ -385,7 +385,7 @@ DECLARE_BG2_WEAPON( pistol_a )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL
@@ -427,7 +427,7 @@ DECLARE_BG2_WEAPON( pistol_b )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL
@@ -660,7 +660,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL
@@ -718,7 +718,7 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL
@@ -880,7 +880,7 @@ DECLARE_BG2_WEAPON( longpattern )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL
@@ -938,7 +938,7 @@ DECLARE_BG2_WEAPON( longpattern_nobayo )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL
@@ -1011,7 +1011,7 @@ DECLARE_BG2_WEAPON( american_brownbess )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL
@@ -1069,7 +1069,7 @@ DECLARE_BG2_WEAPON( american_brownbess_nobayo )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL
@@ -1141,7 +1141,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 
 	m_flInternalSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 1;
+	m_iNumShot = 0;
 }
 
 #ifndef CLIENT_DLL

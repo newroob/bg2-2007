@@ -329,8 +329,17 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		flDamage = GetDamage( iAttack );
 		break;
 	case AMMO_KIT_BUCKSHOT:
-		numActualShot = m_iNumShot;
-		flDamage = m_flDamagePerShot;
+		if( m_iNumShot > 0 )
+		{
+			numActualShot = m_iNumShot;
+			flDamage = m_flDamagePerShot;
+		}
+		else
+		{
+			//just in case we got AMMO_KIT_BUCKSHOT without being able to shoot shot
+			numActualShot = 1;
+			flDamage = GetDamage( iAttack );
+		}
 		break;
 	}
 
