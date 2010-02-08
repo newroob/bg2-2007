@@ -264,6 +264,8 @@ void CHL2MP_Player::Precache( void )
 		PrecacheScriptSound( name );
 		Q_snprintf( name, sizeof name, "Voicecomms.British.Rif_%i", i+1 );
 		PrecacheScriptSound( name );
+		Q_snprintf( name, sizeof name, "Voicecomms.British.Ski_%i", i+1 );
+		PrecacheScriptSound( name );
 	}
 }
 
@@ -1455,8 +1457,9 @@ void CHL2MP_Player::HandleVoicecomm( int comm )
 				break;
 			case CLASS_SKIRMISHER: //TODO - Get native sounds in. - HairyPotter
 				if ( GetTeamNumber() == TEAM_BRITISH )
-					return;
-				pClassString = "Rif"; //We'll use infantry sounds for the Militia class.. for now.
+					pClassString = "Ski";
+				else
+					pClassString = "Rif"; //We'll use infantry sounds for the Militia class.. for now.
 				break;
 			case CLASS_LIGHT_INFANTRY:
 				pClassString = "Rif"; //same thing here..
