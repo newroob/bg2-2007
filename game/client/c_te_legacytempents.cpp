@@ -3129,7 +3129,7 @@ ConVar cl_smoke_flashpan_size_end( "cl_smoke_flashpan_size_end", "8", FCVAR_ARCH
 ConVar cl_smoke_owner_velocity_bonus( "cl_smoke_owner_velocity_bonus", "0.25", FCVAR_ARCHIVE, "Amount of extra velocity to take from player to add to smoke. Setting too high (> 0.5) looks silly" );
 ConVar cl_smoke_opacity_start( "cl_smoke_opacity_start", "45", FCVAR_ARCHIVE, "Initial opacity of smoke" );
 ConVar cl_smoke_opacity_end( "cl_smoke_opacity_end", "0", FCVAR_ARCHIVE, "Final opacity of smoke, before dying" );
-ConVar cl_smoke_size_expansion( "cl_smoke_size_expansion", "3", FCVAR_ARCHIVE, "Ratio between initial and final smoke size" );
+ConVar cl_smoke_size_expansion( "cl_smoke_size_expansion", "4", FCVAR_ARCHIVE, "Ratio between initial and final smoke size" );
 ConVar cl_smoke_rotation( "cl_smoke_rotation", "99", FCVAR_ARCHIVE, "Rotation speed of sprites" );
 ConVar cl_smoke_speed_dropoff( "cl_smoke_speed_dropoff", "999999", FCVAR_ARCHIVE, "Smoke speed drops off to drift speed at a rate of expf(-dropoff * dt) each dt" );
 //
