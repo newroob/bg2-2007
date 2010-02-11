@@ -452,12 +452,17 @@ ConVar cl_vcommsounds("cl_vcommsounds", "1", FCVAR_ARCHIVE, "Allow voice comm so
 void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 {
 	int attacker, victim, hitgroup;
+	int attackType;
 	float damage;
 
 	attacker	= msg.ReadByte();
 	victim		= msg.ReadByte();
 	hitgroup	= msg.ReadByte();
 	damage		= 0.01 * (unsigned)msg.ReadShort();	//un-scale damage
+
+	//attack type and hitgroup are packed into the same byte
+	attackType = (hitgroup >> 4) & 0xF;
+	hitgroup &= 0xF;
 
 	C_HL2MP_Player *pAttacker = dynamic_cast<C_HL2MP_Player*>(UTIL_PlayerByIndex( attacker ));
 	C_HL2MP_Player *pVictim = dynamic_cast<C_HL2MP_Player*>(UTIL_PlayerByIndex( victim ));
@@ -469,9 +474,16 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 	//play melee hit sound if attacker's last attack was a melee attack
 	//note: hit sound should always be played, regardless of what cl_hitverif is set to
 	//in other words: don't mess up the order of these tests
-	if( pWeapon->m_iLastAttackType == C_BaseBG2Weapon::ATTACKTYPE_STAB || pWeapon->m_iLastAttackType == C_BaseBG2Weapon::ATTACKTYPE_SLASH )
+	if( attackType == C_BaseBG2Weapon::ATTACKTYPE_STAB || attackType == C_BaseBG2Weapon::ATTACKTYPE_SLASH )
 	{
-		pWeapon->WeaponSound( MELEE_HIT );
+		//we need play the hit sound like this since WeaponSound() only plays the local player's weapon's sound, not those of the other players
+		const char *sound = pWeapon->GetShootSound( MELEE_HIT );
+
+		if( sound && sound[0] )
+		{
+			CLocalPlayerFilter filter;
+			C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, sound );
+		}
 
 		//cl_hitverif 3 -> don't display melee hits
 		if( cl_hitverif.GetInt() == 3 )
@@ -479,7 +491,7 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 	}
 
 	//cl_hitverif 0 -> don't display any hits, while 2 -> don't display shot hits
-	if( cl_hitverif.GetInt() == 0 || (cl_hitverif.GetInt() == 2 && pWeapon->m_iLastAttackType == C_BaseBG2Weapon::ATTACKTYPE_FIREARM) )
+	if( cl_hitverif.GetInt() == 0 || (cl_hitverif.GetInt() == 2 && attackType == C_BaseBG2Weapon::ATTACKTYPE_FIREARM) )
 		return;
 
 	//Msg( "MsgFunc_HitVerif: %i %i %i %f\n", attacker, victim, hitgroup, damage );

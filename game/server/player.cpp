@@ -68,6 +68,7 @@
 #include "hl2orange.spa.h"
 //BG2 - Tjoppen - health fix
 #include "player_resource.h"
+#include "bg2/weapon_bg2base.h"
 //
 
 
@@ -932,6 +933,9 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 						*pAttacker = ToBasePlayer( info.GetAttacker() );
 			Assert( pAttacker != NULL );
 
+			CBaseBG2Weapon *pWeapon = dynamic_cast<CBaseBG2Weapon*>(pAttacker->GetActiveWeapon());
+			int attackType = pWeapon ? pWeapon->m_iLastAttackType : 0;
+
 			//use usermessage instead and let the client figure out what to print. saves precious bandwidth
 			//send one to attacker and one to victim
 			//the "Damage" usermessage is more detailed, but adds up all damage in the current frame. it is therefore
@@ -945,7 +949,7 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 			UserMessageBegin( recpfilter, "HitVerif" );
 				WRITE_BYTE( pAttacker->entindex() );			//attacker id
 				WRITE_BYTE( pVictim->entindex() );				//victim id
-				WRITE_BYTE( ptr->hitgroup );					//where?
+				WRITE_BYTE( ptr->hitgroup + (attackType << 4) );//where?
 				WRITE_SHORT( (int)(info.GetDamage() * 100) );	//damage - scale up for better tallying accuracy due to truncation
 			MessageEnd();
 

@@ -157,7 +157,7 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 
 	int drain = 0;
 //BG2 - Pretend this doesn't exist. -HairyPotter
-#ifdef CLIENT_DLL
+#ifndef CLIENT_DLL
 	m_iLastAttackType = GetAttackType(ATTACK_PRIMARY);
 #endif
 //
@@ -212,7 +212,7 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 	int drain = 0;
 
 //BG2 - Pretend this doesn't exist. -HairyPotter
-#ifdef CLIENT_DLL
+#ifndef CLIENT_DLL
 	m_iLastAttackType = GetAttackType(ATTACK_SECONDARY);
 #endif
 //
