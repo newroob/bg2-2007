@@ -3236,7 +3236,7 @@ void MuzzleFlash_Pistol_Shared( ClientEntityHandle_t hEntity, int attachmentInde
 		//BG2 - Tjoppen - larger flash
 		//pParticle->m_uchStartSize	= ( (random->RandomFloat( 6.0f, 8.0f ) * (8-(i))/6) * flScale );
 		//pParticle->m_uchEndSize		= pParticle->m_uchStartSize;
-		pParticle->m_uchStartSize	= 0.5 * (random->RandomFloat( 6.0f, 8.0f ) * (24-(i))/6) * flScale;
+		pParticle->m_uchStartSize	= 0.65 * (random->RandomFloat( 6.0f, 8.0f ) * (24-(i))/6) * flScale;
 		pParticle->m_uchEndSize		= 0;
 		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
 		pParticle->m_flRollDelta	= 0.0f;
