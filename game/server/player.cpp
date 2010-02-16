@@ -979,44 +979,19 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 //------------------------------------------------------------------------------
 void CBasePlayer::DamageEffect(float flDamage, int fDamageType)
 {
-	if (fDamageType & DMG_CRUSH)
-	{
-		//Red damage indicator
-		color32 red = {128,0,0,128};
-		UTIL_ScreenFade( this, red, 1.0f, 0.1f, FFADE_IN );
-	}
-	else if (fDamageType & DMG_DROWN)
-	{
-		//Red damage indicator
-		color32 blue = {0,0,128,128};
-		UTIL_ScreenFade( this, blue, 1.0f, 0.1f, FFADE_IN );
-	}
-	else if (fDamageType & DMG_SLASH)
-	{
-		// If slash damage shoot some blood
-		SpawnBlood(EyePosition(), g_vecAttackDir, BloodColor(), flDamage);
-	}
-	else if (fDamageType & DMG_PLASMA)
-	{
-		// Blue screen fade
-		color32 blue = {0,0,255,100};
-		UTIL_ScreenFade( this, blue, 0.2, 0.4, FFADE_MODULATE );
+	//fade to red
+	//redness and duration depends on damage taken
+	int d = 1.5f * flDamage;
 
-		// Very small screen shake
-		ViewPunch(QAngle(random->RandomInt(-0.1,0.1), random->RandomInt(-0.1,0.1), random->RandomInt(-0.1,0.1)));
+	if(d > 127)
+		d = 127;
 
-		// Burn sound 
-		EmitSound( "Player.PlasmaDamage" );
-	}
-	/*else if (fDamageType & DMG_SONIC)
-	{
-		// Sonic damage sound 
-		EmitSound( "Player.SonicDamage" );
-	}*/
-	else if ( fDamageType & DMG_BULLET )
-	{
-		EmitSound( "Flesh.BulletImpact" );
-	}
+	float t = flDamage / 10;
+
+	color32 red = {128 + d,0,0,128 + d};
+	UTIL_ScreenFade( this, red, t / 3, 2 * t / 3, FFADE_IN );
+
+	EmitSound( "Flesh.BulletImpact" );
 }
 
 /*
