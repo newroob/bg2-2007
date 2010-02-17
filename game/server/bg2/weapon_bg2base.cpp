@@ -551,6 +551,42 @@ int CBaseBG2Weapon::Swing( int iAttack, bool bDoEffects )
 
 	TraceAttackToTriggers( triggerInfo, traceHit.startpos, traceHit.endpos, vec3_origin );
 #endif //Keep the following code with the client.dll
+
+	//stolen from basebludgeonweapon.cpp and modified slightly
+	if( GetAttackType(iAttack) == ATTACKTYPE_SLASH )
+	{
+		//reset trace info. for slash attack the above was merely for hitting triggers
+		//since we're going a hull trace below we can't hit any hitgroups
+		//this balances out the increased hit volume quite well
+		traceHit = trace_t();
+
+		float bludgeonHullRadius = 1.732f * BLUDGEON_HULL_DIM;  // hull is +/- 16, so use cuberoot of 2 to determine how big the hull is from center to the corner point
+
+		// Back off by hull "radius"
+		swingEnd -= forward * bludgeonHullRadius;
+
+		UTIL_TraceHull( swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
+		if ( traceHit.fraction < 1.0 && traceHit.m_pEnt )
+		{
+			Vector vecToTarget = traceHit.m_pEnt->GetAbsOrigin() - swingStart;
+			VectorNormalize( vecToTarget );
+
+			float dot = vecToTarget.Dot( forward );
+
+			// YWB:  Make sure they are sort of facing the guy at least...
+			if ( dot < 0.70721f )
+			{
+				// Force amiss
+				traceHit.fraction = 1.0f;
+			}
+			else
+			{
+				//ignore the return value since we're not interested in any special animations for our slashing weapons
+				/*nHitActivity =*/ ChooseIntersectionPointAndActivity( traceHit, g_bludgeonMins, g_bludgeonMaxs, pOwner );
+			}
+		}
+	}
+
 	if ( traceHit.fraction == 1.0f )
 	{
 		//miss, do any waterimpact stuff

@@ -169,7 +169,7 @@ void CBaseHL2MPBludgeonWeapon::Hit( trace_t &traceHit, Activity nHitActivity )
 	ImpactEffect( traceHit );
 }
 
-Activity CBaseHL2MPBludgeonWeapon::ChooseIntersectionPointAndActivity( trace_t &hitTrace, const Vector &mins, const Vector &maxs, CBasePlayer *pOwner )
+Activity ChooseIntersectionPointAndActivity( trace_t &hitTrace, const Vector &mins, const Vector &maxs, CBasePlayer *pOwner )
 {
 	int			i, j, k;
 	float		distance;

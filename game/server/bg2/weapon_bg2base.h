@@ -269,7 +269,6 @@ public:
 	int			Swing( int iAttack, bool bDoEffects );
 
 	void		Hit( trace_t &traceHit, int iAttack );
-	Activity	ChooseIntersectionPointAndActivity( int iAttack, trace_t &hitTrace, const Vector &mins, const Vector &maxs, CBasePlayer *pOwner );
 	bool		ImpactWater( const Vector &start, const Vector &end );
 	void		ImpactEffect( trace_t &traceHit );
 
