@@ -32,6 +32,8 @@
 */
 
 //BG2 - Tjoppen - CSpawnPoint can be enabled/disabled
+#include <hl2mp_gamerules.h>
+
 class CSpawnPoint : public CPointEntity
 {
 	DECLARE_CLASS( CSpawnPoint, CPointEntity );
@@ -39,12 +41,19 @@ class CSpawnPoint : public CPointEntity
 
 	bool	m_bEnabled;
 	float	m_flNextSetEnabled;
+
+	int m_iDefaultTeam;
+
 #define SPAWNPOINT_START_DISABLED	1
 
 public:
+
+	bool m_bReserved;
+	int m_iSpawnTeam;
+
 	void Spawn( void ) { Reset(); }
 
-	void Reset( void )
+	void Reset( void ) 
 	{
 		//on round resets and spawns we reset the enabled flag
         
@@ -52,6 +61,16 @@ public:
 		SetEnabled( !HasSpawnFlags( SPAWNPOINT_START_DISABLED ) );
 
 		m_flNextSetEnabled = gpGlobals->curtime + 0.1f;				//wait for other outputs and stuff to fire
+
+		switch( m_iDefaultTeam )
+		{
+			case 0:
+				m_iSpawnTeam = TEAM_BRITISH;
+				break;
+			case 1:
+				m_iSpawnTeam = TEAM_AMERICANS;
+				break;
+		}
 	}
 
 	bool IsEnabled( void ) { return m_bEnabled; }
@@ -68,7 +87,16 @@ public:
 		m_bEnabled = bEnabled;
 	}
 
+	void SetTeam( int iTeam )
+	{
+		m_iSpawnTeam = iTeam;
+	}
+
 	void InputEnable( inputdata_t &inputData ) { /*Msg( "enablind spawn\n" );*/ SetEnabled( true ); }
 	void InputDisable( inputdata_t &inputData ) { /*Msg( "disabling spawn\n" );*/ SetEnabled( false ); }
 	void InputToggle( inputdata_t &inputData ) { /*Msg( "toggling spawn\n" );*/ SetEnabled( !IsEnabled() ); }
+
+	void InputAmerican( inputdata_t &inputData ) { SetTeam( TEAM_BRITISH ); }
+	void InputBritish( inputdata_t &inputData ) { SetTeam( TEAM_AMERICANS ); }
+	void InputToggleTeam( inputdata_t &inputData ) { SetTeam( m_iSpawnTeam == TEAM_AMERICANS ? TEAM_BRITISH : TEAM_AMERICANS ); }
 };
