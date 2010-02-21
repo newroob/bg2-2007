@@ -942,7 +942,7 @@ void CFlagTriggerBG2::StartTouch(CBaseEntity *pOther)
 	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
 	CFlag *FlagEnt = dynamic_cast< CFlag* >( GetParent() );
 
-	if ( !FlagEnt->m_bActive ) //Flag is inactive?
+	if ( !pPlayer || !FlagEnt || !FlagEnt->m_bActive ) //Flag is inactive?
 		return;				   //Die here.
 
 	if ( !pOther->IsPlayer() ) //Ask yourself, would anything else be able to capture a flag?
@@ -980,7 +980,7 @@ void CFlagTriggerBG2::EndTouch(CBaseEntity *pOther)
 	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
 	CFlag *FlagEnt = dynamic_cast< CFlag* >( GetParent() );
 
-	if ( !FlagEnt->m_bActive ) //Flag is inactive?
+	if ( !pPlayer || !FlagEnt || !FlagEnt->m_bActive ) //Flag is inactive?
 		return;				   //Die here.
 
 	if ( !pOther->IsPlayer() ) //Ask yourself, would anything else be able to capture a flag? Should bullets be able to capture?
