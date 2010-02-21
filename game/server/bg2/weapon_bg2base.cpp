@@ -522,7 +522,7 @@ void CBaseBG2Weapon::ImpactEffect( trace_t &traceHit )
 
 int CBaseBG2Weapon::Swing( int iAttack, bool bDoEffects )
 {
-	trace_t traceHit;
+	trace_t traceHit, dummy; //Dummy is so GCC 3.4 can compile the linux version.
 
 	// Try a ray
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
@@ -558,7 +558,9 @@ int CBaseBG2Weapon::Swing( int iAttack, bool bDoEffects )
 		//reset trace info. for slash attack the above was merely for hitting triggers
 		//since we're going a hull trace below we can't hit any hitgroups
 		//this balances out the increased hit volume quite well
-		traceHit = trace_t();
+		//traceHit = trace_t();
+		traceHit = dummy; //This is a hack so that GCC will compile the Linux version.
+
 
 		float bludgeonHullRadius = 1.732f * BLUDGEON_HULL_DIM;  // hull is +/- 16, so use cuberoot of 2 to determine how big the hull is from center to the corner point
 
