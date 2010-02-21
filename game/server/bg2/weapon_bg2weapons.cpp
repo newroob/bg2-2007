@@ -771,11 +771,11 @@ DECLARE_BG2_WEAPON( fowler )
 
 	//Iron sights viewmodel settings.
 	vecIronsightPosOffset.x		= -20.0; //forward
-	vecIronsightPosOffset.y		= -8.2; //right
-	vecIronsightPosOffset.z		= 7.43; //up
+	vecIronsightPosOffset.y		= -7.7; //right
+	vecIronsightPosOffset.z		= 7.17; //up
  
 	angIronsightAngOffset[PITCH]	= -0.45;
-	angIronsightAngOffset[YAW]		= 0.1;
+	angIronsightAngOffset[YAW]		= 0.4;
 	angIronsightAngOffset[ROLL]		= 0;
 	flIronsightFOVOffset		= -2.5;
 
