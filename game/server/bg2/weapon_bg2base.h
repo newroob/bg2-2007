@@ -286,10 +286,29 @@ public:
 	//
 
 	//values related to internal ballistics
-	float	m_flInternalSpread;	//accuracy-agnostic spread
+	//accuracy-agnostic spreads
+	float	m_flBallSpread;		//used when firing single balls
+	float	m_flShotSpread;		//used when firing shot, if the current gun is capable of that
 	float	m_flMuzzleVelocity;
 	int		m_iNumShot;
 	float	m_flDamagePerShot;
+
+	float GetCurrentAmmoSpread( void )
+	{
+		CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
+
+		if ( !pPlayer || m_iNumShot <= 0 )
+			return m_flBallSpread;
+
+		switch( pPlayer->GetCurrentAmmoKit() )
+		{
+		default:
+		case AMMO_KIT_BALL:
+			return m_flBallSpread;
+		case AMMO_KIT_BUCKSHOT:
+			return m_flShotSpread;
+		}
+	}
 
 #ifndef CLIENT_DLL
 	int		m_iLastAttackType;	//used for HitVerif stuff

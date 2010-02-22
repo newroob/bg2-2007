@@ -187,7 +187,7 @@ void CHudCrosshair::Paint( void )
 		if( weapon->GetAttackType( C_BaseBG2Weapon::ATTACK_PRIMARY ) == C_BaseBG2Weapon::ATTACKTYPE_FIREARM )
 		{
 			//add both spreads (accuracy and internal ballistics) to give a more accurate circle
-			r *= weapon->GetAccuracy( C_BaseBG2Weapon::ATTACK_PRIMARY ) + weapon->m_flInternalSpread;
+			r *= weapon->GetAccuracy( C_BaseBG2Weapon::ATTACK_PRIMARY ) + weapon->GetCurrentAmmoSpread();
 			r *= 0.008725f;
 		}
 		else

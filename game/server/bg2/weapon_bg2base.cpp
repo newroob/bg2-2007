@@ -360,7 +360,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 
 		for( int x = 0; x < numActualShot; x++ )
 		{
-			Vector vecDir = manipulator2.ApplySpread( Cone( m_flInternalSpread ) );
+			Vector vecDir = manipulator2.ApplySpread( Cone( GetCurrentAmmoSpread() ) );
 
 			QAngle angDir;
 			VectorAngles( vecDir, angDir );
@@ -373,7 +373,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	}
 	else
 	{
-		FireBulletsInfo_t info( numActualShot, vecSrc, vecShooting, Cone( m_flInternalSpread ), GetRange( iAttack ), m_iPrimaryAmmoType );
+		FireBulletsInfo_t info( numActualShot, vecSrc, vecShooting, Cone( GetCurrentAmmoSpread() ), GetRange( iAttack ), m_iPrimaryAmmoType );
 		info.m_pAttacker = pPlayer;
 		info.m_iPlayerDamage = flDamage;
 		info.m_iDamage = -1;		//ancient chinese secret..
