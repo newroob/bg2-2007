@@ -132,11 +132,7 @@ public:
 	int		m_iSerialNumber;	// The edict serial number. TODO used anywhere ?
 };
 
-//extern CUtlLinkedList<CMapEntityRef, unsigned short> g_MapEntityRefs;
-
-//BG2 - Spawn Point Lists. 
-extern CUtlVector< CBaseEntity * > s_AmericanSpawns, s_BritishSpawns, s_MultiSpawns;
-//
+extern CUtlLinkedList<CMapEntityRef, unsigned short> g_MapEntityRefs; 
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -165,21 +161,7 @@ public:
 				ref.m_iSerialNumber = pRet->edict()->m_NetworkSerialNumber;
 		}
 
-		//g_MapEntityRefs.AddToTail( ref ); //BG2 - Not needed. We have our own mapfilter. -HairyPotter
-
-		//This is a test to see if the spawn code can be optimized a little bit.
-		//Basically this divides up the spawn entities only when the map loads. Then EntSelectSpawnPoint will determine which list to use,
-		//Rather than parsing the entire entity list each time a player spawns.
-
-		if ( !Q_strcmp( pClassname, "info_player_american" ) )
-			s_AmericanSpawns.AddToTail( pRet );
-		
-		if ( !Q_strcmp( pClassname, "info_player_british" ) )
-			s_BritishSpawns.AddToTail( pRet );
-
-		if ( !Q_strcmp( pClassname, "info_player_multispawn" ) )
-			s_MultiSpawns.AddToTail( pRet );
-
+		g_MapEntityRefs.AddToTail( ref );
 		return pRet;
 	}
 };

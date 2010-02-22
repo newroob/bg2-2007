@@ -23,7 +23,6 @@
 //#include "GameStats.h"
 
 //#includes - HairyPotter
-#include "gameinterface.h"
 #include "ammodef.h"
 //
 
@@ -49,10 +48,6 @@ ConVar sv_unlag_rmb( "sv_unlag_rmb", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Do unla
 ConVar sv_saferespawntime( "sv_saferespawntime", "2.5f", FCVAR_GAMEDLL | FCVAR_NOTIFY, "Amount of time after respawn when player is immune to damage. (In Seconds)");
 //
 
-//BG2 - Test Optimization of EntSelectSpawnPoint - HairyPotter
-CUtlVector< CBaseEntity * > s_AmericanSpawns, s_BritishSpawns, s_MultiSpawns;
-//
-
 int g_iLastCitizenModel = 0;
 int g_iLastCombineModel = 0;
 
@@ -60,25 +55,6 @@ int g_iLastCombineModel = 0;
 /*CBaseEntity	 *g_pLastCombineSpawn = NULL;
 CBaseEntity	 *g_pLastRebelSpawn = NULL;*/
 //extern CBaseEntity				*g_pLastSpawn;
-
-//BG2 - Tjoppen - CSpawnPoint
-BEGIN_DATADESC( CSpawnPoint )
-	DEFINE_KEYFIELD( m_iDefaultTeam, FIELD_INTEGER, "StartingTeam" ),
-
-	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "Toggle", InputToggle ),
-
-	//Below are for info_player_multi
-	DEFINE_INPUTFUNC( FIELD_VOID, "ToggleTeam", InputToggleTeam ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "SetAmerican", InputBritish ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "SetBritish", InputAmerican ),
-	//
-END_DATADESC()
-
-LINK_ENTITY_TO_CLASS( info_player_american, CSpawnPoint );
-LINK_ENTITY_TO_CLASS( info_player_british, CSpawnPoint );
-LINK_ENTITY_TO_CLASS( info_player_multispawn, CSpawnPoint );
 //
 
 #define HL2MP_COMMAND_MAX_RATE 0.3
@@ -89,6 +65,26 @@ void ClientKill( edict_t *pEdict );
 //
 
 LINK_ENTITY_TO_CLASS( player, CHL2MP_Player );
+
+//BG2 - Tjoppen - CSpawnPoint
+BEGIN_DATADESC( CSpawnPoint )
+	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "Toggle", InputToggle ),
+
+	//Below are for info_player_multi
+	DEFINE_INPUTFUNC( FIELD_VOID, "ToggleTeam", InputToggleTeam ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "SetAmerican", InputAmerican ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "SetBritish", InputBritish),
+	//
+END_DATADESC()
+//
+
+//BG2 - Tjoppen - info_player_american/british
+LINK_ENTITY_TO_CLASS( info_player_american, CSpawnPoint );
+LINK_ENTITY_TO_CLASS( info_player_british, CSpawnPoint );
+LINK_ENTITY_TO_CLASS( info_player_multispawn, CSpawnPoint );
+//
 
 IMPLEMENT_SERVERCLASS_ST(CHL2MP_Player, DT_HL2MP_Player)
 	SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 0), 11, SPROP_CHANGES_OFTEN ),
@@ -2065,152 +2061,64 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 	if( GetTeamNumber() <= TEAM_SPECTATOR )
 		return NULL;	//BG2 - Tjoppen - spectators/unassigned don't spawn..
 
-	//CBaseEntity *pSpot = NULL;
+	CBaseEntity *pSpot = NULL;
 	edict_t		*player;
 
 	player = edict();
 
-	switch ( GetTeamNumber() )
-	{
-		case TEAM_AMERICANS:
-			for ( int x = 0; x < s_AmericanSpawns.Count(); x++ )
-			{
-				CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>( s_AmericanSpawns[x] );
-				if ( pSpawn && !pSpawn->m_bReserved && pSpawn->IsEnabled() )
-				{
-					CBaseEntity *ent = NULL;
-					//32 world units seems... safe.. -HairyPotter
-					for ( CEntitySphereQuery sphere( s_AmericanSpawns[x]->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
-					{
-						// Check to see if the ent is a player.
-						if ( ent->IsPlayer() && !(ent->edict() == player) )
-							continue;
-					}
-				
-					pSpawn->m_bReserved = true; //Another player is going to use this slot.
-					return s_AmericanSpawns[x];
-				}
-
-				continue;
-			}
-			break;
-		case TEAM_BRITISH:
-			for ( int x = 0; x < s_BritishSpawns.Count(); x++ )
-			{
-				CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>( s_BritishSpawns[x] );
-				if ( pSpawn && !pSpawn->m_bReserved && pSpawn->IsEnabled() )
-				{
-					CBaseEntity *ent = NULL;
-					//32 world units seems... safe.. -HairyPotter
-					for ( CEntitySphereQuery sphere( s_BritishSpawns[x]->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
-					{
-						// Check to see if the ent is a player.
-						if ( ent->IsPlayer() && !(ent->edict() == player) )
-							continue;
-					}
-				
-					pSpawn->m_bReserved = true; //Another player is going to use this slot.
-					return s_BritishSpawns[x];
-				}
-
-				continue;
-			}
-			break;
-		default:
-			return false;
-			break;
-	}
-
-	for ( int x = 0; x < s_MultiSpawns.Count(); x++ )
-	{
-		CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>( s_MultiSpawns[x] );
-		if ( pSpawn && pSpawn->m_iSpawnTeam == GetTeamNumber() && !pSpawn->m_bReserved && pSpawn->IsEnabled() )
-		{
-			CBaseEntity *ent = NULL;
-			//32 world units seems... safe.. -HairyPotter
-			for ( CEntitySphereQuery sphere( s_MultiSpawns[x]->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
-			{
-				// Check to see if the ent is a player.
-				if ( ent->IsPlayer() && !(ent->edict() == player) )
-					continue;
-			}
-				
-			pSpawn->m_bReserved = true; //Another player is going to use this slot.
-			return s_MultiSpawns[x];
-		}
-
-		continue;
-	}
-	
-
 	//BG2 - Rewrote all of the stuff below. -HairyPotter
 	//if ( GetTeamNumber() == TEAM_AMERICANS )
-	/*while( ( pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_multispawn" )) != NULL )
-	{
-		CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>(pSpot);
-		if ( pSpawn && pSpawn->m_iSpawnTeam == GetTeamNumber() && !pSpawn->m_bReserved && pSpawn->IsEnabled() )
-		{
-			CBaseEntity *ent = NULL;
-			//32 world units seems... safe.. -HairyPotter
-			for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
-			{
-				// Check to see if the ent is a player.
-				if ( ent->IsPlayer() && !(ent->edict() == player) )
-					continue;
-			}
-				
-			pSpawn->m_bReserved = true; //Another player is going to use this slot.
-			return pSpot;
-		}
-	}
-
 	switch ( GetTeamNumber() )
 	{
 		case TEAM_AMERICANS:
-			while( ( pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_american" )) != NULL )
+			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_american" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
 			{
-				//CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
-				CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>(pSpot);
-				if ( pSpawn && !pSpawn->m_bReserved && pSpawn->IsEnabled() )
+				CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
+				if ( pSpot && pSpawn->IsEnabled() )
 				{
 					CBaseEntity *ent = NULL;
+					bool IsTaken = false;
 					//32 world units seems... safe.. -HairyPotter
-					for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
+					for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 /*128*/ ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 					{
 						// Check to see if the ent is a player.
 						if ( ent->IsPlayer() && !(ent->edict() == player) )
 						{
+							IsTaken = true;
 							//Msg("Someone is in the way of the american spawn. \n");
-							continue;
 						}
 					}
+					if ( IsTaken ) //Retry?
+						continue;
 				
-					pSpawn->m_bReserved = true; //Another player is going to use this slot.
-					return pSpot;
+					pSpot->AddEFlags( EFL_DORMANT );
+					goto ReturnSpot; //Spawn. Also pretend this goto doesn't exist.
 				}
 			}
 			break;
 		case TEAM_BRITISH:
-			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_british" )) != NULL )
+			while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_british" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
 			{
-				//CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
-				CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>(pSpot);
-				if ( pSpawn && !pSpawn->m_bReserved && pSpawn->IsEnabled() )
+				CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
+				if ( pSpot && pSpawn->IsEnabled() )
 				{
 					CBaseEntity *ent = NULL;
+					bool IsTaken = false;
 					//32 world units seems... safe.. -HairyPotter
 					for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 					{
 						// Check to see if the ent is a player.
 						if ( ent->IsPlayer() && !(ent->edict() == player) )
 						{	
+							IsTaken = true;
 							//Msg("Someone is in the way of the british spawn. \n");
-							continue;
 						}
 					}
+					if ( IsTaken ) //Retry?
+						continue;
 
-					pSpawn->m_bReserved = true; //Another player is going to use this slot.
-					return pSpot;
+					pSpot->AddEFlags( EFL_DORMANT );
+					goto ReturnSpot; //Spawn. Also pretend this goto doesn't exist.
 				}
 			}
 			break;
@@ -2219,19 +2127,50 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 			break;
 	}
 	//
-	*/
 
-	switch ( GetTeamNumber() )
+	while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_multispawn" )) != NULL && !pSpot->IsEFlagSet( EFL_DORMANT ) )
 	{
-	case TEAM_BRITISH:
-		Warning( "PutClientInServer: There are too few British spawns or they are too close together, or someone was obstructing them.\n");
-		break;
-	case TEAM_AMERICANS:
-		Warning( "PutClientInServer: There are too few American spawns or they are too close together, or someone was obstructing them.\n");
-		break;
+		CSpawnPoint *pSpawn = dynamic_cast<CSpawnPoint*>(pSpot);
+		if ( pSpot && pSpawn->IsEnabled() )
+		{
+			CBaseEntity *ent = NULL;
+			bool IsTaken = false;
+			//32 world units seems... safe.. -HairyPotter
+			for ( CEntitySphereQuery sphere( pSpot->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
+			{
+				// Check to see if the ent is a player.
+				if ( ent->IsPlayer() && !(ent->edict() == player) )
+				{	
+					IsTaken = true;
+					//Msg("Someone is in the way of the british spawn. \n");
+				}
+			}
+			if ( IsTaken ) //Retry?
+				continue;
+
+			pSpot->AddEFlags( EFL_DORMANT );
+			goto ReturnSpot; //Spawn. Also pretend this goto doesn't exist.
+		}
 	}
 
-	return CBaseEntity::Instance( INDEXENT( 0 ) );
+ReturnSpot:
+	if ( !pSpot  )
+	{
+		switch ( GetTeamNumber() )
+		{
+		case TEAM_BRITISH:
+			Warning( "PutClientInServer: There are too few British spawns or they are too close together, or someone was obstructing them.\n");
+			break;
+		case TEAM_AMERICANS:
+			Warning( "PutClientInServer: There are too few American spawns or they are too close together, or someone was obstructing them.\n");
+			break;
+		}
+
+		return CBaseEntity::Instance( INDEXENT( 0 ) );
+	}
+
+	//g_pLastSpawn = pSpot;
+	return pSpot;
 }
 
 CON_COMMAND( timeleft, "Prints the time remaining in the round." )

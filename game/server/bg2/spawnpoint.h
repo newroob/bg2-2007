@@ -96,7 +96,7 @@ public:
 	void InputDisable( inputdata_t &inputData ) { /*Msg( "disabling spawn\n" );*/ SetEnabled( false ); }
 	void InputToggle( inputdata_t &inputData ) { /*Msg( "toggling spawn\n" );*/ SetEnabled( !IsEnabled() ); }
 
-	void InputAmerican( inputdata_t &inputData ) { SetTeam( TEAM_BRITISH ); }
-	void InputBritish( inputdata_t &inputData ) { SetTeam( TEAM_AMERICANS ); }
+	void InputBritish( inputdata_t &inputData ) { SetTeam( TEAM_BRITISH ); }
+	void InputAmerican( inputdata_t &inputData ) { SetTeam( TEAM_AMERICANS ); }
 	void InputToggleTeam( inputdata_t &inputData ) { SetTeam( m_iSpawnTeam == TEAM_AMERICANS ? TEAM_BRITISH : TEAM_AMERICANS ); }
 };
