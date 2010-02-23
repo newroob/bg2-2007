@@ -64,6 +64,10 @@ const float FOWLER_FIRE_DAMAGE = 56.0;	//damage per ball
 const float FOWLER_SHOT_DAMAGE = 4.0;	//damage per shot. base is 18*4 = 72. gut shot (HIT_STOMACH_DMG) -> 72*1.75 = 126
 const int   FOWLER_NUM_SHOT = 18;
 
+const float CARBINE_FIRE_DAMAGE = 58.0;	//damage per ball. between fowler and normal brown bess
+const float CARBINE_SHOT_DAMAGE = 5.0;	//damage per shot. base is 16*5 = 80. gut shot (HIT_STOMACH_DMG) -> 80*1.75 = 140
+const int   CARBINE_NUM_SHOT = 16;
+
 const float JAEGER_FIRE_DAMAGE = 63.0;
 
 const float PISTOLA_FIRE_DAMAGE = 40.0;
@@ -1105,19 +1109,19 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= BESS_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_flDamage				= CARBINE_FIRE_DAMAGE;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
-	m_Attackinfos[0].m_flCrouchMoving		= 12.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 3.6f;
-	m_Attackinfos[0].m_flStandMoving		= 13.2f;
-	m_Attackinfos[0].m_flStandStill			= 3.6f;
+	m_Attackinfos[0].m_flCrouchMoving		= 11.0f;
+	m_Attackinfos[0].m_flCrouchStill		= 2.6f;
+	m_Attackinfos[0].m_flStandMoving		= 12.2f;
+	m_Attackinfos[0].m_flStandStill			= 2.6f;
 	//Iron Sights.
-	m_Attackinfos[0].m_flStandAimStill		= 2.4f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 3.0f;
-	m_Attackinfos[0].m_flCrouchAimStill		= 2.4f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	m_Attackinfos[0].m_flStandAimStill		= 1.4f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 2.0f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 1.4f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 2.0f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= 20.0 * 36.0;	//20 yards
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -1140,9 +1144,11 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= BESS_BAYONET_RANGE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
+	m_flBallSpread = 1.0f;
+	m_flShotSpread = 7.64f;		//4 m spread at 33 m -> (4 / 2) / 30 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
-	m_iNumShot = 0;
+	m_iNumShot = CARBINE_NUM_SHOT;
+	m_flDamagePerShot = CARBINE_SHOT_DAMAGE;
 }
 
 #ifndef CLIENT_DLL
