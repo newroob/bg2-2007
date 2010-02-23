@@ -73,6 +73,8 @@ public:
 		}
 	}
 
+	int GetTeam ( void ) { return m_iSpawnTeam; }
+
 	bool IsEnabled( void ) { return m_bEnabled; }
 	
 	void SetEnabled( bool bEnabled )

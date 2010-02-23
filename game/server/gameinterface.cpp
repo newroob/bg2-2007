@@ -105,7 +105,7 @@ CTimedEventMgr g_NetworkPropertyEventMgr;
 ISaveRestoreBlockHandler *GetEventQueueSaveRestoreBlockHandler();
 //ISaveRestoreBlockHandler *GetCommentarySaveRestoreBlockHandler();
 
-CUtlLinkedList<CMapEntityRef, unsigned short> g_MapEntityRefs;
+//CUtlLinkedList<CMapEntityRef, unsigned short> g_MapEntityRefs;
 
 // Engine interfaces.
 IVEngineServer	*engine = NULL;
@@ -903,7 +903,12 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 		}
 
 		// Clear out entity references, and parse the entities into it.
-		g_MapEntityRefs.Purge(); 
+		//g_MapEntityRefs.Purge(); 
+		//BG2 - Spawn point optimization test. - HairyPotter 
+		m_AmericanSpawns.Purge();
+		m_BritishSpawns.Purge();
+		m_MultiSpawns.Purge();
+		//
 		CMapLoadEntityFilter filter;
 		MapEntity_ParseAllEntities( pMapEntities, &filter );
 

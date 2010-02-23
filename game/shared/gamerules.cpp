@@ -185,7 +185,9 @@ CBaseEntity *CGameRules::GetPlayerSpawnSpot( CBasePlayer *pPlayer )
 	pPlayer->m_Local.m_vecPunchAngleVel = vec3_angle;
 	pPlayer->SnapEyeAngles( pSpawnSpot->GetLocalAngles() );
 
-	pSpawnSpot->RemoveEFlags( EFL_DORMANT ); 
+	CSpawnPoint *pSpawn = static_cast< CSpawnPoint * >( pSpawnSpot );
+	if ( pSpawn )
+		pSpawn->m_bReserved = false;
 
 	return pSpawnSpot;
 }

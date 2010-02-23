@@ -132,7 +132,9 @@ public:
 	int		m_iSerialNumber;	// The edict serial number. TODO used anywhere ?
 };
 
-extern CUtlLinkedList<CMapEntityRef, unsigned short> g_MapEntityRefs; 
+//extern CUtlLinkedList<CMapEntityRef, unsigned short> g_MapEntityRefs; 
+
+extern CUtlVector<CBaseEntity *> m_MultiSpawns, m_AmericanSpawns, m_BritishSpawns;
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -159,9 +161,21 @@ public:
 			ref.m_iEdict = pRet->entindex();
 			if ( pRet->edict() )
 				ref.m_iSerialNumber = pRet->edict()->m_NetworkSerialNumber;
+
+			//BG2 - Spawn point optimization test. - HairyPotter
+			if ( !Q_strcmp( pClassname, "info_player_multispawn" ) )
+				m_MultiSpawns.AddToTail( pRet );
+
+			if ( !Q_strcmp( pClassname, "info_player_american" ) )
+				m_AmericanSpawns.AddToTail( pRet );
+
+			if ( !Q_strcmp( pClassname, "info_player_british" ) )
+				m_BritishSpawns.AddToTail( pRet );
+			//
 		}
 
-		g_MapEntityRefs.AddToTail( ref );
+		//g_MapEntityRefs.AddToTail( ref );
+
 		return pRet;
 	}
 };
