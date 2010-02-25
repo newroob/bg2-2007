@@ -67,6 +67,7 @@ const int   FOWLER_NUM_SHOT = 18;
 const float CARBINE_FIRE_DAMAGE = 58.0;	//damage per ball. between fowler and normal brown bess
 const float CARBINE_SHOT_DAMAGE = 5.0;	//damage per shot. base is 16*5 = 80. gut shot (HIT_STOMACH_DMG) -> 80*1.75 = 140
 const int   CARBINE_NUM_SHOT = 16;
+const float CARBINE_BAYONET_RANGE = 72.0;
 
 const float JAEGER_FIRE_DAMAGE = 63.0;
 
@@ -1134,7 +1135,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
 	m_Attackinfos[1].m_flDamage				= BESS_BAYONET_DAMAGE;//60;
 	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;
-	m_Attackinfos[1].m_flRange				= BESS_BAYONET_RANGE;
+	m_Attackinfos[1].m_flRange				= CARBINE_BAYONET_RANGE;
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
@@ -1142,7 +1143,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_pBayonetDeathNotice = "brownbess_bayonet";
 
 	m_fMinRange2	= 0;
-	m_fMaxRange2	= BESS_BAYONET_RANGE;
+	m_fMaxRange2	= CARBINE_BAYONET_RANGE;
 
 	m_flBallSpread = 1.0f;
 	m_flShotSpread = 7.64f;		//4 m spread at 33 m -> (4 / 2) / 30 / sin(0.5)
