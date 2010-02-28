@@ -85,6 +85,21 @@ const float HIRSCHFAENGER_RANGE = 57.0;
 const float KNIFE_RANGE = 52.0;
 const float TOMAHAWK_RANGE = 55.0; //66
 
+const float BAYONET_COS_TOLERANCE = 0.9961946980917;		//+-5 degrees
+const float BAYONET_RETRACE_DURATION = 0.1;
+
+const float KNIFE_COS_TOLERANCE = 0.9063077870366;			//+-25 degrees
+const float KNIFE_RETRACE_DURATION = 0.2;
+
+const float TOMAHAWK_COS_TOLERANCE = 0.8191520442889;		//+-35 degrees
+const float TOMAHAWK_RETRACE_DURATION = 0.25;
+
+const float HIRSCHFAENGER_COS_TOLERANCE = 0.7880107536067;	//+-38 degrees
+const float HIRSCHFAENGER_RETRACE_DURATION = 0.3;
+
+const float SABRE_COS_TOLERANCE = 0.7071067811865;			//+-45 degrees
+const float SABRE_RETRACE_DURATION = 0.3;
+
 const float MUZZLE_VELOCITY_DEFAULT = 14400.0f;
 
 #ifdef CLIENT_DLL
@@ -144,6 +159,8 @@ DECLARE_BG2_WEAPON( brownbess )
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
+	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
+	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
 
 	m_pBayonetDeathNotice = "brownbess_bayonet";
 
@@ -216,6 +233,8 @@ DECLARE_BG2_WEAPON( charleville )
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
+	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
+	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
 
 	m_pBayonetDeathNotice = "charleville_bayonet";
 
@@ -459,6 +478,8 @@ DECLARE_BG2_WEAPON( sabre_a )
 	m_Attackinfos[0].m_flRange				= SABRE_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_flCosAngleTolerance  = SABRE_COS_TOLERANCE;
+	m_Attackinfos[0].m_flRetraceDuration    = SABRE_RETRACE_DURATION;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = SABRE_RANGE;
@@ -491,6 +512,8 @@ DECLARE_BG2_WEAPON( sabre_b )
 	m_Attackinfos[0].m_flRange				= SABRE_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_flCosAngleTolerance  = SABRE_COS_TOLERANCE;
+	m_Attackinfos[0].m_flRetraceDuration    = SABRE_RETRACE_DURATION;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = SABRE_RANGE;
@@ -523,6 +546,8 @@ DECLARE_BG2_WEAPON( knife )
 	m_Attackinfos[0].m_flRange				= KNIFE_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_flCosAngleTolerance  = KNIFE_COS_TOLERANCE;
+	m_Attackinfos[0].m_flRetraceDuration    = KNIFE_RETRACE_DURATION;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = KNIFE_RANGE;
@@ -555,6 +580,8 @@ DECLARE_BG2_WEAPON( hirschf )
 	m_Attackinfos[0].m_flRange				= HIRSCHFAENGER_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_flCosAngleTolerance  = HIRSCHFAENGER_COS_TOLERANCE;
+	m_Attackinfos[0].m_flRetraceDuration    = HIRSCHFAENGER_RETRACE_DURATION;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = HIRSCHFAENGER_RANGE;
@@ -588,6 +615,8 @@ DECLARE_BG2_WEAPON( tomahawk )
 	m_Attackinfos[0].m_flRange				= TOMAHAWK_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_ATTACK;
+	m_Attackinfos[0].m_flCosAngleTolerance  = TOMAHAWK_COS_TOLERANCE;
+	m_Attackinfos[0].m_flRetraceDuration    = TOMAHAWK_RETRACE_DURATION;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = TOMAHAWK_RANGE;
@@ -657,6 +686,8 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
+	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
+	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
 
 	m_pBayonetDeathNotice = "revolutionnaire_bayonet";
 
@@ -750,6 +781,8 @@ DECLARE_BG2_WEAPON( beltaxe )
 	m_Attackinfos[0].m_flRange				= TOMAHAWK_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_flCosAngleTolerance  = TOMAHAWK_COS_TOLERANCE;
+	m_Attackinfos[0].m_flRetraceDuration    = TOMAHAWK_RETRACE_DURATION;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = TOMAHAWK_RANGE;
@@ -878,6 +911,8 @@ DECLARE_BG2_WEAPON( longpattern )
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
+	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
+	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
 
 	m_pBayonetDeathNotice = "brownbess_bayonet";
 
@@ -1009,6 +1044,8 @@ DECLARE_BG2_WEAPON( american_brownbess )
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
+	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
+	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
 
 	m_pBayonetDeathNotice = "brownbess_bayonet";
 
@@ -1139,6 +1176,8 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
 	m_Attackinfos[1].m_iAttackActivity		= ACT_VM_SECONDARYATTACK;
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
+	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
+	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
 
 	m_pBayonetDeathNotice = "brownbess_bayonet";
 

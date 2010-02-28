@@ -87,8 +87,9 @@ public:
 		float	m_flRange,
 				m_flDamage,
 				m_flRecoil,				//factor of 357 standard recoil - firearm only
-				//m_flCosAngleTolerance,	//tolerance of melee hits(sqrt(0.5) for crowbar, or 45 degrees)
+				m_flCosAngleTolerance,	//tolerance of melee hits(sqrt(0.5) for crowbar, or 45 degrees)
 										// - melee only
+				m_flRetraceDuration,
 				m_flAttackrate;
 
 		/*Vector	m_vDuckSpread,			//firearm only
@@ -240,6 +241,17 @@ public:
 		return m_Attackinfos[iAttack].m_iAttackActivity;
 	}
 
+	float GetRetraceDuration( int iAttack )
+	{
+		return iAttack == ATTACK_NONE ? 0 : m_Attackinfos[iAttack].m_flRetraceDuration;
+	}
+
+	float GetCosAngleTolerance( void )
+	{
+		//return tolerance of last attack
+		return m_iLastAttack == ATTACK_NONE ? 1.0 : m_Attackinfos[m_iLastAttack].m_flCosAngleTolerance;
+	}
+
 	//minor hack to get bayonet deathnotice
 	bool m_bLastAttackStab;
 	char *GetDeathNoticeName( void )
@@ -255,13 +267,6 @@ public:
 											// in other words, the game will attempt to do the tracelines for say 100 ms
 	int		m_iLastAttack;					//for reattempting swings
 	Vector	m_vLastForward;					//last forward eye vector
-
-#define RETRACE_COS_TOLERANCE	0.9961946980917		//5 degrees
-
-	/*bool	IsMeleeWeapon( void )
-	{
-		return m_Attackinfos[ATTACK_PRIMARY].m_iAttacktype == ATTACKTYPE_STAB ? true : false;
-	}*/
 
 	void		ItemPostFrame( void );
 	int			Fire( int iAttack );

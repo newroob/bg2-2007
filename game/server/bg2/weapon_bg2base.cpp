@@ -80,8 +80,6 @@ ConVar sv_simulatedbullets_overshoot_force( "sv_simulatedbullets_overshoot_force
 
 ConVar sv_bullettracers("sv_bullettracers", "1", FCVAR_NOTIFY | FCVAR_REPLICATED, "Do bullets draw tracers behind them?" );
 
-#define SWING_ATTEMPT_TIME 0.1
-
 ConVar sv_retracing_melee( "sv_retracing_melee", "1", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
 		"Should melee weapons continue tracing a short moment after attacks? At the moment 0.1 seconds. This masks the effects of lag a bit." );
 
@@ -171,7 +169,7 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 
 		//do tracelines for so many seconds
 		if( sv_retracing_melee.GetBool() )
-			m_flStopAttemptingSwing = gpGlobals->curtime + SWING_ATTEMPT_TIME;
+			m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( ATTACK_PRIMARY );
 
 		drain = Swing( ATTACK_PRIMARY, true );
 	}
@@ -226,7 +224,7 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 
 		//do tracelines for so many seconds
 		if( sv_retracing_melee.GetBool() )
-			m_flStopAttemptingSwing = gpGlobals->curtime + SWING_ATTEMPT_TIME;
+			m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( ATTACK_SECONDARY );
 
 		drain = Swing( ATTACK_SECONDARY, true );
 	}
@@ -522,7 +520,7 @@ void CBaseBG2Weapon::ImpactEffect( trace_t &traceHit )
 
 int CBaseBG2Weapon::Swing( int iAttack, bool bDoEffects )
 {
-	trace_t traceHit, dummy; //Dummy is so GCC 3.4 can compile the linux version.
+	trace_t traceHit;
 
 	// Try a ray
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
@@ -551,43 +549,6 @@ int CBaseBG2Weapon::Swing( int iAttack, bool bDoEffects )
 
 	TraceAttackToTriggers( triggerInfo, traceHit.startpos, traceHit.endpos, vec3_origin );
 #endif //Keep the following code with the client.dll
-
-	//stolen from basebludgeonweapon.cpp and modified slightly
-	if( GetAttackType(iAttack) == ATTACKTYPE_SLASH )
-	{
-		//reset trace info. for slash attack the above was merely for hitting triggers
-		//since we're going a hull trace below we can't hit any hitgroups
-		//this balances out the increased hit volume quite well
-		//traceHit = trace_t();
-		traceHit = dummy; //This is a hack so that GCC will compile the Linux version.
-
-
-		float bludgeonHullRadius = 1.732f * BLUDGEON_HULL_DIM;  // hull is +/- 16, so use cuberoot of 2 to determine how big the hull is from center to the corner point
-
-		// Back off by hull "radius"
-		swingEnd -= forward * bludgeonHullRadius;
-
-		UTIL_TraceHull( swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit );
-		if ( traceHit.fraction < 1.0 && traceHit.m_pEnt )
-		{
-			Vector vecToTarget = traceHit.m_pEnt->GetAbsOrigin() - swingStart;
-			VectorNormalize( vecToTarget );
-
-			float dot = vecToTarget.Dot( forward );
-
-			// YWB:  Make sure they are sort of facing the guy at least...
-			if ( dot < 0.70721f )
-			{
-				// Force amiss
-				traceHit.fraction = 1.0f;
-			}
-			else
-			{
-				//ignore the return value since we're not interested in any special animations for our slashing weapons
-				/*nHitActivity =*/ ChooseIntersectionPointAndActivity( traceHit, g_bludgeonMins, g_bludgeonMaxs, pOwner );
-			}
-		}
-	}
 
 	if ( traceHit.fraction == 1.0f )
 	{
@@ -671,7 +632,7 @@ void CBaseBG2Weapon::ItemPostFrame( void )
 		Vector vForward;
 		AngleVectors( pOwner->EyeAngles(), &vForward, NULL, NULL );
 
-		if( m_vLastForward.Dot( vForward ) < RETRACE_COS_TOLERANCE )
+		if( m_vLastForward.Dot( vForward ) < GetCosAngleTolerance() )
 		{
 			//flailing too much. stop
 			m_flStopAttemptingSwing = 0;
