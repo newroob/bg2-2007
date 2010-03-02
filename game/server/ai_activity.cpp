@@ -785,6 +785,13 @@ void CAI_BaseNPC::InitDefaultActivitySR(void)
 	// Player anim ACTs
 
 	//===========================
+	// BG2 Specific Activities
+	//===========================
+
+	ADD_ACTIVITY_TO_SR ( ACT_HL2MP_GESTURE_ATTACK_MELEE_BAYONET );
+	ADD_ACTIVITY_TO_SR ( ACT_HL2MP_GESTURE_RELOAD_MUSKET );
+
+	//===========================
 	// HL2MP Specific Activities
 	//===========================
 	
