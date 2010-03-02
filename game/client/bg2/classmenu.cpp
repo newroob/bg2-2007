@@ -183,6 +183,45 @@ void CClassButton::PerformCommand( void )
 	engine->ServerCmd( cmd );
 }
 
+void CClassButton::ApplySchemeSettings( vgui::IScheme *pScheme )
+{
+	BaseClass::ApplySchemeSettings(pScheme);
+
+	SetPaintBorderEnabled(false); //No borders.
+}
+void CClassButton::Paint( void )
+{
+	BaseClass::Paint();
+
+	CClassMenu *pThisMenu = (CClassMenu*)GetParent();
+
+	if ( !pThisMenu )
+		return;
+
+	int wide, tall;
+	GetSize( wide, tall );
+	vgui::IImage *m_pImage = NULL;
+
+	switch( pThisMenu->m_iTeamSelection )
+	{
+		case TEAM_AMERICANS:
+			m_pImage = scheme()->GetImage( AmericanImage, false );
+			break;
+		case TEAM_BRITISH:
+			m_pImage = scheme()->GetImage( BritishImage, false );
+			break;
+		default:
+			m_pImage = scheme()->GetImage( BritishImage, false );
+			break;
+	}
+
+	if ( m_pImage )
+	{
+		m_pImage->SetSize( wide, tall );
+		m_pImage->Paint();
+	}
+}
+
 //
 //	CTeamButton
 //
@@ -281,6 +320,27 @@ void CTeamButton::PerformCommand( void )
 	pThisMenu->m_iTeamSelection = m_iCommand;
 }
 
+void CTeamButton::ApplySchemeSettings( vgui::IScheme *pScheme )
+{
+	BaseClass::ApplySchemeSettings(pScheme);
+
+	SetPaintBorderEnabled(false); //No borders.
+}
+void CTeamButton::Paint( void )
+{
+	BaseClass::Paint();
+
+	int wide, tall;
+	GetSize( wide, tall );
+	vgui::IImage *m_pImage = scheme()->GetImage( ImageName, false );
+
+	if ( m_pImage )
+	{
+		m_pImage->SetSize( wide, tall );
+		m_pImage->Paint();
+	}
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
@@ -296,40 +356,50 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	SetTitleBarVisible( false ); // don't draw a title bar
 	SetMoveable( false );
 	SetSizeable( false );
-	//SetProportional(true);
-	SetProportional( false );
+	SetProportional(false);
 
 	SetScheme("ClientScheme");
 
-	/*SetSize( 640, 480 );
-	SetPos( (ScreenWidth() - 640) / 2, (ScreenHeight() - 480) / 2 );*/
-
-	m_pBritishButton = new CTeamButton( this, "BritishButton", "1. British" );
-	m_pAmericanButton = new CTeamButton( this, "AmericanButton", "2. American" );
-	m_pAutoassignButton = new CTeamButton( this, "AutoassignButton", "3. Autoassign team" );
-	m_pSpectateButton = new CTeamButton( this, "SpectateButton", "4. Spectate" );
+	//Team Selection...
+	m_pBritishButton = new CTeamButton( this, "BritishButton", "" );
+	m_pAmericanButton = new CTeamButton( this, "AmericanButton", "" );
+	m_pAutoassignButton = new CTeamButton( this, "AutoassignButton", "" );
+	m_pSpectateButton = new CTeamButton( this, "SpectateButton", "" );
+	m_pBritishLabel = new vgui::Label( this, "BritishLabel", "");
+	m_pAmericanLabel = new vgui::Label( this, "AmericanLabel", "" );
+	//
 	
-	m_pInfantryButton = new CClassButton( this, "InfantryButton", "1. Infantry(in code)" );
-	m_pOfficerButton = new CClassButton( this, "OfficerButton", "2. Officer(in code)" );
-	m_pSniperButton = new CClassButton( this, "RiflemanButton", "3. Rifleman(in code)" );
-	m_pSkirmisherButton = new CClassButton( this, "SkirmisherButton", "4. Skirmisher(in code)" );
-	m_pLightInfantryButton = new CClassButton( this, "LightInfantryButton", "5. Light infantry(in code)" );
+	//Class Selection.
+	m_pInfantryButton = new CClassButton( this, "InfantryButton", "" );
+	m_pOfficerButton = new CClassButton( this, "OfficerButton", "" );
+	m_pSniperButton = new CClassButton( this, "RiflemanButton", "" );
+	m_pSkirmisherButton = new CClassButton( this, "SkirmisherButton", "" );
+	m_pLightInfantryButton = new CClassButton( this, "LightInfantryButton", "" );
+	m_pInfantryLabel = new vgui::Label( this, "InfantryLabel", "" );
+	m_pOfficerLabel = new vgui::Label( this, "OfficerLabel", "" );
+	m_pRiflemanLabel = new vgui::Label( this, "RiflemanLabel", "" );
+	m_pSkirmisherLabel = new vgui::Label( this, "SkirmisherLabel", "" );
+	m_pLightInfantryLabel = new vgui::Label( this, "LightInfantryLabel", "" );
+	//
 
 	m_pQuickJoinCheckButton = new vgui::CheckButton( this, "QuickJoinCheckButton", "" );
 
-	m_pWeaponButton1 = new CWeaponButton( this, "WeaponButton1", "Gun 1 (in code)" );
-	m_pWeaponButton2 = new CWeaponButton( this, "WeaponButton2", "Gun 2( in code)" );
-	m_pWeaponButton3 = new CWeaponButton( this, "WeaponButton3", "Gun 3 (in code)" );
-	m_pAmmoButton1 = new CAmmoButton( this, "AmmoButton1", "Ammo 1 (in code)" );
-	m_pAmmoButton2 = new CAmmoButton( this, "AmmoButton2", "Ammo 2 (in code)" );
-	m_pAmmoButton3 = new CAmmoButton( this, "AmmoButton3", "Ammo 3 (in code)" );
-	m_pOK = new COkayButton( this, "Okay", "Okay (in code)" );
+	m_pBackground = new ImagePanel( this, "ClassMenuBG" );
+
+	m_pWeaponSelection = new ImagePanel( this, "WeaponImage" );
+	m_pAmmoSelection = new ImagePanel( this, "AmmoImage" );
+
+	m_pWeaponButton1 = new CWeaponButton( this, "WeaponButton1", "" );
+	m_pWeaponButton2 = new CWeaponButton( this, "WeaponButton2", "" );
+	m_pWeaponButton3 = new CWeaponButton( this, "WeaponButton3", "" );
+	m_pAmmoButton1 = new CAmmoButton( this, "AmmoButton1", "" );
+	m_pAmmoButton2 = new CAmmoButton( this, "AmmoButton2", "" );
+	m_pAmmoButton3 = new CAmmoButton( this, "AmmoButton3", "" );
+	m_pOK = new COkayButton( this, "Okay", "" );
 
 	m_pCancelButton = new CClassButton( this, "CancelButton", "0. Cancel" );
 
 	m_pInfoHTML = new HTML( this, "InfoHTML" );
-	//m_pInfoHTML->SetPos( 100, 100 );
-	//m_pInfoHTML->SetSize( 540, 380 );
 
 	LoadControlSettings( "Resource/BG2Classmenu.res" );
 
@@ -374,25 +444,25 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
-	SetSize( 640, 480 );
-	SetPos( (ScreenWidth() - 640) / 2, (ScreenHeight() - 480) / 2 );
+	int width = 800, height = 600;
+	SetSize( width, height );
+	SetPos( (ScreenWidth() - width) / 2, (ScreenHeight() - height) / 2 );
+
+	m_pBackground->SetSize( width, height );
 
 	m_pAmericanButton->MakeReadyForUse();
 	m_pBritishButton->MakeReadyForUse();
-	m_pAmericanButton->SetBgColor( BLACK_BAR_COLOR );
-	m_pBritishButton->SetBgColor( BLACK_BAR_COLOR );
+	m_pSpectateButton->MakeReadyForUse();
+	m_pAutoassignButton->MakeReadyForUse();
+
+	/*m_pAmericanButton->SetBgColor( BLACK_BAR_COLOR );
+	m_pBritishButton->SetBgColor( BLACK_BAR_COLOR );*/
 
 	m_pInfantryButton->MakeReadyForUse();
 	m_pOfficerButton->MakeReadyForUse();
 	m_pSniperButton->MakeReadyForUse();
 	m_pSkirmisherButton->MakeReadyForUse();
 	m_pLightInfantryButton->MakeReadyForUse();
-
-	m_pInfantryButton->SetBgColor( BLACK_BAR_COLOR );
-	m_pOfficerButton->SetBgColor( BLACK_BAR_COLOR );
-	m_pSniperButton->SetBgColor( BLACK_BAR_COLOR );
-	m_pSkirmisherButton->SetBgColor( BLACK_BAR_COLOR );
-	m_pLightInfantryButton->SetBgColor( BLACK_BAR_COLOR );
 
 	// For weapons and ammo selection menu.. -HairyPotter
 	m_pAmmoButton1->MakeReadyForUse();
@@ -403,6 +473,8 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 	m_pWeaponButton3->MakeReadyForUse();
 	m_pOK->MakeReadyForUse();
 
+	
+
 	m_pAmmoButton1->SetBgColor( BLACK_BAR_COLOR );
 	m_pAmmoButton2->SetBgColor( BLACK_BAR_COLOR );
 	m_pAmmoButton3->SetBgColor( BLACK_BAR_COLOR );
@@ -411,12 +483,6 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 	m_pWeaponButton3->SetBgColor( BLACK_BAR_COLOR );
 	m_pOK->SetBgColor( BLACK_BAR_COLOR );
 	//
-
-	m_pInfantryButton->SetBgColor( BLACK_BAR_COLOR );
-	m_pOfficerButton->SetBgColor( BLACK_BAR_COLOR );
-	m_pSniperButton->SetBgColor( BLACK_BAR_COLOR );
-	m_pSkirmisherButton->SetBgColor( BLACK_BAR_COLOR );
-	m_pLightInfantryButton->SetBgColor( BLACK_BAR_COLOR );
 
 	m_pCancelButton->MakeReadyForUse();
 	m_pCancelButton->SetBgColor( BLACK_BAR_COLOR );
@@ -427,6 +493,7 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 //-----------------------------------------------------------------------------
 void CClassMenu::PerformLayout()
 {
+	BaseClass::PerformLayout(); //Eh heh heh
 }
 
 
@@ -683,38 +750,31 @@ void CClassMenu::OnThink()
 	char tmp[256];
 	if( g_Teams[TEAM_BRITISH] )		//check just in case..
 	{
-		sprintf( tmp, "1. British (%i)", g_Teams[TEAM_BRITISH]->Get_Number_Players() );
-		m_pBritishButton->SetText( tmp );
+		sprintf( tmp, "British : (%i)", /*g_pVGuiLocalize->Find( "#BG2_Spec_British_Score" ),*/ g_Teams[TEAM_BRITISH]->Get_Number_Players() );
+		m_pBritishLabel->SetText( tmp );
 	}
 
 	if( g_Teams[TEAM_AMERICANS] )	//check just in case..
 	{
-		sprintf( tmp, "2. American (%i)", g_Teams[TEAM_AMERICANS]->Get_Number_Players() );
-		m_pAmericanButton->SetText( tmp );
+		sprintf( tmp, "Americans : (%i)", /*g_pVGuiLocalize->Find( "#BG2_Spec_American_Score" ),*/ g_Teams[TEAM_AMERICANS]->Get_Number_Players() );
+		m_pAmericanLabel->SetText( tmp );
 	}
 
 	//BG2 - Draco - set the proper names for the classes
 	//BG2 - Tjoppen - updated to use UpdateClassButtonText()
-	UpdateClassButtonText( m_pInfantryButton, CLASS_INFANTRY, 
-			m_iTeamSelection == TEAM_AMERICANS ? "1. Continental Soldier" : "1. Royal Infantry" );
+	UpdateClassLabelText( m_pInfantryLabel, CLASS_INFANTRY );
+	UpdateClassLabelText( m_pOfficerLabel, CLASS_OFFICER );
+	UpdateClassLabelText( m_pRiflemanLabel, CLASS_SNIPER );
+	UpdateClassLabelText( m_pSkirmisherLabel, CLASS_SKIRMISHER );
+	UpdateClassLabelText( m_pLightInfantryLabel, CLASS_LIGHT_INFANTRY );
 
-	UpdateClassButtonText( m_pOfficerButton, CLASS_OFFICER, 
-			m_iTeamSelection == TEAM_AMERICANS ? "2. Continental Officer" : "2. Royal Commander" );
-
-	UpdateClassButtonText( m_pSniperButton, CLASS_SNIPER, 
-			m_iTeamSelection == TEAM_AMERICANS ? "3. Frontiersman" : "3. Jaeger" );
-
-	UpdateClassButtonText( m_pSkirmisherButton, CLASS_SKIRMISHER, 
-			m_iTeamSelection == TEAM_AMERICANS ? "4. Militia" : "4. Native" );
-
-	UpdateClassButtonText( m_pLightInfantryButton, CLASS_LIGHT_INFANTRY, "5. Light Infantry" );
-
-	UpdateWeaponButtonText( m_iTeamSelection, m_iClassSelection );
-	UpdateAmmoButtonText( m_iTeamSelection, m_iClassSelection );
+	UpdateWeaponButtonText();
+	UpdateAmmoButtonText();
 }
 
-void CClassMenu::UpdateClassButtonText( CClassButton *pButton, int iClass, const char *pPrefix )
+void CClassMenu::UpdateClassLabelText( vgui::Label *pLabel, int iClass )
 {
+	//Rehashed to change the text for the labels above each class button.
 	//BG2 - Tjoppen - this function figures out what to print on the specified button's text field
 	//					based on class limits and such
 	char temp[512];
@@ -729,20 +789,20 @@ void CClassMenu::UpdateClassButtonText( CClassButton *pButton, int iClass, const
 		return;
 
 	if( limit >= 0 )
-		Q_snprintf( temp, sizeof temp, "%s (%i/%i)", pPrefix, pCurrentTeam->GetNumOfClass(iClass), limit );
+		Q_snprintf( temp, sizeof temp, "(%i/%i)", pCurrentTeam->GetNumOfClass(iClass), limit );
 	else
-		Q_snprintf( temp, sizeof temp, "%s (%i)", pPrefix, pCurrentTeam->GetNumOfClass(iClass) );
+		Q_snprintf( temp, sizeof temp, "(%i)", pCurrentTeam->GetNumOfClass(iClass) );
 
-	pButton->SetText( temp );
+	pLabel->SetText( temp );
 }
 
-void CClassMenu::UpdateAmmoButtonText( int iTeam, int iClass )
+void CClassMenu::UpdateAmmoButtonText( void )
 {
 	//This may not even be necessary if we follow through with this idea.
-	switch ( iTeam )
+	switch ( m_iTeamSelection )
 	{
 		case TEAM_AMERICANS:
-			switch ( iClass )
+			switch ( m_iClassSelection )
 			{
 				case CLASS_OFFICER:
 					m_pAmmoButton1->SetText( "4. Coded in later.." );
@@ -773,7 +833,7 @@ void CClassMenu::UpdateAmmoButtonText( int iTeam, int iClass )
 			}
 			break;
 		case TEAM_BRITISH:
-			switch ( iClass )
+			switch ( m_iClassSelection )
 			{
 				case CLASS_OFFICER:
 					m_pAmmoButton1->SetText( "4. Coded in later.." );
@@ -812,12 +872,12 @@ void CClassMenu::UpdateAmmoButtonText( int iTeam, int iClass )
 	//
 }
 
-void CClassMenu::UpdateWeaponButtonText( int iTeam, int iClass )
+void CClassMenu::UpdateWeaponButtonText( void )
 {
-	switch ( iTeam )
+	switch ( m_iTeamSelection )
 	{
 		case TEAM_AMERICANS:
-			switch ( iClass )
+			switch ( m_iClassSelection )
 			{
 				case CLASS_OFFICER:
 					m_pWeaponButton1->SetText( "1. American Pistol + Sword" );
@@ -848,7 +908,7 @@ void CClassMenu::UpdateWeaponButtonText( int iTeam, int iClass )
 			}
 			break;
 		case TEAM_BRITISH:
-			switch ( iClass )
+			switch ( m_iClassSelection )
 			{
 				case CLASS_OFFICER:
 					m_pWeaponButton1->SetText( "1. Sabre + British Pistol" );
@@ -903,19 +963,29 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 	switch (iShowScreen)
 	{
 		case 1:
-			m_pInfoHTML->SetVisible(true);
-			m_pCancelButton->SetVisible(true);
 			m_pBritishButton->SetVisible(true);
 			m_pAmericanButton->SetVisible(true);
 			//BG2 - Tjoppen - show autoassign button if we're not in the class part and we're unassigned or spectator
 			m_pAutoassignButton->SetVisible( IsInClassMenu() ? false : C_BasePlayer::GetLocalPlayer() ? C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR : false );
 			//
 			m_pSpectateButton->SetVisible(true);
+			m_pBritishLabel->SetVisible(true);
+			m_pAmericanLabel->SetVisible(true);
+
+			//Invis the class selection screen...
 			m_pOfficerButton->SetVisible(false);
 			m_pInfantryButton->SetVisible(false);
 			m_pSniperButton->SetVisible(false);
 			m_pSkirmisherButton->SetVisible(false);
 			m_pLightInfantryButton->SetVisible(false);
+			m_pQuickJoinCheckButton->SetVisible( false );
+			m_pInfantryLabel->SetVisible( false );
+			m_pOfficerLabel->SetVisible( false );
+			m_pRiflemanLabel->SetVisible( false );
+			m_pSkirmisherLabel->SetVisible( false );
+			m_pLightInfantryLabel->SetVisible( false );
+			//
+			//Invis the weapon seleection screen...
 			m_pWeaponButton1->SetVisible(false);
 			m_pWeaponButton2->SetVisible(false);
 			m_pWeaponButton3->SetVisible(false);
@@ -923,20 +993,36 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pAmmoButton2->SetVisible(false);
 			m_pAmmoButton3->SetVisible(false);
 			m_pOK->SetVisible(false);
-			m_pQuickJoinCheckButton->SetVisible( false );
-			break;
-		case 2:
+			//
+			//Misc
 			m_pInfoHTML->SetVisible(true);
 			m_pCancelButton->SetVisible(true);
+			//
+			break;
+		case 2:
+			//Invis the team selection screen...
 			m_pBritishButton->SetVisible(false);
 			m_pAmericanButton->SetVisible(false);
+			m_pBritishLabel->SetVisible(false);
+			m_pAmericanLabel->SetVisible(false);
 			m_pAutoassignButton->SetVisible(false);
 			m_pSpectateButton->SetVisible(false);
+			// 
+			//Make class selection visible
 			m_pOfficerButton->SetVisible(true);
 			m_pInfantryButton->SetVisible(true);
 			m_pSniperButton->SetVisible(true);
 			m_pSkirmisherButton->SetVisible(true);
 			m_pLightInfantryButton->SetVisible(m_iTeamSelection == TEAM_BRITISH);
+			m_pQuickJoinCheckButton->SetVisible( true );
+			m_pQuickJoinCheckButton->SetSelected( cl_quickjoin.GetBool() );
+			m_pInfantryLabel->SetVisible( true );
+			m_pOfficerLabel->SetVisible( true );
+			m_pRiflemanLabel->SetVisible( true );
+			m_pSkirmisherLabel->SetVisible( true );
+			m_pLightInfantryLabel->SetVisible(m_iTeamSelection == TEAM_BRITISH);
+			//
+			//Invis the weapon selection screen...
 			m_pWeaponButton1->SetVisible(false);
 			m_pWeaponButton2->SetVisible(false);
 			m_pWeaponButton3->SetVisible(false);
@@ -944,21 +1030,35 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pAmmoButton2->SetVisible(false);
 			m_pAmmoButton3->SetVisible(false);
 			m_pOK->SetVisible(false);
-			m_pQuickJoinCheckButton->SetVisible( true );
-			m_pQuickJoinCheckButton->SetSelected( cl_quickjoin.GetBool() );
+			//
+			//Misc
+			m_pCancelButton->SetVisible(true);
+			m_pInfoHTML->SetVisible(true);
+			//
 			break;
 		case 3:
-			m_pInfoHTML->SetVisible(false);
-			m_pCancelButton->SetVisible(true);
+			// -- invis the team selection screen...
 			m_pBritishButton->SetVisible(false);
 			m_pAmericanButton->SetVisible(false);
+			m_pBritishLabel->SetVisible(false);
+			m_pAmericanLabel->SetVisible(false);
 			m_pAutoassignButton->SetVisible(false);
 			m_pSpectateButton->SetVisible(false);
+			// 
+			//Invis the class selection screen...
 			m_pOfficerButton->SetVisible(false);
 			m_pInfantryButton->SetVisible(false);
 			m_pSniperButton->SetVisible(false);
 			m_pSkirmisherButton->SetVisible(false);
 			m_pLightInfantryButton->SetVisible(false);
+			m_pQuickJoinCheckButton->SetVisible( false );
+			m_pInfantryLabel->SetVisible( false );
+			m_pOfficerLabel->SetVisible( false );
+			m_pRiflemanLabel->SetVisible( false );
+			m_pSkirmisherLabel->SetVisible( false );
+			m_pLightInfantryLabel->SetVisible( false );
+			//
+			//Make weapon selection visible
 			m_pWeaponButton1->SetVisible(true);
 			m_pWeaponButton2->SetVisible(true);
 			m_pWeaponButton3->SetVisible(true);
@@ -966,7 +1066,11 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pAmmoButton2->SetVisible(true);
 			m_pAmmoButton3->SetVisible(true);
 			m_pOK->SetVisible(true);
-			m_pQuickJoinCheckButton->SetVisible( false );
+			//
+			//Misc
+			m_pCancelButton->SetVisible(true);
+			m_pInfoHTML->SetVisible(false);
+			//
 			break;
 	}
 }

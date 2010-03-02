@@ -20,6 +20,10 @@
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/ToggleButton.h>
 #include <vgui_controls/CheckButton.h>
+#include "vgui_BitmapImage.h"
+#include "vgui_bitmapbutton.h"
+#include <vgui_controls/ImagePanel.h>
+#include <imagemouseoverbutton.h>
 
 #include <game/client/iviewport.h>
 
@@ -45,7 +49,7 @@ class IBaseFileSystem;
 class CClassButton : public vgui::Button
 {
 public:
-	DECLARE_CLASS_SIMPLE( CClassButton, vgui::Button );
+	DECLARE_CLASS_SIMPLE( CClassButton, vgui::Button);
 
 	CClassButton(Panel *parent, const char *panelName, const char *text) : Button( parent, panelName, text ) { m_iCommand = 0; }
 
@@ -53,15 +57,45 @@ public:
 	void OnMousePressed(vgui::MouseCode code);
 	void OnCursorEntered( void );
 	void PerformCommand( void );
+	//Added functionality for images as buttons. -HairyPotter
+	virtual void Paint();
+	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
+	virtual void ApplySettings( KeyValues *inResourceData )
+	{
+		// Active Image
+		delete [] BritishImage,
+				  AmericanImage,
+				  temp;
+
+		BritishImage = AmericanImage = temp = NULL;
+		int len;
+
+		temp = inResourceData->GetString( "BritishImage", "" );
+		len = Q_strlen( temp ) + 1;
+		BritishImage = new char[ len ];
+		Q_strncpy( (char *)BritishImage, temp, len );
+
+		temp = inResourceData->GetString( "AmericanImage", "" );
+		len = Q_strlen( temp ) + 1;
+		AmericanImage = new char[ len ];
+		Q_strncpy( (char *)AmericanImage, temp, len );
+		
+		BaseClass::ApplySettings( inResourceData );
+	}
+	//
 
 private:
 	int m_iCommand;
+
+	const char *BritishImage,
+			*AmericanImage,
+			*temp;
 };
 
 class CTeamButton : public vgui::Button
 {
 public:
-	DECLARE_CLASS_SIMPLE( CTeamButton, vgui::Button );
+	DECLARE_CLASS_SIMPLE( CTeamButton, vgui::Button);
 
 	CTeamButton(Panel *parent, const char *panelName, const char *text) : Button( parent, panelName, text ) { m_iCommand = 0; }
 
@@ -69,9 +103,31 @@ public:
 	void OnMousePressed(vgui::MouseCode code);
 	void OnCursorEntered( void );
 	void PerformCommand( void );
+	//Added functionality for images as buttons. -HairyPotter
+	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
+	virtual void Paint( void );
+	virtual void ApplySettings( KeyValues *inResourceData )
+	{
+		// Active Image
+		delete [] ImageName;
+
+		ImageName = NULL;
+
+		temp = inResourceData->GetString( "Image", "" );
+		int len = Q_strlen( temp ) + 1;
+		ImageName = new char[ len ];
+		Q_strncpy( (char *)ImageName, temp, len );
+
+		BaseClass::ApplySettings( inResourceData );
+	}
+	//
 
 private:
 	int m_iCommand;
+
+	const char *ImageName,
+			   *temp;
+
 };
 
 class COkayButton : public vgui::Button
@@ -125,6 +181,7 @@ public:
 	virtual bool HasInputElements( void ) { return true; }
 	virtual void ShowPanel( bool bShow );
 
+
 	// both vgui::Frame and IViewPortPanel define these, so explicitly define them here as passthroughs to vgui
 	virtual bool IsVisible() { return BaseClass::IsVisible(); }
 	vgui::VPANEL GetVPanel( void ) { return BaseClass::GetVPanel(); }
@@ -149,6 +206,18 @@ public:
 					*m_pAmmoButton2,
 					*m_pAmmoButton3;
 
+	vgui::ImagePanel *m_pWeaponSelection,
+					 *m_pAmmoSelection,
+					 *m_pBackground;
+
+	vgui::Label *m_pBritishLabel,
+				*m_pAmericanLabel,
+				*m_pInfantryLabel,
+				*m_pOfficerLabel,
+				*m_pRiflemanLabel,
+				*m_pSkirmisherLabel,
+				*m_pLightInfantryLabel;
+
 	vgui::CheckButton		*m_pQuickJoinCheckButton;
 
 	COkayButton		*m_pOK;
@@ -159,9 +228,9 @@ public:
 		m_iClassSelection;
 
 	void OnThink();
-	void UpdateClassButtonText( CClassButton *pButton, int iClass, const char *pPrefix );
-	void UpdateAmmoButtonText( int iTeam, int iClass );
-	void UpdateWeaponButtonText( int iTeam, int iClass );
+	void UpdateClassLabelText( vgui::Label *pLabel, int iClass);
+	void UpdateAmmoButtonText( void );
+	void UpdateWeaponButtonText( void );
 	void ToggleButtons(int iShowScreen);
 
 	//being in classmenu mode means we must be visible aswell
