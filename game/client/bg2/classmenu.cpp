@@ -100,10 +100,14 @@ void CClassButton::OnMousePressed(MouseCode code)
 		pThisMenu->ToggleButtons( 3 ); //Go to weapon selection.
 	}	
 }
+void CClassButton::OnCursorExited( void )
+{
+	m_bMouseOver = false;
+}
 
 void CClassButton::OnCursorEntered( void )
 {
-	BaseClass::OnCursorEntered();
+	m_bMouseOver = true;
 
 	CClassMenu *pThisMenu = (CClassMenu*)GetParent();
 
@@ -205,13 +209,19 @@ void CClassButton::Paint( void )
 	switch( pThisMenu->m_iTeamSelection )
 	{
 		case TEAM_AMERICANS:
-			m_pImage = scheme()->GetImage( AmericanImage, false );
+			if ( m_bMouseOver )
+				m_pImage = scheme()->GetImage( AmericanMouseoverImage, false );
+			else
+				m_pImage = scheme()->GetImage( AmericanImage, false );
 			break;
 		case TEAM_BRITISH:
-			m_pImage = scheme()->GetImage( BritishImage, false );
+			if ( m_bMouseOver )
+				m_pImage = scheme()->GetImage( BritishMouseoverImage, false );
+			else
+				m_pImage = scheme()->GetImage( BritishImage, false );
 			break;
 		default:
-			m_pImage = scheme()->GetImage( BritishImage, false );
+			m_pImage = NULL;
 			break;
 	}
 
@@ -268,8 +278,6 @@ void CTeamButton::OnMousePressed(MouseCode code)
 			pThisMenu->m_iTeamSelection = TEAM_AMERICANS;
 		else
 			pThisMenu->m_iTeamSelection = random->RandomInt( TEAM_AMERICANS, TEAM_BRITISH );
-	
-		return;
 	}
 
 	PerformCommand();
@@ -277,9 +285,14 @@ void CTeamButton::OnMousePressed(MouseCode code)
 	pThisMenu->ToggleButtons(2);
 }
 
+void CTeamButton::OnCursorExited( void )
+{
+	//BaseClass::OnCursorExited();
+}
+
 void CTeamButton::OnCursorEntered( void )
 {
-	BaseClass::OnCursorEntered();
+	//BaseClass::OnCursorEntered();
 	
 	CClassMenu *pThisMenu = (CClassMenu *)GetParent();
 	
@@ -317,7 +330,8 @@ void CTeamButton::PerformCommand( void )
 	if ( !pThisMenu )
 		return;
 
-	pThisMenu->m_iTeamSelection = m_iCommand;
+	if ( m_iCommand > 0 ) //In case we autoassigned or something.
+		pThisMenu->m_iTeamSelection = m_iCommand;
 }
 
 void CTeamButton::ApplySchemeSettings( vgui::IScheme *pScheme )
@@ -384,8 +398,6 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 
 	m_pQuickJoinCheckButton = new vgui::CheckButton( this, "QuickJoinCheckButton", "" );
 
-	m_pBackground = new ImagePanel( this, "ClassMenuBG" );
-
 	m_pWeaponSelection = new ImagePanel( this, "WeaponImage" );
 	m_pAmmoSelection = new ImagePanel( this, "AmmoImage" );
 
@@ -397,7 +409,7 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pAmmoButton3 = new CAmmoButton( this, "AmmoButton3", "" );
 	m_pOK = new COkayButton( this, "Okay", "" );
 
-	m_pCancelButton = new CClassButton( this, "CancelButton", "0. Cancel" );
+	m_pCancelButton = new CClassButton( this, "CancelButton", "" );
 
 	m_pInfoHTML = new HTML( this, "InfoHTML" );
 
@@ -440,15 +452,28 @@ void CClassMenu::ShowFile( const char *filename )
 	m_pInfoHTML->OpenURL( localURL );
 }
 
+void CClassMenu::Paint( void )
+{
+	BaseClass::Paint();
+
+	int wide, tall;
+	GetSize( wide, tall );
+	vgui::IImage *m_pImage = scheme()->GetImage( BGImage, false );
+
+	if ( m_pImage )
+	{
+		m_pImage->SetSize( wide, tall );
+		m_pImage->Paint();
+	}
+}
+
 void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
-	int width = 800, height = 600;
-	SetSize( width, height );
+	int width, height;
+	GetSize(width, height);
 	SetPos( (ScreenWidth() - width) / 2, (ScreenHeight() - height) / 2 );
-
-	m_pBackground->SetSize( width, height );
 
 	m_pAmericanButton->MakeReadyForUse();
 	m_pBritishButton->MakeReadyForUse();
@@ -473,19 +498,10 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 	m_pWeaponButton3->MakeReadyForUse();
 	m_pOK->MakeReadyForUse();
 
-	
-
-	m_pAmmoButton1->SetBgColor( BLACK_BAR_COLOR );
-	m_pAmmoButton2->SetBgColor( BLACK_BAR_COLOR );
-	m_pAmmoButton3->SetBgColor( BLACK_BAR_COLOR );
-	m_pWeaponButton1->SetBgColor( BLACK_BAR_COLOR );
-	m_pWeaponButton2->SetBgColor( BLACK_BAR_COLOR );
-	m_pWeaponButton3->SetBgColor( BLACK_BAR_COLOR );
 	m_pOK->SetBgColor( BLACK_BAR_COLOR );
 	//
 
 	m_pCancelButton->MakeReadyForUse();
-	m_pCancelButton->SetBgColor( BLACK_BAR_COLOR );
 }
 
 //-----------------------------------------------------------------------------
@@ -493,7 +509,7 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 //-----------------------------------------------------------------------------
 void CClassMenu::PerformLayout()
 {
-	BaseClass::PerformLayout(); //Eh heh heh
+	BaseClass::PerformLayout();
 }
 
 

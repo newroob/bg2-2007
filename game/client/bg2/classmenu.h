@@ -56,6 +56,7 @@ public:
 	void SetCommand( int command );
 	void OnMousePressed(vgui::MouseCode code);
 	void OnCursorEntered( void );
+	void OnCursorExited( void );
 	void PerformCommand( void );
 	//Added functionality for images as buttons. -HairyPotter
 	virtual void Paint();
@@ -79,6 +80,16 @@ public:
 		len = Q_strlen( temp ) + 1;
 		AmericanImage = new char[ len ];
 		Q_strncpy( (char *)AmericanImage, temp, len );
+
+		temp = inResourceData->GetString( "BritishMouseoverImage", "" );
+		len = Q_strlen( temp ) + 1;
+		BritishMouseoverImage = new char[ len ];
+		Q_strncpy( (char *)BritishMouseoverImage, temp, len );
+
+		temp = inResourceData->GetString( "AmericanMouseoverImage", "" );
+		len = Q_strlen( temp ) + 1;
+		AmericanMouseoverImage = new char[ len ];
+		Q_strncpy( (char *)AmericanMouseoverImage, temp, len );
 		
 		BaseClass::ApplySettings( inResourceData );
 	}
@@ -89,7 +100,11 @@ private:
 
 	const char *BritishImage,
 			*AmericanImage,
+			*BritishMouseoverImage,
+			*AmericanMouseoverImage,
 			*temp;
+
+	bool m_bMouseOver;
 };
 
 class CTeamButton : public vgui::Button
@@ -102,6 +117,7 @@ public:
 	void SetCommand( int command );
 	void OnMousePressed(vgui::MouseCode code);
 	void OnCursorEntered( void );
+	void OnCursorExited( void );
 	void PerformCommand( void );
 	//Added functionality for images as buttons. -HairyPotter
 	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
@@ -180,6 +196,21 @@ public:
 	virtual bool NeedsUpdate( void ) { return false; }
 	virtual bool HasInputElements( void ) { return true; }
 	virtual void ShowPanel( bool bShow );
+	virtual void Paint( void );
+	virtual void ApplySettings( KeyValues *inResourceData )
+	{
+		// Active Image
+		delete [] BGImage;
+
+		BGImage = NULL;
+
+		const char *image = inResourceData->GetString( "BackgroundImage", "" );
+		int len = Q_strlen( image ) + 1;
+		BGImage = new char[ len ];
+		Q_strncpy( (char *)BGImage, image, len );
+		
+		BaseClass::ApplySettings( inResourceData );
+	}
 
 
 	// both vgui::Frame and IViewPortPanel define these, so explicitly define them here as passthroughs to vgui
@@ -207,8 +238,7 @@ public:
 					*m_pAmmoButton3;
 
 	vgui::ImagePanel *m_pWeaponSelection,
-					 *m_pAmmoSelection,
-					 *m_pBackground;
+					 *m_pAmmoSelection;
 
 	vgui::Label *m_pBritishLabel,
 				*m_pAmericanLabel,
@@ -226,6 +256,8 @@ public:
 
 	int m_iTeamSelection,
 		m_iClassSelection;
+
+	const char *BGImage;
 
 	void OnThink();
 	void UpdateClassLabelText( vgui::Label *pLabel, int iClass);
