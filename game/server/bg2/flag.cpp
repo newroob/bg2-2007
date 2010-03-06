@@ -121,20 +121,9 @@ void CFlag::InputDisable( inputdata_t &inputData )
 	//ClientPrintAll( msg, true, true ); // saying whether it is enabled or not is important, so force
 
 	m_bActive = false;
-	if( GetTeamNumber() == TEAM_AMERICANS )
-	{
-		m_OnAmericanLosePoint.FireOutput( this, this );
-		m_OnLosePoint.FireOutput( this, this );
-	}
-	else if( GetTeamNumber() == TEAM_BRITISH )
-	{
-		m_OnBritishLosePoint.FireOutput( this, this );
-		m_OnLosePoint.FireOutput( this, this );
-	}
-	//Going invisible anyway. The skin will be reset when enabled.
-	//ChangeTeam( TEAM_UNASSIGNED );
-	//m_iLastTeam = TEAM_UNASSIGNED;
-	//m_nSkin = GetDisabledSkin(); 
+
+	HandleLoseOutputs();
+
 	m_OnDisable.FireOutput( inputData.pActivator, this );
 }
 void CFlag::InputToggle( inputdata_t &inputData )
@@ -149,6 +138,9 @@ void CFlag::InputForceCap( inputdata_t &inputData )
 {
 	int m_iForceCap = inputData.value.Int();
 
+	if ( !m_bNotUncappable ) //If this is true, the outputs will be called in the Capture function. No need to call them twice.
+		HandleLoseOutputs(); //Takes care of the OnLosePoint outputs.
+
 	switch( m_iForceCap )
 	{
 		case 1:
@@ -158,6 +150,23 @@ void CFlag::InputForceCap( inputdata_t &inputData )
 			Capture( TEAM_BRITISH );
 			break;
 	}
+}
+
+void CFlag::HandleLoseOutputs( void )
+{
+	switch ( GetTeamNumber() )
+	{
+		case TEAM_AMERICANS:
+			m_OnAmericanLosePoint.FireOutput( this, this );
+			break;
+		case TEAM_BRITISH:
+			m_OnBritishLosePoint.FireOutput( this, this );
+			break;
+		case TEAM_UNASSIGNED: //Neutral flags aren't "Lost"
+			return;
+	}
+
+	m_OnLosePoint.FireOutput( this, this );
 }
 
 void CFlag::Spawn( void )
@@ -559,7 +568,7 @@ void CFlag::Capture( int iTeam )
 
 	CRecipientFilter recpfilter;
 	//recpfilter.AddAllPlayers();
-	recpfilter.AddRecipientsByPAS( GetAbsOrigin() ); //Instead, let's send this to players that are at least slose enough to hear it.. -HairyPotter
+	recpfilter.AddRecipientsByPAS( GetAbsOrigin() ); //Instead, let's send this to players that are at least close enough to hear it.. -HairyPotter
 	recpfilter.MakeReliable();
 	
 	UserMessageBegin( recpfilter, "CaptureSounds" );
@@ -594,27 +603,9 @@ void CFlag::Capture( int iTeam )
 	m_iRequestingCappers = TEAM_UNASSIGNED;
 	m_iNearbyPlayers = m_vOverloadingPlayers.Count();
 
-	// before we change team, if they stole the point, fire the output
-	if (GetTeamNumber() != iTeam)
-	{
-		//fire appropriate output
-		/*if( GetTeamNumber() == TEAM_AMERICANS )
-			m_OnAmericanLosePoint.FireOutput( this, this );
-		else if( GetTeamNumber() == TEAM_BRITISH )
-			m_OnBritishLosePoint.FireOutput( this, this );*/
-		//Make it a switch for great justice. -HairyPotter
-		switch( GetTeamNumber() )
-		{
-			case TEAM_AMERICANS:
-				m_OnAmericanLosePoint.FireOutput( this, this );
-				break;
-			case TEAM_BRITISH:
-				m_OnBritishLosePoint.FireOutput( this, this );
-				break;
-		}
-
-		m_OnLosePoint.FireOutput( this, this );
-	}
+	if ( m_bNotUncappable ) //This is here because when NotUncappable is true, a flag is never neutral. 
+		HandleLoseOutputs();	//And therefore can only be "Lost" when it's fully captured.
+		
 
 #ifndef _DEBUG //For whatever reason, debug compiles crash on this code. We'll just omit this if we're debugging.
 
@@ -654,13 +645,7 @@ void CFlag::Capture( int iTeam )
 #endif
 
 	ChangeTeam( iTeam );
-	//CFlagHandler::Update();
 
-	/*if( iTeam == TEAM_AMERICANS )
-		m_OnAmericanCapture.FireOutput( this, this );
-	else if( iTeam == TEAM_BRITISH )
-		m_OnBritishCapture.FireOutput( this, this );*/
-	//Make it a switch for great justice. -HairyPotter
 	switch( iTeam )
 	{
 		case TEAM_AMERICANS:
@@ -765,6 +750,7 @@ void CFlag::ThinkCapped( void )
 	if( !m_bNotUncappable && (enemies > 0 && friendlies <= 0 || (m_bUncapOnDeath && m_vOverloadingPlayers.Count() <= 0)) )
 	{
 		//uncap
+		HandleLoseOutputs(); //Remember to call this BEFORE changing the team.
 		ChangeTeam( TEAM_UNASSIGNED );
 		m_iNearbyPlayers = 0;
 		m_vOverloadingPlayers.RemoveAll();

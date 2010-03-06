@@ -78,7 +78,7 @@ class CFlag : public CBaseAnimating
 	//CNetworkVar( bool, m_bActive );		//BG2 - Tjoppen - adding SaintGreg's flag stuff from way back as a placeholder
 										//				  until the new flag code is done.
 
-	CNetworkVar( bool, m_bNotUncappable );	//is flag non-uncappable?
+	CNetworkVar( bool, m_bNotUncappable );	//is flag non-uncappable? 
 	CNetworkVar( bool, m_bUncapOnDeath );	//does this flag uncap if all overloaders die?
 
 	//BG2 - SaintGreg - Output functions similar to BG's
@@ -182,6 +182,7 @@ public:
 	void ThinkUncapped( void );
 	void ThinkCapped( void );
 	void Capture( int iTeam );	//let iTeam have this flag now..
+	void HandleLoseOutputs( void );	//let iTeam have this flag now..
 	void ChangeTeam( int iTeamNum );
 	void ResetFlag( void );
 	virtual int UpdateTransmitState();
