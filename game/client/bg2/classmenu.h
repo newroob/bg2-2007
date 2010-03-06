@@ -56,7 +56,7 @@ public:
 	void SetCommand( int command );
 	void OnMousePressed(vgui::MouseCode code);
 	void OnCursorEntered( void );
-	void OnCursorExited( void );
+	void OnCursorExited( void ){ m_bMouseOver = false; };
 	void PerformCommand( void );
 	//Added functionality for images as buttons. -HairyPotter
 	virtual void Paint();
@@ -69,27 +69,22 @@ public:
 				  temp;
 
 		BritishImage = AmericanImage = temp = NULL;
-		int len;
 
 		temp = inResourceData->GetString( "BritishImage", "" );
-		len = Q_strlen( temp ) + 1;
-		BritishImage = new char[ len ];
-		Q_strncpy( (char *)BritishImage, temp, len );
+		BritishImage = new char[ Q_strlen( temp ) + 1  ];
+		Q_strncpy( (char *)BritishImage, temp, Q_strlen( temp ) + 1 );
 
 		temp = inResourceData->GetString( "AmericanImage", "" );
-		len = Q_strlen( temp ) + 1;
-		AmericanImage = new char[ len ];
-		Q_strncpy( (char *)AmericanImage, temp, len );
+		AmericanImage = new char[ Q_strlen( temp ) + 1 ];
+		Q_strncpy( (char *)AmericanImage, temp, Q_strlen( temp ) + 1 );
 
 		temp = inResourceData->GetString( "BritishMouseoverImage", "" );
-		len = Q_strlen( temp ) + 1;
-		BritishMouseoverImage = new char[ len ];
-		Q_strncpy( (char *)BritishMouseoverImage, temp, len );
+		BritishMouseoverImage = new char[ Q_strlen( temp ) + 1  ];
+		Q_strncpy( (char *)BritishMouseoverImage, temp, Q_strlen( temp ) + 1 );
 
 		temp = inResourceData->GetString( "AmericanMouseoverImage", "" );
-		len = Q_strlen( temp ) + 1;
-		AmericanMouseoverImage = new char[ len ];
-		Q_strncpy( (char *)AmericanMouseoverImage, temp, len );
+		AmericanMouseoverImage = new char[ Q_strlen( temp ) + 1  ];
+		Q_strncpy( (char *)AmericanMouseoverImage, temp, Q_strlen( temp ) + 1 );
 		
 		BaseClass::ApplySettings( inResourceData );
 	}
@@ -117,7 +112,7 @@ public:
 	void SetCommand( int command );
 	void OnMousePressed(vgui::MouseCode code);
 	void OnCursorEntered( void );
-	void OnCursorExited( void );
+	void OnCursorExited( void ){ m_bMouseOver = false; };
 	void PerformCommand( void );
 	//Added functionality for images as buttons. -HairyPotter
 	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
@@ -125,14 +120,22 @@ public:
 	virtual void ApplySettings( KeyValues *inResourceData )
 	{
 		// Active Image
-		delete [] ImageName;
+		delete [] TeamImage,
+				  TeamMouseoverImage;
 
-		ImageName = NULL;
+		TeamImage = TeamMouseoverImage = NULL;
+
+		int len;
 
 		temp = inResourceData->GetString( "Image", "" );
-		int len = Q_strlen( temp ) + 1;
-		ImageName = new char[ len ];
-		Q_strncpy( (char *)ImageName, temp, len );
+		len = Q_strlen( temp ) + 1;
+		TeamImage = new char[ len ];
+		Q_strncpy( (char *)TeamImage, temp, len );
+
+		temp = inResourceData->GetString( "MouseoverImage", "" );
+		len = Q_strlen( temp ) + 1;
+		TeamMouseoverImage = new char[ len ];
+		Q_strncpy( (char *)TeamMouseoverImage, temp, len );
 
 		BaseClass::ApplySettings( inResourceData );
 	}
@@ -141,8 +144,11 @@ public:
 private:
 	int m_iCommand;
 
-	const char *ImageName,
+	const char *TeamImage,
+			   *TeamMouseoverImage,
 			   *temp;
+
+	bool m_bMouseOver;
 
 };
 
@@ -167,7 +173,47 @@ public:
 	CWeaponButton(Panel *parent, const char *panelName, const char *text) : ToggleButton( parent, panelName, text ) {  }
 
 	void OnMousePressed(vgui::MouseCode code);
-	void OnCursorEntered( void );
+	void OnCursorEntered( void ){ m_bMouseOver = true; };
+	void OnCursorExited( void ){ m_bMouseOver = false; };
+	virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
+	void SetImage( const char *ImageName );
+	virtual void Paint( void );
+	virtual void ApplySettings( KeyValues *inResourceData )
+	{
+		Q_strncpy( AInf1, (const char *)inResourceData->GetString( "AInfImage1", "" ), 80 );
+		Q_strncpy( AInf2, (const char *)inResourceData->GetString( "AInfImage2", "" ), 80 );
+		Q_strncpy( AInf3, (const char *)inResourceData->GetString( "AInfImage3", "" ), 80 );
+		Q_strncpy( BInf1, (const char *)inResourceData->GetString( "BInfImage1", "" ), 80 );
+		Q_strncpy( BInf2, (const char *)inResourceData->GetString( "BInfImage2", "" ), 80 );
+		Q_strncpy( ASki1, (const char *)inResourceData->GetString( "ASkiImage1", "" ), 80 );
+		Q_strncpy( ASki2, (const char *)inResourceData->GetString( "ASkiImage2", "" ), 80 );
+		Q_strncpy( BSki1, (const char *)inResourceData->GetString( "BSkiImage1", "" ), 80 );
+		Q_strncpy( BSki2, (const char *)inResourceData->GetString( "BSkiImage2", "" ), 80 );
+		Q_strncpy( BLight1, (const char *)inResourceData->GetString( "BLightImage1", "" ), 80 );
+
+		//Mouse Overs
+		Q_strncpy( AInf1M, (const char *)inResourceData->GetString( "AInfMouseImage1", "" ), 80 );
+		Q_strncpy( AInf2M, (const char *)inResourceData->GetString( "AInfMouseImage2", "" ), 80 );
+		Q_strncpy( AInf3M, (const char *)inResourceData->GetString( "AInfMouseImage3", "" ), 80 );
+		Q_strncpy( BInf1M, (const char *)inResourceData->GetString( "BInfMouseImage1", "" ), 80 );
+		Q_strncpy( BInf2M, (const char *)inResourceData->GetString( "BInfMouseImage2", "" ), 80 );
+		Q_strncpy( ASki1M, (const char *)inResourceData->GetString( "ASkiMouseImage1", "" ), 80 );
+		Q_strncpy( ASki2M, (const char *)inResourceData->GetString( "ASkiMouseImage2", "" ), 80 );
+		Q_strncpy( BSki1M, (const char *)inResourceData->GetString( "BSkiMouseImage1", "" ), 80 );
+		Q_strncpy( BSki2M, (const char *)inResourceData->GetString( "BSkiMouseImage2", "" ), 80 );
+		Q_strncpy( BLight1M, (const char *)inResourceData->GetString( "BLightMouseImage1", "" ), 80 );
+		//
+
+		BaseClass::ApplySettings( inResourceData );
+	}
+
+	char BLight1[80], BInf1[80], BInf2[80], AInf1[80], AInf2[80], AInf3[80], ASki1[80], ASki2[80],
+		 BSki1[80], BSki2[80], BLight1M[80], BInf1M[80], BInf2M[80], AInf1M[80], AInf2M[80], AInf3M[80], ASki1M[80], ASki2M[80],
+		 BSki1M[80], BSki2M[80];
+
+	bool m_bMouseOver;
+
+	vgui::IImage *m_pImage;
 };
 
 class CAmmoButton : public vgui::ToggleButton
@@ -178,7 +224,40 @@ public:
 	CAmmoButton(Panel *parent, const char *panelName, const char *text) : ToggleButton( parent, panelName, text ) {  }
 
 	void OnMousePressed(vgui::MouseCode code);
-	void OnCursorEntered( void );
+	void OnCursorEntered( void ){ m_bMouseOver = true; };
+	void OnCursorExited( void ){ m_bMouseOver = false; };
+	virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
+	virtual void Paint( void );
+	virtual void ApplySettings( KeyValues *inResourceData )
+	{
+		// Active Image
+		delete [] Image,
+				  RestrictedImage,
+				  MouseoverImage;
+
+		Image = MouseoverImage = RestrictedImage = NULL;
+
+		temp = inResourceData->GetString( "Image", "" );
+		Image = new char[ Q_strlen( temp ) + 1 ];
+		Q_strncpy( (char *)Image, temp, Q_strlen( temp ) + 1 );
+
+		temp = inResourceData->GetString( "MouseoverImage", "" );
+		MouseoverImage = new char[ Q_strlen( temp ) + 1 ];
+		Q_strncpy( (char *)MouseoverImage, temp, Q_strlen( temp ) + 1 );
+
+		temp = inResourceData->GetString( "RestrictedImage", "" );
+		RestrictedImage = new char[ Q_strlen( temp ) + 1 ];
+		Q_strncpy( (char *)RestrictedImage, temp, Q_strlen( temp ) + 1 );
+
+		BaseClass::ApplySettings( inResourceData );
+	}
+
+	const char *Image,
+			   *MouseoverImage,
+			   *RestrictedImage,
+			   *temp;
+
+	bool m_bMouseOver, m_bRestricted;
 };
 
 class CClassMenu : public vgui::Frame, public IViewPortPanel
@@ -234,8 +313,7 @@ public:
 					*m_pWeaponButton3;
 
 	CAmmoButton		*m_pAmmoButton1,
-					*m_pAmmoButton2,
-					*m_pAmmoButton3;
+					*m_pAmmoButton2;
 
 	vgui::ImagePanel *m_pWeaponSelection,
 					 *m_pAmmoSelection;
@@ -261,8 +339,8 @@ public:
 
 	void OnThink();
 	void UpdateClassLabelText( vgui::Label *pLabel, int iClass);
-	void UpdateAmmoButtonText( void );
-	void UpdateWeaponButtonText( void );
+	void UpdateWeaponButtonImages( void );
+	void UpdateAmmoButtons( void );
 	void ToggleButtons(int iShowScreen);
 
 	//being in classmenu mode means we must be visible aswell

@@ -89,7 +89,7 @@ void CClassButton::OnMousePressed(MouseCode code)
 
 	cl_quickjoin.SetValue( pThisMenu->m_pQuickJoinCheckButton->IsSelected() ); //Set quickjoin var.
 
-	if ( pThisMenu->m_pQuickJoinCheckButton->IsSelected() ) //Just join game with the default kit.
+	if ( pThisMenu->m_pQuickJoinCheckButton->IsSelected() || m_iCommand == CLASS_OFFICER || m_iCommand == CLASS_SNIPER ) //Just join game with the default kit.
 	{
 		GetParent()->SetVisible( false );
 		SetSelected( false );
@@ -99,10 +99,6 @@ void CClassButton::OnMousePressed(MouseCode code)
 	{
 		pThisMenu->ToggleButtons( 3 ); //Go to weapon selection.
 	}	
-}
-void CClassButton::OnCursorExited( void )
-{
-	m_bMouseOver = false;
 }
 
 void CClassButton::OnCursorEntered( void )
@@ -285,14 +281,10 @@ void CTeamButton::OnMousePressed(MouseCode code)
 	pThisMenu->ToggleButtons(2);
 }
 
-void CTeamButton::OnCursorExited( void )
-{
-	//BaseClass::OnCursorExited();
-}
-
 void CTeamButton::OnCursorEntered( void )
 {
 	//BaseClass::OnCursorEntered();
+	m_bMouseOver = true;
 	
 	CClassMenu *pThisMenu = (CClassMenu *)GetParent();
 	
@@ -346,7 +338,12 @@ void CTeamButton::Paint( void )
 
 	int wide, tall;
 	GetSize( wide, tall );
-	vgui::IImage *m_pImage = scheme()->GetImage( ImageName, false );
+	vgui::IImage *m_pImage = NULL;
+
+	if ( m_bMouseOver )
+		m_pImage = scheme()->GetImage( TeamMouseoverImage, false );
+	else
+		m_pImage = scheme()->GetImage( TeamImage, false );
 
 	if ( m_pImage )
 	{
@@ -406,7 +403,6 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pWeaponButton3 = new CWeaponButton( this, "WeaponButton3", "" );
 	m_pAmmoButton1 = new CAmmoButton( this, "AmmoButton1", "" );
 	m_pAmmoButton2 = new CAmmoButton( this, "AmmoButton2", "" );
-	m_pAmmoButton3 = new CAmmoButton( this, "AmmoButton3", "" );
 	m_pOK = new COkayButton( this, "Okay", "" );
 
 	m_pCancelButton = new CClassButton( this, "CancelButton", "" );
@@ -492,7 +488,6 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 	// For weapons and ammo selection menu.. -HairyPotter
 	m_pAmmoButton1->MakeReadyForUse();
 	m_pAmmoButton2->MakeReadyForUse();
-	m_pAmmoButton3->MakeReadyForUse();
 	m_pWeaponButton1->MakeReadyForUse();
 	m_pWeaponButton2->MakeReadyForUse();
 	m_pWeaponButton3->MakeReadyForUse();
@@ -599,13 +594,9 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 			m_pAmmoButton2->OnMousePressed( code2 );
 		}
 	}
-	else if( code == m_iSlot6Key ) //This is used only for
+	/*else if( code == m_iSlot6Key ) //This is used only for
 	{
-		if ( m_pAmmoButton3->IsVisible() )
-		{
-			m_pAmmoButton3->OnMousePressed( code2 );
-		}
-	}
+	}*/
 	else if( code == m_iCancelKey )
 	{
 		ToggleButtons(1);
@@ -784,8 +775,8 @@ void CClassMenu::OnThink()
 	UpdateClassLabelText( m_pSkirmisherLabel, CLASS_SKIRMISHER );
 	UpdateClassLabelText( m_pLightInfantryLabel, CLASS_LIGHT_INFANTRY );
 
-	UpdateWeaponButtonText();
-	UpdateAmmoButtonText();
+	UpdateWeaponButtonImages();
+	UpdateAmmoButtons();
 }
 
 void CClassMenu::UpdateClassLabelText( vgui::Label *pLabel, int iClass )
@@ -812,142 +803,72 @@ void CClassMenu::UpdateClassLabelText( vgui::Label *pLabel, int iClass )
 	pLabel->SetText( temp );
 }
 
-void CClassMenu::UpdateAmmoButtonText( void )
+void CClassMenu::UpdateAmmoButtons( void )
 {
-	//This may not even be necessary if we follow through with this idea.
+	//This handles the logic 
+	m_pAmmoButton2->m_bRestricted = true;
+
 	switch ( m_iTeamSelection )
 	{
 		case TEAM_AMERICANS:
-			switch ( m_iClassSelection )
+			if ( m_iClassSelection == CLASS_SKIRMISHER )
 			{
-				case CLASS_OFFICER:
-					m_pAmmoButton1->SetText( "4. Coded in later.." );
-					m_pAmmoButton2->SetText( "5. Coded in later.." );
-					m_pAmmoButton3->SetText( "6. Coded in later.." );
-					break;
-				case CLASS_INFANTRY:
-					m_pAmmoButton1->SetText( "4. Coded in later.." );
-					m_pAmmoButton2->SetText( "5. Coded in later.." );
-					m_pAmmoButton3->SetText( "6. Coded in later.." );
-					break;
-				case CLASS_SNIPER:
-					m_pAmmoButton1->SetText( "4. Coded in later.." );
-					m_pAmmoButton2->SetText( "5. Coded in later.." );
-					m_pAmmoButton3->SetText( "6. Coded in later.." );
-					break;
-				case CLASS_SKIRMISHER:
-					m_pAmmoButton1->SetText( "4. Coded in later.." );
-					m_pAmmoButton2->SetText( "5. Coded in later.." );
-					m_pAmmoButton3->SetText( "6. Coded in later.." );
-					break;
-				default:
-					m_pAmmoButton1->SetVisible( false );
-					m_pAmmoButton2->SetVisible( false );
-					m_pAmmoButton3->SetVisible( false );
-					//Msg("There was an error determining which American class you chose to play as. \n");
-					break;
+				if ( m_pWeaponButton1->IsSelected() ) //FOWLER
+						m_pAmmoButton2->m_bRestricted = false; //Buckshot allowed
 			}
 			break;
 		case TEAM_BRITISH:
-			switch ( m_iClassSelection )
+			if ( m_iClassSelection == CLASS_LIGHT_INFANTRY )
 			{
-				case CLASS_OFFICER:
-					m_pAmmoButton1->SetText( "4. Coded in later.." );
-					m_pAmmoButton2->SetText( "5. Coded in later.." );
-					m_pAmmoButton3->SetText( "6. Coded in later.." );
-					break;
-				case CLASS_INFANTRY:
-					m_pAmmoButton1->SetText( "4. Coded in later.." );
-					m_pAmmoButton2->SetText( "5. Coded in later.." );
-					m_pAmmoButton3->SetText( "6. Coded in later.." );
-					break;
-				case CLASS_SNIPER:
-					m_pAmmoButton1->SetText( "4. Coded in later.." );
-					m_pAmmoButton2->SetText( "5. Coded in later.." );
-					m_pAmmoButton3->SetText( "6. Coded in later.." );
-					break;
-				case CLASS_SKIRMISHER:
-					m_pAmmoButton1->SetText( "4. Coded in later.." );
-					m_pAmmoButton2->SetText( "5. Coded in later.." );
-					m_pAmmoButton3->SetText( "6. Coded in later.." );
-					break;
-				case CLASS_LIGHT_INFANTRY:
-					m_pAmmoButton1->SetText( "4. Coded in later.." );
-					m_pAmmoButton2->SetText( "5. Coded in later.." );
-					m_pAmmoButton3->SetText( "6. Coded in later.." );
-					break;
-				default:
-					m_pAmmoButton1->SetVisible( false );
-					m_pAmmoButton2->SetVisible( false );
-					m_pAmmoButton3->SetVisible( false );
-					//Msg("There was an error determining which British class you chose to play as. \n");
-					break;
+				if ( m_pWeaponButton1->IsSelected() ) //CARBINE
+						m_pAmmoButton2->m_bRestricted = false; //Buckshot allowed
 			}
 			break;
 	}
 	//
 }
 
-void CClassMenu::UpdateWeaponButtonText( void )
+void CClassMenu::UpdateWeaponButtonImages( void )
 {
+	//We decided to only display weapon selections for classes that have more than one setup.
 	switch ( m_iTeamSelection )
 	{
 		case TEAM_AMERICANS:
 			switch ( m_iClassSelection )
 			{
-				case CLASS_OFFICER:
-					m_pWeaponButton1->SetText( "1. American Pistol + Sword" );
-					m_pWeaponButton2->SetVisible( false );
-					m_pWeaponButton3->SetVisible( false );
-					break;
 				case CLASS_INFANTRY:
-					m_pWeaponButton1->SetText( "1. Charleville" );
-					m_pWeaponButton2->SetText( "2. American Brownbess" );
-					m_pWeaponButton3->SetText( "3. Revolutionnaire" );
-					break;
-				case CLASS_SNIPER:
-					m_pWeaponButton1->SetText( "1. Pennsylvania Longrifle + Knife" );
-					m_pWeaponButton2->SetVisible( false );
-					m_pWeaponButton3->SetVisible( false );
+					m_pWeaponButton1->SetImage( m_pWeaponButton1->m_bMouseOver || m_pWeaponButton1->IsSelected() ? m_pWeaponButton1->AInf1M : m_pWeaponButton1->AInf1 );
+					m_pWeaponButton2->SetImage( m_pWeaponButton2->m_bMouseOver || m_pWeaponButton2->IsSelected() ? m_pWeaponButton2->AInf2M : m_pWeaponButton2->AInf2 );
+					m_pWeaponButton3->SetImage( m_pWeaponButton3->m_bMouseOver || m_pWeaponButton3->IsSelected() ? m_pWeaponButton3->AInf3M : m_pWeaponButton3->AInf3 );
 					break;
 				case CLASS_SKIRMISHER: 
-					m_pWeaponButton1->SetText( "1. Fowler + BeltAxe" );
-					m_pWeaponButton2->SetText( "2. American Brownbess + BeltAxe" );
+					m_pWeaponButton1->SetImage( m_pWeaponButton1->m_bMouseOver || m_pWeaponButton1->IsSelected() ? m_pWeaponButton1->ASki1M : m_pWeaponButton1->ASki1 );
+					m_pWeaponButton2->SetImage( m_pWeaponButton2->m_bMouseOver || m_pWeaponButton2->IsSelected() ? m_pWeaponButton2->ASki2M : m_pWeaponButton2->ASki2 );
 					m_pWeaponButton3->SetVisible( false );
 					break;
 				default:
 					m_pWeaponButton1->SetVisible( false );
 					m_pWeaponButton2->SetVisible( false );
 					m_pWeaponButton3->SetVisible( false );
-					//Msg("There was an error determining which American class you chose to play as. \n");
+					//Warning("There was an error determining which American class you chose to play as. \n");
 					break;
 			}
 			break;
 		case TEAM_BRITISH:
 			switch ( m_iClassSelection )
 			{
-				case CLASS_OFFICER:
-					m_pWeaponButton1->SetText( "1. Sabre + British Pistol" );
-					m_pWeaponButton2->SetVisible( false );
-					m_pWeaponButton3->SetVisible( false );
-					break;
 				case CLASS_INFANTRY:
-					m_pWeaponButton1->SetText( "1. Brownbess" );
-					m_pWeaponButton2->SetText( "2. Longpattern" );
-					m_pWeaponButton3->SetVisible( false );
-					break;
-				case CLASS_SNIPER:
-					m_pWeaponButton1->SetText( "1. Jaeger Rifle + Hirschfanger" );
-					m_pWeaponButton2->SetVisible( false );
+					m_pWeaponButton1->SetImage( m_pWeaponButton1->m_bMouseOver || m_pWeaponButton1->IsSelected() ? m_pWeaponButton1->BInf1M : m_pWeaponButton1->BInf1 );
+					m_pWeaponButton2->SetImage( m_pWeaponButton2->m_bMouseOver || m_pWeaponButton2->IsSelected() ? m_pWeaponButton2->BInf2M : m_pWeaponButton2->BInf2 );
 					m_pWeaponButton3->SetVisible( false );
 					break;
 				case CLASS_SKIRMISHER:
-					m_pWeaponButton1->SetText( "1. Brownbess + Tomahawk" );
-					m_pWeaponButton2->SetText( "2. Longpattern + Tomahawk" );
+					m_pWeaponButton1->SetImage( m_pWeaponButton1->m_bMouseOver || m_pWeaponButton1->IsSelected() ? m_pWeaponButton1->BSki1M : m_pWeaponButton1->BSki1 );
+					m_pWeaponButton2->SetImage( m_pWeaponButton2->m_bMouseOver || m_pWeaponButton2->IsSelected() ? m_pWeaponButton2->BSki2M : m_pWeaponButton2->BSki2 );
 					m_pWeaponButton3->SetVisible( false );
 					break;
 				case CLASS_LIGHT_INFANTRY:
-					m_pWeaponButton1->SetText( "1. Brownbess carbine" );
+					m_pWeaponButton1->SetImage( m_pWeaponButton1->m_bMouseOver || m_pWeaponButton1->IsSelected() ? m_pWeaponButton1->BLight1M : m_pWeaponButton1->BLight1 );
 					m_pWeaponButton2->SetVisible( false );
 					m_pWeaponButton3->SetVisible( false );
 					break;
@@ -955,7 +876,7 @@ void CClassMenu::UpdateWeaponButtonText( void )
 					m_pWeaponButton1->SetVisible( false );
 					m_pWeaponButton2->SetVisible( false );
 					m_pWeaponButton3->SetVisible( false );
-					//Msg("There was an error determining which British class you chose to play as. \n");
+					//Warning("There was an error determining which British class you chose to play as. \n");
 					break;
 			}
 			break;
@@ -1007,7 +928,6 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pWeaponButton3->SetVisible(false);
 			m_pAmmoButton1->SetVisible(false);
 			m_pAmmoButton2->SetVisible(false);
-			m_pAmmoButton3->SetVisible(false);
 			m_pOK->SetVisible(false);
 			//
 			//Misc
@@ -1044,7 +964,6 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pWeaponButton3->SetVisible(false);
 			m_pAmmoButton1->SetVisible(false);
 			m_pAmmoButton2->SetVisible(false);
-			m_pAmmoButton3->SetVisible(false);
 			m_pOK->SetVisible(false);
 			//
 			//Misc
@@ -1080,7 +999,6 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pWeaponButton3->SetVisible(true);
 			m_pAmmoButton1->SetVisible(true);
 			m_pAmmoButton2->SetVisible(true);
-			m_pAmmoButton3->SetVisible(true);
 			m_pOK->SetVisible(true);
 			//
 			//Misc
@@ -1089,6 +1007,13 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			//
 			break;
 	}
+}
+
+void CAmmoButton::ApplySchemeSettings( vgui::IScheme *pScheme )
+{
+	BaseClass::ApplySchemeSettings(pScheme);
+
+	SetPaintBorderEnabled(false); //No borders.
 }
 
 void CAmmoButton::OnMousePressed(MouseCode code)
@@ -1101,14 +1026,47 @@ void CAmmoButton::OnMousePressed(MouseCode code)
 	//Force the buttons to "reset" so we don't get mixed signals sent to the server.
 	pThisMenu->m_pAmmoButton1->SetSelected ( false );
 	pThisMenu->m_pAmmoButton2->SetSelected ( false );
-	pThisMenu->m_pAmmoButton3->SetSelected ( false );
 
 	SetSelected( true );
 }
-
-void CAmmoButton::OnCursorEntered( void )
+void CAmmoButton::Paint ( void )
 {
-	BaseClass::OnCursorEntered();
+	CClassMenu *pThisMenu = (CClassMenu*)GetParent();
+
+	if ( !pThisMenu )
+		return;
+
+	int wide, tall;
+	vgui::IImage *m_pImage = NULL;
+
+	GetSize( wide, tall );
+
+	if ( m_bRestricted )
+	{
+		m_pImage = scheme()->GetImage( RestrictedImage, false );
+	}
+	else if ( IsSelected() || m_bMouseOver )
+	{
+		m_pImage = scheme()->GetImage( MouseoverImage, false );
+	}
+	else
+	{
+		m_pImage = scheme()->GetImage( Image, false );
+	}
+
+	if ( m_pImage )
+	{
+		m_pImage->SetSize( wide, tall );
+		m_pImage->Paint();
+	}
+
+}
+
+void CWeaponButton::ApplySchemeSettings( vgui::IScheme *pScheme )
+{
+	BaseClass::ApplySchemeSettings(pScheme);
+
+	SetPaintBorderEnabled(false); //No borders.
 }
 
 void CWeaponButton::OnMousePressed(MouseCode code)
@@ -1127,9 +1085,21 @@ void CWeaponButton::OnMousePressed(MouseCode code)
 	SetSelected( true );
 }
 
-void CWeaponButton::OnCursorEntered( void )
+void CWeaponButton::Paint ( void )
 {
-	BaseClass::OnCursorEntered();
+	int wide, tall;
+	GetSize( wide, tall );
+
+	if ( m_pImage )
+	{
+		m_pImage->SetSize( wide, tall );
+		m_pImage->Paint();
+	}
+}
+
+void CWeaponButton::SetImage( const char *ImageName )
+{
+	m_pImage = scheme()->GetImage( ImageName, false );
 }
 
 //The button that gathers the weapons and ammo kit settings and sends the server command.
@@ -1145,7 +1115,7 @@ void COkayButton::OnMousePressed(MouseCode code)
 
 void COkayButton::OnCursorEntered( void )
 {
-	BaseClass::OnCursorEntered();
+	//BaseClass::OnCursorEntered();
 }
 
 void COkayButton::PerformCommand( void )
@@ -1176,9 +1146,6 @@ void COkayButton::PerformCommand( void )
 
 	if ( pThisMenu->m_pAmmoButton2->IsSelected() )
 		m_iAmmoType = AMMO_KIT_BUCKSHOT;
-
-	if ( pThisMenu->m_pAmmoButton3->IsSelected() )
-		m_iAmmoType = AMMO_KIT_RESERVED1;
 
 	char cmd[64];
 	Q_snprintf( cmd, sizeof( cmd ), "kit %i %i \n", m_iGunType, m_iAmmoType );
