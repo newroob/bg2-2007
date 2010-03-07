@@ -271,7 +271,7 @@ public:
 	void		ItemPostFrame( void );
 	int			Fire( int iAttack );
 	int			FireBullet( int iAttack );
-	int			Swing( int iAttack, bool bDoEffects );
+	int			Swing( int iAttack, bool bIsFirstAttempt );
 
 	void		Hit( trace_t &traceHit, int iAttack );
 	bool		ImpactWater( const Vector &start, const Vector &end );

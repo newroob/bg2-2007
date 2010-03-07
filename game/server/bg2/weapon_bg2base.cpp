@@ -518,7 +518,7 @@ void CBaseBG2Weapon::ImpactEffect( trace_t &traceHit )
 	UTIL_ImpactTrace( &traceHit, DMG_BULLET );	//BG2 - Tjoppen - surface blood
 }
 
-int CBaseBG2Weapon::Swing( int iAttack, bool bDoEffects )
+int CBaseBG2Weapon::Swing( int iAttack, bool bIsFirstAttempt )
 {
 	trace_t traceHit;
 
@@ -550,10 +550,15 @@ int CBaseBG2Weapon::Swing( int iAttack, bool bDoEffects )
 	TraceAttackToTriggers( triggerInfo, traceHit.startpos, traceHit.endpos, vec3_origin );
 #endif //Keep the following code with the client.dll
 
+	//only allow melee hits to head on the first frame
+	//any subsequent hit to the head gets demoted a hit to the chest
+	if( traceHit.hitgroup == HITGROUP_HEAD && !bIsFirstAttempt )
+		traceHit.hitgroup = HITGROUP_CHEST;
+
 	if ( traceHit.fraction == 1.0f )
 	{
 		//miss, do any waterimpact stuff
-		if( bDoEffects )
+		if( bIsFirstAttempt )
 		{
 			Vector testEnd = swingStart + forward * GetRange(iAttack);
 			ImpactWater( swingStart, testEnd );
@@ -569,7 +574,7 @@ int CBaseBG2Weapon::Swing( int iAttack, bool bDoEffects )
 		Hit( traceHit, iAttack );
 	}
 	// Send the anim
-	if( bDoEffects )
+	if( bIsFirstAttempt )
 	{
 		SendWeaponAnim( GetActivity( iAttack ) );
 		pOwner->SetAnimation( PLAYER_ATTACK2 );
