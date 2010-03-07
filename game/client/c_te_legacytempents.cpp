@@ -64,7 +64,11 @@ CLIENTEFFECT_REGISTER_BEGIN( PrecacheEffectMuzzleFlash )
 	CLIENTEFFECT_MATERIAL( "effects/muzzleflash3_noz" )
 	CLIENTEFFECT_MATERIAL( "effects/muzzleflash4_noz" )
 
-	CLIENTEFFECT_MATERIAL( "particle/particle_musketsmoke" ) //BG2 - Precache the particle effect? -HairyPotter
+	CLIENTEFFECT_MATERIAL( "particle/particle_musketsmoke1" )
+	CLIENTEFFECT_MATERIAL( "particle/particle_musketsmoke2" )
+	CLIENTEFFECT_MATERIAL( "particle/particle_musketsmoke3" )
+	CLIENTEFFECT_MATERIAL( "particle/particle_musketsmoke4" )
+	CLIENTEFFECT_MATERIAL( "particle/particle_musketsmoke5" )
 
 	CLIENTEFFECT_REGISTER_END()
 #endif
@@ -3110,7 +3114,6 @@ void CTempEnts::MuzzleFlash_357_Player( ClientEntityHandle_t hEntity, int attach
 //BG2 - Tjoppen - client smoke cvars
 ConVar cl_smoke_muzzle_length( "cl_smoke_muzzle_length", "120", FCVAR_ARCHIVE, "Length of forward smoke cone when created" );
 ConVar cl_smoke_muzzle_count( "cl_smoke_muzzle_count", "11", FCVAR_ARCHIVE, "Number of 'puff' sprites along the length of the smoke cone" );
-ConVar cl_smoke_muzzle_material( "cl_smoke_muzzle_material", "particle/particle_musketsmoke", FCVAR_ARCHIVE, "Material to use for smoke puffs" );
 ConVar cl_smoke_muzzle_lifetime_min( "cl_smoke_muzzle_lifetime_min", "1", FCVAR_ARCHIVE, "Minimum lifetime of smoke puffs" );
 ConVar cl_smoke_muzzle_lifetime_max( "cl_smoke_muzzle_lifetime_max", "18", FCVAR_ARCHIVE, "Maximum lifetime of smoke puffs" );
 ConVar cl_smoke_muzzle_speed( "cl_smoke_muzzle_speed", "20000", FCVAR_ARCHIVE, "Initial speed of smoke in forward direction" );
@@ -3119,7 +3122,6 @@ ConVar cl_smoke_muzzle_size_end( "cl_smoke_muzzle_size_end", "28", FCVAR_ARCHIVE
 
 ConVar cl_smoke_flashpan_length( "cl_smoke_flashpan_length", "20", FCVAR_ARCHIVE, "Length of upward smoke cone when created" );
 ConVar cl_smoke_flashpan_count( "cl_smoke_flashpan_count", "8", FCVAR_ARCHIVE, "Number of 'puff' sprites along the length of the smoke cone" );
-ConVar cl_smoke_flashpan_material( "cl_smoke_flashpan_material", "particle/particle_musketsmoke", FCVAR_ARCHIVE, "Material to use for smoke puffs" );
 ConVar cl_smoke_flashpan_lifetime_min( "cl_smoke_flashpan_lifetime_min", "1", FCVAR_ARCHIVE, "Minimum lifetime of smoke puffs" );
 ConVar cl_smoke_flashpan_lifetime_max( "cl_smoke_flashpan_lifetime_max", "5", FCVAR_ARCHIVE, "Maximum lifetime of smoke puffs" );
 ConVar cl_smoke_flashpan_speed( "cl_smoke_flashpan_speed", "1000", FCVAR_ARCHIVE, "Initial speed of smoke in upward direction" );
@@ -3256,7 +3258,10 @@ void MuzzleFlash_Pistol_Shared( ClientEntityHandle_t hEntity, int attachmentInde
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
 		offset = origin + forward * cl_smoke_muzzle_length.GetFloat() * (j+1) / cl_smoke_muzzle_count.GetFloat();
 
-		pParticle = (SimpleParticle *) pSimple3->AddParticle( sizeof( SimpleParticle ), pSimple3->GetPMaterial( cl_smoke_muzzle_material.GetString() ), offset );
+		char name[64];
+		Q_snprintf( name, sizeof(name), "particle/particle_musketsmoke%i", random->RandomInt(1,5) );
+
+		pParticle = (SimpleParticle *) pSimple3->AddParticle( sizeof( SimpleParticle ), pSimple3->GetPMaterial( name ), offset );
 			
 		if ( pParticle == NULL )
 			return;
@@ -3390,7 +3395,10 @@ void CTempEnts::MuzzleFlash_Flashpan( ClientEntityHandle_t hEntity, int attachme
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
 		Vector offset = origin + forward * cl_smoke_flashpan_length.GetFloat() * (j+1) / cl_smoke_flashpan_count.GetFloat();
 
-		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( cl_smoke_flashpan_material.GetString() ), offset );
+		char name[64];
+		Q_snprintf( name, sizeof(name), "particle/particle_musketsmoke%i", random->RandomInt(1,5) );
+
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( name ), offset );
 			
 		if ( pParticle == NULL )
 			return;
