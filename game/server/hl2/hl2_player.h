@@ -294,6 +294,8 @@ public:
 	//int	m_iStamina; //BG2 - Draco - Stamina of player
 	//
 
+	void DrainStamina( int iAmount );
+
 protected:
 	virtual void		PreThink( void );
 	virtual	void		PostThink( void );

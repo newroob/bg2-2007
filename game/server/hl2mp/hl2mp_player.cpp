@@ -778,18 +778,9 @@ void CHL2MP_Player::PostThink( void )
 	if ( m_fNextStamRegen <= gpGlobals->curtime )
 	{
 		if( m_iStamina < 100 )
-		{
-			m_iStamina += 6;
+			m_iStamina += 1 + m_iHealth / 15;
 
-			/*CSingleUserRecipientFilter user( this );
-			user.MakeReliable();
-			UserMessageBegin( user, "Stamina" );
-				WRITE_SHORT( m_iStamina );
-			MessageEnd();*/
-		}
-
-		m_fNextStamRegen = gpGlobals->curtime + 0.3;	//was 0.225
-		//m_fNextStamRegen = gpGlobals->curtime + 0.075;
+		m_fNextStamRegen = gpGlobals->curtime + 0.3;
 	}
 
 	if( m_iStamina > 100 )
@@ -2017,9 +2008,10 @@ int CHL2MP_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	}
 
 	//BG2 - Tjoppen - take damage => lose some stamina
-	m_iStamina -= inputInfo.GetDamage() * 0.3;	//enough to just be noticed, doesn't affect much
-	if( m_iStamina < 0 )
-		m_iStamina = 0;
+	//have bullets drain a lot more stamina than melee damage
+	//this makes firearms more useful, and avoids melee turning too slow due to stamina loss
+	float scale = inputInfo.GetDamageType() & DMG_BULLET ? 1.0 : 0.3;
+	DrainStamina( inputInfo.GetDamage() * scale );
 	//
 
 	return BaseClass::OnTakeDamage( inputInfo );

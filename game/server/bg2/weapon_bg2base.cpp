@@ -187,9 +187,7 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 #ifndef CLIENT_DLL
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
 
-	pHL2Player->m_iStamina -= drain;
-	if( pHL2Player->m_iStamina < 0 )
-		pHL2Player->m_iStamina = 0;
+	pHL2Player->DrainStamina( drain );
 #endif
 }
 
@@ -242,9 +240,7 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 #ifndef CLIENT_DLL
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
 
-	pHL2Player->m_iStamina -= drain;
-	if( pHL2Player->m_iStamina < 0 )
-		pHL2Player->m_iStamina = 0;
+	pHL2Player->DrainStamina( drain );
 #endif
 }
 
@@ -432,7 +428,7 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )
 		float	damage		= GetDamage( iAttack );	
 
 		//BG2 - Tjoppen - apply no force
-		CTakeDamageInfo info( GetOwner(), GetOwner(), damage, DMG_BULLET | DMG_PREVENT_PHYSICS_FORCE | DMG_NEVERGIB );
+		CTakeDamageInfo info( GetOwner(), GetOwner(), damage, DMG_CLUB | DMG_PREVENT_PHYSICS_FORCE | DMG_NEVERGIB );
 		info.SetDamagePosition( traceHit.endpos );
 
 		pHitEntity->DispatchTraceAttack( info, hitDirection, &traceHit);	//negative dir for weird reasons

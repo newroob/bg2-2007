@@ -2351,7 +2351,10 @@ bool CGameMovement::CheckJumpButton( void )
 #else
 	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
 #endif
-	if( pHL2Player->m_iStamina < 50 )
+	//make healthier players have an easier time jumping
+	int drain = 50 - pHL2Player->m_iHealth / 4;
+
+	if( pHL2Player->m_iStamina < drain )
 		return false;				//don't drain unless we can cover some height
 	//
 
@@ -2475,12 +2478,7 @@ bool CGameMovement::CheckJumpButton( void )
 
 #ifndef CLIENT_DLL
 	//BG2 - Draco - decrease stamina for jumping
-	//CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
-	pHL2Player->m_iStamina -= 50;
-	if (pHL2Player->m_iStamina < 0)//clamp to 0
-	{
-		pHL2Player->m_iStamina = 0;
-	}
+	pHL2Player->DrainStamina( drain );
 #endif
 
 	return true;
@@ -4040,11 +4038,8 @@ void CGameMovement::FinishDuck( void )
 #ifndef CLIENT_DLL
 	//BG2 - Draco - decrease stamina for ducking
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
-	pHL2Player->m_iStamina -= 15;
-	if (pHL2Player->m_iStamina < 0)//clamp to 0
-	{
-		pHL2Player->m_iStamina = 0;
-	}
+	
+	pHL2Player->DrainStamina( 15 );
 #endif
 
 	player->AddFlag( FL_DUCKING );

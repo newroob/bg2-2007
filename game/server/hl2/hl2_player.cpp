@@ -467,6 +467,15 @@ void CHL2_Player::RemoveSuit( void )
 	SetArmorValue( iArmor );
 }*/
 
+void CHL2_Player::DrainStamina( int iAmount )
+{
+	m_iStamina -= iAmount;
+
+	//clamp
+	if( m_iStamina < 0 )
+		m_iStamina = 0;
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: Allow pre-frame adjustments on the player
 //-----------------------------------------------------------------------------
