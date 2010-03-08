@@ -914,7 +914,7 @@ DECLARE_BG2_WEAPON( longpattern )
 	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
 	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
 
-	m_pBayonetDeathNotice = "brownbess_bayonet";
+	m_pBayonetDeathNotice = "longpattern_bayonet";
 
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= LONGPATTERN_BAYONET_RANGE;
