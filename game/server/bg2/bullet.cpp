@@ -274,7 +274,7 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		UTIL_ImpactTrace( &tr, DMG_BULLET );	//BG2 - Tjoppen - surface blood
 
 		//no force!
-		CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, /*DMG_BULLET | DMG_PREVENT_PHYSICS_FORCE |*/DMG_CRUSH | DMG_NEVERGIB ); //Changed to avoid asserts. -HairyPotter
+		CTakeDamageInfo	dmgInfo( GetOwnerEntity(), GetOwnerEntity(), dmg, DMG_BULLET | /*DMG_PREVENT_PHYSICS_FORCE |*/DMG_CRUSH | DMG_NEVERGIB ); //Changed to avoid asserts. -HairyPotter
 		dmgInfo.SetDamagePosition( tr.endpos );
 		pOther->DispatchTraceAttack( dmgInfo, vecNormalizedVel, &tr );
 

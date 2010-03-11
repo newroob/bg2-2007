@@ -1971,6 +1971,23 @@ const char* CHL2MP_Player::GetHitgroupPainSound( int hitgroup, int team )
 
 int CHL2MP_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 {
+	//BG2 - Draco
+	CBaseEntity * pAttacker = inputInfo.GetInflictor();
+	if (pAttacker->IsPlayer())
+	{
+		CBasePlayer * pAttacker2 = (CBasePlayer *)pAttacker;
+		//subtract 3x damage for attacking teammates!
+		pAttacker2->IncrementDeathCount( (int)inputInfo.GetDamage()
+										* (GetTeamNumber() == pAttacker2->GetTeamNumber() ? -3 : 1) );
+	}
+
+	//BG2 - Tjoppen - take damage => lose some stamina
+	//have bullets drain a lot more stamina than melee damage
+	//this makes firearms more useful, and avoids melee turning too slow due to stamina loss
+	float scale = inputInfo.GetDamageType() & DMG_BULLET ? 1.0 : 0.3;
+	DrainStamina( inputInfo.GetDamage() * scale );
+	//
+
 	m_vecTotalBulletForce += inputInfo.GetDamageForce();
 	
 	//BG2 - Tjoppen - pain sound
@@ -1996,23 +2013,6 @@ int CHL2MP_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	ep.m_pOrigin = &vecOrigin;
 
 	EmitSound( filter, entindex(), ep );
-
-	//BG2 - Draco
-	CBaseEntity * pAttacker = inputInfo.GetInflictor();
-	if (pAttacker->IsPlayer())
-	{
-		CBasePlayer * pAttacker2 = (CBasePlayer *)pAttacker;
-		//subtract 3x damage for attacking teammates!
-		pAttacker2->IncrementDeathCount( (int)inputInfo.GetDamage()
-										* (GetTeamNumber() == pAttacker2->GetTeamNumber() ? -3 : 1) );
-	}
-
-	//BG2 - Tjoppen - take damage => lose some stamina
-	//have bullets drain a lot more stamina than melee damage
-	//this makes firearms more useful, and avoids melee turning too slow due to stamina loss
-	float scale = inputInfo.GetDamageType() & DMG_BULLET ? 1.0 : 0.3;
-	DrainStamina( inputInfo.GetDamage() * scale );
-	//
 
 	return BaseClass::OnTakeDamage( inputInfo );
 }
