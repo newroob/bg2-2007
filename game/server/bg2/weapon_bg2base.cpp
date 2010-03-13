@@ -361,7 +361,8 @@ int CBaseBG2Weapon::Fire( int iAttack )
 
 			CBullet::BulletCreate( vecSrc, angDir, flDamage,
 									m_Attackinfos[iAttack].m_flConstantDamageRange,
-									m_Attackinfos[iAttack].m_flRelativeDrag, pPlayer, pPlayer->GetActiveWeapon() );
+									m_Attackinfos[iAttack].m_flRelativeDrag, m_flMuzzleVelocity,
+									pPlayer, pPlayer->GetActiveWeapon() );
 		}
 #endif
 	}

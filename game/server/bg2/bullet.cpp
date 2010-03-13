@@ -63,9 +63,6 @@
 
 #define BOLT_MODEL			"models/game/musket_ball.mdl"
 
-#define BOLT_AIR_VELOCITY	14400
-#define BOLT_WATER_VELOCITY	1500
-
 //#define BULLET_TRACER "sprites/laser.vmt" //Pew Pew "sprites/laser.vmt"
 
 /*extern ConVar sv_bullettracers;
@@ -93,7 +90,7 @@ END_DATADESC()
 IMPLEMENT_SERVERCLASS_ST( CBullet, DT_Bullet )
 END_SEND_TABLE()
 
-CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles, int iDamage, float flConstantDamageRange, float flRelativeDrag, CBasePlayer *pentOwner, CBaseCombatWeapon *pWeapon  )
+CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles, int iDamage, float flConstantDamageRange, float flRelativeDrag, float flMuzzleVelocity, CBasePlayer *pentOwner, CBaseCombatWeapon *pWeapon  )
 {
 	// Create a new entity with CBullet private data
 	CBullet *pBullet = (CBullet *)CreateEntityByName( "bullet" );
@@ -101,7 +98,7 @@ CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles
 	pBullet->SetAbsAngles( angAngles );
 	Vector vecDir;
 	AngleVectors( angAngles, &vecDir );
-	pBullet->SetAbsVelocity( vecDir * BOLT_AIR_VELOCITY );
+	pBullet->SetAbsVelocity( vecDir * flMuzzleVelocity );
 
 	pBullet->Spawn();
 	pBullet->SetOwnerEntity( pentOwner );
@@ -112,6 +109,7 @@ CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles
 	pBullet->m_flDyingTime = gpGlobals->curtime + LIFETIME;
 	pBullet->m_flConstantDamageRange = flConstantDamageRange;
 	pBullet->m_flRelativeDrag = flRelativeDrag;
+	pBullet->m_flMuzzleVelocity = flMuzzleVelocity;
 	pBullet->m_vTrajStart = vecOrigin;//pBullet->GetAbsOrigin();
 	pBullet->m_bHasPlayedNearmiss = false;
 	pBullet->firedWeapon = pWeapon; //Store this off.
@@ -254,7 +252,7 @@ void CBullet::BoltTouch( CBaseEntity *pOther )
 		if( (GetAbsOrigin() - m_vTrajStart).Length() < m_flConstantDamageRange )
 			dmg = (float)m_iDamage;
 		else
-			dmg = floorf( (float)m_iDamage * speed * speed / (float)(BOLT_AIR_VELOCITY*BOLT_AIR_VELOCITY) );
+			dmg = floorf( (float)m_iDamage * speed * speed / (float)(m_flMuzzleVelocity*m_flMuzzleVelocity) );
 
 		Vector vForward;
 
@@ -447,7 +445,7 @@ void CBullet::BubbleThink( void )
 			//add lift due to bullet rotation which causes overshoot at medium range
 			//this extra force declines exponentially and will equal to gravity at time tmax, thus putting the maximum there
 			float	t = gpGlobals->curtime - m_flDyingTime + LIFETIME,	//how long we've existed..
-					tmax = sv_simulatedbullets_overshoot_range.GetFloat() * 36.f / BOLT_AIR_VELOCITY,	//how long until max?
+					tmax = sv_simulatedbullets_overshoot_range.GetFloat() * 36.f / m_flMuzzleVelocity,	//how long until max?
 					F0 = sv_gravity.GetFloat() * sv_simulatedbullets_overshoot_force.GetFloat(),
 					//F = F0 * expf( -logf(sv_simulatedbullets_overshoot_force.GetFloat()) * t / tmax );
 					F = F0 * powf( sv_simulatedbullets_overshoot_force.GetFloat(), -t / tmax );

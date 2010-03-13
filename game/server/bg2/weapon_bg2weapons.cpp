@@ -71,8 +71,7 @@ const float CARBINE_BAYONET_RANGE = 72.0;
 
 const float JAEGER_FIRE_DAMAGE = 63.0;
 
-const float PISTOLA_FIRE_DAMAGE = 40.0;
-const float PISTOLB_FIRE_DAMAGE = 40.0;
+const float PISTOL_FIRE_DAMAGE = 55.0;
 
 const float KNIFE_DAMAGE = 30.0;
 const float SABRE_DAMAGE = 40.0; //38
@@ -100,7 +99,8 @@ const float HIRSCHFAENGER_RETRACE_DURATION = 0.3;
 const float SABRE_COS_TOLERANCE = 0.7071067811865;			//+-45 degrees
 const float SABRE_RETRACE_DURATION = 0.3;
 
-const float MUZZLE_VELOCITY_DEFAULT = 14400.0f;
+const float MUZZLE_VELOCITY_DEFAULT = 14400.0f;	//1200 fps
+const float MUZZLE_VELOCITY_PISTOL = 12000.0f;	//1000 fps
 
 #ifdef CLIENT_DLL
 #define CWeaponbrownbess C_Weaponbrownbess
@@ -389,7 +389,7 @@ DECLARE_BG2_WEAPON( pistol_a )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= PISTOLA_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_flDamage				= PISTOL_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= PISTOL_RANGE;
@@ -408,7 +408,7 @@ DECLARE_BG2_WEAPON( pistol_a )
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_PISTOL;
 	m_iNumShot = 0;
 }
 
@@ -431,7 +431,7 @@ DECLARE_BG2_WEAPON( pistol_b )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= PISTOLB_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_flDamage				= PISTOL_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= PISTOL_RANGE;
@@ -450,7 +450,7 @@ DECLARE_BG2_WEAPON( pistol_b )
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_PISTOL;
 	m_iNumShot = 0;
 }
 
