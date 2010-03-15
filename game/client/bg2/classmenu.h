@@ -63,28 +63,11 @@ public:
 	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
 	virtual void ApplySettings( KeyValues *inResourceData )
 	{
-		// Active Image
-		delete [] BritishImage,
-				  AmericanImage,
-				  temp;
+		Q_strncpy( BritishImage, (const char *)inResourceData->GetString( "BritishImage", "" ), 80 );
+		Q_strncpy( AmericanImage, (const char *)inResourceData->GetString( "AmericanImage", "" ), 80 );
 
-		BritishImage = AmericanImage = temp = NULL;
-
-		temp = inResourceData->GetString( "BritishImage", "" );
-		BritishImage = new char[ Q_strlen( temp ) + 1  ];
-		Q_strncpy( (char *)BritishImage, temp, Q_strlen( temp ) + 1 );
-
-		temp = inResourceData->GetString( "AmericanImage", "" );
-		AmericanImage = new char[ Q_strlen( temp ) + 1 ];
-		Q_strncpy( (char *)AmericanImage, temp, Q_strlen( temp ) + 1 );
-
-		temp = inResourceData->GetString( "BritishMouseoverImage", "" );
-		BritishMouseoverImage = new char[ Q_strlen( temp ) + 1  ];
-		Q_strncpy( (char *)BritishMouseoverImage, temp, Q_strlen( temp ) + 1 );
-
-		temp = inResourceData->GetString( "AmericanMouseoverImage", "" );
-		AmericanMouseoverImage = new char[ Q_strlen( temp ) + 1  ];
-		Q_strncpy( (char *)AmericanMouseoverImage, temp, Q_strlen( temp ) + 1 );
+		Q_strncpy( BritishMouseoverImage, (const char *)inResourceData->GetString( "BritishMouseoverImage", "" ), 80 );
+		Q_strncpy( AmericanMouseoverImage, (const char *)inResourceData->GetString( "AmericanMouseoverImage", "" ), 80 );
 		
 		BaseClass::ApplySettings( inResourceData );
 	}
@@ -93,11 +76,10 @@ public:
 private:
 	int m_iCommand;
 
-	const char *BritishImage,
-			*AmericanImage,
-			*BritishMouseoverImage,
-			*AmericanMouseoverImage,
-			*temp;
+	char BritishImage[80],
+		 AmericanImage[80],
+		 BritishMouseoverImage[80],
+		 AmericanMouseoverImage[80];
 
 	bool m_bMouseOver;
 };
@@ -119,23 +101,8 @@ public:
 	virtual void Paint( void );
 	virtual void ApplySettings( KeyValues *inResourceData )
 	{
-		// Active Image
-		delete [] TeamImage,
-				  TeamMouseoverImage;
-
-		TeamImage = TeamMouseoverImage = NULL;
-
-		int len;
-
-		temp = inResourceData->GetString( "Image", "" );
-		len = Q_strlen( temp ) + 1;
-		TeamImage = new char[ len ];
-		Q_strncpy( (char *)TeamImage, temp, len );
-
-		temp = inResourceData->GetString( "MouseoverImage", "" );
-		len = Q_strlen( temp ) + 1;
-		TeamMouseoverImage = new char[ len ];
-		Q_strncpy( (char *)TeamMouseoverImage, temp, len );
+		Q_strncpy( TeamImage, (const char *)inResourceData->GetString( "Image", "" ), 80 );
+		Q_strncpy( TeamMouseoverImage, (const char *)inResourceData->GetString( "MouseoverImage", "" ), 80 );
 
 		BaseClass::ApplySettings( inResourceData );
 	}
@@ -144,9 +111,8 @@ public:
 private:
 	int m_iCommand;
 
-	const char *TeamImage,
-			   *TeamMouseoverImage,
-			   *temp;
+	char TeamImage[80],
+		 TeamMouseoverImage[80];
 
 	bool m_bMouseOver;
 
@@ -173,11 +139,11 @@ public:
 	CWeaponButton(Panel *parent, const char *panelName, const char *text) : ToggleButton( parent, panelName, text ) {  }
 
 	void OnMousePressed(vgui::MouseCode code);
-	void OnCursorEntered( void ){ m_bMouseOver = true; };
+	void OnCursorEntered( void );
 	void OnCursorExited( void ){ m_bMouseOver = false; };
 	virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
-	void SetImage( const char *ImageName );
 	virtual void Paint( void );
+	void GetWeaponImages( CWeaponButton *pButton, char *m_szActiveImage, char *m_szInactiveImage );
 	virtual void ApplySettings( KeyValues *inResourceData )
 	{
 		Q_strncpy( AInf1, (const char *)inResourceData->GetString( "AInfImage1", "" ), 80 );
@@ -212,8 +178,6 @@ public:
 		 BSki1M[80], BSki2M[80];
 
 	bool m_bMouseOver;
-
-	vgui::IImage *m_pImage;
 };
 
 class CAmmoButton : public vgui::ToggleButton
@@ -224,38 +188,22 @@ public:
 	CAmmoButton(Panel *parent, const char *panelName, const char *text) : ToggleButton( parent, panelName, text ) {  }
 
 	void OnMousePressed(vgui::MouseCode code);
-	void OnCursorEntered( void ){ m_bMouseOver = true; };
+	void OnCursorEntered( void );
 	void OnCursorExited( void ){ m_bMouseOver = false; };
 	virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
 	virtual void Paint( void );
 	virtual void ApplySettings( KeyValues *inResourceData )
 	{
-		// Active Image
-		delete [] Image,
-				  RestrictedImage,
-				  MouseoverImage;
-
-		Image = MouseoverImage = RestrictedImage = NULL;
-
-		temp = inResourceData->GetString( "Image", "" );
-		Image = new char[ Q_strlen( temp ) + 1 ];
-		Q_strncpy( (char *)Image, temp, Q_strlen( temp ) + 1 );
-
-		temp = inResourceData->GetString( "MouseoverImage", "" );
-		MouseoverImage = new char[ Q_strlen( temp ) + 1 ];
-		Q_strncpy( (char *)MouseoverImage, temp, Q_strlen( temp ) + 1 );
-
-		temp = inResourceData->GetString( "RestrictedImage", "" );
-		RestrictedImage = new char[ Q_strlen( temp ) + 1 ];
-		Q_strncpy( (char *)RestrictedImage, temp, Q_strlen( temp ) + 1 );
+		Q_strncpy( Image, (const char *)inResourceData->GetString( "Image", "" ), 80 );
+		Q_strncpy( MouseoverImage, (const char *)inResourceData->GetString( "MouseoverImage", "" ), 80 );
+		Q_strncpy( RestrictedImage, (const char *)inResourceData->GetString( "RestrictedImage", "" ), 80 );
 
 		BaseClass::ApplySettings( inResourceData );
 	}
 
-	const char *Image,
-			   *MouseoverImage,
-			   *RestrictedImage,
-			   *temp;
+	char Image[80],
+		MouseoverImage[80],
+		RestrictedImage[80];
 
 	bool m_bMouseOver, m_bRestricted;
 };
@@ -278,15 +226,7 @@ public:
 	virtual void Paint( void );
 	virtual void ApplySettings( KeyValues *inResourceData )
 	{
-		// Active Image
-		delete [] BGImage;
-
-		BGImage = NULL;
-
-		const char *image = inResourceData->GetString( "BackgroundImage", "" );
-		int len = Q_strlen( image ) + 1;
-		BGImage = new char[ len ];
-		Q_strncpy( (char *)BGImage, image, len );
+		Q_strncpy( BGImage, (const char *)inResourceData->GetString( "BackgroundImage", "" ), 80 );
 		
 		BaseClass::ApplySettings( inResourceData );
 	}
@@ -335,7 +275,7 @@ public:
 	int m_iTeamSelection,
 		m_iClassSelection;
 
-	const char *BGImage;
+	char BGImage[80];
 
 	void OnThink();
 	void UpdateClassLabelText( vgui::Label *pLabel, int iClass);
@@ -379,5 +319,7 @@ private:
 					commmenu2;
 public:
 };
+
+extern void PlaySound( const char *m_szSound );
 
 #endif // CLASSMENU_H

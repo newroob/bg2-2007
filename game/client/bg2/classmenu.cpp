@@ -36,6 +36,7 @@
 #include <imapoverview.h>
 #include <shareddefs.h>
 #include <igameresources.h>
+#include "engine/IEngineSound.h"
 
 #include "classmenu.h"
 #include "hl2mp_gamerules.h"
@@ -50,6 +51,7 @@
 extern IGameUIFuncs *gameuifuncs; // for key binding details
 
 ConVar cl_quickjoin( "cl_quickjoin", "0", FCVAR_ARCHIVE, "Automatically join the game after choosing a class, spawing with the default weapon kit.");
+ConVar cl_classmenu_sounds( "cl_classmenu_sounds", "1", FCVAR_ARCHIVE, "Enable sounds in the team/class/weapon selection menu.");
 
 #define CANCEL -2
 
@@ -169,6 +171,8 @@ void CClassButton::OnCursorEntered( void )
 	}
 
 	pThisMenu->ShowFile( pANSIPath );
+
+	PlaySound("Classmenu.Class");
 }
 
 void CClassButton::PerformCommand( void )
@@ -313,6 +317,8 @@ void CTeamButton::OnCursorEntered( void )
 	}
 	
 	pThisMenu->ShowFile( pANSIPath );
+
+	PlaySound("Classmenu.Team");
 }
 
 void CTeamButton::PerformCommand( void )
@@ -775,7 +781,6 @@ void CClassMenu::OnThink()
 	UpdateClassLabelText( m_pSkirmisherLabel, CLASS_SKIRMISHER );
 	UpdateClassLabelText( m_pLightInfantryLabel, CLASS_LIGHT_INFANTRY );
 
-	UpdateWeaponButtonImages();
 	UpdateAmmoButtons();
 }
 
@@ -826,64 +831,6 @@ void CClassMenu::UpdateAmmoButtons( void )
 			break;
 	}
 	//
-}
-
-void CClassMenu::UpdateWeaponButtonImages( void )
-{
-	//We decided to only display weapon selections for classes that have more than one setup.
-	switch ( m_iTeamSelection )
-	{
-		case TEAM_AMERICANS:
-			switch ( m_iClassSelection )
-			{
-				case CLASS_INFANTRY:
-					m_pWeaponButton1->SetImage( m_pWeaponButton1->m_bMouseOver || m_pWeaponButton1->IsSelected() ? m_pWeaponButton1->AInf1M : m_pWeaponButton1->AInf1 );
-					m_pWeaponButton2->SetImage( m_pWeaponButton2->m_bMouseOver || m_pWeaponButton2->IsSelected() ? m_pWeaponButton2->AInf2M : m_pWeaponButton2->AInf2 );
-					m_pWeaponButton3->SetImage( m_pWeaponButton3->m_bMouseOver || m_pWeaponButton3->IsSelected() ? m_pWeaponButton3->AInf3M : m_pWeaponButton3->AInf3 );
-					break;
-				case CLASS_SKIRMISHER: 
-					m_pWeaponButton1->SetImage( m_pWeaponButton1->m_bMouseOver || m_pWeaponButton1->IsSelected() ? m_pWeaponButton1->ASki1M : m_pWeaponButton1->ASki1 );
-					m_pWeaponButton2->SetImage( m_pWeaponButton2->m_bMouseOver || m_pWeaponButton2->IsSelected() ? m_pWeaponButton2->ASki2M : m_pWeaponButton2->ASki2 );
-					m_pWeaponButton3->SetVisible( false );
-					break;
-				default:
-					m_pWeaponButton1->SetVisible( false );
-					m_pWeaponButton2->SetVisible( false );
-					m_pWeaponButton3->SetVisible( false );
-					//Warning("There was an error determining which American class you chose to play as. \n");
-					break;
-			}
-			break;
-		case TEAM_BRITISH:
-			switch ( m_iClassSelection )
-			{
-				case CLASS_INFANTRY:
-					m_pWeaponButton1->SetImage( m_pWeaponButton1->m_bMouseOver || m_pWeaponButton1->IsSelected() ? m_pWeaponButton1->BInf1M : m_pWeaponButton1->BInf1 );
-					m_pWeaponButton2->SetImage( m_pWeaponButton2->m_bMouseOver || m_pWeaponButton2->IsSelected() ? m_pWeaponButton2->BInf2M : m_pWeaponButton2->BInf2 );
-					m_pWeaponButton3->SetVisible( false );
-					break;
-				case CLASS_SKIRMISHER:
-					m_pWeaponButton1->SetImage( m_pWeaponButton1->m_bMouseOver || m_pWeaponButton1->IsSelected() ? m_pWeaponButton1->BSki1M : m_pWeaponButton1->BSki1 );
-					m_pWeaponButton2->SetImage( m_pWeaponButton2->m_bMouseOver || m_pWeaponButton2->IsSelected() ? m_pWeaponButton2->BSki2M : m_pWeaponButton2->BSki2 );
-					m_pWeaponButton3->SetVisible( false );
-					break;
-				case CLASS_LIGHT_INFANTRY:
-					m_pWeaponButton1->SetImage( m_pWeaponButton1->m_bMouseOver || m_pWeaponButton1->IsSelected() ? m_pWeaponButton1->BLight1M : m_pWeaponButton1->BLight1 );
-					m_pWeaponButton2->SetVisible( false );
-					m_pWeaponButton3->SetVisible( false );
-					break;
-				default:
-					m_pWeaponButton1->SetVisible( false );
-					m_pWeaponButton2->SetVisible( false );
-					m_pWeaponButton3->SetVisible( false );
-					//Warning("There was an error determining which British class you chose to play as. \n");
-					break;
-			}
-			break;
-		default:
-			//Msg("There was an error determining which class you chose in the menu. \n");
-			break;
-	}
 }
 
 void CClassMenu::SetData(KeyValues *data)
@@ -1016,6 +963,12 @@ void CAmmoButton::ApplySchemeSettings( vgui::IScheme *pScheme )
 	SetPaintBorderEnabled(false); //No borders.
 }
 
+void CAmmoButton::OnCursorEntered( void )
+{
+	m_bMouseOver = true;
+	PlaySound("Classmenu.Ammo");
+}
+
 void CAmmoButton::OnMousePressed(MouseCode code)
 {
 	CClassMenu *pThisMenu = (CClassMenu*)GetParent();
@@ -1038,7 +991,6 @@ void CAmmoButton::Paint ( void )
 
 	int wide, tall;
 	vgui::IImage *m_pImage = NULL;
-
 	GetSize( wide, tall );
 
 	if ( m_bRestricted )
@@ -1060,6 +1012,12 @@ void CAmmoButton::Paint ( void )
 		m_pImage->Paint();
 	}
 
+}
+
+void CWeaponButton::OnCursorEntered( void )
+{
+	m_bMouseOver = true; 
+	PlaySound("Classmenu.Weapon");
 }
 
 void CWeaponButton::ApplySchemeSettings( vgui::IScheme *pScheme )
@@ -1085,10 +1043,20 @@ void CWeaponButton::OnMousePressed(MouseCode code)
 	SetSelected( true );
 }
 
-void CWeaponButton::Paint ( void )
+void CWeaponButton::GetWeaponImages( CWeaponButton *pButton, char *m_szActiveImage, char *m_szInactiveImage )
 {
+	if ( !pButton )
+		return;
+
 	int wide, tall;
-	GetSize( wide, tall );
+	vgui::IImage *m_pImage = NULL;
+
+	pButton->GetSize( wide, tall );
+
+	if ( pButton->m_bMouseOver || pButton->IsSelected() )
+		m_pImage = scheme()->GetImage( m_szActiveImage, false );
+	else 
+		m_pImage = scheme()->GetImage( m_szInactiveImage, false );
 
 	if ( m_pImage )
 	{
@@ -1097,9 +1065,73 @@ void CWeaponButton::Paint ( void )
 	}
 }
 
-void CWeaponButton::SetImage( const char *ImageName )
+void CWeaponButton::Paint ( void )
 {
-	m_pImage = scheme()->GetImage( ImageName, false );
+	CClassMenu *pThisMenu = (CClassMenu*)GetParent();
+
+	if ( !pThisMenu )
+		return;
+
+	CWeaponButton *pButton1 = pThisMenu->m_pWeaponButton1,
+				  *pButton2 = pThisMenu->m_pWeaponButton2,
+				  *pButton3 = pThisMenu->m_pWeaponButton3;
+
+	if ( !pButton1 || !pButton2 || !pButton3 )
+		return;
+
+	switch ( pThisMenu->m_iTeamSelection )
+	{
+		case TEAM_AMERICANS:
+			switch ( pThisMenu->m_iClassSelection )
+			{
+				case CLASS_INFANTRY:
+					GetWeaponImages( pButton1, AInf1M, AInf1 );
+					GetWeaponImages( pButton2, AInf2M, AInf2 );
+					GetWeaponImages( pButton3, AInf3M, AInf3 );
+					break;
+				case CLASS_SKIRMISHER: 
+					GetWeaponImages( pButton1, ASki1M, ASki1 );
+					GetWeaponImages( pButton2, ASki2M, ASki2 );
+					pButton3->SetVisible( false );
+					break;
+				default:
+					pButton1->SetVisible( false );
+					pButton2->SetVisible( false );
+					pButton3->SetVisible( false );
+					//Warning("There was an error determining which American class you chose to play as. \n");
+					break;
+			}
+			break;
+		case TEAM_BRITISH:
+			switch ( pThisMenu->m_iClassSelection )
+			{
+				case CLASS_INFANTRY:
+					GetWeaponImages( pButton1, BInf1M, BInf1 );
+					GetWeaponImages( pButton2, BInf2M, BInf2 );
+					pButton3->SetVisible( false );
+					break;
+				case CLASS_SKIRMISHER:
+					GetWeaponImages( pButton1, BSki1M, BSki1 );
+					GetWeaponImages( pButton2, BSki2M, BSki2 );
+					pButton3->SetVisible( false );
+					break;
+				case CLASS_LIGHT_INFANTRY:
+					GetWeaponImages( pButton1, BLight1M, BLight1 );
+					pButton2->SetVisible( false );
+					pButton3->SetVisible( false );
+					break;
+				default:
+					pButton1->SetVisible( false );
+					pButton2->SetVisible( false );
+					pButton3->SetVisible( false );
+					//Warning("There was an error determining which British class you chose to play as. \n");
+					break;
+			}
+			break;
+		default:
+			//Msg("There was an error determining which class you chose in the menu. \n");
+			break;
+	}
 }
 
 //The button that gathers the weapons and ammo kit settings and sends the server command.
@@ -1154,4 +1186,20 @@ void COkayButton::PerformCommand( void )
 	char sClass[64];
 	Q_snprintf( sClass, sizeof( sClass ), "class %i %i \n", pThisMenu->m_iTeamSelection, pThisMenu->m_iClassSelection );
 	engine->ServerCmd( sClass ); //Send the class AFTER we've selected a gun, otherwise you won't spawn with the right kit.
+}
+
+void PlaySound( const char *m_szSound )
+{
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+	if ( !pPlayer )
+		return;
+
+	if ( !cl_classmenu_sounds.GetBool() )
+		return;
+
+	//This wonderful hack prevents the sounds from overlapping if you move to a new button before the old sound ends
+	pPlayer->StopSound( m_szSound ); 
+
+	CLocalPlayerFilter filter;
+	C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, m_szSound );
 }
