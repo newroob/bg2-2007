@@ -232,22 +232,6 @@ void CFlag::Spawn( void )
 
 	BaseClass::Spawn( );
 
-	/*// BG2 - This is all for finding the animation for the flag model. -HairyPotter
-	int nSequence = LookupSequence( "flag_idle1" );
-	if ( nSequence > ACTIVITY_NOT_AVAILABLE )
-	{
-		SetSequence(nSequence);
-		SetCycle( 0 );
-		ResetSequence( nSequence );
-		ResetClientsideFrame();
-	}
-	else
-	{
-		Msg( "Flag sequence is busted...\n");
-		SetSequence( 0 );
-	}
-	//*/
-
 	SetThink( &CFlag::Think );
 	SetNextThink( gpGlobals->curtime );
 }
@@ -274,7 +258,6 @@ void CFlag::Think( void )
 	- any enemy walking into a capture zone without a friendly player inside guarding the flag, will uncap the flag
 
 	*/
-
 
 	extern ConVar mp_respawnstyle;
 	if ( !m_bActive || mp_respawnstyle.GetInt() == 2 )
@@ -771,7 +754,20 @@ void CFlag::ResetFlag( void )
 		case 2:
 			ChangeTeam( TEAM_BRITISH );
 			break;
+		default:
+			ChangeTeam( TEAM_UNASSIGNED );
+			break;
 	}
+
+	m_iLastTeam = TEAM_UNASSIGNED;
+	m_iRequestingCappers = TEAM_UNASSIGNED;
+	m_vOverloadingPlayers.RemoveAll();
+	m_iNearbyPlayers = 0;
+
+	if ( HasSpawnFlags( CFlag_START_DISABLED ) )
+		m_bActive = false;
+	else
+		m_bActive = true;
 }
 
 void CFlag::ChangeTeam( int iTeamNum )

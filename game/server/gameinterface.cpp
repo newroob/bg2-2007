@@ -904,7 +904,7 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 
 		// Clear out entity references, and parse the entities into it.
 		//g_MapEntityRefs.Purge(); 
-		//BG2 - Spawn point optimization test. - HairyPotter 
+		//BG2 - Spawn point optimization test. - HairyPotter
 		m_AmericanSpawns.Purge();
 		m_BritishSpawns.Purge();
 		m_MultiSpawns.Purge();
@@ -941,10 +941,10 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	//BG2 - Tjoppen - exec <mapname>.cfg
 	//first reset relevant cvars to their default values
 #define LIMIT_REVERT( size )\
-	extern ConVar mp_limit_inf_a_##size, mp_limit_off_a_##size, mp_limit_rif_a_##size,\
-					mp_limit_inf_b_##size, mp_limit_off_b_##size, mp_limit_rif_b_##size;\
-	mp_limit_inf_a_##size.Revert(); mp_limit_off_a_##size.Revert(); mp_limit_rif_a_##size.Revert();\
-	mp_limit_inf_b_##size.Revert(); mp_limit_off_b_##size.Revert(); mp_limit_rif_b_##size.Revert();
+	extern ConVar mp_limit_inf_a_##size, mp_limit_off_a_##size, mp_limit_rif_a_##size, mp_limit_ski_a_##size,\
+					mp_limit_inf_b_##size, mp_limit_off_b_##size, mp_limit_rif_b_##size, mp_limit_ski_b_##size, mp_limit_linf_b_##size;\
+	mp_limit_inf_a_##size.Revert(); mp_limit_off_a_##size.Revert(); mp_limit_rif_a_##size.Revert(); mp_limit_ski_a_##size.Revert(); \
+	mp_limit_inf_b_##size.Revert(); mp_limit_off_b_##size.Revert(); mp_limit_rif_b_##size.Revert(); mp_limit_ski_b_##size.Revert(); mp_limit_linf_b_##size.Revert();	
 
 	//class limits..
 	LIMIT_REVERT( sml )

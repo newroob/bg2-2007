@@ -352,7 +352,8 @@ void CHL2MPRules::ResetMap()
 			//It's not in the "keep" list, so remove the ent.
 			UTIL_Remove (pEnt);
 			//Msg("Removed %s \n", pEnt->GetClassname());
-		}	
+		}
+
 		pEnt = gEntList.NextEnt (pEnt);
 	}
     // force the entities we've set to be removed to actually be removed
@@ -1703,57 +1704,17 @@ void CHL2MPRules::ResetFlags( void )
 
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{
-		CFlag *pFlag = dynamic_cast<CFlag*>(pEntity);
+		CFlag *pFlag = static_cast<CFlag*>(pEntity);
 		if( !pFlag )
 			continue;
 
-		//why? resetflags is only used after resetmap.. all triggerable entities should be reset
-		/*if( pFlag->GetTeamNumber() == TEAM_AMERICANS )
-		{
-			pFlag->m_OnAmericanLosePoint.FireOutput( pFlag, pFlag );
-			pFlag->m_OnLosePoint.FireOutput( pFlag, pFlag );
-		}
-		else if( pFlag->GetTeamNumber() == TEAM_BRITISH )
-		{
-			pFlag->m_OnBritishLosePoint.FireOutput( pFlag, pFlag );
-			pFlag->m_OnLosePoint.FireOutput( pFlag, pFlag );
-		}*/
-
-		pFlag->ChangeTeam( TEAM_UNASSIGNED );	//ChangeTeam handles everything..
-		pFlag->m_iLastTeam = TEAM_UNASSIGNED;
-		pFlag->m_iRequestingCappers = TEAM_UNASSIGNED;
-		pFlag->m_vOverloadingPlayers.RemoveAll();
-		pFlag->m_iNearbyPlayers = 0;
-
-		if (pFlag->HasSpawnFlags( CFlag_START_DISABLED ))
-		{
-			pFlag->m_bActive = false;
-			//pFlag->m_nSkin = 2;
-		}
-		else
-		{
-			pFlag->m_bActive = true;
-		}
-		//Also set the flag's starting team for each round. -HairyPotter
-		switch ( pFlag->m_iStartingTeam )
-		{
-			case 1:
-				pFlag->ChangeTeam( TEAM_AMERICANS );
-				break;
-			case 2:
-				pFlag->ChangeTeam( TEAM_BRITISH );
-				break;
-			default:
-				pFlag->ChangeTeam( TEAM_UNASSIGNED );
-				break;
-		}
-		//
+		pFlag->ResetFlag(); //It's just that easy.
 	}
 
 	//BG2 - Reset CTF Flags as well. -HairyPotter
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "ctf_flag" )) != NULL )
 	{
-		CtfFlag *pFlag = dynamic_cast<CtfFlag*>(pEntity);
+		CtfFlag *pFlag = static_cast<CtfFlag*>(pEntity);
 		if( !pFlag )
 			continue;
 
