@@ -53,6 +53,19 @@ extern IGameUIFuncs *gameuifuncs; // for key binding details
 ConVar cl_quickjoin( "cl_quickjoin", "0", FCVAR_ARCHIVE, "Automatically join the game after choosing a class, spawing with the default weapon kit.");
 ConVar cl_classmenu_sounds( "cl_classmenu_sounds", "1", FCVAR_ARCHIVE, "Enable sounds in the team/class/weapon selection menu.");
 
+#define CVAR_FLAGS	( FCVAR_ARCHIVE )
+
+#define LIMIT_DEFINES( iclass, name )\
+	ConVar cl_kit_a_##iclass( "cl_kit_a_"#iclass, "1 1", CVAR_FLAGS,\
+									"Default kit for American " name " class." );\
+	ConVar cl_kit_b_##iclass( "cl_kit_b_"#iclass, "1 1", CVAR_FLAGS,\
+									"Default kit for British " name " class." );
+
+LIMIT_DEFINES( inf, "infantry" )
+LIMIT_DEFINES( ski, "skirmisher" )
+
+ConVar cl_kit_b_light("cl_kit_b_light", "1 1", CVAR_FLAGS, "Default kit for British light infantry class." );
+
 #define CANCEL -2
 
 using namespace vgui;
@@ -81,8 +94,7 @@ void CClassButton::OnMousePressed(MouseCode code)
 
 	if ( m_iCommand == CANCEL )
 	{
-		pThisMenu->ToggleButtons( 1 );
-		pThisMenu->ShowPanel( false );
+		pThisMenu->SetScreen( 1, false );
 		return;
 	}
 
@@ -91,16 +103,12 @@ void CClassButton::OnMousePressed(MouseCode code)
 
 	cl_quickjoin.SetValue( pThisMenu->m_pQuickJoinCheckButton->IsSelected() ); //Set quickjoin var.
 
-	if ( pThisMenu->m_pQuickJoinCheckButton->IsSelected() || m_iCommand == CLASS_OFFICER || m_iCommand == CLASS_SNIPER ) //Just join game with the default kit.
+	if ( pThisMenu->m_pQuickJoinCheckButton->IsSelected() || !pThisMenu->SetScreen( 3, true, false ) ) //Just join game with the default kit.
 	{
 		GetParent()->SetVisible( false );
 		SetSelected( false );
 		PerformCommand();
 	}
-	else
-	{
-		pThisMenu->ToggleButtons( 3 ); //Go to weapon selection.
-	}	
 }
 
 void CClassButton::OnCursorEntered( void )
@@ -249,40 +257,34 @@ void CTeamButton::OnMousePressed(MouseCode code)
 
 	SetSelected( false );
 
-	if ( m_iCommand == CANCEL ) //Cancel Button
+	switch( m_iCommand )
 	{
-		pThisMenu->ToggleButtons( 1 );
-		pThisMenu->ShowPanel( false );
-		return;
-	}
+		case CANCEL:
+			pThisMenu->SetScreen( 1, false );
+			return;
 
-	if( m_iCommand == TEAM_UNASSIGNED ) //Spectate
-	{
-		//join spectators
-		engine->ServerCmd( "spectate", true );
-		pThisMenu->ToggleButtons(1);
-		pThisMenu->ShowPanel( false );
-		return;
-	}
+		case TEAM_UNASSIGNED:
+			engine->ServerCmd( "spectate", true );
+			pThisMenu->SetScreen( 1, false );
+			return;
 
-	if( m_iCommand == -1 )
-	{
-		//autoassign
-		int americans = g_Teams[TEAM_AMERICANS]->Get_Number_Players(),
-			british = g_Teams[TEAM_BRITISH]->Get_Number_Players();
+		case -1: //autoassign
+			int americans = g_Teams[TEAM_AMERICANS]->Get_Number_Players(),
+				british = g_Teams[TEAM_BRITISH]->Get_Number_Players();
 
-		//pick team with least players. or if equal, pick random
-		if( americans > british )
-			pThisMenu->m_iTeamSelection = TEAM_BRITISH;
-		else if( americans < british )
-			pThisMenu->m_iTeamSelection = TEAM_AMERICANS;
-		else
-			pThisMenu->m_iTeamSelection = random->RandomInt( TEAM_AMERICANS, TEAM_BRITISH );
+			//pick team with least players. or if equal, pick random
+			if( americans > british )
+				pThisMenu->m_iTeamSelection = TEAM_BRITISH;
+			else if( americans < british )
+				pThisMenu->m_iTeamSelection = TEAM_AMERICANS;
+			else
+				pThisMenu->m_iTeamSelection = random->RandomInt( TEAM_AMERICANS, TEAM_BRITISH );
+			break;
 	}
 
 	PerformCommand();
 
-	pThisMenu->ToggleButtons(2);
+	pThisMenu->SetScreen( 2, true, false ); //Don't check teams or class.
 }
 
 void CTeamButton::OnCursorEntered( void )
@@ -526,7 +528,7 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 
-	if ( !pPlayer )
+	if ( !pPlayer || !m_pViewPort )
 		return;
 
 	MouseCode code2 = MOUSE_LEFT;	//for faking mouse presses
@@ -605,8 +607,7 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	}*/
 	else if( code == m_iCancelKey )
 	{
-		ToggleButtons(1);
-		m_pViewPort->ShowPanel( this, false );
+		SetScreen( 1, false );
 	}
 	/*else if( code == m_iOkayKey )
 	{
@@ -615,63 +616,35 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	}*/
 	else if( code == teammenu )
 	{
-		if( m_pBritishButton->IsVisible() )
-		{
-			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
-			m_pViewPort->ShowPanel( PANEL_COMM, false );
-			m_pViewPort->ShowPanel( PANEL_COMM2, false );
-		}
-		else
-			ToggleButtons( 1 );
+		m_pViewPort->ShowPanel( PANEL_COMM, false );
+		m_pViewPort->ShowPanel( PANEL_COMM2, false );
+
+		SetScreen( 1, !IsInTeamMenu() );
 		
 		return;
 	}
 	else if( code == classmenu )
 	{
-		if( IsInClassMenu() )
-		{
-			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
-			m_pViewPort->ShowPanel( PANEL_COMM, false );
-			m_pViewPort->ShowPanel( PANEL_COMM2, false );
-		}
-		else if( !IsInClassMenu() && pPlayer->GetTeamNumber() <= TEAM_SPECTATOR )
-		{
-			internalCenterPrint->Print( "You can\'t select class before selecting team" );
-			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
-			m_pViewPort->ShowPanel( PANEL_COMM, false );
-			m_pViewPort->ShowPanel( PANEL_COMM2, false );
-		}
-		else
-			ToggleButtons( 2 );
+		
+		m_pViewPort->ShowPanel( PANEL_COMM, false );
+		m_pViewPort->ShowPanel( PANEL_COMM2, false );
+		
+		SetScreen( 2, !IsInClassMenu() );
 		
 		return;
 	}
 	else if( code == weaponmenu )
 	{
-		if( IsInClassMenu() )
-		{
-			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
-			m_pViewPort->ShowPanel( PANEL_COMM, false );
-			m_pViewPort->ShowPanel( PANEL_COMM2, false );
-		}
-		else if( !IsInClassMenu() && pPlayer->GetTeamNumber() <= TEAM_SPECTATOR )
-		{
-			internalCenterPrint->Print( "You can\'t select a weapon before choosing a team and class." );
-			m_pViewPort->ShowPanel( PANEL_CLASSES, false );
-			m_pViewPort->ShowPanel( PANEL_COMM, false );
-			m_pViewPort->ShowPanel( PANEL_COMM2, false );
-		}
-		else
-			ToggleButtons( 3 );
+		m_pViewPort->ShowPanel( PANEL_COMM, false );
+		m_pViewPort->ShowPanel( PANEL_COMM2, false );
 		
+		SetScreen( 3, !IsInWeaponMenu() );
+
 		return;
 	}
 	else if( code == commmenu )
 	{
-		if ( !pPlayer->IsAlive() ) //Make sure the player is on a team and alive to use voicecomms. -HairyPotter
-			return;
-
-		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+		ShowPanel( false ); //This panel.
 		m_pViewPort->ShowPanel( PANEL_COMM, true );
 		m_pViewPort->ShowPanel( PANEL_COMM2, false );
 		
@@ -679,10 +652,7 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 	}
 	else if( code == commmenu2 )
 	{
-		if ( !pPlayer->IsAlive() ) //Make sure the player is on a team and alive to use voicecomms. -HairyPotter
-			return;
-
-		m_pViewPort->ShowPanel( PANEL_CLASSES, false );
+		ShowPanel( false ); //This panel.
 		m_pViewPort->ShowPanel( PANEL_COMM, false );
 		m_pViewPort->ShowPanel( PANEL_COMM2, true );
 		
@@ -694,27 +664,31 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 
 void CClassMenu::ShowPanel(bool bShow)
 {
+	if ( engine->IsPlayingDemo() ) //Don't show up in demos -HairyPotter
+		return;
+
 	if ( BaseClass::IsVisible() == bShow )
 		return;
 
 	//clear html screen
 	char pANSIPath[512];
-	ResolveLocalizedPath( "#BG2_InfoHTML_Blank_Path", pANSIPath, sizeof pANSIPath );
-	ShowFile( pANSIPath );
 
 	if ( bShow )
 	{
 		Activate();
-		SetMouseInputEnabled( true );
-		SetKeyBoardInputEnabled( true );
+		
+		ResolveLocalizedPath( "#BG2_InfoHTML_Blank_Path", pANSIPath, sizeof pANSIPath );
+
+		ShowFile( pANSIPath );
+
+		//BG2 - Tjoppen - show autoassign button if we're not in the class part and we're unassigned or spectator
+		m_pAutoassignButton->SetVisible( IsInWeaponMenu() ? false : IsInClassMenu() ? false : C_BasePlayer::GetLocalPlayer() ? C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR : false );
 	}
 	else
-	{
 		SetVisible( false );
-		SetMouseInputEnabled( false );
-		SetKeyBoardInputEnabled( false );
-	}
 
+	SetMouseInputEnabled( bShow );
+	SetKeyBoardInputEnabled( bShow );
 	m_pCancelButton->SetVisible( bShow );
 }
 
@@ -751,25 +725,23 @@ void CClassMenu::OnThink()
 {
 	if ( !engine->IsInGame() ) //This prevents a crash when disconnecting from a game with the classmenu open, then rejoining. - HairyPotter
 	{
-		ToggleButtons( 1 ); //Reset the menu.
+		SetScreen( 1, false );
 		return;
 	}
 
 	BaseClass::OnThink();
-	//BG2 - Tjoppen - show autoassign button if we're not in the class part and we're unassigned or spectator
-	m_pAutoassignButton->SetVisible( IsInClassMenu() ? false : C_BasePlayer::GetLocalPlayer() ? C_BasePlayer::GetLocalPlayer()->GetTeamNumber() <= TEAM_SPECTATOR : false );
 
 	//show number of players in teams..
-	char tmp[256];
+	wchar_t tmp[32];
 	if( g_Teams[TEAM_BRITISH] )		//check just in case..
 	{
-		sprintf( tmp, "British : (%i)", /*g_pVGuiLocalize->Find( "#BG2_Spec_British_Score" ),*/ g_Teams[TEAM_BRITISH]->Get_Number_Players() );
+		_snwprintf(tmp, sizeof( tmp ), L"%s (%i)", g_pVGuiLocalize->Find( "#BG2_Spec_British_Score" ), g_Teams[TEAM_BRITISH]->Get_Number_Players() );
 		m_pBritishLabel->SetText( tmp );
 	}
 
 	if( g_Teams[TEAM_AMERICANS] )	//check just in case..
 	{
-		sprintf( tmp, "Americans : (%i)", /*g_pVGuiLocalize->Find( "#BG2_Spec_American_Score" ),*/ g_Teams[TEAM_AMERICANS]->Get_Number_Players() );
+		_snwprintf(tmp, sizeof( tmp ), L"%s (%i)", g_pVGuiLocalize->Find( "#BG2_Spec_American_Score" ), g_Teams[TEAM_AMERICANS]->Get_Number_Players() );
 		m_pAmericanLabel->SetText( tmp );
 	}
 
@@ -789,7 +761,7 @@ void CClassMenu::UpdateClassLabelText( vgui::Label *pLabel, int iClass )
 	//Rehashed to change the text for the labels above each class button.
 	//BG2 - Tjoppen - this function figures out what to print on the specified button's text field
 	//					based on class limits and such
-	char temp[512];
+	char temp[32];
 	int limit = HL2MPRules()->GetLimitTeamClass(m_iTeamSelection, iClass);
 
 	if( m_iTeamSelection != TEAM_AMERICANS && m_iTeamSelection != TEAM_BRITISH )
@@ -833,13 +805,66 @@ void CClassMenu::UpdateAmmoButtons( void )
 	//
 }
 
-void CClassMenu::SetData(KeyValues *data)
+void CClassMenu::SetDefaultWeaponKit( int m_iTeam, int m_iClass )
 {
-	//HACKHACK
-	if( (int)data == 1 )
-		ToggleButtons(2);
-	else if( (int)data == 0 )
-		ToggleButtons(1);
+	CUtlVector< int * > args;
+	sscanf( cl_kit_a_inf.GetString(), "%i %i", &(args[0]), &(args[1]) );
+	Msg("%i, %i \n", args[0], args[1]) ;
+}
+
+bool CClassMenu::SetScreen( int m_iScreen, bool m_bVisible, bool m_bUpdate )
+{
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+
+	if ( !pPlayer || !pHL2Player )
+		return false;
+
+	wchar_t msg[128];
+
+	int iTeam = pPlayer->GetTeamNumber(),
+		iClass = pHL2Player->GetClass();
+
+	if ( m_bVisible ) //No sense updating information we won't be able to see anyway.
+	{
+		switch( m_iScreen )
+		{
+			case 2:
+				if ( m_bUpdate )
+				{
+					if ( iTeam <= TEAM_SPECTATOR )
+					{
+						_snwprintf(msg, sizeof( msg ), L"%s", g_pVGuiLocalize->Find( "#BG2_Deny_Class_Selection" ) );
+						internalCenterPrint->Print( msg );
+						return false;
+					}
+
+					m_iTeamSelection = iTeam;
+				}
+				break;
+			case 3:
+				if ( m_bUpdate )
+				{
+					if( iTeam <= TEAM_SPECTATOR || iClass == -1 )
+					{
+						_snwprintf(msg, sizeof( msg ), L"%s", g_pVGuiLocalize->Find( "#BG2_Deny_Weapon_Selection" ) );
+						internalCenterPrint->Print( msg );
+						return false;	
+					}
+
+					m_iTeamSelection = iTeam;
+					m_iClassSelection = iClass;
+				}
+
+				if ( m_iClassSelection == CLASS_OFFICER || m_iClassSelection == CLASS_SNIPER )
+						return false;
+				break;
+		}
+	}
+
+	ShowPanel( m_bVisible );
+	ToggleButtons( m_iScreen );
+	return true;
 }
 
 void CClassMenu::ToggleButtons(int iShowScreen)
@@ -1160,8 +1185,7 @@ void COkayButton::PerformCommand( void )
 	int m_iGunType = 1,
 		m_iAmmoType = AMMO_KIT_BALL;
 
-	pThisMenu->ToggleButtons( 1 ); 
-	GetParent()->SetVisible( false );
+	pThisMenu->SetScreen( 1, false ); //Reset to first screen and make invisible.
 
 	if ( pThisMenu->m_pWeaponButton1->IsSelected() )
 		m_iGunType = 1;

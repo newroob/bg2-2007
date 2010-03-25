@@ -562,14 +562,12 @@ void TeamMenu( void )
 {
 	if( gViewPortInterface )
 	{
-		CClassMenu *panel = dynamic_cast<CClassMenu*>( gViewPortInterface->FindPanelByName( PANEL_CLASSES ) );
+		CClassMenu *panel = static_cast<CClassMenu*>( gViewPortInterface->FindPanelByName( PANEL_CLASSES ) );
 
-		if( panel )
-		{
-			//toggle
-			panel->ShowPanel( !panel->IsVisible() );
-			panel->ToggleButtons( 1 );
-		}
+		if( !panel )
+			return;
+		
+		panel->SetScreen( 1, !panel->IsInTeamMenu() );
 
 		gViewPortInterface->ShowPanel( PANEL_COMM, false );
 		gViewPortInterface->ShowPanel( PANEL_COMM2, false );
@@ -580,34 +578,12 @@ void ClassMenu( void )
 {
 	if( gViewPortInterface )
 	{
-		CClassMenu *panel = dynamic_cast<CClassMenu*>( gViewPortInterface->FindPanelByName( PANEL_CLASSES ) );
-		C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+		CClassMenu *panel = static_cast<CClassMenu*>( gViewPortInterface->FindPanelByName( PANEL_CLASSES ) );
 
-		if( !pPlayer )
+		if( !panel )
 			return;
 
-		if( pPlayer->GetTeamNumber() <= TEAM_SPECTATOR && !panel->IsInClassMenu() )
-		{
-			internalCenterPrint->Print( "You can\'t select class before selecting team" );
-			return;		//spectators/unassigned don't select class
-		}
-
-		if( panel )
-		{
-			//toggle
-			if( panel->IsInClassMenu() )
-			{
-				//hide!
-				panel->ShowPanel( false );
-			}
-			else
-			{
-				//make sure we're visible and change buttons
-				panel->ShowPanel( true );
-				//panel->m_iTeamSelection = pPlayer->GetTeamNumber();
-				panel->ToggleButtons( 2 );
-			}
-		}
+		panel->SetScreen( 2, !panel->IsInClassMenu() );
 
 		gViewPortInterface->ShowPanel( PANEL_COMM, false );
 		gViewPortInterface->ShowPanel( PANEL_COMM2, false );
@@ -617,34 +593,12 @@ void WeaponMenu( void )
 {
 	if( gViewPortInterface )
 	{
-		CClassMenu *panel = dynamic_cast<CClassMenu*>( gViewPortInterface->FindPanelByName( PANEL_CLASSES ) );
-		C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+		CClassMenu *panel = static_cast<CClassMenu*>( gViewPortInterface->FindPanelByName( PANEL_CLASSES ) );
 
-		if( !pPlayer )
+		if( !panel )
 			return;
 
-		if( pPlayer->GetTeamNumber() <= TEAM_SPECTATOR && !panel->IsInClassMenu() )
-		{
-			internalCenterPrint->Print( "You can\'t select a weapon before selecting team and class." );
-			return;		//spectators/unassigned don't select class
-		}
-
-		if( panel )
-		{
-			//toggle
-			if( panel->IsInClassMenu() )
-			{
-				//hide!
-				panel->ShowPanel( false );
-			}
-			else
-			{
-				//make sure we're visible and change buttons
-				panel->ShowPanel( true );
-				//panel->m_iTeamSelection = pPlayer->GetTeamNumber();
-				panel->ToggleButtons( 3 );
-			}
-		}
+		panel->SetScreen( 3, !panel->IsInWeaponMenu() );
 
 		gViewPortInterface->ShowPanel( PANEL_COMM, false );
 		gViewPortInterface->ShowPanel( PANEL_COMM2, false );
@@ -653,17 +607,8 @@ void WeaponMenu( void )
 
 void CommMenu( void )
 {
-	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
-
-	if( !pPlayer )
-		return;
-
 	if( gViewPortInterface )
 	{
-		if ( pPlayer->GetTeamNumber() <= TEAM_SPECTATOR || 
-			!pPlayer->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
-			return;
-
 		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_COMM );
 		if( panel )
 		{
@@ -678,19 +623,10 @@ void CommMenu( void )
 
 void CommMenu2( void )
 {
-	bool EnforceOfficerForCommenu2( void );
-
-	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
-
-	if ( !pPlayer )
-		return;
+	//bool EnforceOfficerForCommenu2( void );
 
 	if( gViewPortInterface /*&& EnforceOfficerForCommenu2()*/ )
 	{
-		if ( pPlayer->GetTeamNumber() <= TEAM_SPECTATOR || 
-			!pPlayer->IsAlive() ) //Make sure the player is alive to use voicecomms. -HairyPotter
-			return;
-
 		IViewPortPanel *panel = gViewPortInterface->FindPanelByName( PANEL_COMM2 );
 		if( panel )
 		{

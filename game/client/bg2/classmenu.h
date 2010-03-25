@@ -217,7 +217,9 @@ public:
 	~CClassMenu();
 
 	virtual const char *GetName( void ) { return PANEL_CLASSES; }
-	virtual void SetData(KeyValues *data);
+	virtual void SetData(KeyValues *data){}
+	bool SetScreen( int m_iScreen, bool m_bVisible, bool m_bUpdate = true );
+	void SetDefaultWeaponKit( int m_iTeam, int m_iClass );
 	virtual void Reset( void ) { }//m_pPlayerList->DeleteAllItems(); }
 	virtual void Update( void );
 	virtual bool NeedsUpdate( void ) { return false; }
@@ -284,8 +286,9 @@ public:
 	void ToggleButtons(int iShowScreen);
 
 	//being in classmenu mode means we must be visible aswell
-	//Kind of a hack here with the weapon kit selection. I mean.. there's always going to be at least 1 ammo selection.. so yeah..
-	bool IsInClassMenu( void ) { return m_pInfantryButton->IsVisible() && IsVisible() || m_pAmmoButton1->IsVisible(); }
+	bool IsInClassMenu( void ) { return m_pInfantryButton->IsVisible() && IsVisible(); }
+	bool IsInTeamMenu( void ) { return m_pBritishButton->IsVisible() && IsVisible(); }
+	bool IsInWeaponMenu( void ) { return m_pAmmoButton1->IsVisible() && IsVisible(); }
 
 	void ShowFile( const char *filename );
 
