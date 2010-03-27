@@ -4039,7 +4039,7 @@ void CGameMovement::FinishDuck( void )
 	//BG2 - Draco - decrease stamina for ducking
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
 	
-	pHL2Player->DrainStamina( 15 );
+	pHL2Player->DrainStamina( 30 );
 #endif
 
 	player->AddFlag( FL_DUCKING );

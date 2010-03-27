@@ -1984,7 +1984,20 @@ int CHL2MP_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	//BG2 - Tjoppen - take damage => lose some stamina
 	//have bullets drain a lot more stamina than melee damage
 	//this makes firearms more useful, and avoids melee turning too slow due to stamina loss
-	float scale = inputInfo.GetDamageType() & DMG_BULLET ? 1.0 : 0.3;
+	//have leg damage drain the most stamina. works as a consolation prize and also makes more sense
+	float scale;
+	
+	if( inputInfo.GetDamageType() & DMG_BULLET )
+	{
+		//legs = full drain, all other hit groups = 60%
+		if( LastHitGroup() == HITGROUP_LEFTLEG || LastHitGroup() == HITGROUP_RIGHTLEG )
+			scale = 1.0;
+		else
+			scale = 0.6;
+	}
+	else
+		scale = 0.3;
+	
 	DrainStamina( inputInfo.GetDamage() * scale );
 	//
 
