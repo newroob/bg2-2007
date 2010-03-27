@@ -201,11 +201,11 @@ void CHL2MP_Player::UpdateOnRemove( void )
 void CC_ToggleIronSights( void )
 {
 	CBasePlayer* pPlayer = UTIL_GetCommandClient();
-	if ( pPlayer == NULL )
+	if ( !pPlayer  )
 		return;
  
 	CBaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
-	if( pWeapon == NULL )
+	if( !pWeapon )
 		return;
 
 	if ( !pWeapon->m_bWeaponHasSights ) //Don't use iron sights on certain weapons... like a sword. -HairyPotter
@@ -735,7 +735,9 @@ void CHL2MP_Player::HandleSpeedChanges( void )
 			scale *= 0.3f;
 
 		if( GetActiveWeapon()->m_bInReload )
+		{
 			scale *= 0.5f;
+		}
 	}
 
 	if( m_nButtons & IN_WALK )
@@ -927,6 +929,7 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 
 	speed = GetAbsVelocity().Length2D();
 
+	CBaseCombatWeapon *pWeapon = GetActiveWeapon();
 	
 	// bool bRunning = true;
 
@@ -1012,6 +1015,9 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 		*/
 		else
 		{
+			if ( !pWeapon )
+				return;
+
 			if ( GetFlags() & FL_DUCKING )
 			{
 				if ( speed > 0 )
@@ -1027,24 +1033,17 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 			{
 				if ( speed > 0 )
 				{
-					/*
-					if ( bRunning == false )
-					{
-						idealActivity = ACT_WALK;
-					}
-					else
-					*/
-					if ( GetActiveWeapon() && GetActiveWeapon()->m_bIsIronsighted ) //BG2 - This may need to be changed.. -HairyPotter
+					if ( pWeapon->m_bIsIronsighted || pWeapon->m_bInReload ) //BG2 - This may need to be changed.. -HairyPotter
 						idealActivity = ACT_WALK_AIM_AR2;
+
 					else
-					{
 						idealActivity = ACT_HL2MP_RUN;
-					}
 				}
 				else
 				{
-					if ( GetActiveWeapon() && GetActiveWeapon()->m_bIsIronsighted ) //BG2 - This may need to be changed.. -HairyPotter
+					if ( pWeapon->m_bIsIronsighted ) //BG2 - This may need to be changed.. -HairyPotter
 						idealActivity = ACT_IDLE_ANGRY_AR2;
+
 					else
 						idealActivity = ACT_HL2MP_IDLE;
 				}
@@ -1052,8 +1051,8 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 		}
 
 		//BG2 - Tjoppen - idle weapons.. but not until smoke and stuff have come out
-		if( GetActiveWeapon() && GetActiveWeapon()->m_flNextPrimaryAttack < gpGlobals->curtime &&
-			GetActiveWeapon()->m_flNextSecondaryAttack < gpGlobals->curtime )
+		if( pWeapon && pWeapon->m_flNextPrimaryAttack < gpGlobals->curtime &&
+			pWeapon->m_flNextSecondaryAttack < gpGlobals->curtime )
 			Weapon_SetActivity( Weapon_TranslateActivity( ACT_HL2MP_IDLE ), 0 );
 		//
 
@@ -2081,10 +2080,9 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 	switch ( GetTeamNumber() )
 	{
 		case TEAM_AMERICANS:
-			//while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_american" )) != NULL )
 			for ( int x = 0; x < m_AmericanSpawns.Count(); x++ ) 
 			{
-				CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>( m_AmericanSpawns[x] );
+				CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>(  m_AmericanSpawns[x] );
 				if ( pSpawn && !pSpawn->m_bReserved && pSpawn->IsEnabled() )
 				{
 					CBaseEntity *ent = NULL;
@@ -2141,6 +2139,7 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 	}
 	//
 
+	//while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_multispawn" )) != NULL )
 	for ( int x = 0; x < m_MultiSpawns.Count(); x++ ) 
 	{
 		CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>( m_MultiSpawns[x] );
