@@ -163,7 +163,7 @@ ConVar	sk_player_leg( "sk_player_leg","1" );
 //BG2 - Tjoppen - hitgroup modifiers. these are taken from BG 1.0F
 const double HIT_HEAD_DMG = 3.4;
 const double HIT_CHEST_DMG = 1.85;
-const double HIT_STOMACH_DMG = 1.75;
+const double HIT_STOMACH_DMG = 1.825;
 const double HIT_ARM_DMG = 1.25;
 const double HIT_LEG_DMG = 1.35;
 //
