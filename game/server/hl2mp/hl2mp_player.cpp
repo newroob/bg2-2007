@@ -1034,7 +1034,7 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 				if ( speed > 0 )
 				{
 					if ( pWeapon->m_bIsIronsighted || pWeapon->m_bInReload ) //BG2 - This may need to be changed.. -HairyPotter
-						idealActivity = ACT_WALK_AIM_AR2;
+						idealActivity = ACT_BG2_IRONSIGHTS_WALK;
 
 					else
 						idealActivity = ACT_HL2MP_RUN;
@@ -1042,7 +1042,7 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 				else
 				{
 					if ( pWeapon->m_bIsIronsighted ) //BG2 - This may need to be changed.. -HairyPotter
-						idealActivity = ACT_IDLE_ANGRY_AR2;
+						idealActivity = ACT_BG2_IRONSIGHTS_AIM;
 
 					else
 						idealActivity = ACT_HL2MP_IDLE;

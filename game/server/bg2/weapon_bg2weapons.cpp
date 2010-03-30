@@ -890,15 +890,15 @@ DECLARE_BG2_WEAPON( longpattern )
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
-	m_Attackinfos[0].m_flCrouchMoving		= 12.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 3.6f; //2.4
-	m_Attackinfos[0].m_flStandMoving		= 13.2f; //12.0f
-	m_Attackinfos[0].m_flStandStill			= 3.6f; //2.4
+	m_Attackinfos[0].m_flCrouchMoving		= 11.0f;
+	m_Attackinfos[0].m_flCrouchStill		= 3.5f; //2.4
+	m_Attackinfos[0].m_flStandMoving		= 12.2f; //12.0f
+	m_Attackinfos[0].m_flStandStill			= 3.5f; //2.4
 	//Iron Sights. These values will probably be changed.
-	m_Attackinfos[0].m_flStandAimStill		= 2.4f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 3.0f;
-	m_Attackinfos[0].m_flCrouchAimStill		= 2.4f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	m_Attackinfos[0].m_flStandAimStill		= 2.3f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 2.9f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.3f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 2.9f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
