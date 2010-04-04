@@ -964,7 +964,12 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 	}
 	else if ( playerAnim == PLAYER_ATTACK1 )
 	{
-		if ( GetActivity( ) == ACT_HOVER	|| 
+		if ( pWeapon->m_bIsIronsighted )
+		{
+			//play "shoot while aiming" animation instead
+			idealActivity = ACT_BG2_IRONSIGHTS_RECOIL;
+		}
+		else if ( GetActivity( ) == ACT_HOVER	|| 
 			 GetActivity( ) == ACT_SWIM		||
 			 GetActivity( ) == ACT_HOP		||
 			 GetActivity( ) == ACT_LEAP		||
