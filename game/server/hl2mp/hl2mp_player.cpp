@@ -1064,7 +1064,7 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 		idealActivity = TranslateTeamActivity( idealActivity );
 	}
 	
-	if ( idealActivity == ACT_HL2MP_GESTURE_RANGE_ATTACK )
+	if ( idealActivity == ACT_HL2MP_GESTURE_RANGE_ATTACK || idealActivity == ACT_BG2_IRONSIGHTS_RECOIL )
 	{
 		RestartGesture( Weapon_TranslateActivity( idealActivity ) );
 
