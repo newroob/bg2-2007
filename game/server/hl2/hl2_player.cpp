@@ -469,6 +469,10 @@ void CHL2_Player::RemoveSuit( void )
 
 void CHL2_Player::DrainStamina( int iAmount )
 {
+	//limit drain to be no more than 50 at once
+	if( iAmount > 50 )
+		iAmount = 50;
+
 	m_iStamina -= iAmount;
 
 	//clamp
