@@ -354,9 +354,9 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_Attackinfos[0].m_flStandMoving		= 12.0f; //8.0f
 	m_Attackinfos[0].m_flStandStill			= 3.0f; //1.75
 	//Iron Sights. These values will probably be changed.
-	m_Attackinfos[0].m_flStandAimStill		= 1.75f;	
+	m_Attackinfos[0].m_flStandAimStill		= 1.65f;	
 	m_Attackinfos[0].m_flStandAimMoving		= 3.8f;
-	m_Attackinfos[0].m_flCrouchAimStill		= 0.75f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 0.65f;
 	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= RIFLE_CONSTANT_DAMAGE_RANGE;

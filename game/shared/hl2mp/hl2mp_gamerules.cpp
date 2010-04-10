@@ -62,7 +62,7 @@ ConVar sv_restartmap( "sv_restartmap", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_americanscore( "mp_americanscore", "0", FCVAR_GAMEDLL /*| FCVAR_NOTIFY*/ | FCVAR_CHEAT );
 ConVar mp_britishscore( "mp_britishscore", "0", FCVAR_GAMEDLL /*| FCVAR_NOTIFY*/ | FCVAR_CHEAT  );
 ConVar mp_autobalanceteams( "mp_autobalanceteams", "1", FCVAR_GAMEDLL | FCVAR_NOTIFY );
-ConVar mp_autobalancetolerance( "mp_autobalancetolerance", "2", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar mp_autobalancetolerance( "mp_autobalancetolerance", "3", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_timeleft( "mp_timeleft", "0", FCVAR_GAMEDLL, "");
 
 //BG2 - Draco - End

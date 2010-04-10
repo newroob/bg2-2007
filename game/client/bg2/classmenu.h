@@ -125,9 +125,10 @@ public:
 
 	COkayButton(Panel *parent, const char *panelName, const char *text) : Button( parent, panelName, text ) { }
 
-	void SetCommand( int command, bool ammo = false );
+	void SetCommand( int command ){}
 	void OnMousePressed(vgui::MouseCode code);
-	void OnCursorEntered( void );
+	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
+	void OnCursorEntered( void ){}
 	void PerformCommand( void );
 };
 
@@ -219,19 +220,14 @@ public:
 	virtual const char *GetName( void ) { return PANEL_CLASSES; }
 	virtual void SetData(KeyValues *data){}
 	bool SetScreen( int m_iScreen, bool m_bVisible, bool m_bUpdate = true );
-	void SetDefaultWeaponKit( int m_iTeam, int m_iClass );
+	void SetDefaultWeaponKit( int m_iTeam, int m_iClass, int weapon, int ammo );
+	void UpdateDefaultWeaponKit( int m_iTeam, int m_iClass );
 	virtual void Reset( void ) { }//m_pPlayerList->DeleteAllItems(); }
 	virtual void Update( void );
 	virtual bool NeedsUpdate( void ) { return false; }
 	virtual bool HasInputElements( void ) { return true; }
 	virtual void ShowPanel( bool bShow );
 	virtual void Paint( void );
-	virtual void ApplySettings( KeyValues *inResourceData )
-	{
-		Q_strncpy( BGImage, (const char *)inResourceData->GetString( "BackgroundImage", "" ), 80 );
-		
-		BaseClass::ApplySettings( inResourceData );
-	}
 
 
 	// both vgui::Frame and IViewPortPanel define these, so explicitly define them here as passthroughs to vgui
@@ -277,8 +273,6 @@ public:
 	int m_iTeamSelection,
 		m_iClassSelection;
 
-	char BGImage[80];
-
 	void OnThink();
 	void UpdateClassLabelText( vgui::Label *pLabel, int iClass);
 	void UpdateWeaponButtonImages( void );
@@ -291,6 +285,14 @@ public:
 	bool IsInWeaponMenu( void ) { return m_pAmmoButton1->IsVisible() && IsVisible(); }
 
 	void ShowFile( const char *filename );
+
+	//Used for gathering kit info from cvars. -HairyPotter
+	struct
+	{
+		int m_iGun,
+			m_iAmmo;
+	} DefaultKit;
+	//
 
 private:
 	// VGUI2 overrides
@@ -313,6 +315,7 @@ private:
 					m_iOkayKey;
 
 	CClassButton	*m_pCancelButton;
+
 	int				m_iCancelKey,
 
 					teammenu,

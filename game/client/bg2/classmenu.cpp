@@ -56,15 +56,15 @@ ConVar cl_classmenu_sounds( "cl_classmenu_sounds", "1", FCVAR_ARCHIVE, "Enable s
 #define CVAR_FLAGS	( FCVAR_ARCHIVE )
 
 #define LIMIT_DEFINES( iclass, name )\
-	ConVar cl_kit_a_##iclass( "cl_kit_a_"#iclass, "1 1", CVAR_FLAGS,\
+	ConVar cl_kit_a_##iclass( "cl_kit_a_"#iclass, "1 0", CVAR_FLAGS,\
 									"Default kit for American " name " class." );\
-	ConVar cl_kit_b_##iclass( "cl_kit_b_"#iclass, "1 1", CVAR_FLAGS,\
+	ConVar cl_kit_b_##iclass( "cl_kit_b_"#iclass, "1 0", CVAR_FLAGS,\
 									"Default kit for British " name " class." );
 
 LIMIT_DEFINES( inf, "infantry" )
 LIMIT_DEFINES( ski, "skirmisher" )
 
-ConVar cl_kit_b_light("cl_kit_b_light", "1 1", CVAR_FLAGS, "Default kit for British light infantry class." );
+ConVar cl_kit_b_light("cl_kit_b_light", "1 0", CVAR_FLAGS, "Default kit for British light infantry class." );
 
 #define CANCEL -2
 
@@ -129,7 +129,7 @@ void CClassButton::OnCursorEntered( void )
 			{
 				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
 					ResolveLocalizedPath( "#BG2_InfoHTML_A_Off_Path", pANSIPath, sizeof pANSIPath );
-				else //if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+				else
 					ResolveLocalizedPath( "#BG2_InfoHTML_B_Off_Path", pANSIPath, sizeof pANSIPath );
 				//else
 					//return;
@@ -139,7 +139,7 @@ void CClassButton::OnCursorEntered( void )
 			{
 				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
 					ResolveLocalizedPath( "#BG2_InfoHTML_A_Inf_Path", pANSIPath, sizeof pANSIPath );
-				else //if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+				else
 					ResolveLocalizedPath( "#BG2_InfoHTML_B_Inf_Path", pANSIPath, sizeof pANSIPath );
 				//else
 					//return;
@@ -149,7 +149,7 @@ void CClassButton::OnCursorEntered( void )
 			{
 				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
 					ResolveLocalizedPath( "#BG2_InfoHTML_A_Rif_Path", pANSIPath, sizeof pANSIPath );
-				else //if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+				else
 					ResolveLocalizedPath( "#BG2_InfoHTML_B_Rif_Path", pANSIPath, sizeof pANSIPath );
 				//else
 				//	return;
@@ -159,7 +159,7 @@ void CClassButton::OnCursorEntered( void )
 			{
 				if( pThisMenu->m_iTeamSelection == TEAM_AMERICANS )
 					ResolveLocalizedPath( "#BG2_InfoHTML_A_Ski_Path", pANSIPath, sizeof pANSIPath );
-				else //if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
+				else
 					ResolveLocalizedPath( "#BG2_InfoHTML_B_Ski_Path", pANSIPath, sizeof pANSIPath );
 				//else
 					//return;
@@ -170,8 +170,6 @@ void CClassButton::OnCursorEntered( void )
 				//only british have light infantry
 				if( pThisMenu->m_iTeamSelection == TEAM_BRITISH )
 					ResolveLocalizedPath( "#BG2_InfoHTML_B_Linf_Path", pANSIPath, sizeof pANSIPath );
-				//else
-					//return;
 			}
 			break;
 		default:
@@ -190,9 +188,18 @@ void CClassButton::PerformCommand( void )
 	if ( !pThisMenu )
 		return;
 
-	char cmd[64];
-	Q_snprintf( cmd, sizeof( cmd ), "class %i %i \n", pThisMenu->m_iTeamSelection, m_iCommand );
+	PlaySound("Classmenu.Join");
+
+	//Update the DefaultKit struct. This should be called so previously selected kits are loaded for people who quick join.
+	pThisMenu->UpdateDefaultWeaponKit( pThisMenu->m_iTeamSelection, m_iCommand );
+
+	char cmd[16];
+	Q_snprintf( cmd, sizeof( cmd ), "kit %i %i \n", pThisMenu->DefaultKit.m_iGun, pThisMenu->DefaultKit.m_iAmmo );
 	engine->ServerCmd( cmd );
+
+	char sClass[16];
+	Q_snprintf( sClass, sizeof( sClass ), "class %i %i \n", pThisMenu->m_iTeamSelection, m_iCommand );
+	engine->ServerCmd( sClass );
 }
 
 void CClassButton::ApplySchemeSettings( vgui::IScheme *pScheme )
@@ -424,7 +431,6 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pAutoassignButton->SetCommand(-1);
 	m_pSpectateButton->SetCommand(TEAM_UNASSIGNED);
 
-	m_pOK->SetCommand( 1 );
 	m_pCancelButton->SetCommand( CANCEL );
 
 	m_pInfantryButton->SetCommand( CLASS_INFANTRY );
@@ -462,7 +468,7 @@ void CClassMenu::Paint( void )
 
 	int wide, tall;
 	GetSize( wide, tall );
-	vgui::IImage *m_pImage = scheme()->GetImage( BGImage, false );
+	vgui::IImage *m_pImage = scheme()->GetImage( "menu/classmenu", false );
 
 	if ( m_pImage )
 	{
@@ -805,12 +811,85 @@ void CClassMenu::UpdateAmmoButtons( void )
 	//
 }
 
-void CClassMenu::SetDefaultWeaponKit( int m_iTeam, int m_iClass )
+//Default weapon kits for menus. -HairyPotter
+void CClassMenu::SetDefaultWeaponKit( int m_iTeam, int m_iClass, int weapon, int ammo )
 {
-	CUtlVector< int * > args;
-	sscanf( cl_kit_a_inf.GetString(), "%i %i", &(args[0]), &(args[1]) );
-	Msg("%i, %i \n", args[0], args[1]) ;
+	char temp[16];
+	Q_snprintf( temp, sizeof temp, "%i %i", weapon, ammo );
+
+	switch ( m_iTeam )
+	{
+		case TEAM_AMERICANS:
+			switch( m_iClass )
+			{
+				case CLASS_INFANTRY:
+					cl_kit_a_inf.SetValue( temp );
+					break;
+				case CLASS_SKIRMISHER:
+					cl_kit_a_ski.SetValue( temp );
+					break;
+			}
+			break;
+		case TEAM_BRITISH:
+			switch( m_iClass )
+			{
+				case CLASS_INFANTRY:
+					cl_kit_b_inf.SetValue( temp );
+					break;
+				case CLASS_SKIRMISHER:
+					cl_kit_b_ski.SetValue( temp );
+					break;
+				case CLASS_LIGHT_INFANTRY:
+					cl_kit_b_light.SetValue( temp );
+					break;
+			}
+		break;
+	}
 }
+
+void CClassMenu::UpdateDefaultWeaponKit( int m_iTeam, int m_iClass )
+{
+	int args[2];
+
+	//Just to make sure.
+	args[0] = 1;
+	args[1] = AMMO_KIT_BALL;
+	//
+
+	switch ( m_iTeam )
+	{
+		case TEAM_AMERICANS:
+			switch( m_iClass )
+			{
+				case CLASS_INFANTRY:
+					sscanf( cl_kit_a_inf.GetString(), "%i %i", &(args[0]), &(args[1]) );
+					break;
+				case CLASS_SKIRMISHER:
+					sscanf( cl_kit_a_ski.GetString(), "%i %i", &(args[0]), &(args[1]) );
+					break;
+			}
+			break;
+
+		case TEAM_BRITISH:
+			switch( m_iClass )
+			{
+				case CLASS_INFANTRY:
+					sscanf( cl_kit_b_inf.GetString(), "%i %i", &(args[0]), &(args[1]) );
+					break;
+				case CLASS_SKIRMISHER:
+					sscanf( cl_kit_b_ski.GetString(), "%i %i", &(args[0]), &(args[1]) );
+					break;
+				case CLASS_LIGHT_INFANTRY:
+					sscanf( cl_kit_b_light.GetString(), "%i %i", &(args[0]), &(args[1]) );
+					break;
+			}
+			break;
+	}
+
+	DefaultKit.m_iGun = args[0];
+	DefaultKit.m_iAmmo = args[1];
+}
+//
 
 bool CClassMenu::SetScreen( int m_iScreen, bool m_bVisible, bool m_bUpdate )
 {
@@ -858,6 +937,8 @@ bool CClassMenu::SetScreen( int m_iScreen, bool m_bVisible, bool m_bUpdate )
 
 				if ( m_iClassSelection == CLASS_OFFICER || m_iClassSelection == CLASS_SNIPER )
 						return false;
+
+				UpdateDefaultWeaponKit( m_iTeamSelection, m_iClassSelection ); //Make sure we're updated.
 				break;
 		}
 	}
@@ -976,6 +1057,13 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			//Misc
 			m_pCancelButton->SetVisible(true);
 			m_pInfoHTML->SetVisible(false);
+			//
+			//Default Weapon Kits. -HairyPotter
+			m_pWeaponButton1->SetSelected( DefaultKit.m_iGun == 1 );
+			m_pWeaponButton2->SetSelected( DefaultKit.m_iGun == 2 );
+			m_pWeaponButton3->SetSelected( DefaultKit.m_iGun == 3 );
+			m_pAmmoButton1->SetSelected( DefaultKit.m_iAmmo == AMMO_KIT_BALL );
+			m_pAmmoButton2->SetSelected( DefaultKit.m_iAmmo == AMMO_KIT_BUCKSHOT );
 			//
 			break;
 	}
@@ -1159,20 +1247,17 @@ void CWeaponButton::Paint ( void )
 	}
 }
 
-//The button that gathers the weapons and ammo kit settings and sends the server command.
-void COkayButton::SetCommand( int command, bool ammo )
-{
-}
-
 void COkayButton::OnMousePressed(MouseCode code)
 {
 	SetSelected( false );
 	PerformCommand();
 }
 
-void COkayButton::OnCursorEntered( void )
+void COkayButton::ApplySchemeSettings( vgui::IScheme *pScheme )
 {
-	//BaseClass::OnCursorEntered();
+	BaseClass::ApplySchemeSettings(pScheme);
+
+	SetPaintBorderEnabled(false); //No borders.
 }
 
 void COkayButton::PerformCommand( void )
@@ -1182,8 +1267,12 @@ void COkayButton::PerformCommand( void )
 	if ( !pThisMenu )
 		return;
 
+	PlaySound("Classmenu.Join");
+
 	int m_iGunType = 1,
-		m_iAmmoType = AMMO_KIT_BALL;
+		m_iAmmoType = AMMO_KIT_BALL,
+		iTeam = pThisMenu->m_iTeamSelection,
+		iClass = pThisMenu->m_iClassSelection;
 
 	pThisMenu->SetScreen( 1, false ); //Reset to first screen and make invisible.
 
@@ -1203,12 +1292,14 @@ void COkayButton::PerformCommand( void )
 	if ( pThisMenu->m_pAmmoButton2->IsSelected() )
 		m_iAmmoType = AMMO_KIT_BUCKSHOT;
 
-	char cmd[64];
+	pThisMenu->SetDefaultWeaponKit( iTeam, iClass, m_iGunType, m_iAmmoType ); //Since we chose a kit ourselves, save it off.
+
+	char cmd[32];
 	Q_snprintf( cmd, sizeof( cmd ), "kit %i %i \n", m_iGunType, m_iAmmoType );
 	engine->ServerCmd( cmd );
 
-	char sClass[64];
-	Q_snprintf( sClass, sizeof( sClass ), "class %i %i \n", pThisMenu->m_iTeamSelection, pThisMenu->m_iClassSelection );
+	char sClass[32];
+	Q_snprintf( sClass, sizeof( sClass ), "class %i %i \n", iTeam, iClass );
 	engine->ServerCmd( sClass ); //Send the class AFTER we've selected a gun, otherwise you won't spawn with the right kit.
 }
 
