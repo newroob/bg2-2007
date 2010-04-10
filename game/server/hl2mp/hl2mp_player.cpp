@@ -780,7 +780,7 @@ void CHL2MP_Player::PostThink( void )
 	if ( m_fNextStamRegen <= gpGlobals->curtime )
 	{
 		if( m_iStamina < 100 )
-			m_iStamina += 1 + m_iHealth / 15;
+			m_iStamina += 2 + m_iHealth / 19;
 
 		m_fNextStamRegen = gpGlobals->curtime + 0.3;
 	}

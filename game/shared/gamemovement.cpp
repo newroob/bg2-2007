@@ -2352,7 +2352,7 @@ bool CGameMovement::CheckJumpButton( void )
 	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
 #endif
 	//make healthier players have an easier time jumping
-	int drain = 50 - pHL2Player->m_iHealth / 4;
+	int drain = 40 - pHL2Player->m_iHealth / 10;
 
 	if( pHL2Player->m_iStamina < drain )
 		return false;				//don't drain unless we can cover some height
