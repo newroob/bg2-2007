@@ -205,15 +205,11 @@ void CC_ToggleIronSights( void )
 		return;
  
 	CBaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
-	if( !pWeapon )
+	if( !pWeapon || !pWeapon->m_bWeaponHasSights || pWeapon->m_bInReload )
 		return;
 
-	if ( !pWeapon->m_bWeaponHasSights ) //Don't use iron sights on certain weapons... like a sword. -HairyPotter
-		return;
+	pWeapon->SendWeaponAnim( ACT_FORCE_STABLE ); //Dummy animation that will cancel out the idle anim.
 
-	if ( pWeapon->m_bInReload ) //Don't do iron sights when reloading...
-		return;
- 
 	pWeapon->ToggleIronsights();
 	//
 }

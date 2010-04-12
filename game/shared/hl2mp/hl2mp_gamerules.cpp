@@ -379,15 +379,21 @@ void CHL2MPRules::HandleScores( int iTeam, int iScore, char *cText, bool bRestar
 {
 	CMapTrigger *BG2Trigger = NULL;
 
-	while ( (BG2Trigger = dynamic_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
+	while ( (BG2Trigger = static_cast<CMapTrigger*>(gEntList.FindEntityByClassname( BG2Trigger, "bg2_maptrigger" ))) != NULL )
 	{
 		switch ( iTeam )
 		{
 		case TEAM_AMERICANS:
-			BG2Trigger->AmericanMapWin();
+			if ( bRestart )
+				BG2Trigger->AmericanRoundWin();
+			else
+				BG2Trigger->AmericanMapWin();
 			break;
 		case TEAM_BRITISH:
-			BG2Trigger->BritishMapWin();
+			if ( bRestart )
+				BG2Trigger->BritishRoundWin();
+			else
+				BG2Trigger->BritishMapWin();
 			break;
 		default: //Assume a draw
 			BG2Trigger->Draw();
