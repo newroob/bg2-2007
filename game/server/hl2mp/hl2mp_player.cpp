@@ -208,7 +208,10 @@ void CC_ToggleIronSights( void )
 	if( !pWeapon || !pWeapon->m_bWeaponHasSights || pWeapon->m_bInReload )
 		return;
 
-	pWeapon->SendWeaponAnim( ACT_FORCE_STABLE ); //Dummy animation that will cancel out the idle anim.
+	if ( !pWeapon->m_iClip1 )
+		pWeapon->SendWeaponAnim( ACT_FORCE_STABLE_EMPTY ); //Dummy animation that will cancel out the idle anim.
+	else
+		pWeapon->SendWeaponAnim( ACT_FORCE_STABLE ); //Dummy animation that will cancel out the idle anim.
 
 	pWeapon->ToggleIronsights();
 	//
