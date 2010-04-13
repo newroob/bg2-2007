@@ -144,7 +144,7 @@ public:
 	void OnCursorExited( void ){ m_bMouseOver = false; };
 	virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
 	virtual void Paint( void );
-	void GetWeaponImages( CWeaponButton *pButton, char *m_szActiveImage, char *m_szInactiveImage );
+	void GetWeaponImages( char *m_szActiveImage, char *m_szInactiveImage );
 	virtual void ApplySettings( KeyValues *inResourceData )
 	{
 		Q_strncpy( AInf1, (const char *)inResourceData->GetString( "AInfImage1", "" ), 80 );

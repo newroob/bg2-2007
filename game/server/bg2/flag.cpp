@@ -384,7 +384,7 @@ void CFlag::ThinkUncapped( void )
 		americans = 0;
 		british = 0;
 
-		while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
+		while( (pPlayer = static_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
 		{
 			if( !pPlayer->IsAlive() )	//dead players don't cap
 				continue;
@@ -412,10 +412,9 @@ void CFlag::ThinkUncapped( void )
 	{
 		americans = 0;
 		british = 0;
-		//if ( m_vTriggerAmericanPlayers.Count() > 0 )
-			americans = m_vTriggerAmericanPlayers.Count();
-		//if ( m_vTriggerBritishPlayers.Count() > 0 )
-			british = m_vTriggerBritishPlayers.Count();
+
+		americans = m_vTriggerAmericanPlayers.Count();
+		british = m_vTriggerBritishPlayers.Count();
 	} //
 
 	//char *msg = NULL;
@@ -548,6 +547,8 @@ void CFlag::Capture( int iTeam )
 {
 	//iTeam is either americans or british
 	//this function handles a lot of the capture related stuff
+	CBasePlayer *pPlayer = NULL;
+	CHL2MP_Player *pHL2Player = NULL;
 
 	CRecipientFilter recpfilter;
 	//recpfilter.AddAllPlayers();
@@ -567,21 +568,52 @@ void CFlag::Capture( int iTeam )
 
 	if ( !m_bIsParent )
 	{
-		CHL2MP_Player *pPlayer = NULL;
-		while( (pPlayer = dynamic_cast<CHL2MP_Player*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
+		while( (pHL2Player = static_cast<CHL2MP_Player*>(gEntList.FindEntityByClassnameWithin( pHL2Player, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
 		{
-			if( !pPlayer->IsAlive() )	//dead players don't cap
+			if( !pHL2Player->IsAlive() )	//dead players don't cap
 				continue;
 
-			if( pPlayer->GetTeamNumber() == iTeam )
+			if( pHL2Player->GetTeamNumber() == iTeam )
 			{
-				pPlayer->IncrementFragCount(m_iPlayerBonus);
+				pHL2Player->IncrementFragCount(m_iPlayerBonus);
 				//BG2 - Tjoppen - rewards put on hold
 				//pPlayer->IncreaseReward(1);
-				m_vOverloadingPlayers.AddToHead( pPlayer );
+				m_vOverloadingPlayers.AddToHead( pHL2Player );
 			}
 		}
 	}
+	else //Flag has a trigger.
+	{
+		switch( iTeam )
+		{
+			case TEAM_AMERICANS:
+				for ( int i = 1; i <= m_vTriggerAmericanPlayers.Count(); i++ )
+				{
+					pHL2Player = ToHL2MPPlayer( UTIL_PlayerByIndex( i ) );
+
+					if ( !pHL2Player || !pHL2Player->IsAlive() ) //Just to make sure.
+						continue;
+
+					pHL2Player->IncrementFragCount(m_iPlayerBonus);
+					m_vOverloadingPlayers.AddToHead( pHL2Player );
+				}
+
+				break;
+			case TEAM_BRITISH:
+				for ( int i = 1; i <= m_vTriggerBritishPlayers.Count(); i++ )
+				{
+					pHL2Player = ToHL2MPPlayer( UTIL_PlayerByIndex( i ) );
+
+					if ( !pHL2Player || !pHL2Player->IsAlive() ) //Just to make sure.
+						continue;
+
+					pHL2Player->IncrementFragCount(m_iPlayerBonus);
+					m_vOverloadingPlayers.AddToHead( pHL2Player );
+				}
+				break;
+		}
+	}
+
 	m_iLastTeam = TEAM_UNASSIGNED;
 	m_iRequestingCappers = TEAM_UNASSIGNED;
 	m_iNearbyPlayers = m_vOverloadingPlayers.Count();
@@ -594,18 +626,13 @@ void CFlag::Capture( int iTeam )
 
 	//BG2 - Added for HlstatsX Support. -HairyPotter
 	const char *team = iTeam == TEAM_AMERICANS ? "Americans" : "British";
-	char playerinfo[3072];
-	char playerdata[256];
-	CBasePlayer *pPlayer = NULL;
-	while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassname( pPlayer, "player" ))) != NULL )
+	char playerinfo[3072] = "";
+	char playerdata[256] = "";
+
+	while( (pPlayer = static_cast<CBasePlayer*>(gEntList.FindEntityByClassname( pPlayer, "player" ))) != NULL )
 	{
-		if( !pPlayer->IsAlive() )	//dead players don't cap
+		if( !pPlayer->IsAlive() || pPlayer->GetTeamNumber() != iTeam )
 			continue;
-
-		if ( pPlayer->GetTeamNumber() != iTeam ) //Eliminate any possibility of an enemy getting logged as a flag capper.
-				continue;
-
-		//CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
 
 		if( m_vOverloadingPlayers.Find( pPlayer ) != -1 ) //So we're actually overloading this flag.
 		{
@@ -654,7 +681,7 @@ void CFlag::ThinkCapped( void )
 		friendlies = 0,
 		enemies = 0;
 
-		while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
+		while( (pPlayer = static_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flCaptureRadius ))) != NULL )
 		{
 			if( !pPlayer->IsAlive() )	//dead players don't cap
 				continue;
@@ -676,7 +703,6 @@ void CFlag::ThinkCapped( void )
 	} 
 	else //The trigger is talking to this flag.
 	{
-
 		friendlies = 0,
 		enemies = 0;
 
@@ -698,9 +724,7 @@ void CFlag::ThinkCapped( void )
 					}
 				}
 				friendlies = m_vTriggerAmericanPlayers.Count();
-
-				if ( m_vTriggerBritishPlayers.Count() > 0 )
-					enemies = m_vTriggerBritishPlayers.Count();
+				enemies = m_vTriggerBritishPlayers.Count();
 
 				break;
 			case TEAM_BRITISH:
@@ -719,9 +743,7 @@ void CFlag::ThinkCapped( void )
 					}
 				}
 				friendlies = m_vTriggerBritishPlayers.Count();
-
-				if ( m_vTriggerAmericanPlayers.Count() > 0 )
-					enemies = m_vTriggerAmericanPlayers.Count();
+				enemies = m_vTriggerAmericanPlayers.Count();
 
 				break;
 		}
@@ -762,6 +784,8 @@ void CFlag::ResetFlag( void )
 	m_iLastTeam = TEAM_UNASSIGNED;
 	m_iRequestingCappers = TEAM_UNASSIGNED;
 	m_vOverloadingPlayers.RemoveAll();
+	m_vTriggerBritishPlayers.RemoveAll();
+	m_vTriggerAmericanPlayers.RemoveAll();
 	m_iNearbyPlayers = 0;
 
 	if ( HasSpawnFlags( CFlag_START_DISABLED ) )
@@ -798,9 +822,6 @@ void CFlag::ChangeTeam( int iTeamNum )
 			break;
 		}
 	}
-
-	//m_iLastTeam = iTeamNum;
-	//m_iLastTeam = TEAM_UNASSIGNED;
 
 	BaseClass::ChangeTeam( iTeamNum );
 }

@@ -1156,17 +1156,14 @@ void CWeaponButton::OnMousePressed(MouseCode code)
 	SetSelected( true );
 }
 
-void CWeaponButton::GetWeaponImages( CWeaponButton *pButton, char *m_szActiveImage, char *m_szInactiveImage )
+void CWeaponButton::GetWeaponImages( char *m_szActiveImage, char *m_szInactiveImage )
 {
-	if ( !pButton )
-		return;
-
 	int wide, tall;
 	vgui::IImage *m_pImage = NULL;
 
-	pButton->GetSize( wide, tall );
+	GetSize( wide, tall );
 
-	if ( pButton->m_bMouseOver || pButton->IsSelected() )
+	if ( m_bMouseOver || IsSelected() )
 		m_pImage = scheme()->GetImage( m_szActiveImage, false );
 	else 
 		m_pImage = scheme()->GetImage( m_szInactiveImage, false );
@@ -1198,13 +1195,13 @@ void CWeaponButton::Paint ( void )
 			switch ( pThisMenu->m_iClassSelection )
 			{
 				case CLASS_INFANTRY:
-					GetWeaponImages( pButton1, AInf1M, AInf1 );
-					GetWeaponImages( pButton2, AInf2M, AInf2 );
-					GetWeaponImages( pButton3, AInf3M, AInf3 );
+					pButton1->GetWeaponImages( AInf1M, AInf1 );
+					pButton2->GetWeaponImages( AInf2M, AInf2 );
+					pButton3->GetWeaponImages( AInf3M, AInf3 );
 					break;
 				case CLASS_SKIRMISHER: 
-					GetWeaponImages( pButton1, ASki1M, ASki1 );
-					GetWeaponImages( pButton2, ASki2M, ASki2 );
+					pButton1->GetWeaponImages( ASki1M, ASki1 );
+					pButton2->GetWeaponImages( ASki2M, ASki2 );
 					pButton3->SetVisible( false );
 					break;
 				default:
@@ -1219,17 +1216,17 @@ void CWeaponButton::Paint ( void )
 			switch ( pThisMenu->m_iClassSelection )
 			{
 				case CLASS_INFANTRY:
-					GetWeaponImages( pButton1, BInf1M, BInf1 );
-					GetWeaponImages( pButton2, BInf2M, BInf2 );
+					pButton1->GetWeaponImages( BInf1M, BInf1 );
+					pButton2->GetWeaponImages( BInf2M, BInf2 );
 					pButton3->SetVisible( false );
 					break;
 				case CLASS_SKIRMISHER:
-					GetWeaponImages( pButton1, BSki1M, BSki1 );
-					GetWeaponImages( pButton2, BSki2M, BSki2 );
+					pButton1->GetWeaponImages( BSki1M, BSki1 );
+					pButton2->GetWeaponImages( BSki2M, BSki2 );
 					pButton3->SetVisible( false );
 					break;
 				case CLASS_LIGHT_INFANTRY:
-					GetWeaponImages( pButton1, BLight1M, BLight1 );
+					pButton1->GetWeaponImages( BLight1M, BLight1 );
 					pButton2->SetVisible( false );
 					pButton3->SetVisible( false );
 					break;

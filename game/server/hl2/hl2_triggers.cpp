@@ -896,6 +896,7 @@ public:
 
 private:
 	string_t m_strParentName;
+	CFlag *FlagEnt;
 };
 
 
@@ -917,7 +918,7 @@ void CFlagTriggerBG2::Spawn( void )
 	//We want to get the parent setting out of the way, let's connect it and be done with it. Also have the flag notice this.
 	if ( !GetParent() )
 	{
-		CFlag *FlagEnt = dynamic_cast< CFlag* >( gEntList.FindEntityByName( NULL, m_strParentName ) );
+		FlagEnt = static_cast< CFlag* >( gEntList.FindEntityByName( NULL, m_strParentName ) );
 		if ( !FlagEnt )	//Check to see if this is even a flag. Return and remove if false, don't take the whole server down from one error.
 		{
 			Warning("This trigger has determined that the parent named '%s' is not a BG2 flag or does not exist. Trigger disabled. \n", m_strParentName );
@@ -935,12 +936,8 @@ void CFlagTriggerBG2::Spawn( void )
 //-----------------------------------------------------------------------------
 void CFlagTriggerBG2::StartTouch(CBaseEntity *pOther)
 {
-	//if ( PassesTriggerFilters(pOther) == false )
-	//	return;
-
 	//Defines.
-	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
-	CFlag *FlagEnt = dynamic_cast< CFlag* >( GetParent() );
+	CBasePlayer *pPlayer = static_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
 
 	if ( !pPlayer || !FlagEnt || !FlagEnt->m_bActive ) //Flag is inactive?
 		return;				   //Die here.
@@ -977,8 +974,7 @@ void CFlagTriggerBG2::StartTouch(CBaseEntity *pOther)
 void CFlagTriggerBG2::EndTouch(CBaseEntity *pOther)
 {
 	//Defines
-	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
-	CFlag *FlagEnt = dynamic_cast< CFlag* >( GetParent() );
+	CBasePlayer *pPlayer = static_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
 
 	if ( !pPlayer || !FlagEnt || !FlagEnt->m_bActive ) //Flag is inactive?
 		return;				   //Die here.
@@ -1047,7 +1043,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 		return;
 
 	//Defines
-	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( pOther );
+	CBasePlayer *pPlayer = static_cast< CBasePlayer* >( pOther );
 	CtfFlag *pFlag = NULL;
 	bool m_bHomeFlagTaken = false;
 
@@ -1059,7 +1055,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 
 	if ( sv_ctf_capturestyle.GetInt() > 1 ) 
 	{
-		while( (pFlag = dynamic_cast<CtfFlag*>( gEntList.FindEntityByClassname( pFlag, "ctf_flag" ) )) != NULL )
+		while( (pFlag = static_cast<CtfFlag*>( gEntList.FindEntityByClassname( pFlag, "ctf_flag" ) )) != NULL )
 		{
 			if ( pFlag->iTeam == pPlayer->GetTeamNumber() ) //This flag is an enemy flag, we want the player's team's flag.
 				continue;
@@ -1070,7 +1066,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 	}
 
 
-	while( (pFlag = dynamic_cast<CtfFlag*>( gEntList.FindEntityByClassname( pFlag, "ctf_flag" ) )) != NULL )
+	while( (pFlag = static_cast<CtfFlag*>( gEntList.FindEntityByClassname( pFlag, "ctf_flag" ) )) != NULL )
 	{
 		if ( pFlag->GetParent() && pFlag->GetParent() == pPlayer) //So the flag has a parent.. and it's the player who touched the trigger.
 		{
