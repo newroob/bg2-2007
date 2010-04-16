@@ -1245,7 +1245,7 @@ int CHL2MPRules::PlayerRelationship( CBaseEntity *pPlayer, CBaseEntity *pTarget 
 const char *CHL2MPRules::GetGameDescription( void )
 { 
 	//BG2 - Tjoppen - our game descriptions - putting the current version number in these might be a good idea
-	return "Battle Grounds 2 1.5a";
+	return "Battle Grounds 2 2.0";
 	// 
 } 
 

@@ -23,12 +23,14 @@
 
 #include "voice_status.h"
 
+#include <FileSystem.h> //BG2 - HairyPotter
+
 using namespace vgui;
 
 #define TEAM_MAXCOUNT			5
 
 extern ConVar sv_show_damages;
-ConVar cl_scoreboard("cl_scoreboard", "2", FCVAR_CLIENTDLL, "Scoreboard setting for BG2. 1 = Old Scoreboard, 2 = New Scoreboard.");
+ConVar cl_scoreboard("cl_scoreboard", "3", FCVAR_ARCHIVE, "Scoreboard setting for BG2. 1 = Old Scoreboard, 2 = 1.5a Scoreboard, 3 = 2.0 scoreboard.");
 // id's of sections used in the scoreboard
 
 const int NumSegments = 7;
@@ -74,16 +76,145 @@ void CHL2MPClientScoreBoardDialog::PaintBackground()
 	GetSize( wide, tall );
 
 	//BG2 - Background Image - HairyPotter
-	vgui::IImage *m_pImage = NULL;
-
-	m_pImage = scheme()->GetImage( "scoreboard/scoreboard", false );
-
-	if ( m_pImage )
+	if ( cl_scoreboard.GetInt() == 3 )
 	{
-		m_pImage->SetSize( wide, tall );
-		m_pImage->Paint();
+		vgui::IImage *m_pImage = NULL;
+		char mapimage[128] = "",
+			 mapname[64] = "";
+
+		Q_FileBase( engine->GetLevelName(), mapname, sizeof(mapname) );
+
+		if ( Q_strcmp(mapname, "") )
+		{
+			char temp[128] = "";
+
+			Q_snprintf( mapimage, sizeof( mapimage ), "scoreboard/maps/%s", mapname );
+			Q_snprintf( temp, sizeof( temp ), "materials/VGUI/%s.vmt", mapimage );
+
+			if ( g_pFullFileSystem->FileExists( temp ) )
+				m_pImage = scheme()->GetImage( mapimage, false );
+		}
+
+		if ( !m_pImage )
+			m_pImage = scheme()->GetImage( "scoreboard/scoreboard", false );
+
+		if ( m_pImage )
+		{
+			m_pImage->SetSize( wide, tall );
+			m_pImage->Paint();
+		}
+		//
 	}
-	//
+	else //Older scoreboards.
+	{
+		int x1, x2, y1, y2;
+		surface()->DrawSetColor(m_bgColor);
+		surface()->DrawSetTextColor(m_bgColor);
+
+		int i;
+
+		// top-left corner --------------------------------------------------------
+		int xDir = 1;
+		int yDir = -1;
+		int xIndex = 0;
+		int yIndex = NumSegments - 1;
+		int xMult = 1;
+		int yMult = 1;
+		int x = 0;
+		int y = 0;
+		for ( i=0; i<NumSegments; ++i )
+		{
+			x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+			x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+			y1 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+			y2 = y + coord[NumSegments];
+			surface()->DrawFilledRect( x1, y1, x2, y2 );
+
+			xIndex += xDir;
+			yIndex += yDir;
+		}
+
+		// top-right corner -------------------------------------------------------
+		xDir = 1;
+		yDir = -1;
+		xIndex = 0;
+		yIndex = NumSegments - 1;
+		x = wide;
+		y = 0;
+		xMult = -1;
+		yMult = 1;
+		for ( i=0; i<NumSegments; ++i )
+		{
+			x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+			x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+			y1 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+			y2 = y + coord[NumSegments];
+			surface()->DrawFilledRect( x1, y1, x2, y2 );
+			xIndex += xDir;
+			yIndex += yDir;
+		}
+
+		// bottom-right corner ----------------------------------------------------
+		xDir = 1;
+		yDir = -1;
+		xIndex = 0;
+		yIndex = NumSegments - 1;
+		x = wide;
+		y = tall;
+		xMult = -1;
+		yMult = -1;
+		for ( i=0; i<NumSegments; ++i )
+		{
+			x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+			x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+			y1 = y - coord[NumSegments];
+			y2 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+			surface()->DrawFilledRect( x1, y1, x2, y2 );
+			xIndex += xDir;
+			yIndex += yDir;
+		}
+
+		// bottom-left corner -----------------------------------------------------
+		xDir = 1;
+		yDir = -1;
+		xIndex = 0;
+		yIndex = NumSegments - 1;
+		x = 0;
+		y = tall;
+		xMult = 1;
+		yMult = -1;
+		for ( i=0; i<NumSegments; ++i )
+		{
+			x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+			x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+			y1 = y - coord[NumSegments];
+			y2 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+			surface()->DrawFilledRect( x1, y1, x2, y2 );
+			xIndex += xDir;
+			yIndex += yDir;
+		}
+
+		// paint between top left and bottom left ---------------------------------
+		x1 = 0;
+		x2 = coord[NumSegments];
+		y1 = coord[NumSegments];
+		y2 = tall - coord[NumSegments];
+		surface()->DrawFilledRect( x1, y1, x2, y2 );
+
+		// paint between left and right -------------------------------------------
+		x1 = coord[NumSegments];
+		x2 = wide - coord[NumSegments];
+		y1 = 0;
+		y2 = tall;
+		surface()->DrawFilledRect( x1, y1, x2, y2 );
+		
+		// paint between top right and bottom right -------------------------------
+		x1 = wide - coord[NumSegments];
+		x2 = wide;
+		y1 = coord[NumSegments];
+		y2 = tall - coord[NumSegments];
+		surface()->DrawFilledRect( x1, y1, x2, y2 );
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -91,6 +222,126 @@ void CHL2MPClientScoreBoardDialog::PaintBackground()
 //-----------------------------------------------------------------------------
 void CHL2MPClientScoreBoardDialog::PaintBorder()
 {
+	if ( cl_scoreboard.GetInt() == 3 )
+		return;
+
+	int x1, x2, y1, y2;
+	surface()->DrawSetColor(m_borderColor);
+	surface()->DrawSetTextColor(m_borderColor);
+
+	int wide, tall;
+	GetSize( wide, tall );
+
+	int i;
+
+	// top-left corner --------------------------------------------------------
+	int xDir = 1;
+	int yDir = -1;
+	int xIndex = 0;
+	int yIndex = NumSegments - 1;
+	int xMult = 1;
+	int yMult = 1;
+	int x = 0;
+	int y = 0;
+	for ( i=0; i<NumSegments; ++i )
+	{
+		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		surface()->DrawFilledRect( x1, y1, x2, y2 );
+
+		xIndex += xDir;
+		yIndex += yDir;
+	}
+
+	// top-right corner -------------------------------------------------------
+	xDir = 1;
+	yDir = -1;
+	xIndex = 0;
+	yIndex = NumSegments - 1;
+	x = wide;
+	y = 0;
+	xMult = -1;
+	yMult = 1;
+	for ( i=0; i<NumSegments; ++i )
+	{
+		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		surface()->DrawFilledRect( x1, y1, x2, y2 );
+		xIndex += xDir;
+		yIndex += yDir;
+	}
+
+	// bottom-right corner ----------------------------------------------------
+	xDir = 1;
+	yDir = -1;
+	xIndex = 0;
+	yIndex = NumSegments - 1;
+	x = wide;
+	y = tall;
+	xMult = -1;
+	yMult = -1;
+	for ( i=0; i<NumSegments; ++i )
+	{
+		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		surface()->DrawFilledRect( x1, y1, x2, y2 );
+		xIndex += xDir;
+		yIndex += yDir;
+	}
+
+	// bottom-left corner -----------------------------------------------------
+	xDir = 1;
+	yDir = -1;
+	xIndex = 0;
+	yIndex = NumSegments - 1;
+	x = 0;
+	y = tall;
+	xMult = 1;
+	yMult = -1;
+	for ( i=0; i<NumSegments; ++i )
+	{
+		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		surface()->DrawFilledRect( x1, y1, x2, y2 );
+		xIndex += xDir;
+		yIndex += yDir;
+	}
+
+	// top --------------------------------------------------------------------
+	x1 = coord[NumSegments];
+	x2 = wide - coord[NumSegments];
+	y1 = 0;
+	y2 = 1;
+	surface()->DrawFilledRect( x1, y1, x2, y2 );
+
+	// bottom -----------------------------------------------------------------
+	x1 = coord[NumSegments];
+	x2 = wide - coord[NumSegments];
+	y1 = tall - 1;
+	y2 = tall;
+	surface()->DrawFilledRect( x1, y1, x2, y2 );
+
+	// left -------------------------------------------------------------------
+	x1 = 0;
+	x2 = 1;
+	y1 = coord[NumSegments];
+	y2 = tall - coord[NumSegments];
+	surface()->DrawFilledRect( x1, y1, x2, y2 );
+
+	// right ------------------------------------------------------------------
+	x1 = wide - 1;
+	x2 = wide;
+	y1 = coord[NumSegments];
+	y2 = tall - coord[NumSegments];
+	surface()->DrawFilledRect( x1, y1, x2, y2 );
 }
 
 //-----------------------------------------------------------------------------
