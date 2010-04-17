@@ -55,6 +55,10 @@ private:
 		DEATH_WIDTH,
 		PING_WIDTH; //BG2 - For the team damage totals. -HairyPotter
 
+	//BG2 - For background image - HairyPotter
+	vgui::IImage *m_pImage;
+	//
+
 };
 
 

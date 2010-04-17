@@ -76,33 +76,10 @@ void CHL2MPClientScoreBoardDialog::PaintBackground()
 	GetSize( wide, tall );
 
 	//BG2 - Background Image - HairyPotter
-	if ( cl_scoreboard.GetInt() == 3 )
+	if ( cl_scoreboard.GetInt() == 3 && m_pImage )
 	{
-		vgui::IImage *m_pImage = NULL;
-		char mapimage[128] = "",
-			 mapname[64] = "";
-
-		Q_FileBase( engine->GetLevelName(), mapname, sizeof(mapname) );
-
-		if ( Q_strcmp(mapname, "") )
-		{
-			char temp[128] = "";
-
-			Q_snprintf( mapimage, sizeof( mapimage ), "scoreboard/maps/%s", mapname );
-			Q_snprintf( temp, sizeof( temp ), "materials/VGUI/%s.vmt", mapimage );
-
-			if ( g_pFullFileSystem->FileExists( temp ) )
-				m_pImage = scheme()->GetImage( mapimage, false );
-		}
-
-		if ( !m_pImage )
-			m_pImage = scheme()->GetImage( "scoreboard/scoreboard", false );
-
-		if ( m_pImage )
-		{
-			m_pImage->SetSize( wide, tall );
-			m_pImage->Paint();
-		}
+		m_pImage->SetSize( wide, tall );
+		m_pImage->Paint();
 		//
 	}
 	else //Older scoreboards.
@@ -377,6 +354,25 @@ void CHL2MPClientScoreBoardDialog::InitScoreboardSections()
 	AddSection( TYPE_TEAM, TEAM_AMERICANS );
 	AddSection( TYPE_TEAM, TEAM_BRITISH );
 	AddSection( TYPE_TEAM, TEAM_SPECTATOR );
+
+	//Put this here because it updates only when you first bring up the scoreboard. -HairyPotter
+	if ( cl_scoreboard.GetInt() == 3 )
+	{
+		m_pImage = NULL;
+		char temp[160] = "",
+		     mapimage[128] = "",
+			 mapname[64] = "";
+
+		Q_FileBase( engine->GetLevelName(), mapname, sizeof(mapname) ); //Get the map name.
+		Q_snprintf( mapimage, sizeof( mapimage ), "scoreboard/maps/%s", mapname ); // This is for the GetImage function.
+		Q_snprintf( temp, sizeof( temp ), "materials/VGUI/%s.vmt", mapimage ); // This is used to see if the file exists.
+
+		if ( g_pFullFileSystem->FileExists( temp ) )
+			m_pImage = scheme()->GetImage( mapimage, false );
+		else
+			m_pImage = scheme()->GetImage( "scoreboard/scoreboard", false );
+	}
+	//
 }
 
 //-----------------------------------------------------------------------------
@@ -749,7 +745,7 @@ int PlayerScoreInfoSort( const PlayerScoreInfo *p1, const PlayerScoreInfo *p2 )
 // Purpose: 
 //-----------------------------------------------------------------------------
 void CHL2MPClientScoreBoardDialog::UpdatePlayerInfo()
-{
+{ 
 	m_iSectionId = 0; // 0'th row is a header
 	int selectedRow = -1;
 	int i;
