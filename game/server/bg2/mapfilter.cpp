@@ -23,6 +23,9 @@ CMapEntityFilter::CMapEntityFilter()
 	AddKeep( "hl2mp_gamerules" );
 	AddKeep( "worldspawn" );
 	AddKeep( "ambient_generic" );
+	AddKeep( "env_fog_controller" );
+	AddKeep( "func_precipitation" );
+	AddKeep( "info_intermission" );
 	AddKeep( "player" );
 	AddKeep( "soundent" );
 	AddKeep( "env_soundscape" );
