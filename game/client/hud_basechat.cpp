@@ -1016,23 +1016,14 @@ void CBaseHudChat::MsgFunc_BG2Events( bf_read &msg )
 		internalCenterPrint->Print( ConvertCRtoNL( outputBuf ) );
 		break;
 
-	case HUD_PRINTNOTIFY:
+	case HUD_PRINTTALK:
 		g_pVGuiLocalize->ConvertUnicodeToANSI( outputBuf, szString, sizeof(szString) );
 		len = strlen( szString );
 		if ( len && szString[len-1] != '\n' && szString[len-1] != '\r' )
 		{
 			Q_strncat( szString, "\n", sizeof(szString), 1 );
 		}
-		Msg( "%s", ConvertCRtoNL( szString ) );
-		break;
-
-	case HUD_PRINTCONSOLE:
-		g_pVGuiLocalize->ConvertUnicodeToANSI( outputBuf, szString, sizeof(szString) );
-		len = strlen( szString );
-		if ( len && szString[len-1] != '\n' && szString[len-1] != '\r' )
-		{
-			Q_strncat( szString, "\n", sizeof(szString), 1 );
-		}
+		Printf( CHAT_FILTER_NONE, "%s", ConvertCRtoNL( szString ) );
 		Msg( "%s", ConvertCRtoNL( szString ) );
 		break;
 	}
