@@ -40,7 +40,6 @@ ConVar hud_saytext_time( "hud_saytext_time", "12", 0 );
 ConVar cl_showtextmsg( "cl_showtextmsg", "1", 0, "Enable/disable text messages printing on the screen." );
 ConVar cl_chatfilters( "cl_chatfilters", "127", FCVAR_ARCHIVE, "Stores the chat filter settings " );
 
-
 Color g_ColorBlue( 153, 204, 255, 255 );
 Color g_ColorRed( 255, 63.75, 63.75, 255 );
 Color g_ColorGreen( 153, 255, 153, 255 );
@@ -836,8 +835,8 @@ void CBaseHudChat::MsgFunc_TextMsg( bf_read &msg )
 	char szString[2048];
 	int msg_dest = msg.ReadByte();
 
-	wchar_t szBuf[5][256];
-	wchar_t outputBuf[256];
+	wchar_t szBuf[5][256],
+			outputBuf[256];
 
 	for ( int i=0; i<5; ++i )
 	{
@@ -864,16 +863,16 @@ void CBaseHudChat::MsgFunc_TextMsg( bf_read &msg )
 	if ( !cl_showtextmsg.GetInt() )
 		return;
 
+	g_pVGuiLocalize->ConstructString( outputBuf, sizeof(outputBuf), szBuf[0], 4, szBuf[1], szBuf[2], szBuf[3], szBuf[4] );
+
 	int len;
 	switch ( msg_dest )
 	{
 	case HUD_PRINTCENTER:
-		g_pVGuiLocalize->ConstructString( outputBuf, sizeof(outputBuf), szBuf[0], 4, szBuf[1], szBuf[2], szBuf[3], szBuf[4] );
 		internalCenterPrint->Print( ConvertCRtoNL( outputBuf ) );
 		break;
 
 	case HUD_PRINTNOTIFY:
-		g_pVGuiLocalize->ConstructString( outputBuf, sizeof(outputBuf), szBuf[0], 4, szBuf[1], szBuf[2], szBuf[3], szBuf[4] );
 		g_pVGuiLocalize->ConvertUnicodeToANSI( outputBuf, szString, sizeof(szString) );
 		len = strlen( szString );
 		if ( len && szString[len-1] != '\n' && szString[len-1] != '\r' )
@@ -884,7 +883,6 @@ void CBaseHudChat::MsgFunc_TextMsg( bf_read &msg )
 		break;
 
 	case HUD_PRINTTALK:
-		g_pVGuiLocalize->ConstructString( outputBuf, sizeof(outputBuf), szBuf[0], 4, szBuf[1], szBuf[2], szBuf[3], szBuf[4] );
 		g_pVGuiLocalize->ConvertUnicodeToANSI( outputBuf, szString, sizeof(szString) );
 		len = strlen( szString );
 		if ( len && szString[len-1] != '\n' && szString[len-1] != '\r' )
@@ -897,7 +895,6 @@ void CBaseHudChat::MsgFunc_TextMsg( bf_read &msg )
 
 	//BG2 - So we can filter class changes. -HairyPotter
 	case HUD_BG2CLASSCHANGE:
-		g_pVGuiLocalize->ConstructString( outputBuf, sizeof(outputBuf), szBuf[0], 4, szBuf[1], szBuf[2], szBuf[3], szBuf[4] );
 		g_pVGuiLocalize->ConvertUnicodeToANSI( outputBuf, szString, sizeof(szString) );
 		len = strlen( szString );
 		if ( len && szString[len-1] != '\n' && szString[len-1] != '\r' )
@@ -910,7 +907,126 @@ void CBaseHudChat::MsgFunc_TextMsg( bf_read &msg )
 	//
 
 	case HUD_PRINTCONSOLE:
-		g_pVGuiLocalize->ConstructString( outputBuf, sizeof(outputBuf), szBuf[0], 4, szBuf[1], szBuf[2], szBuf[3], szBuf[4] );
+		g_pVGuiLocalize->ConvertUnicodeToANSI( outputBuf, szString, sizeof(szString) );
+		len = strlen( szString );
+		if ( len && szString[len-1] != '\n' && szString[len-1] != '\r' )
+		{
+			Q_strncat( szString, "\n", sizeof(szString), 1 );
+		}
+		Msg( "%s", ConvertCRtoNL( szString ) );
+		break;
+	}
+}
+
+void CBaseHudChat::MsgFunc_BG2Events( bf_read &msg )
+{
+	if ( !cl_showtextmsg.GetInt() )
+		return;
+
+	char szString[2048];
+	int msg_type = msg.ReadByte(),
+		msg_dest = msg.ReadByte(); //BG2 - Used for BG2 localization. -HairyPotter
+
+	wchar_t szBuf[2][256],
+			outputBuf[256];
+
+	for ( int i = 0; i < 2; ++i )
+	{
+		msg.ReadString( szString, sizeof(szString) );
+		char *tmpStr = hudtextmessage->LookupString( szString, &msg_dest );
+		const wchar_t *pBuf = g_pVGuiLocalize->Find( tmpStr );
+		if ( pBuf )
+		{
+			// Copy pBuf into szBuf[i].
+			int nMaxChars = sizeof( szBuf[i] ) / sizeof( wchar_t );
+			wcsncpy( szBuf[i], pBuf, nMaxChars );
+			szBuf[i][nMaxChars-1] = 0;
+		}
+		else
+		{
+			if ( i )
+			{
+				StripEndNewlineFromString( tmpStr );  // these strings are meant for subsitution into the main strings, so cull the automatic end newlines
+			}
+			g_pVGuiLocalize->ConvertANSIToUnicode( tmpStr, szBuf[i], sizeof(szBuf[i]) );
+		}
+	}
+
+	switch ( msg_type )
+	{
+		case ROUND_DRAW:
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_Round_Draw" ) );
+			break;
+		case MAP_DRAW:
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_Map_Draw" ) );
+			break;
+		case DEFAULT_DRAW:
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_Default_Draw" ) );
+			break;
+		case BRITISH_ROUND_WIN:
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_British_Round_Win" ) );
+			break;
+		case AMERICAN_ROUND_WIN:
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_American_Round_Win" ) );
+			break;
+		case BRITISH_MAP_WIN:
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_British_Map_Win" ) );
+			break;
+		case AMERICAN_MAP_WIN:
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_American_Map_Win" ) );
+			break;
+		case BRITISH_DEFAULT_WIN:
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_British_Default_Win" ) );
+			break;
+		case AMERICAN_DEFAULT_WIN:
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_American_Default_Win" ) );
+			break;
+		case CTF_DENY_CAPTURE:
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_CTF_Deny_Capture" ) );
+			break;
+		case CTF_DENY_PICKUP:
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_CTF_Deny_Pickup" ) );
+			break;
+		case CTF_CAPTURE:
+			if ( !szBuf[0] || !szBuf[1] ) //Just to be safe
+				break;
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_CTF_Capture" ), szBuf[0], szBuf[1] );
+			break;
+		case CTF_PICKUP:
+			if ( !szBuf[0] || !szBuf[1] ) //Just to be safe
+				break;
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_CTF_Pickup" ), szBuf[0], szBuf[1] );
+			break;
+		case CTF_DROP:
+			if ( !szBuf[0] || !szBuf[1] ) //Just to be safe
+				break;
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_CTF_Drop" ), szBuf[0], szBuf[1] );
+			break;
+		case CTF_RETURNED:
+			if ( !szBuf[0] ) //Just to be safe
+				break;
+			_snwprintf(outputBuf, sizeof( outputBuf ), g_pVGuiLocalize->Find( "#BG2_CTF_Returned" ), szBuf[0] );
+			break;
+	}
+
+	int len;
+	switch ( msg_dest )
+	{
+	case HUD_PRINTCENTER:
+		internalCenterPrint->Print( ConvertCRtoNL( outputBuf ) );
+		break;
+
+	case HUD_PRINTNOTIFY:
+		g_pVGuiLocalize->ConvertUnicodeToANSI( outputBuf, szString, sizeof(szString) );
+		len = strlen( szString );
+		if ( len && szString[len-1] != '\n' && szString[len-1] != '\r' )
+		{
+			Q_strncat( szString, "\n", sizeof(szString), 1 );
+		}
+		Msg( "%s", ConvertCRtoNL( szString ) );
+		break;
+
+	case HUD_PRINTCONSOLE:
 		g_pVGuiLocalize->ConvertUnicodeToANSI( outputBuf, szString, sizeof(szString) );
 		len = strlen( szString );
 		if ( len && szString[len-1] != '\n' && szString[len-1] != '\r' )

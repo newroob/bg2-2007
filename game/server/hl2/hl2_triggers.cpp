@@ -936,14 +936,14 @@ void CFlagTriggerBG2::Spawn( void )
 //-----------------------------------------------------------------------------
 void CFlagTriggerBG2::StartTouch(CBaseEntity *pOther)
 {
+	if ( !pOther->IsPlayer() ) //Ask yourself, would anything else be able to capture a flag?
+		return;
+
 	//Defines.
 	CBasePlayer *pPlayer = static_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
 
 	if ( !pPlayer || !FlagEnt || !FlagEnt->m_bActive ) //Flag is inactive?
 		return;				   //Die here.
-
-	if ( !pOther->IsPlayer() ) //Ask yourself, would anything else be able to capture a flag?
-		return;
 
 	//BaseClass::StartTouch( pOther );
 
@@ -970,17 +970,17 @@ void CFlagTriggerBG2::StartTouch(CBaseEntity *pOther)
 //-----------------------------------------------------------------------------
 // Purpose: Called when an entity stops touching us.
 // Input  : pOther - The entity that was touching us.
-//-----------------------------------------------------------------------------
+//----------------------------------------1-------------------------------------
 void CFlagTriggerBG2::EndTouch(CBaseEntity *pOther)
 {
+	if ( !pOther->IsPlayer() ) //Ask yourself, would anything else be able to capture a flag? Should bullets be able to capture?
+		return;
+
 	//Defines
 	CBasePlayer *pPlayer = static_cast< CBasePlayer* >( pOther->MyCombatCharacterPointer() );
 
 	if ( !pPlayer || !FlagEnt || !FlagEnt->m_bActive ) //Flag is inactive?
 		return;				   //Die here.
-
-	if ( !pOther->IsPlayer() ) //Ask yourself, would anything else be able to capture a flag? Should bullets be able to capture?
-		return;
 
 	//BaseClass::EndTouch( pOther );
 
@@ -1047,10 +1047,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 	CtfFlag *pFlag = NULL;
 	bool m_bHomeFlagTaken = false;
 
-	if ( !pPlayer )
-		return;
-
-	if ( !pPlayer->IsAlive() ) //Still alive?
+	if ( !pPlayer || !pPlayer->IsAlive() ) //Still alive?
 		return;
 
 	if ( sv_ctf_capturestyle.GetInt() > 1 ) 
@@ -1092,8 +1089,8 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 
 			if ( m_bHomeFlagTaken ) //The player's team's flag is taken. So we cannot cap an enemy flag.
 			{
-				ClientPrint( pPlayer, HUD_PRINTCENTER, "Your team's flag must be at home before you can capture an enemy flag!\n" ); //Let the player know.
-					return; //Die here.
+				ClientPrint( pPlayer, CTF_DENY_CAPTURE ); //Let the player know.
+				return; //Die here.
 			}
 
 			//Assuming we've made it thus far, you're probably carrying a flag that belongs to the enemy. Go ahead and cap it.
@@ -1125,7 +1122,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 			}
 			//
 
-			pFlag->PrintAlert( "%s Has Captured The %s Flag!", pPlayer->GetPlayerName(), pFlag->cFlagName );
+			pFlag->PrintAlert( CTF_CAPTURE, pPlayer->GetPlayerName(), pFlag->cFlagName );
 
 			//Do the log stuff.
 			CTeam *team = pPlayer->GetTeam();

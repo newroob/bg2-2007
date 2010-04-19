@@ -71,6 +71,25 @@ enum
 	NUM_TEAMS,	//!! must be last !!
 };
 
+enum
+{
+	ROUND_DRAW = 1,
+	MAP_DRAW,
+	DEFAULT_DRAW,
+	BRITISH_ROUND_WIN,
+	AMERICAN_ROUND_WIN,
+	BRITISH_MAP_WIN,
+	AMERICAN_MAP_WIN,
+	BRITISH_DEFAULT_WIN,
+	AMERICAN_DEFAULT_WIN,
+	CTF_DENY_CAPTURE,
+	CTF_DENY_PICKUP,
+	CTF_CAPTURE,
+	CTF_PICKUP,
+	CTF_DROP,
+	CTF_RETURNED,
+};
+
 
 #ifdef CLIENT_DLL
 	#define CHL2MPRules C_HL2MPRules
@@ -176,7 +195,7 @@ public:
 	const char *GetChatFormat( bool bTeamOnly, CBasePlayer *pPlayer );
 
 	//BG2 - This should handle all the score settings after each round, and also fire any triggers and play win music. -HairyPotter
-	void HandleScores( int iTeam, int iScore, char *cText, bool bRestart );
+	void HandleScores( int iTeam, int iScore, int msg_type, bool bRestart );
 #else
 	//BG2 - Skillet - List of player ragdolls
 	CUtlVector<C_HL2MPRagdoll*> m_hRagdollList;

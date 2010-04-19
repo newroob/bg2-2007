@@ -43,6 +43,8 @@ const int CFlag_START_DISABLED = 1;		// spawnflag definition
 
 //BG2 - Tjoppen - TODO: replace the use of ClientPrintAll with custom usermessages
 void ClientPrintAll( char *str, bool printfordeadplayers = false, bool forcenextclientprintall = false );
+void ClientPrintAll( int msg_type, int msg_dest = HUD_PRINTCENTER, const char * param1 = 0, const char * param2 = 0 );
+void ClientPrint( CBasePlayer *pPlayer, int msg_type, int msg_dest = HUD_PRINTCENTER, const char * param1 = 0, const char * param2 = 0 );
 
 class CFlag : public CBaseAnimating
 {

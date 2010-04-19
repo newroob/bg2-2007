@@ -260,6 +260,8 @@ public:
 
 	//BG2 - Tjoppen - VoiceComm usermessage
 	void			MsgFunc_VoiceComm( bf_read &msg );
+	//BG2 - HairyPotter
+	void			MsgFunc_BG2Events( bf_read &msg ); 
 
 	virtual int		GetFilterForString( const char *pString );
 

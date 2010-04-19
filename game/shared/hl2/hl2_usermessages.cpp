@@ -54,6 +54,7 @@ void RegisterUserMessages( void )
 	usermessages->Register( "WinMusic", 1 );		//byte = team ID. let client decide how to interpret
 	usermessages->Register( "CaptureSounds", -1 );	//Position of flag (varies). -HairyPotter
 	usermessages->Register( "VCommSounds", -1 ); //Position Of Player (varies). -HairyPotter
-	usermessages->Register( "MapName", -1 ); //Name of map that we're changng to (varies). -HairyPotter //Not used yet.
+	//usermessages->Register( "MapName", -1 ); //Name of map that we're changng to (varies). -HairyPotter //Not used yet.
+	usermessages->Register( "BG2Events", -1 ); //BG2 - Used for localization. -HairyPotter
 	//
 }

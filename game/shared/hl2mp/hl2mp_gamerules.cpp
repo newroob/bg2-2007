@@ -112,8 +112,8 @@ LIMIT_DEFINES( sml, "small" )
 LIMIT_DEFINES( med, "medium" )
 LIMIT_DEFINES( lrg, "large" )
 
-ConVar mp_limit_mapsize_low( "mp_limit_mapsize_low", "10", CVAR_FLAGS, "Servers with player counts <= this number are small, above it are medium or large" );
-ConVar mp_limit_mapsize_high( "mp_limit_mapsize_high", "20", CVAR_FLAGS, "Servers with player counts <= this number are small or medium, above it are large" );
+ConVar mp_limit_mapsize_low( "mp_limit_mapsize_low", "16", CVAR_FLAGS, "Servers with player counts <= this number are small, above it are medium or large" );
+ConVar mp_limit_mapsize_high( "mp_limit_mapsize_high", "32", CVAR_FLAGS, "Servers with player counts <= this number are small or medium, above it are large" );
 
 
 
@@ -232,8 +232,8 @@ CHL2MPRules::CHL2MPRules()
 	g_CurBotNumber = 1;
 	for( int x = 0; x < MAX_PLAYERS; x++ )
 	{
-		//gBots[x].m_pPlayer = NULL;
-		//gBots[x].m_bInuse = false;
+		gBots[x].m_pPlayer = NULL;
+		gBots[x].m_bInuse = false;
 	}
 
 	extern float flNextClientPrintAll;
@@ -353,6 +353,8 @@ void CHL2MPRules::ResetMap()
 			UTIL_Remove (pEnt);
 			//Msg("Removed %s \n", pEnt->GetClassname());
 		}
+		//else
+		//	Msg("Did not remove : %s \n", pEnt->GetClassname());
 
 		pEnt = gEntList.NextEnt (pEnt);
 	}
@@ -375,7 +377,7 @@ void CHL2MPRules::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 
 #ifndef CLIENT_DLL
 //BG2 - This should handle all the score settings after each round, and also fire any triggers and play win music. -HairyPotter
-void CHL2MPRules::HandleScores( int iTeam, int iScore, char *cText, bool bRestart )
+void CHL2MPRules::HandleScores( int iTeam, int iScore, int msg_type, bool bRestart )
 {
 	CMapTrigger *BG2Trigger = NULL;
 
@@ -412,7 +414,9 @@ void CHL2MPRules::HandleScores( int iTeam, int iScore, char *cText, bool bRestar
 		g_Teams[iTeam]->AddScore( iScore );
 
 	WinSong( iTeam, true );
-	ClientPrintAll( cText, true, true );
+
+	if ( msg_type )
+		ClientPrintAll( msg_type );
 }
 //
 #endif
@@ -436,19 +440,19 @@ void CHL2MPRules::Think( void )
 			if (pAmericans->GetScore() < pBritish->GetScore())
 			{
 				//British Win
-				HandleScores( TEAM_BRITISH, 0, "British win!", false );
+				HandleScores( TEAM_BRITISH, 0, BRITISH_MAP_WIN, false );
 			}
 
 			if (pAmericans->GetScore() > pBritish->GetScore())
 			{
 				//Americans Win
-				HandleScores( TEAM_AMERICANS, 0, "Americans win!", false );
+				HandleScores( TEAM_AMERICANS, 0, AMERICAN_MAP_WIN, false );
 			}
 
 			if (pAmericans->GetScore() == pBritish->GetScore())
 			{
 				//Draw!
-				HandleScores( -1, 0, "Draw!", false );
+				HandleScores( -1, 0, MAP_DRAW, false );
 			}
 		}
 
@@ -692,17 +696,17 @@ void CHL2MPRules::Think( void )
 				{
 					if (aliveamericans > alivebritish)
 					{
-						ClientPrintAll( "Out of time! Americans win!", true, true );
+						ClientPrintAll( AMERICAN_DEFAULT_WIN );
 						m_iTDMTeamThatWon = TEAM_AMERICANS;
 					}
 					else if (aliveamericans < alivebritish)
 					{
-						ClientPrintAll( "Out of time! British win!", true, true );
+						ClientPrintAll( BRITISH_DEFAULT_WIN );
 						m_iTDMTeamThatWon = TEAM_BRITISH;
 					}
 					else
 					{
-						ClientPrintAll( "Out of time! Draw!", true, true );
+						ClientPrintAll( DEFAULT_DRAW );
 						m_iTDMTeamThatWon = -1;
 					}
 				}
@@ -710,20 +714,20 @@ void CHL2MPRules::Think( void )
 				if( aliveamericans == 0 && alivebritish == 0 )
 				{
 					//draw
-					ClientPrintAll( "This round became a draw!", true, true );
+					ClientPrintAll( ROUND_DRAW );
 					m_iTDMTeamThatWon = -1;
 				}
 				else if( aliveamericans == 0 )
 				{
 					//british
 					m_iTDMTeamThatWon = TEAM_BRITISH;
-					ClientPrintAll( "The British won this round!", true, true );
+					ClientPrintAll( BRITISH_ROUND_WIN );
 				}
 				else if( alivebritish == 0 )
 				{
 					//americans
 					m_iTDMTeamThatWon = TEAM_AMERICANS;
-					ClientPrintAll( "The Americans won this round!", true, true );
+					ClientPrintAll( AMERICAN_ROUND_WIN );
 				}
 			}
 			else if( m_flNextRoundRestart < gpGlobals->curtime )
@@ -731,13 +735,13 @@ void CHL2MPRules::Think( void )
 				switch ( m_iTDMTeamThatWon )
 				{
 					case TEAM_AMERICANS:
-						HandleScores( TEAM_AMERICANS, 1, "", true );
+						HandleScores( TEAM_AMERICANS, 1, 0, true );
 						break;
 					case TEAM_BRITISH:
-						HandleScores( TEAM_BRITISH, 1, "", true );
+						HandleScores( TEAM_BRITISH, 1, 0, true );
 						break;
 					default:
-						HandleScores( NULL, 0, "", true );
+						HandleScores( NULL, 0, 0, true );
 						break;
 				}
 
@@ -1835,12 +1839,12 @@ void CHL2MPRules::UpdateFlags( void )
 	{
 		if( (foramericans - american_flags) == 0 && foramericans != 0 )
 		{
-			HandleScores( TEAM_AMERICANS, mp_winbonus.GetInt(), "The Americans won this round!", true );
+			HandleScores( TEAM_AMERICANS, mp_winbonus.GetInt(), AMERICAN_ROUND_WIN, true );
 			return;
 		}
 		if( (forbritish - british_flags) == 0 && forbritish != 0 )
 		{
-			HandleScores( TEAM_BRITISH, mp_winbonus.GetInt(), "The British won this round!", true );
+			HandleScores( TEAM_BRITISH, mp_winbonus.GetInt(), BRITISH_ROUND_WIN, true );
 			return;
 		}
 	}
@@ -1849,7 +1853,7 @@ void CHL2MPRules::UpdateFlags( void )
 		if( american_flags <= 0 && british_flags <= 0 )
 		{
 			//draw
-			HandleScores( NULL, 0, "This round became a draw", true );
+			HandleScores( NULL, 0, ROUND_DRAW, true );
 			//Msg( "draw\n" );
 			return;
 		}
@@ -1858,7 +1862,7 @@ void CHL2MPRules::UpdateFlags( void )
 		{
 			//british win
 			//Msg( "british win\n" );
-			HandleScores( TEAM_BRITISH, mp_winbonus.GetInt(), "The British won this round!", true );
+			HandleScores( TEAM_BRITISH, mp_winbonus.GetInt(), BRITISH_ROUND_WIN, true );
 			return;
 		}
 
@@ -1866,7 +1870,7 @@ void CHL2MPRules::UpdateFlags( void )
 		{
 			//americans win
 			//Msg( "americans win\n" );
-			HandleScores( TEAM_AMERICANS, mp_winbonus.GetInt(), "The Americans won this round!", true );
+			HandleScores( TEAM_AMERICANS, mp_winbonus.GetInt(), AMERICAN_ROUND_WIN, true );
 			return;
 		}
 	}

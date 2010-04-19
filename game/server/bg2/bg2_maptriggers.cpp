@@ -35,17 +35,17 @@ void CMapTrigger::Draw( void )
 void CMapTrigger::InputForceAmericanWinRound( inputdata_t &inputData )
 {
 	//No need to fire an output from here. The rest of the round code will handle that.
-	HL2MPRules()->HandleScores( TEAM_AMERICANS, mp_winbonus.GetInt(), "The Americans won this round!", true );
+	HL2MPRules()->HandleScores( TEAM_AMERICANS, mp_winbonus.GetInt(), AMERICAN_ROUND_WIN, true );
 }
 void CMapTrigger::InputForceBritishWinRound( inputdata_t &inputData )
 {
 	//No need to fire an output from here. The rest of the round code will handle that.
-	HL2MPRules()->HandleScores( TEAM_BRITISH, mp_winbonus.GetInt(), "The British won this round!", true );
+	HL2MPRules()->HandleScores( TEAM_BRITISH, mp_winbonus.GetInt(), BRITISH_ROUND_WIN, true );
 }
 void CMapTrigger::InputForceDrawRound( inputdata_t &inputData )
 {
 	//No need to fire an output from here. The rest of the round code will handle that.
-	HL2MPRules()->HandleScores( -1, 0, "This round became a draw!", true );
+	HL2MPRules()->HandleScores( -1, 0, ROUND_DRAW, true );
 }
 
 

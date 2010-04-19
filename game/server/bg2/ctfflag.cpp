@@ -9,6 +9,7 @@
 #include "hl2mp_gamerules.h"
 #include "team.h"
 #include "engine/IEngineSound.h"
+#include "flag.h"
 
 //ConVar sv_ctf_flagweight ("sv_ctf_flagweight", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL, "How much speed does carrying this flag drain?");
 ConVar sv_ctf_returnstyle ("sv_ctf_returnstyle", "1", FCVAR_NOTIFY | FCVAR_GAMEDLL, "Which way is a flag returned? Setting this to '2' will allow teams to return their own flags when they touch them.");
@@ -51,7 +52,7 @@ void CtfFlag::Spawn( void )
 			break;
 	}
 
-	if ( m_strName == NULL )
+	if ( !m_strName )
 	{
 		switch( iTeam )
 		{
@@ -110,16 +111,15 @@ void CtfFlag::Think( void )
 	StudioFrameAdvance(); //For the flag animation. -HairyPotter
 
 	if ( GetParent() ) //Is a player holding the flag??
-	{
 		return; //Do nothing, we're all set here.
-	}
+
 	else //If there isn't someone holding the flag, we need to search for a potential capturer or perhaps return it.
 	{
 		if ( m_bFlagIsDropped && gpGlobals->curtime > fReturnTime /*&& sv_ctf_returnstyle.GetInt() == 1*/ ) //Should the flag return when time is up?
 			ReturnFlag();
 
 		CBasePlayer *pPlayer = NULL;
-		while( (pPlayer = dynamic_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flPickupRadius ))) != NULL )
+		while( (pPlayer = static_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flPickupRadius ))) != NULL )
 		{
 			if ( !pPlayer->IsAlive() ) //Dead players cannot pick up the flag.
 				continue;
@@ -137,14 +137,14 @@ void CtfFlag::Think( void )
 			if ( sv_ctf_capturestyle.GetInt() > 1 ) 
 			{
 				CtfFlag *pFlag = NULL;
-				while( (pFlag = dynamic_cast<CtfFlag*>(gEntList.FindEntityByClassname( pFlag, "ctf_flag" ))) != NULL ) //Check all flags.
+				while( (pFlag = static_cast<CtfFlag*>(gEntList.FindEntityByClassname( pFlag, "ctf_flag" ))) != NULL ) //Check all flags.
 				{
 					if ( pFlag->iTeam == TeamNumber ) //This flag can be capped by the player's team, we want the other team's flag.
 						continue;
 
 					if ( pFlag->GetAbsOrigin() != pFlag->FlagOrigin ) //This flag belongs to the player's team. Is it at home?
 					{
-						ClientPrint( pPlayer, HUD_PRINTCENTER, "Your team's flag must be at home before you can take an enemy flag!\n" ); //Let the player know.
+						ClientPrint( pPlayer, CTF_DENY_PICKUP ); //Let the player know.
 						return; //Die here.
 					}
 				}
@@ -178,7 +178,7 @@ void CtfFlag::Think( void )
 			}
 			//
 			m_bFlagIsDropped = false; //So it doesn't return while you're carrying it!
-			PrintAlert( "%s Has Taken The %s Flag!", pPlayer->GetPlayerName(), cFlagName );
+			PrintAlert( CTF_PICKUP, pPlayer->GetPlayerName(), cFlagName );
 			PlaySound( GetAbsOrigin(), m_iPickupSound );
 			m_OnPickedUp.FireOutput( this, this ); //Fire the OnPickedUp output.
 		}
@@ -186,7 +186,7 @@ void CtfFlag::Think( void )
 }
 void CtfFlag::PrintAlert( char *Msg, const char * PlayerName, char * FlagName )
 {
-	if ( PlayerName == NULL )
+	if ( !PlayerName )
 		Q_snprintf( CTFMsg, 512, Msg, FlagName );
 	else 
 		Q_snprintf( CTFMsg, 512, Msg, PlayerName, FlagName );
@@ -201,9 +201,22 @@ void CtfFlag::PrintAlert( char *Msg, const char * PlayerName, char * FlagName )
 			break;
 	}
 }
+
+void CtfFlag::PrintAlert( int msg_type, const char * param1, const char * param2 )
+{
+	switch( sv_ctf_flagalerts.GetInt() )
+	{
+		case 1:
+			ClientPrintAll( msg_type, HUD_PRINTCENTER, param1, param2 );
+			break;
+		case 2:
+			ClientPrintAll( msg_type, HUD_PRINTTALK, param1, param2 );
+			break;
+	}
+}
 void CtfFlag::DropFlag( void ) //This function now fires precisely when a player dies / changes teams / disconnects, 
 {							   //this will fix a bug where a player can spawn within 1/8th of a second and still hold the flag after dying.
-	CBasePlayer *pPlayer = dynamic_cast< CBasePlayer* >( GetParent() );
+	CBasePlayer *pPlayer = static_cast< CBasePlayer* >( GetParent() );
 	if ( !pPlayer )
 		return;
 
@@ -212,20 +225,20 @@ void CtfFlag::DropFlag( void ) //This function now fires precisely when a player
 	SetAbsOrigin( GetAbsOrigin() - Vector( 0,0,25 ) ); //HACKHACK: Bring the flag down to it's original height.
 	m_bFlagIsDropped = true;
 	fReturnTime = gpGlobals->curtime + m_fReturnTime;
-	PrintAlert( "%s Has Dropped The %s Flag!", pPlayer->GetPlayerName(), cFlagName );
+	PrintAlert( CTF_DROP, pPlayer->GetPlayerName(), cFlagName );
 	PlaySound( GetAbsOrigin(), m_iDropSound );
 	m_OnDropped.FireOutput( this, this ); //Fire the OnDropped output.
 }
 void CtfFlag::ReturnFlag( void )
 {
 	PlaySound( GetAbsOrigin(), m_iReturnSound );
-	PrintAlert( "The %s Flag Has Returned!", NULL, cFlagName );
+	PrintAlert( CTF_RETURNED, cFlagName );
 	ResetFlag();
 	m_OnReturned.FireOutput( this, this ); //Fire the OnReturned output.
 }
 void CtfFlag::ResetFlag( void )
 {
-	SetParent ( NULL );
+	SetParent( NULL );
 	m_bFlagIsDropped = false;
 	m_bIsCarried = false;
 	SetModel( "models/other/flag.mdl" );

@@ -26,6 +26,8 @@ DECLARE_HUD_MESSAGE( CHudChat, SayText2 );
 DECLARE_HUD_MESSAGE( CHudChat, TextMsg );
 //BG2 - Tjoppen - VoiceComm usermessage
 DECLARE_HUD_MESSAGE( CHudChat, VoiceComm );
+//BG2 - BG2Events usermessage - HairyPotter
+DECLARE_HUD_MESSAGE( CHudChat, BG2Events );
 
 
 //=====================
@@ -82,6 +84,8 @@ void CHudChat::Init( void )
 	HOOK_HUD_MESSAGE( CHudChat, TextMsg );
 	//BG2 - Tjoppen - VoiceComm usermessage
 	HOOK_HUD_MESSAGE( CHudChat, VoiceComm );
+	//BG2 - BG2Events usermessage - HairyPotter
+	HOOK_HUD_MESSAGE( CHudChat, BG2Events );
 }
 
 //-----------------------------------------------------------------------------

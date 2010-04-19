@@ -50,6 +50,7 @@ public:
 	void Spawn( void );
 	void Precache( void );
 	void PrintAlert( char *Msg, const char * PlayerName, char * FlagName );
+	void PrintAlert( int msg_type, const char * param1 = 0, const char * param2 = 0 );
 	void ReturnFlag( void );
 	void PlaySound( int iSound );
 	void DropFlag( void );

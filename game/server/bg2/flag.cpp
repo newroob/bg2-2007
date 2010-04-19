@@ -55,13 +55,8 @@ void ClientPrintAll( char *str, bool printfordeadplayers, bool forcenextclientpr
 	if( !str )
 		return;
 
-	//Msg( "ClientPrintAll: %s printfordeadplayers=%i forcenextclientprintall=%i\t", str, printfordeadplayers, forcenextclientprintall );
-
 	if( flNextClientPrintAll > gpGlobals->curtime && (!printfordeadplayers || bNextClientPrintAllForce) && !forcenextclientprintall )
-	{
-		//Msg( "returned\n" );
 		return;
-	}
 
 	flNextClientPrintAll = gpGlobals->curtime + 1.0f;
 	bNextClientPrintAllForce = forcenextclientprintall;
@@ -75,8 +70,50 @@ void ClientPrintAll( char *str, bool printfordeadplayers, bool forcenextclientpr
 
 		ClientPrint( pPlayer, HUD_PRINTCENTER, str );
 	}
+}
 
-	//Msg( "done\n" );
+void ClientPrintAll( int msg_type, int msg_dest, const char * param1, const char * param2 )
+{
+	CReliableBroadcastRecipientFilter filter;
+
+	UserMessageBegin( filter, "BG2Events" );
+		WRITE_BYTE( msg_type );
+		WRITE_BYTE( msg_dest );
+
+		if ( param1 )
+			WRITE_STRING( param1 );
+		else
+			WRITE_STRING( "" );
+
+		if ( param2 )
+			WRITE_STRING( param2 );
+		else
+			WRITE_STRING( "" );
+	MessageEnd();
+}
+
+void ClientPrint( CBasePlayer *pPlayer, int msg_type, int msg_dest, const char * param1, const char * param2 )
+{
+	if ( !pPlayer )
+		return;
+
+	CSingleUserRecipientFilter user( pPlayer );
+	user.MakeReliable();
+
+	UserMessageBegin( user, "BG2Events" );
+		WRITE_BYTE( msg_type );
+		WRITE_BYTE( msg_dest );
+
+		if ( param1 )
+			WRITE_STRING( param1 );
+		else
+			WRITE_STRING( "" );
+
+		if ( param2 )
+			WRITE_STRING( param2 );
+		else
+			WRITE_STRING( "" );
+	MessageEnd();
 }
 //#endif
 
