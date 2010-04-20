@@ -3112,6 +3112,9 @@ void CTempEnts::MuzzleFlash_357_Player( ClientEntityHandle_t hEntity, int attach
 //==================================================
 
 //BG2 - Tjoppen - client smoke cvars
+//#define SMOKE_TESTCVARS --Comment this out for release.
+
+#if defined( SMOKE_TESTCVARS )
 ConVar cl_smoke_muzzle_length( "cl_smoke_muzzle_length", "120", FCVAR_ARCHIVE, "Length of forward smoke cone when created" );
 ConVar cl_smoke_muzzle_count( "cl_smoke_muzzle_count", "11", FCVAR_ARCHIVE, "Number of 'puff' sprites along the length of the smoke cone" );
 ConVar cl_smoke_muzzle_lifetime_min( "cl_smoke_muzzle_lifetime_min", "1", FCVAR_ARCHIVE, "Minimum lifetime of smoke puffs" );
@@ -3129,11 +3132,12 @@ ConVar cl_smoke_flashpan_size_start( "cl_smoke_flashpan_size_start", "4", FCVAR_
 ConVar cl_smoke_flashpan_size_end( "cl_smoke_flashpan_size_end", "8", FCVAR_ARCHIVE, "Size of smoke puff furthest away from the flashpan" );
 
 ConVar cl_smoke_owner_velocity_bonus( "cl_smoke_owner_velocity_bonus", "0.25", FCVAR_ARCHIVE, "Amount of extra velocity to take from player to add to smoke. Setting too high (> 0.5) looks silly" );
-ConVar cl_smoke_opacity_start( "cl_smoke_opacity_start", "45", FCVAR_ARCHIVE, "Initial opacity of smoke" );
+ConVar cl_smoke_opacity_start( "cl_smoke_opacity_start", "35", FCVAR_ARCHIVE, "Initial opacity of smoke" );
 ConVar cl_smoke_opacity_end( "cl_smoke_opacity_end", "0", FCVAR_ARCHIVE, "Final opacity of smoke, before dying" );
 ConVar cl_smoke_size_expansion( "cl_smoke_size_expansion", "4", FCVAR_ARCHIVE, "Ratio between initial and final smoke size" );
 ConVar cl_smoke_rotation( "cl_smoke_rotation", "99", FCVAR_ARCHIVE, "Rotation speed of sprites" );
 ConVar cl_smoke_speed_dropoff( "cl_smoke_speed_dropoff", "999999", FCVAR_ARCHIVE, "Smoke speed drops off to drift speed at a rate of expf(-dropoff * dt) each dt" );
+#endif
 //
 
 //BG2 - Tjoppen - shared muzzleflash function(both first- and thirdperson)
@@ -3253,6 +3257,7 @@ void MuzzleFlash_Pistol_Shared( ClientEntityHandle_t hEntity, int attachmentInde
 	// Smoke
 
 	//BG2 - Tjoppen - cvar configurable smoke
+#if defined ( SMOKE_TESTCVARS )
 	for( int j = 0; j < cl_smoke_muzzle_count.GetInt(); j++ )
 	{
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
@@ -3296,6 +3301,51 @@ void MuzzleFlash_Pistol_Shared( ClientEntityHandle_t hEntity, int attachmentInde
 		pParticle->m_flRollDelta	= random->RandomFloat( -cl_smoke_rotation.GetFloat(), cl_smoke_rotation.GetFloat() );
 
 	}
+#else
+	for( int j = 0; j < 11; j++ )
+	{
+		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
+		offset = origin + forward * 120 * (j+1) / 11;
+
+		char name[64];
+		Q_snprintf( name, sizeof(name), "particle/particle_musketsmoke%i", random->RandomInt(1,5) );
+
+		pParticle = (SimpleParticle *) pSimple3->AddParticle( sizeof( SimpleParticle ), pSimple3->GetPMaterial( name ), offset );
+			
+		if ( pParticle == NULL )
+			return;
+
+		pParticle->m_flLifetime		= 0.0f;
+		pParticle->m_flDieTime		= random->RandomFloat( 1, 18 );
+
+		pParticle->m_vecVelocity = forward * 20000;
+
+		//BG2 - Tjoppen - also add owner velocity to smoke, or else we can run up to it which doesn't make sense
+		pParticle->m_vecVelocity += ownervelocity * 0.25;
+
+		//Find area ambient light color and use it to tint smoke
+		Vector	worldLight = WorldGetLightForPoint( origin, false );	
+
+		int color = random->RandomInt( 215, 255 );//( 200, 255 );
+		float finalcolor = worldLight[0] * color + 30;
+		if ( finalcolor > 205 )
+			finalcolor = 205;
+		if ( finalcolor < 130 )
+			finalcolor = 130;
+		pParticle->m_uchColor[0]	= finalcolor;
+		pParticle->m_uchColor[1]	= finalcolor;
+		pParticle->m_uchColor[2]	= finalcolor;
+
+		pParticle->m_uchStartAlpha	= 35;
+		pParticle->m_uchEndAlpha	= 0;
+
+		pParticle->m_uchStartSize	= 10 + (28 - 10)* (j+1) / 11;
+		pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 4;
+		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
+		pParticle->m_flRollDelta	= random->RandomFloat( -99, 99 );
+
+	}
+#endif
 }
 
 void CTempEnts::MuzzleFlash_Pistol_Player( ClientEntityHandle_t hEntity, int attachmentIndex )
@@ -3390,6 +3440,7 @@ void CTempEnts::MuzzleFlash_Flashpan( ClientEntityHandle_t hEntity, int attachme
 
 
 	//BG2 - Tjoppen - cvar configurable smoke
+#if defined ( SMOKE_TESTCVARS )
 	for( int j = 0; j < cl_smoke_flashpan_count.GetInt(); j++ )
 	{
 		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
@@ -3432,6 +3483,50 @@ void CTempEnts::MuzzleFlash_Flashpan( ClientEntityHandle_t hEntity, int attachme
 		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
 		pParticle->m_flRollDelta	= random->RandomFloat( -cl_smoke_rotation.GetFloat(), cl_smoke_rotation.GetFloat() );
 	}
+#else
+	for( int j = 0; j < 8; j++ )
+	{
+		//BG2 - Tjoppen - smoke pops up along a line, to simulate the initial very fast exhaust
+		Vector offset = origin + forward * 20 * (j+1) / 8;
+
+		char name[64];
+		Q_snprintf( name, sizeof(name), "particle/particle_musketsmoke%i", random->RandomInt(1,5) );
+
+		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( name ), offset );
+			
+		if ( pParticle == NULL )
+			return;
+
+		pParticle->m_flLifetime		= 0.0f;
+		pParticle->m_flDieTime		= random->RandomFloat( 1, 5 );
+
+		pParticle->m_vecVelocity = forward * 1000;
+
+		//BG2 - Tjoppen - also add owner velocity to smoke, or else we can run up to it which doesn't make sense
+		pParticle->m_vecVelocity += ownervelocity * 0.25;
+
+		//Find area ambient light color and use it to tint smoke
+		Vector	worldLight = WorldGetLightForPoint( origin, false );	
+
+		int color = random->RandomInt( 215, 255 );//( 200, 255 );
+		float finalcolor = worldLight[0] * color + 30;
+		if ( finalcolor > 205 )
+			finalcolor = 205;
+		if ( finalcolor < 130 )
+			finalcolor = 130;
+		pParticle->m_uchColor[0]	= finalcolor;
+		pParticle->m_uchColor[1]	= finalcolor;
+		pParticle->m_uchColor[2]	= finalcolor;
+
+		pParticle->m_uchStartAlpha	= 35;
+		pParticle->m_uchEndAlpha	= 0;
+
+		pParticle->m_uchStartSize	= 4 + (8 - 4)* (j+1) / 8;
+		pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 4;
+		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
+		pParticle->m_flRollDelta	= random->RandomFloat( -99, 99 );
+	}
+#endif
 }
 
 void CTempEnts::RocketFlare( const Vector& pos )

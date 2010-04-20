@@ -2290,6 +2290,15 @@ void CGameMovement::PlaySwimSound()
 //-----------------------------------------------------------------------------
 bool CGameMovement::CheckJumpButton( void )
 {
+	#ifndef CLIENT_DLL
+	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
+	#else
+	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
+	#endif
+
+	if ( !pHL2Player )
+		return false;
+
 	if (player->pl.deadflag)
 	{
 		mv->m_nOldButtons |= IN_JUMP ;	// don't jump again until released
@@ -2346,11 +2355,6 @@ bool CGameMovement::CheckJumpButton( void )
 		return false;
 	}
 
-#ifndef CLIENT_DLL
-	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
-#else
-	C_HL2MP_Player *pHL2Player = (C_HL2MP_Player*)C_HL2MP_Player::GetLocalPlayer();
-#endif
 	//make healthier players have an easier time jumping
 	int drain = 40 - pHL2Player->m_iHealth / 10;
 
@@ -4039,7 +4043,8 @@ void CGameMovement::FinishDuck( void )
 	//BG2 - Draco - decrease stamina for ducking
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
 	
-	pHL2Player->DrainStamina( 30 );
+	if ( pHL2Player )
+		pHL2Player->DrainStamina( 30 );
 #endif
 
 	player->AddFlag( FL_DUCKING );

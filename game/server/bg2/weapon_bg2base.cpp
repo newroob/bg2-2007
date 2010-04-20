@@ -187,7 +187,8 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 #ifndef CLIENT_DLL
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
 
-	pHL2Player->DrainStamina( drain );
+	if ( pHL2Player )
+		pHL2Player->DrainStamina( drain );
 #endif
 }
 
@@ -240,7 +241,8 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 #ifndef CLIENT_DLL
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
 
-	pHL2Player->DrainStamina( drain );
+	if ( pHL2Player )
+		pHL2Player->DrainStamina( drain );
 #endif
 }
 
