@@ -48,7 +48,7 @@ void RegisterUserMessages( void )
 	//usermessages->Register( "teamreward", -1 );
 	//usermessages->Register( "flagstatus", -1 );
 	//BG2 - Tjoppen - usermessages
-	usermessages->Register( "VoiceComm", 2 );
+	usermessages->Register( "VoiceComm", 3 );
 	usermessages->Register( "HitVerif", 5 );	//XXX hit YYY in ZZZ for WWW damage
 	usermessages->Register( "ServerBlood", -1 );	//pos(varies), normal(varies), amount(2)
 	usermessages->Register( "WinMusic", 1 );		//byte = team ID. let client decide how to interpret

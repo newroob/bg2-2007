@@ -1541,6 +1541,7 @@ void CHL2MP_Player::HandleVoicecomm( int comm )
 			UserMessageBegin( recpfilter, "VoiceComm" );
 				WRITE_BYTE( entindex() );	//voicecomm originator
 				WRITE_BYTE( comm | (GetTeamNumber() == TEAM_AMERICANS ? 32 : 0) );	//pack comm number and team
+				WRITE_BYTE( m_iClass );	//class number
 			MessageEnd();
 		}
 	}

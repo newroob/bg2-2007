@@ -1805,6 +1805,8 @@ void CBaseHudChat::MsgFunc_VoiceComm( bf_read &msg )
 	int commdata	= msg.ReadByte(),
 		comm		= commdata & 31,
 		isamerican	= commdata >> 5;
+	int m_iClass	= msg.ReadByte();
+
 	wchar_t string1[64];
 	string1[0] = 0;
 
@@ -1820,7 +1822,11 @@ void CBaseHudChat::MsgFunc_VoiceComm( bf_read &msg )
 		char searchstring[32];
 
 		//first build our search string
-		Q_snprintf( searchstring, sizeof searchstring, "#BG2_VoiceComm_%c%i", isamerican ? 'A' : 'B', comm + 1 );
+		//BG2 - quick hack for now. Fix this up later. - HairyPotter
+		if ( !isamerican && m_iClass == CLASS_SKIRMISHER && ( comm + 1 == 19 ) ) //Native battlecry
+			Q_snprintf( searchstring, sizeof searchstring, "#BG2_VoiceComm_N19" );
+		else
+			Q_snprintf( searchstring, sizeof searchstring, "#BG2_VoiceComm_%c%i", isamerican ? 'A' : 'B', comm + 1 );
 
 		//look up our strings
 		wchar_t *resolved = g_pVGuiLocalize->Find( searchstring ),				// "Yes"
