@@ -1000,7 +1000,11 @@ void CHL2MP_Player::SetAnimation( PLAYER_ANIM playerAnim )
 	//
 	else if ( playerAnim == PLAYER_RELOAD )
 	{
-		idealActivity = ACT_HL2MP_GESTURE_RELOAD;
+			idealActivity = ACT_HL2MP_GESTURE_RELOAD;
+	}
+	else if ( playerAnim == PLAYER_HOLSTER )
+	{
+		RemoveAllGestures(); //BG2 - It took me 2 solid hours to come up with this hack. - HairyPotter
 	}
 	else if ( playerAnim == PLAYER_IDLE || playerAnim == PLAYER_WALK )
 	{

@@ -23,6 +23,7 @@
 
 #ifdef HL2MP
 	#include "hl2mp_gamerules.h"
+	#include "hl2mp_player.h" //BG2 - HairyPotter
 #endif
 
 #endif
@@ -1470,6 +1471,7 @@ bool CBaseCombatWeapon::Holster( CBaseCombatWeapon *pSwitchingTo )
 	//
 
 	CBaseCombatCharacter *pOwner = GetOwner();
+
 	//BG2 - Tjoppen - m_bCantAbortReload
 	if( m_bCantAbortReload && m_bInReload )
 		return false;
@@ -1495,7 +1497,14 @@ bool CBaseCombatWeapon::Holster( CBaseCombatWeapon *pSwitchingTo )
 		flSequenceDuration = SequenceDuration();
 	}
 
-	//CBaseCombatCharacter *pOwner = GetOwner();
+#ifndef CLIENT_DLL
+	//BG2 - Play the player's holster animation - HairyPotter
+	if ( pOwner )
+	{
+		( ( CBasePlayer * )pOwner)->SetAnimation( PLAYER_HOLSTER );
+	}
+#endif
+	
 	if (pOwner)
 	{
 		pOwner->SetNextAttack( gpGlobals->curtime + flSequenceDuration );
@@ -1959,6 +1968,7 @@ bool CBaseCombatWeapon::DefaultReload( int iClipSize1, int iClipSize2, int iActi
 	WeaponSound( RELOAD );
 //#endif
 	SendWeaponAnim( iActivity );
+
 
 	// Play the player's reload animation
 	if ( pOwner->IsPlayer() )
