@@ -33,6 +33,8 @@
 #include <vgui/ISurface.h>
 #include <vgui/ILocalize.h>
 #include <KeyValues.h>
+#include <sstream>
+#include <set>
 #include "c_baseplayer.h"
 #include "c_team.h"
 #include "c_hl2mp_player.h"
@@ -48,6 +50,151 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
+
+#define ACCUMULATE_LIMIT	0.5	//accumulate damages for this long. should be enough for all shot to hit
+
+static const char* HitgroupName( int hitgroup )
+{
+	//BG2 - Tjoppen - TODO: localize
+	switch ( hitgroup )
+	{
+	case HITGROUP_GENERIC:
+		return NULL;
+	case HITGROUP_HEAD:
+		return "head";
+	case HITGROUP_CHEST:
+		return "chest";
+	case HITGROUP_STOMACH:
+		return "stomach";
+	case HITGROUP_LEFTARM:
+		return "left arm";
+	case HITGROUP_RIGHTARM:
+		return "right arm";
+	case HITGROUP_LEFTLEG:
+		return "left leg";
+	case HITGROUP_RIGHTLEG:
+		return "right leg";
+	default:
+		return "unknown default case";
+	}
+}
+
+//BG2 - Tjoppen - used for accumulated damage cauased by or inflicted on the player, over a short period of time (buckshot)
+class CDamagePlayerAccumulator
+{
+	bool m_bIsVictim;			//governs what kind of message is produced
+	float m_flLastAttack;
+	int m_flTotalDamage;
+	int m_iHitgroup;			//only used if only one player was hit
+	std::set<int> m_sPlayers;
+
+	std::string GetPlayerName( int player )
+	{
+		player_info_t info;
+
+		if( engine->GetPlayerInfo( player, &info ) )
+			return info.name;
+		else
+			return "";
+	}
+
+public:
+	CDamagePlayerAccumulator( bool isVictim )
+	{
+		m_bIsVictim = isVictim;
+		m_flLastAttack = 0;
+		m_flTotalDamage = 0;
+	}
+
+	//accumulates the specified damage and returns a proper message
+	std::string Accumulate( float damage, int player, int hitgroup )
+	{
+		if( m_flLastAttack + ACCUMULATE_LIMIT > gpGlobals->curtime )
+		{
+			//accumulate
+			m_flTotalDamage += damage;
+			m_sPlayers.insert(player);
+
+			//only override hitgroup if it's a headshot
+			if( hitgroup == HITGROUP_HEAD )
+				m_iHitgroup = hitgroup;
+		}
+		else
+		{
+			//reset
+			m_flLastAttack = gpGlobals->curtime;
+			m_flTotalDamage = damage;
+			m_iHitgroup = hitgroup;
+			m_sPlayers.clear();
+			m_sPlayers.insert(player);
+		}
+
+		/**
+		  Generate hit verification message. We have five cases:
+		   * we're the victim and were hit by one attacker in no particular hitgroup
+		   * we're the victim and were hit by one attacker in some hitgroup (head, chest etc.)
+		   * we're the attacker and hit one victim in no particular hitgroup
+		   * we're the attacker and hit one victim in some hitgroup
+		   * we're the attacker and hit multiple victims
+	      
+		  This means we don't care about being hit by multiple attackers (just print the first one)
+		  or things like headshoting multiple victims
+		 */
+		//use m_iHitgroup instead of hitgroup so headshots show even though hitgroup might be something else
+		const char *hitgroupname = HitgroupName( m_iHitgroup );
+		std::ostringstream oss;
+
+		//TODO: localize
+		if( m_bIsVictim )
+		{
+			oss << "You were hit";
+
+			if( hitgroupname )
+			{
+				//specific hitgroup
+				oss << " in the " << hitgroupname;
+			}
+
+			oss << " by " << GetPlayerName(player);
+		}
+		else
+		{
+			oss << "You hit ";
+
+			if( m_sPlayers.size() == 1 )
+			{
+				//single victim
+				oss << GetPlayerName(player);
+
+				if( hitgroupname )
+				{
+					//specific hitgroup
+					oss << " in the " << hitgroupname;
+				}
+			}
+			else
+			{
+				//multiple victims
+				//desired format: "player1[, player2[, player3...]] and playerN"
+				size_t numLeft = m_sPlayers.size() - 1;
+
+				for( std::set<int>::iterator it = m_sPlayers.begin(); it != m_sPlayers.end(); it++, numLeft-- )
+				{
+					oss << GetPlayerName(*it);
+
+					if( numLeft > 1 )
+						oss << ", ";
+					else if( numLeft > 0 )
+						oss << " and ";
+				}
+			}
+		}
+
+		oss << " for " << (int)m_flTotalDamage << " points of damage";
+
+		return oss.str();
+	}
+};
 
 //==============================================
 // CHudBG2
@@ -92,12 +239,8 @@ private:
 	vgui::Label *m_pLabelDamageVerificator,
 				*m_pLabelLMS;		//BG2 - Tjoppen - TODO: remove this when hintbox works correctly
 
-	float	m_flLastMessage;
-	int		m_iLastAttacker;
-	int		m_iLastVictim;
-	float	m_flTotalDamage;
-
-	const char* HitgroupName( int hitgroup );
+	CDamagePlayerAccumulator m_IsVictimAccumulator;
+	CDamagePlayerAccumulator m_IsAttackerAccumulator;
 
 	float m_flExpireTime;
 };
@@ -115,7 +258,8 @@ DECLARE_HUD_MESSAGE( CHudBG2, VCommSounds );
 // Constructor
 //==============================================
 CHudBG2::CHudBG2( const char *pElementName ) :
-	CHudElement( pElementName ), BaseClass( NULL, "HudBG2" )
+	CHudElement( pElementName ), BaseClass( NULL, "HudBG2" ),
+	m_IsVictimAccumulator(true), m_IsAttackerAccumulator(false)
 {
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
@@ -127,7 +271,6 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_Health = NULL;
 
 	m_flExpireTime = 0;
-	m_flTotalDamage = 0;
 
 	Color ColourWhite( 255, 255, 255, 255 );
 
@@ -244,6 +387,25 @@ void CHudBG2::Paint()
 	if( !m_Base || !m_Straps || !m_Stamina || !m_Health )
 		return;
 
+	//BG2 - Tjoppen - Always paint damage label, so it becomes visible while using iron sights
+	//fade out the last second
+	float alpha = (m_flExpireTime - gpGlobals->curtime) * 255.0f;
+	if( alpha < 0.0f )
+		alpha = 0.0f;
+	else if( alpha > 255.0f )
+		alpha = 255.0f;
+
+	if( alpha > 0 )
+	{
+		m_pLabelDamageVerificator->SizeToContents();
+		//center and put somewhat below crosshair
+		m_pLabelDamageVerificator->SetPos((ScreenWidth()-m_pLabelDamageVerificator->GetWide())/2, (ScreenHeight()*5)/8);
+		m_pLabelDamageVerificator->SetFgColor( Color( 255, 255, 255, (int)alpha ) );
+		m_pLabelDamageVerificator->SetVisible( true );
+	}
+	else
+		m_pLabelDamageVerificator->SetVisible( false );
+
 	C_HL2MP_Player *pHL2Player = dynamic_cast<C_HL2MP_Player*>(C_HL2MP_Player::GetLocalPlayer());
 	if (!pHL2Player || !pHL2Player->IsAlive())
 	{
@@ -355,19 +517,6 @@ void CHudBG2::Paint()
 	m_pLabelBGVersion->SetPos(5, 60);	
 	m_pLabelBGVersion->SetFgColor( ColourWhite );*/
 
-	m_pLabelDamageVerificator->SizeToContents();
-	//center and put somewhat below crosshair
-	m_pLabelDamageVerificator->SetPos((ScreenWidth()-m_pLabelDamageVerificator->GetWide())/2, (ScreenHeight()*5)/8);
-
-	//fade out the last second
-	float alpha = (m_flExpireTime - gpGlobals->curtime) * 255.0f;
-	if( alpha < 0.0f )
-		alpha = 0.0f;
-	else if( alpha > 255.0f )
-		alpha = 255.0f;
-
-	m_pLabelDamageVerificator->SetFgColor( Color( 255, 255, 255, (int)alpha ) );
-
 	m_pLabelLMS->SetText( g_pVGuiLocalize->Find("#LMS") );
 	m_pLabelLMS->SizeToContents();
 	m_pLabelLMS->GetSize( w, h );
@@ -411,34 +560,8 @@ void CHudBG2::HideShowAll( bool visible )
 	m_pLabelWaveTime->SetVisible(visible);
 	m_pLabelAmmo->SetVisible(visible);
 	//m_pLabelBGVersion->SetVisible(false);	// BP: not used yet as its not subtle enough, m_pLabelBGVersion->SetVisible(ShouldDraw());
-	m_pLabelDamageVerificator->SetVisible(visible && m_flExpireTime > gpGlobals->curtime);
+	m_pLabelDamageVerificator->SetVisible(m_flExpireTime > gpGlobals->curtime);	//always show damage indicator (unless expired)
 	m_pLabelLMS->SetVisible( visible && mp_respawnstyle.GetInt() >= 2 && cl_draw_lms_indicator.GetBool() );
-}
-
-const char* CHudBG2::HitgroupName( int hitgroup )
-{
-	//BG2 - Tjoppen - TODO: localize
-	switch ( hitgroup )
-	{
-	case HITGROUP_GENERIC:
-		return NULL;
-	case HITGROUP_HEAD:
-		return "head";
-	case HITGROUP_CHEST:
-		return "chest";
-	case HITGROUP_STOMACH:
-		return "stomach";
-	case HITGROUP_LEFTARM:
-		return "left arm";
-	case HITGROUP_RIGHTARM:
-		return "right arm";
-	case HITGROUP_LEFTLEG:
-		return "left leg";
-	case HITGROUP_RIGHTLEG:
-		return "right leg";
-	default:
-		return "unknown default case";
-	}
 }
 
 //BG2 - Tjoppen - cl_hitverif & cl_winmusic && capturesounds & voice comm sounds //HairyPotter
@@ -465,10 +588,13 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 	hitgroup &= 0xF;
 
 	C_HL2MP_Player *pAttacker = dynamic_cast<C_HL2MP_Player*>(UTIL_PlayerByIndex( attacker ));
-	C_HL2MP_Player *pVictim = dynamic_cast<C_HL2MP_Player*>(UTIL_PlayerByIndex( victim ));
+
+	if( !pAttacker )
+		return;
+
 	C_BaseBG2Weapon *pWeapon = dynamic_cast<C_BaseBG2Weapon*>(pAttacker->GetActiveWeapon());
 
-	if( !pAttacker || !pVictim || !pWeapon || !C_BasePlayer::GetLocalPlayer() )
+	if( !pWeapon || !C_BasePlayer::GetLocalPlayer() )
 		return;
 
 	//play melee hit sound if attacker's last attack was a melee attack
@@ -496,47 +622,22 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 
 	//Msg( "MsgFunc_HitVerif: %i %i %i %f\n", attacker, victim, hitgroup, damage );
 
-	player_info_t sAttackerInfo, sVictimInfo;
-	engine->GetPlayerInfo( attacker, &sAttackerInfo );
-	engine->GetPlayerInfo( victim, &sVictimInfo );
-
-	char txt[512];
-	const char *hitgroupname = HitgroupName( hitgroup );
-
 	//accumulate partial HitVerif messages within a small time window
 	//this makes buckshot damage display correctly with and without simulated bullets
-	if( m_flLastMessage > gpGlobals->curtime - 0.5 && m_iLastAttacker == attacker && m_iLastVictim == victim )
-	{
-		m_flTotalDamage += damage;
-	}
-	else
-	{
-		m_flTotalDamage = damage;
-		m_iLastAttacker = attacker;
-		m_iLastVictim = victim;
-	}
+	std::string message;
 
-	m_flLastMessage = gpGlobals->curtime;
-
-	//BG2 - Tjoppen - TODO: localize
 	if( C_BasePlayer::GetLocalPlayer()->entindex() == victim )
 	{
-		//I'm the victim here!
-		if( hitgroupname )
-			sprintf( txt, "You were hit in the %s by %s for %i points of damage", hitgroupname, sAttackerInfo.name, (int)m_flTotalDamage );
-		else
-			sprintf( txt, "You were hit by %s for %i points of damage", sAttackerInfo.name, (int)m_flTotalDamage );
+		//local player is victim ("You were hit...")
+		message = m_IsVictimAccumulator.Accumulate( damage, attacker, hitgroup );
 	}
 	else
 	{
-		//got one!
-		if( hitgroupname )
-			sprintf( txt, "You hit %s in the %s for %i points of damage", sVictimInfo.name, hitgroupname, (int)m_flTotalDamage );
-		else
-			sprintf( txt, "You hit %s for %i points of damage", sVictimInfo.name, (int)m_flTotalDamage );
+		//"You hit..."
+		message = m_IsAttackerAccumulator.Accumulate( damage, victim, hitgroup );
 	}
 
-	m_pLabelDamageVerificator->SetText( txt );
+	m_pLabelDamageVerificator->SetText( message.c_str() );
 	m_flExpireTime = gpGlobals->curtime + 5.0f;
 }
 
