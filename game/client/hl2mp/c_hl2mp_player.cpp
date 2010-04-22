@@ -15,6 +15,10 @@
 #include "r_efx.h"
 #include "dlight.h"
 
+//BG2 - Include - HP
+#include "./bg2/bg2_hud_main.h"
+//
+
 // Don't alias here
 #if defined( CHL2MP_Player )
 #undef CHL2MP_Player	
@@ -54,6 +58,15 @@ extern player_info_t sPlayerInfo;
 
 C_HL2MP_Player::C_HL2MP_Player() : m_PlayerAnimState( this ), m_iv_angEyeAngles( "C_HL2MP_Player::m_iv_angEyeAngles" )
 {
+	//BG2 - Reset last attack times each time a player enters the game. -HairyPotter
+	CHudBG2 *pHud = CHudBG2::GetInstance();
+	if ( pHud )
+	{
+		pHud->m_IsAttackerAccumulator.m_flLastAttack = 0;
+		pHud->m_IsVictimAccumulator.m_flLastAttack = 0;
+	}
+	//
+
 	m_iIDEntIndex = 0;
 	m_iSpawnInterpCounterCache = 0;
 
