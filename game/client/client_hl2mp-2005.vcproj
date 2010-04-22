@@ -2790,6 +2790,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\bg2\bg2_hud_main.h"
+					>
+				</File>
+				<File
 					RelativePath=".\bg2\bg2_hud_stamina.cpp"
 					>
 					<FileConfiguration
