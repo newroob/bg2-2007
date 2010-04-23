@@ -724,6 +724,7 @@ void CFlag::ThinkCapped( void )
 				continue;
 
 			//BG2 - Tjoppen - TODO: m_iForTeam troubles?
+
 			if( pPlayer->GetTeamNumber() == GetTeamNumber() )
 			{
 				friendlies++;
@@ -735,7 +736,21 @@ void CFlag::ThinkCapped( void )
 				}
 			}
 			else
-				enemies++;
+			{
+				switch( pPlayer->GetTeamNumber() )
+				{
+					case TEAM_AMERICANS:
+						if ((m_iForTeam == 1) || (m_iForTeam == 0))
+							enemies++;
+						break;
+					case TEAM_BRITISH:
+						if ((m_iForTeam == 2) || (m_iForTeam == 0))
+							enemies++;
+						break;
+					default:
+						break;
+				}
+			}
 		}
 	} 
 	else //The trigger is talking to this flag.
