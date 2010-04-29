@@ -549,9 +549,9 @@ int CBaseBG2Weapon::Swing( int iAttack, bool bIsFirstAttempt )
 	TraceAttackToTriggers( triggerInfo, traceHit.startpos, traceHit.endpos, vec3_origin );
 #endif //Keep the following code with the client.dll
 
-	//only allow melee hits to head on the first frame
+	//only allow slashing weapons to hit to head on the first frame
 	//any subsequent hit to the head gets demoted a hit to the chest
-	if( traceHit.hitgroup == HITGROUP_HEAD && !bIsFirstAttempt )
+	if( GetAttackType( iAttack ) == ATTACKTYPE_SLASH && traceHit.hitgroup == HITGROUP_HEAD && !bIsFirstAttempt )
 		traceHit.hitgroup = HITGROUP_CHEST;
 
 	if ( traceHit.fraction == 1.0f )
