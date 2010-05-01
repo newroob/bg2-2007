@@ -408,7 +408,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 
 	m_fNextHolster = gpGlobals->curtime + 0.3f; //Keep people from switching weapons right after shooting.
 
-	return 45;
+	return 35;
 }
 
 //------------------------------------------------------------------------------

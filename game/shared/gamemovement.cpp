@@ -2355,8 +2355,8 @@ bool CGameMovement::CheckJumpButton( void )
 		return false;
 	}
 
-	//make healthier players have an easier time jumping
-	int drain = 40 - pHL2Player->m_iHealth / 10;
+	//stamina drain for jumping
+	int drain = 35;
 
 	if( pHL2Player->m_iStamina < drain )
 		return false;				//don't drain unless we can cover some height
@@ -4044,7 +4044,7 @@ void CGameMovement::FinishDuck( void )
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( player );
 	
 	if ( pHL2Player )
-		pHL2Player->DrainStamina( 30 );
+		pHL2Player->DrainStamina( 25 );
 #endif
 
 	player->AddFlag( FL_DUCKING );
