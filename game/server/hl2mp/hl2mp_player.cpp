@@ -778,10 +778,9 @@ void CHL2MP_Player::PostThink( void )
 	//BG2 - Tjoppen - update stamina 6 units at a time, at about 3Hz, to reduce network load
 	if ( m_fNextStamRegen <= gpGlobals->curtime )
 	{
-		if( m_iStamina < 100 )
-			m_iStamina += 2 + m_iHealth / 19;
-
-		m_fNextStamRegen = gpGlobals->curtime + 0.3;
+		//this causes stamina regen speed to ramp from 11.7 to 23.3 units per second based on health
+		m_iStamina += 3;
+		m_fNextStamRegen = gpGlobals->curtime + 0.9 / 700.0f * (200.0f - m_iHealth);
 	}
 
 	if( m_iStamina > 100 )
