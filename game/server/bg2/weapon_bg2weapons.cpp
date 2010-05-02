@@ -852,7 +852,7 @@ DECLARE_BG2_WEAPON( fowler )
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
 	m_Attackinfos[0].m_flCrouchMoving		= 11.1f;
-	m_Attackinfos[0].m_flCrouchStill		= 2.5f;
+	m_Attackinfos[0].m_flCrouchStill		= 2.4f;
 	m_Attackinfos[0].m_flStandMoving		= 12.3f;
 	m_Attackinfos[0].m_flStandStill			= 2.4f;
 	//Iron Sights. These values will probably be changed.
