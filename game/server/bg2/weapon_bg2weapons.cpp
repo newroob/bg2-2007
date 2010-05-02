@@ -43,6 +43,10 @@ const float PISTOL_CONSTANT_DAMAGE_RANGE = 15 * 36,	//15 yards
 			MUSKET_CONSTANT_DAMAGE_RANGE = 30 * 36,	//30 yards
 			RIFLE_CONSTANT_DAMAGE_RANGE  = 40 * 36;	//40 yards
 
+const int	PISTOL_STAMINA_DRAIN = 25,
+			MUSKET_RIFLE_STAMINA_DRAIN = 35,
+			MELEE_STAMINA_DRAIN = 25;
+
 //BG2 - Tjoppen - these constants from weapon_data.h @ BG 1.0F RC14
 // damage values for each attack on each weapon
 const float BESS_FIRE_DAMAGE = 60.0;
@@ -151,6 +155,7 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= MUSKET_RIFLE_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
@@ -165,6 +170,7 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
 	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
 	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
+	m_Attackinfos[1].m_iStaminaDrain		= MELEE_STAMINA_DRAIN;
 
 	m_pBayonetDeathNotice = "brownbess_bayonet";
 
@@ -225,6 +231,7 @@ DECLARE_BG2_WEAPON( charleville )
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= MUSKET_RIFLE_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
@@ -239,6 +246,7 @@ DECLARE_BG2_WEAPON( charleville )
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
 	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
 	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
+	m_Attackinfos[1].m_iStaminaDrain		= MELEE_STAMINA_DRAIN;
 
 	m_pBayonetDeathNotice = "charleville_bayonet";
 
@@ -300,6 +308,7 @@ DECLARE_BG2_WEAPON( jaeger )
 	m_Attackinfos[0].m_flConstantDamageRange= RIFLE_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 0.75;			//rifle
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= MUSKET_RIFLE_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= RIFLE_RANGE;
@@ -362,6 +371,7 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_Attackinfos[0].m_flConstantDamageRange= RIFLE_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 0.75;			//rifle
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= MUSKET_RIFLE_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= RIFLE_RANGE;
@@ -404,6 +414,7 @@ DECLARE_BG2_WEAPON( pistol_a )
 	m_Attackinfos[0].m_flConstantDamageRange= PISTOL_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.25;			//pistol
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= PISTOL_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= PISTOL_RANGE;
@@ -446,6 +457,7 @@ DECLARE_BG2_WEAPON( pistol_b )
 	m_Attackinfos[0].m_flConstantDamageRange= PISTOL_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.25;			//pistol
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= PISTOL_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= PISTOL_RANGE;
@@ -484,6 +496,7 @@ DECLARE_BG2_WEAPON( sabre_a )
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 	m_Attackinfos[0].m_flCosAngleTolerance  = SABRE_COS_TOLERANCE;
 	m_Attackinfos[0].m_flRetraceDuration    = SABRE_RETRACE_DURATION;
+	m_Attackinfos[0].m_iStaminaDrain		= MELEE_STAMINA_DRAIN;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = SABRE_RANGE;
@@ -518,6 +531,7 @@ DECLARE_BG2_WEAPON( sabre_b )
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 	m_Attackinfos[0].m_flCosAngleTolerance  = SABRE_COS_TOLERANCE;
 	m_Attackinfos[0].m_flRetraceDuration    = SABRE_RETRACE_DURATION;
+	m_Attackinfos[0].m_iStaminaDrain		= MELEE_STAMINA_DRAIN;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = SABRE_RANGE;
@@ -552,6 +566,7 @@ DECLARE_BG2_WEAPON( knife )
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 	m_Attackinfos[0].m_flCosAngleTolerance  = KNIFE_COS_TOLERANCE;
 	m_Attackinfos[0].m_flRetraceDuration    = KNIFE_RETRACE_DURATION;
+	m_Attackinfos[0].m_iStaminaDrain		= MELEE_STAMINA_DRAIN;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = KNIFE_RANGE;
@@ -586,6 +601,7 @@ DECLARE_BG2_WEAPON( hirschf )
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 	m_Attackinfos[0].m_flCosAngleTolerance  = HIRSCHFAENGER_COS_TOLERANCE;
 	m_Attackinfos[0].m_flRetraceDuration    = HIRSCHFAENGER_RETRACE_DURATION;
+	m_Attackinfos[0].m_iStaminaDrain		= MELEE_STAMINA_DRAIN;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = HIRSCHFAENGER_RANGE;
@@ -621,6 +637,7 @@ DECLARE_BG2_WEAPON( tomahawk )
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_ATTACK;
 	m_Attackinfos[0].m_flCosAngleTolerance  = TOMAHAWK_COS_TOLERANCE;
 	m_Attackinfos[0].m_flRetraceDuration    = TOMAHAWK_RETRACE_DURATION;
+	m_Attackinfos[0].m_iStaminaDrain		= MELEE_STAMINA_DRAIN;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = TOMAHAWK_RANGE;
@@ -678,6 +695,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= MUSKET_RIFLE_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
@@ -692,6 +710,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
 	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
 	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
+	m_Attackinfos[1].m_iStaminaDrain		= MELEE_STAMINA_DRAIN;
 
 	m_pBayonetDeathNotice = "revolutionnaire_bayonet";
 
@@ -752,6 +771,7 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= MUSKET_RIFLE_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
@@ -787,6 +807,7 @@ DECLARE_BG2_WEAPON( beltaxe )
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
 	m_Attackinfos[0].m_flCosAngleTolerance  = TOMAHAWK_COS_TOLERANCE;
 	m_Attackinfos[0].m_flRetraceDuration    = TOMAHAWK_RETRACE_DURATION;
+	m_Attackinfos[0].m_iStaminaDrain		= MELEE_STAMINA_DRAIN;
 
 	m_fMinRange1 = m_fMinRange2	= 0;
 	m_fMaxRange1 = m_fMaxRange2 = TOMAHAWK_RANGE;
@@ -843,6 +864,7 @@ DECLARE_BG2_WEAPON( fowler )
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= MUSKET_RIFLE_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
@@ -903,6 +925,7 @@ DECLARE_BG2_WEAPON( longpattern )
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= MUSKET_RIFLE_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
@@ -917,6 +940,7 @@ DECLARE_BG2_WEAPON( longpattern )
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
 	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
 	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
+	m_Attackinfos[1].m_iStaminaDrain		= MELEE_STAMINA_DRAIN;
 
 	m_pBayonetDeathNotice = "longpattern_bayonet";
 
@@ -977,6 +1001,7 @@ DECLARE_BG2_WEAPON( longpattern_nobayo )
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= MUSKET_RIFLE_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
@@ -1036,6 +1061,7 @@ DECLARE_BG2_WEAPON( american_brownbess )
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= MUSKET_RIFLE_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
@@ -1050,6 +1076,7 @@ DECLARE_BG2_WEAPON( american_brownbess )
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
 	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
 	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
+	m_Attackinfos[1].m_iStaminaDrain		= MELEE_STAMINA_DRAIN;
 
 	m_pBayonetDeathNotice = "brownbess_bayonet";
 
@@ -1110,6 +1137,7 @@ DECLARE_BG2_WEAPON( american_brownbess_nobayo )
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= MUSKET_RIFLE_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
@@ -1168,6 +1196,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
 	m_Attackinfos[0].m_iAttackActivity		= ACT_VM_PRIMARYATTACK;
+	m_Attackinfos[0].m_iStaminaDrain		= MUSKET_RIFLE_STAMINA_DRAIN;
 
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
@@ -1182,6 +1211,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_Attackinfos[1].m_iAttackActivityEmpty	= ACT_VM_SECONDARYATTACK_EMPTY;
 	m_Attackinfos[1].m_flCosAngleTolerance  = BAYONET_COS_TOLERANCE;
 	m_Attackinfos[1].m_flRetraceDuration    = BAYONET_RETRACE_DURATION;
+	m_Attackinfos[1].m_iStaminaDrain		= MELEE_STAMINA_DRAIN;
 
 	m_pBayonetDeathNotice = "brownbess_bayonet";
 

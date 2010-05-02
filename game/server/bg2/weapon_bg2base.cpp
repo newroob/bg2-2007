@@ -153,7 +153,6 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 	//store forward eye vector
 	AngleVectors( pOwner->EyeAngles(), &m_vLastForward, NULL, NULL );
 
-	int drain = 0;
 //BG2 - Pretend this doesn't exist. -HairyPotter
 #ifndef CLIENT_DLL
 	m_iLastAttackType = GetAttackType(ATTACK_PRIMARY);
@@ -171,14 +170,14 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 		if( sv_retracing_melee.GetBool() )
 			m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( ATTACK_PRIMARY );
 
-		drain = Swing( ATTACK_PRIMARY, true );
+		Swing( ATTACK_PRIMARY, true );
 	}
 	else if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_FIREARM )
 	{
 		if( mp_disable_firearms.GetInt() )
 			return;
 
-		drain = Fire( ATTACK_PRIMARY );
+		Fire( ATTACK_PRIMARY );
 	}
 	else
 		return;	//don't drain stamina
@@ -188,7 +187,7 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
 
 	if ( pHL2Player )
-		pHL2Player->DrainStamina( drain );
+		pHL2Player->DrainStamina( GetStaminaDrain( ATTACK_PRIMARY ) );
 #endif
 }
 
@@ -205,8 +204,6 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 
 	//store forward eye vector
 	AngleVectors( pOwner->EyeAngles(), &m_vLastForward, NULL, NULL );
-
-	int drain = 0;
 
 //BG2 - Pretend this doesn't exist. -HairyPotter
 #ifndef CLIENT_DLL
@@ -225,14 +222,14 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 		if( sv_retracing_melee.GetBool() )
 			m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( ATTACK_SECONDARY );
 
-		drain = Swing( ATTACK_SECONDARY, true );
+		Swing( ATTACK_SECONDARY, true );
 	}
 	else if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_FIREARM )
 	{
 		if( mp_disable_firearms.GetInt() )
 			return;
 
-		drain = Fire( ATTACK_SECONDARY );
+		Fire( ATTACK_SECONDARY );
 	}
 	else
 		return;	//don't drain stamina
@@ -242,7 +239,7 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
 
 	if ( pHL2Player )
-		pHL2Player->DrainStamina( drain );
+		pHL2Player->DrainStamina( GetStaminaDrain( ATTACK_SECONDARY ) );
 #endif
 }
 
@@ -250,7 +247,7 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 // Purpose:
 //-----------------------------------------------------------------------------
 
-int CBaseBG2Weapon::Fire( int iAttack )
+void CBaseBG2Weapon::Fire( int iAttack )
 {
 	m_bLastAttackStab = false;
 
@@ -259,7 +256,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 
 	if ( !pPlayer )
 	{
-		return 0;
+		return;
 	}
 
 	if ( m_iClip1 <= 0 )
@@ -274,7 +271,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.15;
 		}
 
-		return 0;
+		return;
 	}
 
 	if( pPlayer->GetWaterLevel() == 3 )
@@ -282,7 +279,7 @@ int CBaseBG2Weapon::Fire( int iAttack )
 		// This weapon doesn't fire underwater
 		WeaponSound(EMPTY);
 		m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.2;
-		return 0;
+		return;
 	}
 
 	if( sv_turboshots.GetInt() == 0 )
@@ -407,8 +404,6 @@ int CBaseBG2Weapon::Fire( int iAttack )
 	}*/
 
 	m_fNextHolster = gpGlobals->curtime + 0.3f; //Keep people from switching weapons right after shooting.
-
-	return 35;
 }
 
 //------------------------------------------------------------------------------
@@ -517,17 +512,17 @@ void CBaseBG2Weapon::ImpactEffect( trace_t &traceHit )
 	UTIL_ImpactTrace( &traceHit, DMG_BULLET );	//BG2 - Tjoppen - surface blood
 }
 
-int CBaseBG2Weapon::Swing( int iAttack, bool bIsFirstAttempt )
+void CBaseBG2Weapon::Swing( int iAttack, bool bIsFirstAttempt )
 {
 	trace_t traceHit;
 
 	// Try a ray
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 	if ( !pOwner )
-		return 0;
+		return;
 
 	if ( m_bIsIronsighted ) //No melee with ironsights.
-		return 0;
+		return;
 
 	if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
 		m_bLastAttackStab = true;
@@ -595,8 +590,6 @@ int CBaseBG2Weapon::Swing( int iAttack, bool bIsFirstAttempt )
 		pHL2Player->NoteWeaponFired();
 #endif
 	}
-
-	return 25;
 }
 
 void CBaseBG2Weapon::Drop( const Vector &vecVelocity )

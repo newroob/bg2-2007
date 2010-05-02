@@ -108,6 +108,8 @@ public:
 				//
 				m_flConstantDamageRange,	//how long until we start losing damage?
 				m_flRelativeDrag;			//how does the drag on this bullet compare to a musket's?
+
+		int		m_iStaminaDrain;			//stamina drained by attack
 	};
 
 	attackinfo	m_Attackinfos[2];
@@ -246,6 +248,11 @@ public:
 		return iAttack == ATTACK_NONE ? 0 : m_Attackinfos[iAttack].m_flRetraceDuration;
 	}
 
+	int GetStaminaDrain( int iAttack )
+	{
+		return iAttack == ATTACK_NONE ? 0 : m_Attackinfos[iAttack].m_iStaminaDrain;
+	}
+
 	float GetCosAngleTolerance( void )
 	{
 		//return tolerance of last attack
@@ -269,9 +276,8 @@ public:
 	Vector	m_vLastForward;					//last forward eye vector
 
 	void		ItemPostFrame( void );
-	int			Fire( int iAttack );
-	int			FireBullet( int iAttack );
-	int			Swing( int iAttack, bool bIsFirstAttempt );
+	void		Fire( int iAttack );
+	void		Swing( int iAttack, bool bIsFirstAttempt );
 
 	void		Hit( trace_t &traceHit, int iAttack );
 	bool		ImpactWater( const Vector &start, const Vector &end );
