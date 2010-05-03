@@ -69,12 +69,12 @@ const float LONGPATTERN_BAYONET_DAMAGE = 45.0;
 const float LONGPATTERN_BAYONET_RANGE = 86.0;
 
 const float FOWLER_FIRE_DAMAGE = 56.0;	//damage per ball
-const float FOWLER_SHOT_DAMAGE = 4.0;	//damage per shot. base is 18*4 = 72. gut shot (HIT_STOMACH_DMG) -> 72*1.75 = 126
-const int   FOWLER_NUM_SHOT = 18;
+const float FOWLER_SHOT_DAMAGE = 10.0;	//damage per shot. base is 8*10 = 80. chest shot (HIT_CHEST_DMG) -> 80*1.85 = 148
+const int   FOWLER_NUM_SHOT = 8;
 
 const float CARBINE_FIRE_DAMAGE = 58.0;	//damage per ball. between fowler and normal brown bess
-const float CARBINE_SHOT_DAMAGE = 5.0;	//damage per shot. base is 16*5 = 80. gut shot (HIT_STOMACH_DMG) -> 80*1.75 = 140
-const int   CARBINE_NUM_SHOT = 16;
+const float CARBINE_SHOT_DAMAGE = 11.0;	//damage per shot. base is 8*11 = 88. chest shot (HIT_CHEST_DMG) -> 88*1.85 = 162.8
+const int   CARBINE_NUM_SHOT = 8;
 const float CARBINE_BAYONET_RANGE = 72.0;
 
 const float JAEGER_FIRE_DAMAGE = 63.0;
