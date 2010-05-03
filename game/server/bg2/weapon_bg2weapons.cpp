@@ -39,7 +39,7 @@ const float	LONG_RANGE = 1000 * 3 * 12,		//since damage decreases with range, we
 			MUSKET_RANGE = LONG_RANGE,		//175 * 3 * 12,	//175 yards
 			RIFLE_RANGE = LONG_RANGE;		//195 * 3 * 12;		//195 yards
 
-const float PISTOL_CONSTANT_DAMAGE_RANGE = 15 * 36,	//15 yards
+const float PISTOL_CONSTANT_DAMAGE_RANGE = 8 * 36,	//8 yards
 			MUSKET_CONSTANT_DAMAGE_RANGE = 30 * 36,	//30 yards
 			RIFLE_CONSTANT_DAMAGE_RANGE  = 40 * 36;	//40 yards
 
