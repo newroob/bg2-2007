@@ -58,6 +58,8 @@
 #include "hl2mp_gamerules.h"
 #include "sdk_bot_temp.h"
 #include "hl2mp_player.h"
+#include "../bg2/flag.h"
+#include "../bg2/weapon_bg2base.h"
 
 class CSDKBot;
 void Bot_Think( CSDKBot *pBot );
@@ -122,6 +124,7 @@ CBasePlayer *BotPutInServer( int iAmount, bool bFrozen )
 		gBots[pPlayer->GetClientIndex()].attack = 0;
 		gBots[pPlayer->GetClientIndex()].attack2 = 0;
 		gBots[pPlayer->GetClientIndex()].respawn = 0;
+		gBots[pPlayer->GetClientIndex()].m_flNextStrafeTime = 0;
 
 		pPlayer->ClearFlags();
 
@@ -320,38 +323,39 @@ CBasePlayer *FindClosestFriend( CSDKBot *pBot, bool insight, float *pdist )
 	return pClosest;
 }
 
-CBaseEntity *FindClosestFlag( CSDKBot *pBot, bool insight )
+CFlag *FindClosestFlag( CSDKBot *pBot, bool insight )
 {
-	//Msg( "FindClosestEnemy(insight=%s)\n", insight ? "true" : "false" );
-	//if( !pBot->m_pPlayer->IsAlive() )
-	//	return NULL;
-
 	int team = pBot->m_pPlayer->GetTeam()->GetTeamNumber();
-
-	//if( team < TEAM_AMERICANS && team < TEAM_BRITISH )
-	//	return NULL;	//spectator or unassigned
-
-	CBaseEntity *pClosest = NULL;
-	//float dist;
-	static float dist2 = 0;
-
+	CFlag *pClosest = NULL;
+	vec_t dist = 1000000000;
 	CBaseEntity *pEntity = NULL;
-	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL && pEntity->GetTeam()->GetTeamNumber() != team  )
+
+	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{
-		/*dist = (pEntity->GetLocalOrigin() + pBot->m_pPlayer->GetLocalOrigin()).Length(); //Why subtract?
-
-		if ( dist2 > 0 ) //Set the first value.
-			dist2 = dist;
-
-		if ( dist > dist2 ) //Make sure we're not setting a flag that's further away.
+		CFlag *pFlag = dynamic_cast<CFlag*>(pEntity);
+		
+		if( !pFlag || pFlag->GetTeamNumber() == team )
 			continue;
 
-		dist2 = dist; //Set the value to static float.
+		if( insight )
+		{
+			//check to make sure flag is in sight
+			trace_t tr;	
+			UTIL_TraceLine( pBot->m_pPlayer->GetLocalOrigin() + Vector(0,0,36), 
+							pFlag->GetLocalOrigin() + Vector(0,0,36),
+							MASK_SOLID, pBot->m_pPlayer, COLLISION_GROUP_NONE, &tr );
 
-		Msg("Flag dist2 = %d \n", dist2);*/
-		//pClosest = pEntity;
-		//Just go to the first one for now.
-		return pEntity;
+			if( tr.DidHitWorld() )
+				continue;
+		}
+
+		vec_t dist2 = pFlag->GetLocalOrigin().DistToSqr(pBot->m_pPlayer->GetLocalOrigin());
+
+		if( !pClosest || dist2 < dist )
+		{
+			pClosest = pFlag;
+			dist = dist2;
+		}
 	}
 
 	return pClosest;
@@ -418,7 +422,80 @@ static void RunPlayerMove( CSDKPlayer *fakeclient, CUserCmd &cmd, float frametim
 	MoveHelperServer()->SetHost( NULL );
 }
 
+void Bot_FlipOut( CSDKBot *pBot, CUserCmd &cmd, bool mayAttack, bool mayReload )
+{
+	if ( bot_flipout.GetInt() > 0 /*&& pBot->m_pPlayer->IsAlive()*/ )
+	{
+		if ( pBot->attack++ >= 20 )//(RandomFloat(0.0,1.0) > 0.5) )
+		{
+			//cmd.buttons |= bot_forceattack2.GetBool() ? IN_ATTACK2 : IN_ATTACK;
+			if( mayAttack )
+				cmd.buttons |= IN_ATTACK;
 
+			pBot->attack = 0;
+		}
+
+		if( pBot->attack2++ >= 13 )
+		{
+			if( mayAttack )
+				cmd.buttons |= IN_ATTACK2;
+
+			pBot->attack2 = 0;
+		}
+
+		/*if( RandomFloat( 0, 1 ) > 0.9 )
+			cmd.buttons |= IN_RELOAD;*/
+		if( pBot->reload++ >= 40 )
+		{
+			if( mayReload )
+				cmd.buttons |= IN_RELOAD;
+
+			pBot->reload = 0;
+		}
+
+		if ( bot_flipout.GetInt() >= 2 )
+		{
+			QAngle angOffset = RandomAngle( -1, 1 );
+
+			pBot->m_LastAngles += angOffset;
+
+			for ( int i = 0 ; i < 2; i++ )
+			{
+				if ( fabs( pBot->m_LastAngles[ i ] - pBot->m_ForwardAngle[ i ] ) > 15.0f )
+				{
+					if ( pBot->m_LastAngles[ i ] > pBot->m_ForwardAngle[ i ] )
+					{
+						pBot->m_LastAngles[ i ] = pBot->m_ForwardAngle[ i ] + 15;
+					}
+					else
+					{
+						pBot->m_LastAngles[ i ] = pBot->m_ForwardAngle[ i ] - 15;
+					}
+				}
+			}
+
+			pBot->m_LastAngles[ 2 ] = 0;
+
+			pBot->m_pPlayer->SetLocalAngles( pBot->m_LastAngles );
+		}
+	}
+}
+
+/**
+ * A simple lagged Fibonacchi generator.
+ * We need this because something's wrong with Valve's PRNG.
+ * Both RandomInt() and random->RandomInt() seem to eventually "run of out randomness".
+ * Also, Valve decided to replace rand() with a call to random->RandomInt() for some reason.
+ */
+int bot_rand()
+{
+	static int a = 9158152, b = 14257153;
+
+	a += b + (a >> 5);
+	b += a + (b >> 11);
+
+	return b;
+}
 
 void Bot_UpdateStrafing( CSDKBot *pBot, CUserCmd &cmd )
 {
@@ -426,17 +503,16 @@ void Bot_UpdateStrafing( CSDKBot *pBot, CUserCmd &cmd )
 	{
 		pBot->m_flNextStrafeTime = gpGlobals->curtime + RandomFloat( 0.7f, 1.5f );
 
-		if ( RandomInt( 0, 5 ) == 0 )
+		if ( bot_rand() % 5 == 0 )
 		{
-			pBot->m_flSideMove = -600.0f + 1200.0f * RandomFloat( 0, 2 );
+			pBot->m_flSideMove = -600.0f + (bot_rand() % 1200);
 		}
 		else
 		{
 			pBot->m_flSideMove = 0;
 		}
-		cmd.sidemove = pBot->m_flSideMove;
 
-		if ( RandomInt( 0, 20 ) == 0 )
+		if ( bot_rand() % 20 == 0 )
 		{
 			pBot->m_bBackwards = true;
 		}
@@ -445,15 +521,49 @@ void Bot_UpdateStrafing( CSDKBot *pBot, CUserCmd &cmd )
 			pBot->m_bBackwards = false;
 		}
 	}
+	else
+		pBot->m_flSideMove *= 0.9f;
+
+	cmd.sidemove = pBot->m_flSideMove;
 }
 
-
-void Bot_UpdateDirection( CSDKBot *pBot )
+/**
+ * Traces in front of the bot to see if something's in the way.
+ * Used for basic obstacle avoidance.
+ */
+bool Bot_TraceAhead( CSDKBot *pBot, CUserCmd &cmd )
 {
-	//BG2 - Tjoppen
-	//float dist;
-	CBasePlayer *pEnemy = FindClosestEnemy( pBot, true/*, &dist*/ );
-	CBaseEntity *pFlag = FindClosestFlag( pBot, true/*, &dist*/ );
+	trace_t tr;	
+	Vector forward;
+
+	AngleVectors( pBot->m_LastAngles, &forward );
+
+	for( int ofs = -40; ofs < 56; ofs += 8 )
+	{
+		UTIL_TraceLine( pBot->m_pPlayer->Weapon_ShootPosition() + Vector(0,0,ofs),
+						pBot->m_pPlayer->Weapon_ShootPosition() + Vector(0,0,ofs) + forward * 56,
+						MASK_SOLID, pBot->m_pPlayer, COLLISION_GROUP_NONE, &tr );
+
+		if( tr.fraction < 1.0 )
+			return true;
+	}
+
+	return false;
+}
+
+void Bot_UpdateDirectionAndSpeed( CSDKBot *pBot, CUserCmd &cmd )
+{
+	bool shouldMove = true;
+	bool mayAttack = false;
+	bool mayReload = true;
+	CBasePlayer *pEnemy = FindClosestEnemy( pBot, true );
+	CFlag *pFlag = FindClosestFlag( pBot, true );
+	CBaseBG2Weapon *pActiveWeapon = dynamic_cast<CBaseBG2Weapon*>(pBot->m_pPlayer->GetActiveWeapon());
+	float flagDistance = 1e12;
+
+	if( pFlag )
+		flagDistance = pBot->m_pPlayer->GetLocalOrigin().DistToSqr( pFlag->GetLocalOrigin() );
+
 	if( pEnemy )
 	{
 		QAngle angles;
@@ -463,19 +573,77 @@ void Bot_UpdateDirection( CSDKBot *pBot )
 		forward.z -= 8;	//slightly below
 		VectorAngles( forward, angles );
 		pBot->m_pPlayer->SetLocalAngles( angles );
-		return;
+		cmd.viewangles = angles;
+		pBot->m_LastAngles = angles;
+
+		//don't move if near the flag
+		if( flagDistance < 4096 )
+			shouldMove = false;
+
+		//only attack if close enough
+		mayAttack = pBot->m_pPlayer->GetLocalOrigin().DistToSqr( pEnemy->GetLocalOrigin() ) < 1000000;
+		
+		//only allow reload if the current weapon lacks a melee attack
+		if( pActiveWeapon && (pActiveWeapon->GetAttackType( CBaseBG2Weapon::ATTACK_PRIMARY ) == CBaseBG2Weapon::ATTACKTYPE_STAB ||
+				pActiveWeapon->GetAttackType( CBaseBG2Weapon::ATTACK_PRIMARY ) == CBaseBG2Weapon::ATTACKTYPE_SLASH ||
+				pActiveWeapon->GetAttackType( CBaseBG2Weapon::ATTACK_SECONDARY ) == CBaseBG2Weapon::ATTACKTYPE_STAB ||
+				pActiveWeapon->GetAttackType( CBaseBG2Weapon::ATTACK_SECONDARY ) == CBaseBG2Weapon::ATTACKTYPE_SLASH) )
+			mayReload = false;
+		else
+			mayReload = true;
 	}
 	else if( pFlag )
 	{
-		QAngle angles;
-		//Vector forward = pEnemy->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin();
-		//aim for the head if you can find it...
-		Vector forward = pFlag->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin();
-		forward.z -= 8;	//slightly below
-		VectorAngles( forward, angles );
-		pBot->m_pPlayer->SetLocalAngles( angles );
-		return;
+		if( flagDistance > 1024 )
+		{
+			QAngle angles;
+			//Vector forward = pEnemy->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin();
+			//aim for the head if you can find it...
+			Vector forward = pFlag->GetLocalOrigin() - pBot->m_pPlayer->GetLocalOrigin();
+			forward.z -= 8;	//slightly below
+			VectorAngles( forward, angles );
+			pBot->m_pPlayer->SetLocalAngles( angles );
+			cmd.viewangles = angles;
+			pBot->m_LastAngles = angles;
+		}
+		else
+			shouldMove = false;
 	}
+	else if( Bot_TraceAhead( pBot, cmd ) )
+	{
+		//something is in the way - turn right a bit
+		QAngle angles = pBot->m_pPlayer->GetLocalAngles();
+
+		//head in random direction
+		angles.y = bot_rand() % 360;
+
+		pBot->m_pPlayer->SetLocalAngles( angles );
+		pBot->m_LastAngles = angles;
+		cmd.viewangles = angles;
+	}
+	else
+	{
+		pBot->m_pPlayer->SetLocalAngles( pBot->m_LastAngles );
+		cmd.viewangles = pBot->m_LastAngles;
+	}
+
+	if( shouldMove )
+	{
+		cmd.forwardmove = 600 * ( pBot->m_bBackwards ? -1 : 1 );
+
+		if ( pBot->m_flSideMove != 0.0f )
+			cmd.forwardmove *= RandomFloat( 0.1, 1.0f );
+
+		Bot_UpdateStrafing( pBot, cmd );
+	}
+	else
+	{
+		cmd.forwardmove = 0;
+		cmd.sidemove = pBot->m_flSideMove = 0;
+	}
+
+	Bot_FlipOut( pBot, cmd, mayAttack, mayReload );
+	
 
 	//This code just makes the bot go insane anyway.
 	/*float angledelta = 15.0;
@@ -528,59 +696,6 @@ void Bot_UpdateDirection( CSDKBot *pBot )
 	pBot->m_pPlayer->SetLocalAngles( angle );*/
 }
 
-
-void Bot_FlipOut( CSDKBot *pBot, CUserCmd &cmd )
-{
-	if ( bot_flipout.GetInt() > 0 /*&& pBot->m_pPlayer->IsAlive()*/ )
-	{
-		if ( pBot->attack++ >= 20 )//(RandomFloat(0.0,1.0) > 0.5) )
-		{
-			//cmd.buttons |= bot_forceattack2.GetBool() ? IN_ATTACK2 : IN_ATTACK;
-			cmd.buttons |= IN_ATTACK;
-			pBot->attack = 0;
-		}
-
-		if( pBot->attack2++ >= 13 )
-		{
-			cmd.buttons |= IN_ATTACK2;
-			pBot->attack2 = 0;
-		}
-
-		/*if( RandomFloat( 0, 1 ) > 0.9 )
-			cmd.buttons |= IN_RELOAD;*/
-		if( pBot->reload++ >= 40 )
-		{
-			cmd.buttons |= IN_RELOAD;
-			pBot->reload = 0;
-		}
-
-		if ( bot_flipout.GetInt() >= 2 )
-		{
-			QAngle angOffset = RandomAngle( -1, 1 );
-
-			pBot->m_LastAngles += angOffset;
-
-			for ( int i = 0 ; i < 2; i++ )
-			{
-				if ( fabs( pBot->m_LastAngles[ i ] - pBot->m_ForwardAngle[ i ] ) > 15.0f )
-				{
-					if ( pBot->m_LastAngles[ i ] > pBot->m_ForwardAngle[ i ] )
-					{
-						pBot->m_LastAngles[ i ] = pBot->m_ForwardAngle[ i ] + 15;
-					}
-					else
-					{
-						pBot->m_LastAngles[ i ] = pBot->m_ForwardAngle[ i ] - 15;
-					}
-				}
-			}
-
-			pBot->m_LastAngles[ 2 ] = 0;
-
-			pBot->m_pPlayer->SetLocalAngles( pBot->m_LastAngles );
-		}
-	}
-}
 /*
 void Bot_HandleSendCmd( CSDKBot *pBot )
 {
@@ -624,17 +739,6 @@ void Bot_ForceFireWeapon( CSDKBot *pBot, CUserCmd &cmd )
 	}
 }
 
-
-void Bot_SetForwardMovement( CSDKBot *pBot, CUserCmd &cmd )
-{
-	cmd.forwardmove = 600 * ( pBot->m_bBackwards ? -1 : 1 );
-	if ( pBot->m_flSideMove != 0.0f )
-	{
-		cmd.forwardmove *= RandomFloat( 0.1, 1.0f );
-	}
-}
-
-
 //-----------------------------------------------------------------------------
 // Run this Bot's AI for one frame.
 //-----------------------------------------------------------------------------
@@ -667,26 +771,15 @@ void Bot_Think( CSDKBot *pBot )
 	// Finally, override all this stuff if the bot is being forced to mimic a player.
 	if ( !Bot_RunMimicCommand( cmd ) )
 	{
-		cmd.sidemove = pBot->m_flSideMove;
+		Bot_UpdateDirectionAndSpeed( pBot, cmd );
 
-		//if ( /*pBot->m_pPlayer->IsAlive() &&*/ (pBot->m_pPlayer->GetSolid() == SOLID_BBOX) )
-		//{
-			Bot_SetForwardMovement( pBot, cmd );
-
-			Bot_UpdateDirection( pBot );
-			Bot_UpdateStrafing( pBot, cmd );
-
-			// Handle console settings.
-			Bot_ForceFireWeapon( pBot, cmd );
-			//Bot_HandleSendCmd( pBot );
-			Bot_FlipOut( pBot, cmd );
-		//}
+		// Handle console settings.
+		Bot_ForceFireWeapon( pBot, cmd );
+		//Bot_HandleSendCmd( pBot );
 
 		// Fix up the m_fEffects flags
 		//pBot->m_pPlayer->PostClientMessagesSent();
 	}
-
-	cmd.viewangles = pBot->m_pPlayer->GetLocalAngles();
 	//cmd.upmove = 0;
 	//cmd.impulse = 0;
 
