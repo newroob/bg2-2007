@@ -219,6 +219,17 @@ void Bot_RunAll( void )
 	}
 }
 
+//returns whether entity B is in sight of entity A
+bool IsInSight( CBaseEntity *pA, CBaseEntity *pB )
+{
+	trace_t tr;	
+	UTIL_TraceLine( pA->GetLocalOrigin() + Vector(0,0,36), 
+					pB->GetLocalOrigin() + Vector(0,0,36),
+					MASK_SOLID, pA, COLLISION_GROUP_DEBRIS_TRIGGER, &tr );
+
+	return !tr.DidHitWorld();
+}
+
 CBasePlayer *FindClosestEnemy( CSDKBot *pBot, bool insight )
 {
 	//Msg( "FindClosestEnemy(insight=%s)\n", insight ? "true" : "false" );
@@ -250,16 +261,8 @@ CBasePlayer *FindClosestEnemy( CSDKBot *pBot, bool insight )
 		if( dist < maxdist )
 		{
 			//check to make sure enemy is in sight
-			trace_t tr;	
-			UTIL_TraceLine( pBot->m_pPlayer->GetLocalOrigin() + Vector(0,0,36), 
-							pEnemy->GetLocalOrigin() + Vector(0,0,36),
-							MASK_SOLID, pBot->m_pPlayer, COLLISION_GROUP_DEBRIS_TRIGGER, &tr );
-
-			if( tr.DidHitWorld() )
-			{
-				//Msg("We can't see the player ent! \n" );
+			if( !IsInSight( pBot->m_pPlayer, pEnemy ) )
 				continue;
-			}
 
 			//mindist = dist;
 			pClosest = pEnemy;
@@ -303,12 +306,7 @@ CBasePlayer *FindClosestFriend( CSDKBot *pBot, bool insight, float *pdist )
 			if( insight )
 			{
 				//check to make sure enemy is in sight
-				trace_t tr;	
-				UTIL_TraceLine( pBot->m_pPlayer->GetLocalOrigin() + Vector(0,0,36), 
-								pEnemy->GetLocalOrigin() + Vector(0,0,36),
-								MASK_SOLID, pBot->m_pPlayer, COLLISION_GROUP_NONE, &tr );
-
-				if( tr.DidHitWorld() )
+				if( !IsInSight( pBot->m_pPlayer, pEnemy ) )
 					continue;
 			}
 
@@ -323,8 +321,9 @@ CBasePlayer *FindClosestFriend( CSDKBot *pBot, bool insight, float *pdist )
 	return pClosest;
 }
 
-CFlag *FindClosestFlag( CSDKBot *pBot, bool insight )
+CFlag *FindClosestFlagToSpot( CSDKBot *pBot, bool insight, bool checkTeam, Vector vSpot )
 {
+	//if checkTeam, ignore flags that belong to the bot's team
 	int team = pBot->m_pPlayer->GetTeam()->GetTeamNumber();
 	CFlag *pClosest = NULL;
 	vec_t dist = 1000000000;
@@ -334,22 +333,17 @@ CFlag *FindClosestFlag( CSDKBot *pBot, bool insight )
 	{
 		CFlag *pFlag = dynamic_cast<CFlag*>(pEntity);
 		
-		if( !pFlag || pFlag->GetTeamNumber() == team )
+		if( !pFlag || (checkTeam && pFlag->GetTeamNumber() == team) )
 			continue;
 
 		if( insight )
 		{
 			//check to make sure flag is in sight
-			trace_t tr;	
-			UTIL_TraceLine( pBot->m_pPlayer->GetLocalOrigin() + Vector(0,0,36), 
-							pFlag->GetLocalOrigin() + Vector(0,0,36),
-							MASK_SOLID, pBot->m_pPlayer, COLLISION_GROUP_NONE, &tr );
-
-			if( tr.DidHitWorld() )
+			if( !IsInSight( pBot->m_pPlayer, pFlag ) )
 				continue;
 		}
 
-		vec_t dist2 = pFlag->GetLocalOrigin().DistToSqr(pBot->m_pPlayer->GetLocalOrigin());
+		vec_t dist2 = pFlag->GetLocalOrigin().DistToSqr(vSpot);
 
 		if( !pClosest || dist2 < dist )
 		{
@@ -359,6 +353,50 @@ CFlag *FindClosestFlag( CSDKBot *pBot, bool insight )
 	}
 
 	return pClosest;
+}
+
+CFlag *FindClosestFlag( CSDKBot *pBot, bool insight )
+{
+	CFlag *pClosestFlagInSight = FindClosestFlagToSpot( pBot, true, true, pBot->m_pPlayer->GetLocalOrigin() );
+
+	if( pClosestFlagInSight )
+	{
+		//we have a flag in sight - done
+		return pClosestFlagInSight;
+	}
+
+	//backup plan - find flag in sight which is closest to the closest enemy flag not in sight
+	//additionally, the flag in sight must be a little bit closer to the desired flag than the bot is
+	CFlag *pClosestFlag = FindClosestFlagToSpot( pBot, false, true, pBot->m_pPlayer->GetLocalOrigin() );
+
+	if( !pClosestFlag )
+	{
+		//no enemy flags left - nothing to do
+		return NULL;
+	}
+
+	//OK, we have some flag (pClosestFlag) out of sight we want to get to
+	//navigate via the flag in sight that is closest to pClosestFlag
+	CFlag *pClosestAnyFlagInSight = FindClosestFlagToSpot( pBot, true, false, pClosestFlag->GetLocalOrigin() );
+
+	if( !pClosestAnyFlagInSight )
+	{
+		//no luck
+		return NULL;
+	}
+
+	//finally, compare distances
+	if( pClosestAnyFlagInSight->GetLocalOrigin().DistToSqr(pClosestFlag->GetLocalOrigin()) <
+	           pBot->m_pPlayer->GetLocalOrigin().DistToSqr(pClosestFlag->GetLocalOrigin()) - 1024 )
+	{
+		//the flag is closer than we are. good enough
+		return pClosestAnyFlagInSight;
+	}
+	else
+	{
+		//no good
+		return NULL;
+	}
 }
 
 bool Bot_RunMimicCommand( CUserCmd& cmd )
