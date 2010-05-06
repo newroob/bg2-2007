@@ -2356,7 +2356,7 @@ bool CGameMovement::CheckJumpButton( void )
 	}
 
 	//stamina drain for jumping
-	int drain = 35;
+	int drain = 40;
 
 	if( pHL2Player->m_iStamina < drain )
 		return false;				//don't drain unless we can cover some height
