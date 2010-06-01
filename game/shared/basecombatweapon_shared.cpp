@@ -641,6 +641,18 @@ bool CBaseCombatWeapon::IsIronsighted( void )
 {
 	return ( m_bIsIronsighted  );
 }
+
+void CBaseCombatWeapon::ToggleIronsights( void )
+{
+	//delay next primary attack 250 ms
+	m_flNextPrimaryAttack = gpGlobals->curtime + 0.25f;
+	
+	if( m_bIsIronsighted )
+		DisableIronsights();
+	else
+		EnableIronsights();
+}
+
 void CBaseCombatWeapon::EnableIronsights( void )
 {
 	if( m_bIsIronsighted )
