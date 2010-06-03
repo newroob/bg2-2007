@@ -195,6 +195,9 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 void CBaseBG2Weapon::SecondaryAttack( void )
 {
 	//disallow holding reload button
+	if ( m_bIsIronsighted )
+		return;
+
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 
 	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
