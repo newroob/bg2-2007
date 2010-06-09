@@ -373,32 +373,6 @@ void CFlag::Think( void )
 		}
 	}
 
-	if (m_bIsParent)
-	{
-		//Gotta use these to keep people from exploiting TEAM_SPECTATOR on trigger caps. -HairyPotter
-		CBasePlayer *pPlayer = NULL;
-
-		for ( int i = 1; i <= m_vTriggerAmericanPlayers.Count(); i++ ) 
-		{
-			pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
-			if ( !pPlayer )
-				continue;
-
-			if ( pPlayer->GetTeamNumber() != TEAM_AMERICANS)
-				m_vTriggerAmericanPlayers.FindAndRemove( pPlayer );
-		}
-
-		for ( int i = 1; i <= m_vTriggerBritishPlayers.Count(); i++ )
-		{
-			pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
-			if ( !pPlayer )
-				continue;
-	
-			if ( pPlayer->GetTeamNumber() != TEAM_BRITISH)
-				m_vTriggerBritishPlayers.FindAndRemove( pPlayer );
-		}
-	}
-
 	//safeguard against the possibility that m_flNextTeamBonus is somehow out of bounds after above check
 	//could happen if the flag stays uncapped for a long time. if so, the team that caps it would get a lot of "stored up"
 	//points.
@@ -761,7 +735,7 @@ void CFlag::ThinkCapped( void )
 		switch( GetTeamNumber() )
 		{
 			case TEAM_AMERICANS:
-				for ( int i = 1; i <= m_vTriggerAmericanPlayers.Count(); i++ )
+				for ( int i = 0; i < m_vTriggerAmericanPlayers.Count(); i++ )
 				{
 					pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
 
@@ -780,7 +754,7 @@ void CFlag::ThinkCapped( void )
 
 				break;
 			case TEAM_BRITISH:
-				for ( int i = 1; i <= m_vTriggerBritishPlayers.Count(); i++ )
+				for ( int i = 0; i < m_vTriggerBritishPlayers.Count(); i++ )
 				{
 					pPlayer = ToBasePlayer( UTIL_PlayerByIndex( i ) );
 

@@ -1376,7 +1376,7 @@ bool CHL2MP_Player::AttemptJoin( int iTeam, int iClass, const char *pClassName )
 	// a new class, skip the limit check
 	int limit = HL2MPRules()->GetLimitTeamClass( iTeam, iClass );
 	if( limit >= 0 && g_Teams[iTeam]->GetNumOfNextClass(iClass) >= limit &&
-		!(GetTeamNumber() == iTeam && m_iClass == iClass) )
+		!(GetTeamNumber() == iTeam && m_iNextClass == iClass) ) //BG2 - check against next class, m_iClass would be officer making the if false - Roob
 	{
 		//BG2 - Tjoppen - TODO: usermessage this
 		ClientPrint( this, HUD_PRINTCENTER, "There are too many of this class on your team!\n" );
@@ -2415,12 +2415,16 @@ void CHL2MP_Player::RemoveSelfFromFlags( void )
 	//remove ourself from any overload list on all flags
 
 	CFlag *pFlag = NULL;
-	while( (pFlag = dynamic_cast<CFlag*>( gEntList.FindEntityByClassname( pFlag, "flag" ) )) != NULL )
+	while( (pFlag = static_cast<CFlag*>( gEntList.FindEntityByClassname( pFlag, "flag" ) )) != NULL )
+	{
 		pFlag->m_vOverloadingPlayers.FindAndRemove( this );
+		pFlag->m_vTriggerBritishPlayers.FindAndRemove( this );
+		pFlag->m_vTriggerAmericanPlayers.FindAndRemove( this );
+	}
 
 	//Also have the player drop CTF Flags if they are holding one. -HairyPotter
 	CtfFlag *ctfFlag = NULL;
-	while( (ctfFlag = dynamic_cast<CtfFlag*>( gEntList.FindEntityByClassname( ctfFlag, "ctf_flag" ) )) != NULL )
+	while( (ctfFlag = static_cast<CtfFlag*>( gEntList.FindEntityByClassname( ctfFlag, "ctf_flag" ) )) != NULL )
 	{
 		if ( ctfFlag->GetParent() && ctfFlag->GetParent() == this )
 			ctfFlag->DropFlag(); 
