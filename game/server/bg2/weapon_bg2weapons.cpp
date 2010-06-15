@@ -148,9 +148,9 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_Attackinfos[0].m_flStandStill			= 3.6f; //2.4
 	//Iron Sights. These values will probably be changed.
 	m_Attackinfos[0].m_flStandAimStill		= 2.4f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 3.0f;
+	m_Attackinfos[0].m_flStandAimMoving		= 8.8f;
 	m_Attackinfos[0].m_flCrouchAimStill		= 2.4f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 8.0f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -224,9 +224,9 @@ DECLARE_BG2_WEAPON( charleville )
 	m_Attackinfos[0].m_flStandStill			= 3.4f;
 	//Iron Sights. These values will probably be changed.
 	m_Attackinfos[0].m_flStandAimStill		= 2.2f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 3.0f;
+	m_Attackinfos[0].m_flStandAimMoving		= 8.5f;
 	m_Attackinfos[0].m_flCrouchAimStill		= 2.2f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 7.7f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -301,9 +301,9 @@ DECLARE_BG2_WEAPON( jaeger )
 	m_Attackinfos[0].m_flStandStill			= 3.0f; //2.0
 	//Iron Sights. These values will probably be changed.
 	m_Attackinfos[0].m_flStandAimStill		= 2.0f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 4.0f;
+	m_Attackinfos[0].m_flStandAimMoving		= 7.3f;
 	m_Attackinfos[0].m_flCrouchAimStill		= 0.83f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 6.7f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= RIFLE_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 0.75;			//rifle
@@ -364,9 +364,9 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_Attackinfos[0].m_flStandStill			= 3.0f; //1.75
 	//Iron Sights. These values will probably be changed.
 	m_Attackinfos[0].m_flStandAimStill		= 1.65f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 3.8f;
+	m_Attackinfos[0].m_flStandAimMoving		= 8.0f;
 	m_Attackinfos[0].m_flCrouchAimStill		= 0.65f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 6.7f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= RIFLE_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 0.75;			//rifle
@@ -688,9 +688,9 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_Attackinfos[0].m_flStandStill			= 3.2f; //2.4
 	//Iron Sights. These values will probably be changed.
 	m_Attackinfos[0].m_flStandAimStill		= 2.15f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 2.95f;
+	m_Attackinfos[0].m_flStandAimMoving		= 8.3f;
 	m_Attackinfos[0].m_flCrouchAimStill		= 2.15f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 2.95f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 7.5f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -764,9 +764,9 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 	m_Attackinfos[0].m_flStandStill			= 3.6f; //2.4
 	//Iron Sights.
 	m_Attackinfos[0].m_flStandAimStill		= 2.4f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 3.0f;
+	m_Attackinfos[0].m_flStandAimMoving		= 8.8f;
 	m_Attackinfos[0].m_flCrouchAimStill		= 2.4f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 8.0f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -857,9 +857,9 @@ DECLARE_BG2_WEAPON( fowler )
 	m_Attackinfos[0].m_flStandStill			= 2.4f;
 	//Iron Sights. These values will probably be changed.
 	m_Attackinfos[0].m_flStandAimStill		= 1.2f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 1.7f;
+	m_Attackinfos[0].m_flStandAimMoving		= 7.2f;
 	m_Attackinfos[0].m_flCrouchAimStill		= 1.2f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 1.7f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 6.4f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -918,9 +918,9 @@ DECLARE_BG2_WEAPON( longpattern )
 	m_Attackinfos[0].m_flStandStill			= 3.5f; //2.4
 	//Iron Sights. These values will probably be changed.
 	m_Attackinfos[0].m_flStandAimStill		= 2.3f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 2.9f;
+	m_Attackinfos[0].m_flStandAimMoving		= 8.1f;
 	m_Attackinfos[0].m_flCrouchAimStill		= 2.3f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 2.9f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 7.3f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -994,9 +994,9 @@ DECLARE_BG2_WEAPON( longpattern_nobayo )
 	m_Attackinfos[0].m_flStandStill			= 3.5f; //2.4
 	//Iron Sights. These values will probably be changed.
 	m_Attackinfos[0].m_flStandAimStill		= 2.3f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 2.9f;
+	m_Attackinfos[0].m_flStandAimMoving		= 8.1f;
 	m_Attackinfos[0].m_flCrouchAimStill		= 2.3f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 2.9f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 7.3f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -1054,9 +1054,9 @@ DECLARE_BG2_WEAPON( american_brownbess )
 	m_Attackinfos[0].m_flStandStill			= 3.7f; //2.4
 	//Iron Sights. These values will probably be changed.
 	m_Attackinfos[0].m_flStandAimStill		= 2.5f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 3.1f;
+	m_Attackinfos[0].m_flStandAimMoving		= 8.9f;
 	m_Attackinfos[0].m_flCrouchAimStill		= 2.5f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 3.1f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 8.1f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -1130,9 +1130,9 @@ DECLARE_BG2_WEAPON( american_brownbess_nobayo )
 	m_Attackinfos[0].m_flStandStill			= 3.6f; //2.4
 	//Iron Sights.
 	m_Attackinfos[0].m_flStandAimStill		= 2.4f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 3.0f;
+	m_Attackinfos[0].m_flStandAimMoving		= 8.8f;
 	m_Attackinfos[0].m_flCrouchAimStill		= 2.4f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 3.0f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 8.0f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -1189,9 +1189,9 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_Attackinfos[0].m_flStandStill			= 2.6f;
 	//Iron Sights.
 	m_Attackinfos[0].m_flStandAimStill		= 1.4f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 2.0f;
+	m_Attackinfos[0].m_flStandAimMoving		= 7.1f;
 	m_Attackinfos[0].m_flCrouchAimStill		= 1.4f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 2.0f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 6.3f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
