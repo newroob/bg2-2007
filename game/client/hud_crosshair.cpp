@@ -184,8 +184,14 @@ void CHudCrosshair::Paint( void )
 				cy = h / 2,
 				r = max( w, h ) / 2;
 
+		//only draw the circle if we're holding a firearm that is ready to fire
+		//when no, the circle will fade out. once holding a loaded firearm again, it will fade back in
+		bool drawCircle = false;
+
 		if( weapon->GetAttackType( C_BaseBG2Weapon::ATTACK_PRIMARY ) == C_BaseBG2Weapon::ATTACKTYPE_FIREARM )
 		{
+			drawCircle = weapon->m_iClip1;
+
 			//add both spreads (accuracy and internal ballistics) to give a more accurate circle
 			r *= weapon->GetAccuracy( C_BaseBG2Weapon::ATTACK_PRIMARY ) + weapon->GetCurrentAmmoSpread();
 			r *= 0.008725f;
@@ -243,10 +249,17 @@ void CHudCrosshair::Paint( void )
 		//Msg( "%f\n", gpGlobals->frametime );
 		
 		static float lastr = 0;
+		static float circlealpha = 1;
 		//Msg( "Radius: %f \n", r);
 		//r = lastr = r * 5.0f * gpGlobals->frametime + lastr * (1.f - 5.0f * gpGlobals->frametime);
 
 		r = lastr = r + (lastr - r) * expf( -13.0f * gpGlobals->frametime );
+
+		//lerp circle alpha up or down
+		circlealpha += (drawCircle ? 6 : -6) * gpGlobals->frametime;
+
+		if( circlealpha < 0 ) circlealpha = 0;
+		if( circlealpha > 1 ) circlealpha = 1;
 
 		//Msg( "%f %f %f\n", cx, cy, r );
 		if( cl_crosshair.GetInt() & 4 )
@@ -301,12 +314,12 @@ void CHudCrosshair::Paint( void )
 										cx + scale * 0.25f, cy + scale * 3.f + expand );*/
 		}
 
-		if( cl_crosshair.GetInt() & 1 )
+		if( circlealpha > 0 && cl_crosshair.GetInt() & 1 )
 		{
 			int step = 10;
 
 			surface()->DrawSetColor( Color( (cl_crosshair_r.GetInt()*2)/3, (cl_crosshair_g.GetInt()*2)/3,
-											(cl_crosshair_b.GetInt()*2)/3, cl_crosshair_a.GetInt()/3 ) );
+											(cl_crosshair_b.GetInt()*2)/3, cl_crosshair_a.GetInt()/3*circlealpha ) );
 			for( int dx = -1; dx <= 1; dx++ )
 				for( int dy = -1; dy <= 1; dy++ )
 				{
@@ -339,7 +352,7 @@ void CHudCrosshair::Paint( void )
 				lasty =	(int)(cy + r*sinf((float)-step * M_PI / 180.f));
 
 			surface()->DrawSetColor( Color( cl_crosshair_r.GetInt(), cl_crosshair_g.GetInt(),
-											cl_crosshair_b.GetInt(), cl_crosshair_a.GetInt() ) );
+											cl_crosshair_b.GetInt(), cl_crosshair_a.GetInt()*circlealpha ) );
 
 			for( int i = 0, j = 0; i < 360; i += step, j++ )
 			{
