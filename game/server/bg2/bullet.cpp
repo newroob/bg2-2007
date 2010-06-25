@@ -94,6 +94,10 @@ CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles
 {
 	// Create a new entity with CBullet private data
 	CBullet *pBullet = (CBullet *)CreateEntityByName( "bullet" );
+
+	if ( !pBullet ) //Just in case. -HairyPotter
+		return NULL;
+
 	UTIL_SetOrigin( pBullet, vecOrigin );
 	pBullet->SetAbsAngles( angAngles );
 	Vector vecDir;

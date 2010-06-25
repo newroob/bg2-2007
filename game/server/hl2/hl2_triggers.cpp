@@ -1105,19 +1105,19 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 			switch( pPlayer->m_iClass )
 			{
 				case CLASS_INFANTRY:
-					pPlayer->iSpeed = pPlayer->iSpeed + pFlag->m_iFlagWeight; 
+					pPlayer->IncreasePlayerSpeed( pFlag->m_iFlagWeight );
 					break;
 				case CLASS_OFFICER:
-					pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.6);
+					pPlayer->IncreasePlayerSpeed( pFlag->m_iFlagWeight * 1.6 );
 					break;
 				case CLASS_SNIPER:
-					pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.2);
+					pPlayer->IncreasePlayerSpeed( pFlag->m_iFlagWeight * 1.2 );
 					break;
 				case CLASS_SKIRMISHER:
-					pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.1);
+					pPlayer->IncreasePlayerSpeed( pFlag->m_iFlagWeight * 1.1 );
 					break;
 				case CLASS_LIGHT_INFANTRY:
-					pPlayer->iSpeed = pPlayer->iSpeed + (pFlag->m_iFlagWeight * 1.05);
+					pPlayer->IncreasePlayerSpeed( pFlag->m_iFlagWeight * 1.05 );
 					break;
 			}
 			//

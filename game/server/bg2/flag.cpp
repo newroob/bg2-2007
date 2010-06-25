@@ -598,7 +598,7 @@ void CFlag::Capture( int iTeam )
 		switch( iTeam )
 		{
 			case TEAM_AMERICANS:
-				for ( int i = 1; i <= m_vTriggerAmericanPlayers.Count(); i++ )
+				for ( int i = 0; i < m_vTriggerAmericanPlayers.Count(); i++ )
 				{
 					pHL2Player = ToHL2MPPlayer( UTIL_PlayerByIndex( i ) );
 
@@ -611,7 +611,7 @@ void CFlag::Capture( int iTeam )
 
 				break;
 			case TEAM_BRITISH:
-				for ( int i = 1; i <= m_vTriggerBritishPlayers.Count(); i++ )
+				for ( int i = 0; i < m_vTriggerBritishPlayers.Count(); i++ )
 				{
 					pHL2Player = ToHL2MPPlayer( UTIL_PlayerByIndex( i ) );
 

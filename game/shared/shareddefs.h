@@ -87,7 +87,7 @@ public:
 
 #define WATERJUMP_HEIGHT			8
 
-#define MAX_CLIMB_SPEED		200
+#define MAX_CLIMB_SPEED		100 //BG2 - Down from 200 - HairyPotter
 
 #if defined(TF_DLL) || defined(TF_CLIENT_DLL)
 	#define TIME_TO_DUCK		0.2
