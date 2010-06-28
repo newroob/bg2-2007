@@ -275,8 +275,16 @@ public:
 	int		m_iLastAttack;					//for reattempting swings
 	Vector	m_vLastForward;					//last forward eye vector
 
+	//for delayed fire
+	bool	m_bShouldSampleForward;
+	float	m_flNextSampleForward;
+	bool	m_bShouldFireDelayed;
+	float	m_flNextDelayedFire;
+
+
 	void		ItemPostFrame( void );
 	void		Fire( int iAttack );
+	void		FireBullets( int iAttack );
 	void		Swing( int iAttack, bool bIsFirstAttempt );
 
 	void		Hit( trace_t &traceHit, int iAttack );
@@ -360,7 +368,7 @@ BEGIN_PREDICTION_DATA( CWeapon##name )							\
 END_PREDICTION_DATA()											\
 LINK_ENTITY_TO_CLASS( weapon_##name, CWeapon##name );			\
 PRECACHE_WEAPON_REGISTER( weapon_##name );						\
-CWeapon##name::CWeapon##name( void )							//constructor follows
+CWeapon##name::CWeapon##name( void ) : CBaseBG2Weapon()			//constructor follows
 
 //acttable def for bayonet firearms, only muskets so far. could a rifle use a bayonet? it's just a name anyway
 #define MUSKET_ACTTABLE( name )\

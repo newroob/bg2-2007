@@ -119,6 +119,9 @@ CBaseBG2Weapon::CBaseBG2Weapon( void )
 	m_bFiresUnderwater	= true;
 	m_bDontAutoreload	= true;
 
+	m_bShouldSampleForward = false;
+	m_bShouldFireDelayed = false;
+
 	m_Attackinfos[0].m_iAttacktype = ATTACKTYPE_NONE;
 	m_Attackinfos[1].m_iAttacktype = ATTACKTYPE_NONE;
 
@@ -307,11 +310,23 @@ void CBaseBG2Weapon::Fire( int iAttack )
 	if( sv_infiniteammo.GetInt() == 0 )
 		m_iClip1--;
 
-	Vector vecSrc		= pPlayer->Weapon_ShootPosition();
-	Vector vecAiming	= pPlayer->CBasePlayer::GetAutoaimVector( AUTOAIM_5DEGREES );	
+	m_fNextHolster = gpGlobals->curtime + 0.3f; //Keep people from switching weapons right after shooting.
 
-	CShotManipulator manipulator( vecAiming );
-	Vector vecShooting	= manipulator.ApplySpread( sv_perfectaim.GetInt() == 0 ? Cone( GetAccuracy( iAttack ) ) : vec3_origin );
+	//sample eye vector after a short delay, then fire the bullet(s) a short time after that
+	m_bShouldSampleForward = true;
+	m_flNextSampleForward = gpGlobals->curtime + 0.1f;
+	m_bShouldFireDelayed = true;
+	m_flNextDelayedFire = gpGlobals->curtime + 0.15f;
+}
+
+void CBaseBG2Weapon::FireBullets( int iAttack )
+{
+	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
+
+	if( !pPlayer )
+		return;
+
+	Vector vecSrc = pPlayer->Weapon_ShootPosition();
 
 	//figure out how many balls we should fire based on the player's current ammo kit
 	int numActualShot = 1;
@@ -352,7 +367,7 @@ void CBaseBG2Weapon::Fire( int iAttack )
 		//Move bullets up slightly so players can shoot over windowcills etc. properly
 		vecSrc.z += 2;
 
-		CShotManipulator manipulator2( vecShooting );
+		CShotManipulator manipulator2( m_vLastForward );
 
 		for( int x = 0; x < numActualShot; x++ )
 		{
@@ -370,7 +385,7 @@ void CBaseBG2Weapon::Fire( int iAttack )
 	}
 	else
 	{
-		FireBulletsInfo_t info( numActualShot, vecSrc, vecShooting, Cone( GetCurrentAmmoSpread() ), GetRange( iAttack ), m_iPrimaryAmmoType );
+		FireBulletsInfo_t info( numActualShot, vecSrc, m_vLastForward, Cone( GetCurrentAmmoSpread() ), GetRange( iAttack ), m_iPrimaryAmmoType );
 		info.m_pAttacker = pPlayer;
 		info.m_iPlayerDamage = flDamage;
 		info.m_iDamage = -1;		//ancient chinese secret..
@@ -385,28 +400,6 @@ void CBaseBG2Weapon::Fire( int iAttack )
 		// Fire the bullets, and force the first shot to be perfectly accurate
 		pPlayer->FireBullets( info );
 	}
-
-	//Disorient the player
-	if( sv_steadyhand.GetInt() == 0 )
-	{
-		int iSeed = CBaseEntity::GetPredictionRandomSeed() & 255;
-		RandomSeed( iSeed );
-
-		//BG2 - Tjoppen - HACKHACK: weapon attacks get called multiple times on client. until we figure out
-		//							why, multiple recoils must be supressed.
-		if( m_flLastRecoil + 0.1f < gpGlobals->curtime )
-			pPlayer->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(iAttack) );
-
-		m_flLastRecoil = gpGlobals->curtime;
-	}
-
-	/*if ( !m_iClip1 && pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 )
-	{
-		// HEV suit - indicate out of ammo condition
-		pPlayer->SetSuitUpdate( "!HEV_AMO0", FALSE, 0 ); 
-	}*/
-
-	m_fNextHolster = gpGlobals->curtime + 0.3f; //Keep people from switching weapons right after shooting.
 }
 
 //------------------------------------------------------------------------------
@@ -641,6 +634,36 @@ void CBaseBG2Weapon::ItemPostFrame( void )
 		{
 			Swing( m_iLastAttack, false );
 		}
+	}
+
+	if( m_bShouldSampleForward && m_flNextSampleForward <= gpGlobals->curtime )
+	{
+		Vector vecAiming	= pOwner->CBasePlayer::GetAutoaimVector( AUTOAIM_5DEGREES );	
+		CShotManipulator manipulator( vecAiming );
+
+		m_vLastForward = manipulator.ApplySpread( sv_perfectaim.GetInt() == 0 ? Cone( GetAccuracy( m_iLastAttack ) ) : vec3_origin );
+		m_bShouldSampleForward = false;
+
+		//Disorient the player
+		if( sv_steadyhand.GetInt() == 0 )
+		{
+			int iSeed = CBaseEntity::GetPredictionRandomSeed() & 255;
+			RandomSeed( iSeed );
+
+			//BG2 - Tjoppen - HACKHACK: weapon attacks get called multiple times on client. until we figure out
+			//							why, multiple recoils must be supressed.
+			if( m_flLastRecoil + 0.1f < gpGlobals->curtime )
+				pOwner->ViewPunch( QAngle( -8, random->RandomFloat( -2, 2 ), 0 ) * GetRecoil(m_iLastAttack) );
+
+			m_flLastRecoil = gpGlobals->curtime;
+		}
+	}
+
+	if( m_bShouldFireDelayed && m_flNextDelayedFire <= gpGlobals->curtime )
+	{
+		m_bShouldFireDelayed = false;
+
+		FireBullets( m_iLastAttack );
 	}
 
 	BaseClass::ItemPostFrame();

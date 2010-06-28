@@ -115,10 +115,6 @@ const float MUZZLE_VELOCITY_PISTOL = 12000.0f;	//1000 fps
 #endif
 DECLARE_BG2_WEAPON( brownbess )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
@@ -191,10 +187,6 @@ MUSKET_ACTTABLE( brownbess )
 #endif
 DECLARE_BG2_WEAPON( charleville )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
@@ -268,10 +260,6 @@ MUSKET_ACTTABLE( charleville )
 #endif
 DECLARE_BG2_WEAPON( jaeger )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
@@ -331,10 +319,6 @@ RIFLE_ACTTABLE( jaeger )
 #endif
 DECLARE_BG2_WEAPON( pennsylvania )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
@@ -393,10 +377,6 @@ RIFLE_ACTTABLE( pennsylvania )
 #endif
 DECLARE_BG2_WEAPON( pistol_a )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_fHolsterTime = 0.50f;
 
 	m_bWeaponHasSights = false; 
@@ -436,10 +416,6 @@ PISTOL_ACTTABLE( pistol_a )
 #endif
 DECLARE_BG2_WEAPON( pistol_b )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_fHolsterTime = 0.50f;
 
 	m_bWeaponHasSights = false; 
@@ -479,10 +455,6 @@ PISTOL_ACTTABLE( pistol_b )
 #endif
 DECLARE_BG2_WEAPON( sabre_a )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_fHolsterTime = 0.50f;
 
 	m_bWeaponHasSights = false; 
@@ -514,10 +486,6 @@ MELEE_ACTTABLE( sabre_a )
 #endif
 DECLARE_BG2_WEAPON( sabre_b )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_fHolsterTime = 0.50f;
 
 	m_bWeaponHasSights = false; 
@@ -549,10 +517,6 @@ MELEE_ACTTABLE( sabre_b )
 #endif
 DECLARE_BG2_WEAPON( knife )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_fHolsterTime = 0.75f;
 
 	m_bWeaponHasSights = false; 
@@ -584,10 +548,6 @@ MELEE_ACTTABLE( knife )
 #endif
 DECLARE_BG2_WEAPON( hirschf )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_fHolsterTime = 0.75f;
 
 	m_bWeaponHasSights = false; 
@@ -620,10 +580,6 @@ MELEE_ACTTABLE( hirschf )
 #endif
 DECLARE_BG2_WEAPON( tomahawk )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_fHolsterTime = 0.75f;
 
 	m_bWeaponHasSights = false; 
@@ -655,10 +611,6 @@ MELEE_ACTTABLE( tomahawk )
 #endif
 DECLARE_BG2_WEAPON( revolutionnaire )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
@@ -731,10 +683,6 @@ MUSKET_ACTTABLE( revolutionnaire )
 #endif
 DECLARE_BG2_WEAPON( brownbess_nobayo )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
@@ -790,10 +738,6 @@ MUSKET_ACTTABLE( brownbess_nobayo )
 #endif
 DECLARE_BG2_WEAPON( beltaxe )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_fHolsterTime = 0.75f;
 
 	m_bWeaponHasSights = false; 
@@ -824,10 +768,6 @@ MELEE_ACTTABLE( beltaxe )
 #endif
 DECLARE_BG2_WEAPON( fowler )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
@@ -885,10 +825,6 @@ MUSKET_ACTTABLE( fowler )
 #endif
 DECLARE_BG2_WEAPON( longpattern )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
@@ -961,10 +897,6 @@ MUSKET_ACTTABLE( longpattern )
 #endif
 DECLARE_BG2_WEAPON( longpattern_nobayo )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
@@ -1021,10 +953,6 @@ MUSKET_ACTTABLE( longpattern_nobayo )
 #endif
 DECLARE_BG2_WEAPON( american_brownbess )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
@@ -1097,10 +1025,6 @@ MUSKET_ACTTABLE( american_brownbess )
 #endif
 DECLARE_BG2_WEAPON( american_brownbess_nobayo )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
@@ -1156,10 +1080,6 @@ MUSKET_ACTTABLE( american_brownbess_nobayo )
 #endif
 DECLARE_BG2_WEAPON( brownbess_carbine )
 {
-	m_bReloadsSingly	= false;
-	m_bFiresUnderwater	= true;
-	m_bDontAutoreload	= true;
-
 	m_bCantAbortReload	= true;
 
 	m_fHolsterTime = 0.75f;
