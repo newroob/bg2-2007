@@ -3643,6 +3643,45 @@
 					>
 				</File>
 				<File
+					RelativePath=".\bg2\cannon.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\bg2\cannon.h"
+					>
+				</File>
+				<File
+					RelativePath=".\bg2\cannonball.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\bg2\cannonball.h"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\bg2\ctfflag.cpp"
 					>
 					<FileConfiguration
