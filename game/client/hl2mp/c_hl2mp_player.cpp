@@ -15,8 +15,10 @@
 #include "r_efx.h"
 #include "dlight.h"
 
-//BG2 - Include - HP
+//BG2 - Include - HairyPotter
 #include "./bg2/bg2_hud_main.h"
+#include "ivieweffects.h"
+#include "shake.h"
 //
 
 // Don't alias here
@@ -52,6 +54,8 @@ END_PREDICTION_DATA()
 //BG2 - Models are set by the server through the class selection menu. -HairyPotter
 //static ConVar cl_playermodel( "cl_playermodel", "none", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Default Player Model");
 
+ConVar cl_ragdolldeathcam( "cl_ragdolldeathcam", "1", FCVAR_ARCHIVE, "Should the camera stick to the player's ragdoll for a few seconds on death?");
+
 void SpawnBlood (Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
 
 extern player_info_t sPlayerInfo;
@@ -65,6 +69,10 @@ C_HL2MP_Player::C_HL2MP_Player() : m_PlayerAnimState( this ), m_iv_angEyeAngles(
 		pHud->m_IsAttackerAccumulator.m_flLastAttack = 0;
 		pHud->m_IsVictimAccumulator.m_flLastAttack = 0;
 	}
+	//
+
+	//BG2 - Reset death cam time. -HairyPotter
+	m_DeathTime = gpGlobals->curtime;
 	//
 
 	m_iIDEntIndex = 0;
@@ -665,47 +673,27 @@ C_BaseAnimating *C_HL2MP_Player::BecomeRagdollOnClient()
 	// m_builtRagdoll = true;
 	return NULL;
 }
-
 void C_HL2MP_Player::CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, float &zFar, float &fov )
 {
 	//BG2 - Tjoppen - reenable spectators
-	/*if ( m_lifeState != LIFE_ALIVE )
+	//BG2 - Have camera follow the player's eyes immediately after death, then go spec after a short while. -HairyPotter
+	if ( m_lifeState != LIFE_ALIVE && cl_ragdolldeathcam.GetBool() && m_DeathTime > gpGlobals->curtime )
 	{
-		Vector origin = EyePosition();			
+		Vector origin;
+		QAngle vecAngle;
 
-		IRagdoll *pRagdoll = GetRepresentativeRagdoll();
-
-		if ( pRagdoll )
-		{
-			origin = pRagdoll->GetRagdollOrigin();
-			origin.z += VEC_DEAD_VIEWHEIGHT.z; // look over ragdoll, not through
-		}
+		CBaseEntity *pDoll = static_cast<CBaseEntity *>( m_hRagdoll.Get() );
+		if ( pDoll )
+			pDoll->GetAttachment( pDoll->LookupAttachment( "eyes" ), origin, vecAngle );
 
 		BaseClass::CalcView( eyeOrigin, eyeAngles, zNear, zFar, fov );
 
 		eyeOrigin = origin;
-		
-		Vector vForward; 
-		AngleVectors( eyeAngles, &vForward );
-
-		VectorNormalize( vForward );
-		VectorMA( origin, -CHASE_CAM_DISTANCE, vForward, eyeOrigin );
-
-		Vector WALL_MIN( -WALL_OFFSET, -WALL_OFFSET, -WALL_OFFSET );
-		Vector WALL_MAX( WALL_OFFSET, WALL_OFFSET, WALL_OFFSET );
-
-		trace_t trace; // clip against world
-		C_BaseEntity::EnableAbsRecomputations( false ); // HACK don't recompute positions while doing RayTrace
-		UTIL_TraceHull( origin, eyeOrigin, WALL_MIN, WALL_MAX, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trace );
-		C_BaseEntity::EnableAbsRecomputations( true );
-
-		if (trace.fraction < 1.0)
-		{
-			eyeOrigin = trace.endpos;
-		}
+		eyeAngles = vecAngle;
 		
 		return;
-	}*/
+	}
+	//
 
 	BaseClass::CalcView( eyeOrigin, eyeAngles, zNear, zFar, fov );
 }
@@ -810,7 +798,7 @@ void C_HL2MPRagdoll::ImpactTrace( trace_t *pTrace, int iDamageType, char *pCusto
 		//BG2 - Tjoppen - do simple blood decals on ragdolls
 		UTIL_DecalTrace( pTrace, "Impact.Flesh" );
 		//
-//		FX_CS_BloodSpray( hitpos, dir, 10 );
+		//FX_BloodSpray( hitpos, dir, 10 );
 	}
 
 	m_pRagdoll->ResetRagdollSleepAfterTime();
@@ -831,7 +819,7 @@ void C_HL2MPRagdoll::CreateHL2MPRagdoll( void )
 		// move my current model instance to the ragdoll's so decals are preserved.
 		pPlayer->SnatchModelInstance( this );
 
-		if ( pPlayer->m_nSkin != NULL )
+		if ( pPlayer->m_nSkin )
 			m_nSkin = pPlayer->m_nSkin; //BG2 - Set the proper skin for ragdolls. -HairyPotter
 
 		VarMapping_t *varMap = GetVarMapping();
@@ -871,6 +859,26 @@ void C_HL2MPRagdoll::CreateHL2MPRagdoll( void )
 			SetCycle( 0.0 );
 
 			Interp_Reset( varMap );
+
+			//BG2 - Fade out when you die, unless you've disabled the ragdoll death cam. -HairyPotter
+			if( cl_ragdolldeathcam.GetBool() )
+			{
+				float duration = RandomFloat( 1.5, 2.0 );
+		
+				ScreenFade_t sf;
+				memset( &sf, 0, sizeof( sf ) );
+				sf.a = 255;
+				sf.r = 0;
+				sf.g = 0;
+				sf.b = 0;
+				sf.duration = (float)(1<<SCREENFADE_FRACBITS) * duration;
+				sf.holdTime = (float)(1<<SCREENFADE_FRACBITS) * 1.0f;
+				sf.fadeFlags = FFADE_OUT | FFADE_PURGE;
+				vieweffects->Fade( sf );
+
+				pPlayer->m_DeathTime = gpGlobals->curtime + duration + 1.0f;
+			}
+			//
 		}		
 	}
 	else

@@ -81,6 +81,7 @@ public:
 	//BG2 - Tjoppen - vars in C_HL2MP_Player
 	//CNetworkVar( int, m_iStamina );	//doesn't have to be a CNetworkVar appearently
 	int		m_iStamina;		//yeah it's a public integer, big woop, wanna fight about it?
+	float m_DeathTime; //BG2 - Used for "death cam". -HairyPotter
 
 	int		GetClass( void )			{ return m_iClass; }
 	int		GetCurrentAmmoKit( void )	{ return m_iCurrentAmmoKit; }
