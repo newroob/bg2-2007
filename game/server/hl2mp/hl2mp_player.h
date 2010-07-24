@@ -174,13 +174,14 @@ public:
 
 	int GetCurrentAmmoKit( void) { return m_iCurrentAmmoKit; }
 
+	int m_iGunKit,
+		m_iAmmoKit;
+
 private:
 	CNetworkVar( int, m_iCurrentAmmoKit );	//BG2 - Tjoppen - we need to copy m_iAmmoKit when spawned so players can't change current load by typing "kit ..."
 
 	//int		m_iClass;					//BG2 - Tjoppen - class system
-	int		m_iNextClass,					//BG2 - Tjoppen - which class will we become on our next respawn?
-			m_iGunKit,
-			m_iAmmoKit;
+	int		m_iNextClass;					//BG2 - Tjoppen - which class will we become on our next respawn?
 	float	m_flNextVoicecomm,				//BG2 - Tjoppen - voice comms
 			m_flNextGlobalVoicecomm;		//BG2 - Tjoppen - only battlecries for now
 	float	m_fNextStamRegen;				//BG2 - Draco - stamina regen timer

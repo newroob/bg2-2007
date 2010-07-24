@@ -542,7 +542,7 @@ void CHL2MPRules::Think( void )
 	//=========================
 	//Auto Team Balance
 	//=========================
-	if (mp_autobalanceteams.GetInt() == 1) //If we're balancing teams on AttemptJoin... is there really a need to think about it again? -HairyPotter
+	if (mp_autobalanceteams.GetInt() == 1)
 	{
 		//use the right sum to find diff, I don't like negative numbers...
 		int iAutoTeamBalanceTeamDiff = 0;
@@ -564,6 +564,14 @@ void CHL2MPRules::Think( void )
 			//meh, go random for now, maybe lowest scorer later...
 			int iAutoTeamBalancePlayerToSwitchIndex = 0;
 			CBasePlayer *pPlayer = NULL;
+
+			int args[2];
+
+			//Just to make sure.
+			args[0] = 1;
+			args[1] = AMMO_KIT_BALL;
+			//
+
 			switch (iAutoTeamBalanceBiggerTeam)
 			{
 				case TEAM_BRITISH:
@@ -571,6 +579,26 @@ void CHL2MPRules::Think( void )
 					pPlayer = pBritish->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex);
 					if (pPlayer && !pPlayer->IsAlive()) //Let's try to avoid null pointers.
 					{
+						//BG2 - This sets the player's current default weapon kit for the class they're being switched to. -HairyPotter
+						int edict = engine->IndexOfEdict( pPlayer->edict() );
+						switch( pPlayer->m_iClass )
+						{
+							case CLASS_INFANTRY:
+								sscanf( engine->GetClientConVarValue( edict, "cl_kit_a_inf" ), "%i %i", &(args[0]), &(args[1]) );
+								break;
+							case CLASS_SKIRMISHER:
+								sscanf( engine->GetClientConVarValue( edict, "cl_kit_a_ski" ), "%i %i", &(args[0]), &(args[1]) );
+								break;
+						}
+
+						CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+						if ( pHL2Player )
+						{
+							pHL2Player->m_iGunKit = args[0];
+							pHL2Player->m_iAmmoKit = args[1];
+						}
+						//
+
 						pPlayer->ChangeTeam(TEAM_AMERICANS);
 					}
 					break;
@@ -579,6 +607,30 @@ void CHL2MPRules::Think( void )
 					pPlayer = pAmericans->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex);
 					if (pPlayer && !pPlayer->IsAlive()) //Let's try to avoid null pointers.
 					{
+						//BG2 - This sets the player's current default weapon kit for the class they're being switched to. -HairyPotter
+						int edict = engine->IndexOfEdict( pPlayer->edict() );
+						//szWeaponKit = engine->GetClientConVarValue( edict, "cl_playermodel" );
+						switch( pPlayer->m_iClass )
+						{
+							case CLASS_INFANTRY:
+								sscanf( engine->GetClientConVarValue( edict, "cl_kit_b_inf" ), "%i %i", &(args[0]), &(args[1]) );
+								break;
+							case CLASS_SKIRMISHER:
+								sscanf( engine->GetClientConVarValue( edict, "cl_kit_b_ski" ), "%i %i", &(args[0]), &(args[1]) );
+								break;
+							case CLASS_LIGHT_INFANTRY:
+								sscanf( engine->GetClientConVarValue( edict, "cl_kit_b_light" ), "%i %i", &(args[0]), &(args[1]) );
+								break;
+						}
+
+						CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+						if ( pHL2Player )
+						{
+							pHL2Player->m_iGunKit = args[0];
+							pHL2Player->m_iAmmoKit = args[1];
+						}
+						//
+
 						pPlayer->ChangeTeam(TEAM_BRITISH);
 					}
 					break;

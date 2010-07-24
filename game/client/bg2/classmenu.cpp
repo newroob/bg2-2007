@@ -53,7 +53,7 @@ extern IGameUIFuncs *gameuifuncs; // for key binding details
 ConVar cl_quickjoin( "cl_quickjoin", "0", FCVAR_ARCHIVE, "Automatically join the game after choosing a class, spawing with the default weapon kit.");
 ConVar cl_classmenu_sounds( "cl_classmenu_sounds", "1", FCVAR_ARCHIVE, "Enable sounds in the team/class/weapon selection menu.");
 
-#define CVAR_FLAGS	( FCVAR_ARCHIVE )
+#define CVAR_FLAGS	( FCVAR_ARCHIVE | FCVAR_USERINFO )
 
 #define LIMIT_DEFINES( iclass, name )\
 	ConVar cl_kit_a_##iclass( "cl_kit_a_"#iclass, "1 0", CVAR_FLAGS,\
