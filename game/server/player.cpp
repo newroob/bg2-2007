@@ -160,11 +160,11 @@ ConVar	sk_player_arm( "sk_player_arm","1" );
 ConVar	sk_player_leg( "sk_player_leg","1" );
 */
 //BG2 - Tjoppen - hitgroup modifiers. these are taken from BG 1.0F
-const double HIT_HEAD_DMG = 3.4;
-const double HIT_CHEST_DMG = 1.85;
-const double HIT_STOMACH_DMG = 1.825;
-const double HIT_ARM_DMG = 1.25;
-const double HIT_LEG_DMG = 1.35;
+const float HIT_HEAD_DMG = 1.8378f;		//3.4 / 1.85
+const float HIT_CHEST_DMG = 1.0f;		//used to be 1.85
+const float HIT_STOMACH_DMG = 0.9865f;	//1.825 / 1.85
+const float HIT_ARM_DMG = 0.6757f;		//1.25 / 1.85
+const float HIT_LEG_DMG = 0.7297f;		//1.35 / 1.85
 //
 
 ConVar  player_debug_print_damage( "player_debug_print_damage", "0", FCVAR_CHEAT, "When true, print amount and type of all damage received by player to console." );
@@ -891,34 +891,23 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 		switch ( ptr->hitgroup )
 		{
 		case HITGROUP_GENERIC:
-			//Msg( "HITGROUP_GENERIC\n" );
 			info.ScaleDamage( HIT_ARM_DMG );	//at least give them something for hitting the generic.. let's be nice
 			break;
 		case HITGROUP_HEAD:
-			//Msg( "HITGROUP_HEAD\n" );
-			//info.ScaleDamage( sk_player_head.GetFloat() );
 			info.ScaleDamage( HIT_HEAD_DMG );
 			break;
 		case HITGROUP_CHEST:
-			//Msg( "HITGROUP_CHEST\n" );
-			//info.ScaleDamage( sk_player_chest.GetFloat() );
 			info.ScaleDamage( HIT_CHEST_DMG );
 			break;
 		case HITGROUP_STOMACH:
-			//Msg( "HITGROUP_STOMACH\n" );
-			//info.ScaleDamage( sk_player_stomach.GetFloat() );
 			info.ScaleDamage( HIT_STOMACH_DMG );
 			break;
 		case HITGROUP_LEFTARM:
 		case HITGROUP_RIGHTARM:
-			//Msg( "HITGROUP_*ARM\n" );
-			//info.ScaleDamage( sk_player_arm.GetFloat() );
 			info.ScaleDamage( HIT_ARM_DMG );
 			break;
 		case HITGROUP_LEFTLEG:
 		case HITGROUP_RIGHTLEG:
-			//Msg( "HITGROUP_*LEG\n" );
-			//info.ScaleDamage( sk_player_leg.GetFloat() );
 			info.ScaleDamage( HIT_LEG_DMG );
 			break;
 		default:

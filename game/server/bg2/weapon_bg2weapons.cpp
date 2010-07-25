@@ -47,50 +47,49 @@ const int	PISTOL_STAMINA_DRAIN = 25,
 			MUSKET_RIFLE_STAMINA_DRAIN = 35,
 			MELEE_STAMINA_DRAIN = 25;
 
-//BG2 - Tjoppen - these constants from weapon_data.h @ BG 1.0F RC14
-// damage values for each attack on each weapon
-const int BESS_FIRE_DAMAGE = 60;
-const int BESS_BAYONET_DAMAGE = 43;
-const int BESS_BAYONET_RANGE = 83; //90
+//BG2 - Tjoppen - these constants are based on values from weapon_data.h @ BG 1.0F RC14
+//they have since been adjusted and normalized to work with a chest damage modifier of 1 instead of 1.85
+const int BESS_FIRE_DAMAGE = 111;			//60 * 1.85
+const int BESS_BAYONET_DAMAGE = 63;			//43 * 0.8 * 1.85
+const int BESS_BAYONET_RANGE = 83;
 
-const int REVOL_FIRE_DAMAGE = 58;
-const int REVOL_BAYONET_DAMAGE = 41;
+const int REVOL_FIRE_DAMAGE = 107;			//58 * 1.85
+const int REVOL_BAYONET_DAMAGE = 60;		//41 * 0.8 * 1.85
 const int REVOL_BAYONET_RANGE = 75;
 
-//BG2 - Tjoppen - roundoff errors makes me have to increase CHARLE_FIRE_DAMAGE by 0.5
-const int CHARLE_FIRE_DAMAGE = 58;//57.5;
-const int CHARLE_BAYONET_DAMAGE = 41;
-const int CHARLE_BAYONET_RANGE = 80; //87
+const int CHARLE_FIRE_DAMAGE = REVOL_FIRE_DAMAGE;
+const int CHARLE_BAYONET_DAMAGE = REVOL_BAYONET_DAMAGE;
+const int CHARLE_BAYONET_RANGE = 80;
 
-const int PENNY_FIRE_DAMAGE = 60;
+const int PENNY_FIRE_DAMAGE = BESS_FIRE_DAMAGE;
 
-const int LONGPATTERN_FIRE_DAMAGE = 62;
-const int LONGPATTERN_BAYONET_DAMAGE = 45;
+const int LONGPATTERN_FIRE_DAMAGE = 114;	//62 * 1.85
+const int LONGPATTERN_BAYONET_DAMAGE = 66;	//45 * 0.8 * 1.85
 const int LONGPATTERN_BAYONET_RANGE = 86;
 
-const int FOWLER_FIRE_DAMAGE = 56;	//damage per ball
-const int FOWLER_SHOT_DAMAGE = 10;	//damage per shot. base is 8*10 = 80. chest shot (HIT_CHEST_DMG) -> 80*1.85 = 148
+const int FOWLER_FIRE_DAMAGE = 103;			//damage per ball. 56 * 1.85
+const int FOWLER_SHOT_DAMAGE = 18;			//damage per shot. 10 * 1.85 -> 18 -> 8*18 = 144
 const int FOWLER_NUM_SHOT = 8;
 
-const int CARBINE_FIRE_DAMAGE = 58;	//damage per ball. between fowler and normal brown bess
-const int CARBINE_SHOT_DAMAGE = 11;	//damage per shot. base is 8*11 = 88. chest shot (HIT_CHEST_DMG) -> 88*1.85 = 162.8
+const int CARBINE_FIRE_DAMAGE = 107;		//damage per ball. between fowler and normal brown bess. 58 * 1.85
+const int CARBINE_SHOT_DAMAGE = 20;			//damage per shot. 11 * 1.85 -> 20 -> 8*20 = 160
 const int CARBINE_NUM_SHOT = 8;
 const int CARBINE_BAYONET_RANGE = 72;
 
-const int JAEGER_FIRE_DAMAGE = 63;
+const int JAEGER_FIRE_DAMAGE = 116;			//63 * 1.85
 
-const int PISTOL_FIRE_DAMAGE = 55;
+const int PISTOL_FIRE_DAMAGE = 101;			//55 * 1.85
 
-const int KNIFE_DAMAGE = 30;
-const int SABRE_DAMAGE = 40; //38
-const int TOMAHAWK_DAMAGE = 43;  //45
+const int KNIFE_DAMAGE = 55;				//30 * 1.85
+const int SABRE_DAMAGE = 74;				//40 * 1.85
+const int TOMAHAWK_DAMAGE = 79;				//43 * 1.85
 const int HIRSCHFAENGER_DAMAGE = KNIFE_DAMAGE;		//same damage as knife
 
 //BG2 - Tjoppen - own constants, interpreted from various places in the BG source
 const float SABRE_RANGE = 57.0;
 const float HIRSCHFAENGER_RANGE = 57.0;
 const float KNIFE_RANGE = 52.0;
-const float TOMAHAWK_RANGE = 55.0; //66
+const float TOMAHAWK_RANGE = 55.0;
 
 const float BAYONET_COS_TOLERANCE = 0.9961946980917;		//+-5 degrees
 const float BAYONET_RETRACE_DURATION = 0.1;

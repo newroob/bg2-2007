@@ -170,15 +170,12 @@ public:
 		return m_Attackinfos[iAttack].m_flRecoil;
 	}
 
-	float	GetDamage( int iAttack )
+	int		GetDamage( int iAttack )
 	{
 		if( iAttack == ATTACK_NONE )
 			return 0;
 
-		float scale = GetAttackType( iAttack ) == ATTACKTYPE_STAB ? 0.8f : 1.0f;	//adjusting stabs
-
-		return m_Attackinfos[iAttack].m_iDamage * scale;/*
-					* random->RandomFloat( 0.97f, 1.03f );	//+-3% dmg*/
+		return m_Attackinfos[iAttack].m_iDamage;
 	}
 
 	float	GetAccuracy( int iAttack )

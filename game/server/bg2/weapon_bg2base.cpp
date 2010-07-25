@@ -419,7 +419,7 @@ void CBaseBG2Weapon::Hit( trace_t &traceHit, int iAttack )
 		pPlayer->EyeVectors( &hitDirection, NULL, NULL );
 		VectorNormalize( hitDirection );
 
-		float	damage		= GetDamage( iAttack );	
+		int damage		= GetDamage( iAttack );	
 
 		//BG2 - Tjoppen - apply no force
 		CTakeDamageInfo info( GetOwner(), GetOwner(), damage, DMG_CLUB | DMG_PREVENT_PHYSICS_FORCE | DMG_NEVERGIB );
