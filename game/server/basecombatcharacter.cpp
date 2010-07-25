@@ -82,14 +82,12 @@ BEGIN_DATADESC( CBaseCombatCharacter )
 	DEFINE_FIELD( m_flNextAttack, FIELD_TIME ),
 	DEFINE_FIELD( m_eHull, FIELD_INTEGER ),
 	DEFINE_FIELD( m_bloodColor, FIELD_INTEGER ),
-	DEFINE_FIELD( m_iDamageCount, FIELD_INTEGER ),
 	
 	DEFINE_FIELD( m_flFieldOfView, FIELD_FLOAT ),
 	DEFINE_FIELD( m_HackedGunPos, FIELD_VECTOR ),
 	DEFINE_KEYFIELD( m_RelationshipString, FIELD_STRING, "Relationship" ),
 
 	DEFINE_FIELD( m_LastHitGroup, FIELD_INTEGER ),
-	DEFINE_FIELD( m_flDamageAccumulator, FIELD_FLOAT ),
 	DEFINE_INPUT( m_impactEnergyScale, FIELD_FLOAT, "physdamagescale" ),
 	DEFINE_FIELD( m_CurrentWeaponProficiency, FIELD_INTEGER),
 
@@ -704,10 +702,6 @@ CBaseCombatCharacter::CBaseCombatCharacter( void )
 	// necessary since in debug, we initialize vectors to NAN for debugging
 	m_HackedGunPos.Init();
 #endif
-
-	// Zero the damage accumulator.
-	m_flDamageAccumulator = 0.0f;
-
 	// Init weapon and Ammo data
 	m_hActiveWeapon			= NULL;
 
@@ -2248,8 +2242,6 @@ int CBaseCombatCharacter::OnTakeDamage( const CTakeDamageInfo &info )
 	if (!m_takedamage)
 		return 0;
 
-	m_iDamageCount++;
-
 	if ( info.GetDamageType() & DMG_SHOCK )
 	{
 		g_pEffects->Sparks( info.GetDamagePosition(), 2, 2 );
@@ -2318,24 +2310,10 @@ int CBaseCombatCharacter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 	if ( m_takedamage != DAMAGE_EVENTS_ONLY )
 	{
 		// Separate the fractional amount of damage from the whole
-		float flFractionalDamage = info.GetDamage() - floor( info.GetDamage() );
-		float flIntegerDamage = info.GetDamage() - flFractionalDamage;
-
-		// Add fractional damage to the accumulator
-		m_flDamageAccumulator += flFractionalDamage;
-
-		// If the accumulator is holding a full point of damage, move that point
-		// of damage into the damage we're about to inflict.
-		if( m_flDamageAccumulator >= 1.0 )
-		{
-			flIntegerDamage += 1.0;
-			m_flDamageAccumulator -= 1.0;
-		}
-
-		if ( flIntegerDamage <= 0 )
+		if ( info.GetDamage() <= 0 )
 			return 0;
 
-		m_iHealth -= flIntegerDamage;
+		m_iHealth -= info.GetDamage();
 	}
 
 	return 1;

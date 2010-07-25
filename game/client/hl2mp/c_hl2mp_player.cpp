@@ -56,7 +56,7 @@ END_PREDICTION_DATA()
 
 ConVar cl_ragdolldeathcam( "cl_ragdolldeathcam", "1", FCVAR_ARCHIVE, "Should the camera stick to the player's ragdoll for a few seconds on death?");
 
-void SpawnBlood (Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
+void SpawnBlood (Vector vecSpot, const Vector &vecDir, int bloodColor, int iDamage);
 
 extern player_info_t sPlayerInfo;
 

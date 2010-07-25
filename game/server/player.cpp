@@ -68,7 +68,6 @@
 #include "hl2orange.spa.h"
 //BG2 - Tjoppen - health fix
 #include "player_resource.h"
-#include "bg2/weapon_bg2base.h"
 //
 
 
@@ -137,7 +136,7 @@ bool gInitHUD = true;
 
 extern void respawn(CBaseEntity *pEdict, bool fCopyCorpse);
 int MapTextureTypeStepType(char chTextureType);
-extern void	SpawnBlood(Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
+extern void	SpawnBlood(Vector vecSpot, const Vector &vecDir, int bloodColor, int iDamage);
 extern void AddMultiDamage( const CTakeDamageInfo &info, CBaseEntity *pEntity );
 
 
@@ -926,41 +925,16 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 			break;
 		}
 
-		//BG2 - Tjoppen - print hit verification
-		if ( info.GetAttacker()->IsPlayer() )
-		{
-			CBasePlayer *pVictim = this,
-						*pAttacker = ToBasePlayer( info.GetAttacker() );
-			Assert( pAttacker != NULL );
+		//BG2 - Tjoppen - serverside blood
+		//show blood to all nearby players
+		CRecipientFilter recpfilter;
+		recpfilter.AddRecipientsByPAS( GetLocalOrigin() );
 
-			CBaseBG2Weapon *pWeapon = dynamic_cast<CBaseBG2Weapon*>(pAttacker->GetActiveWeapon());
-			int attackType = pWeapon ? pWeapon->m_iLastAttackType : 0;
-
-			//use usermessage instead and let the client figure out what to print. saves precious bandwidth
-			//send one to attacker and one to victim
-			//the "Damage" usermessage is more detailed, but adds up all damage in the current frame. it is therefore
-			//hard to determine who is the attacker since the victim can be hit multiple times
-			
-			CRecipientFilter recpfilter;
-			recpfilter.AddRecipient( pAttacker );
-			recpfilter.AddRecipient( pVictim );
-			recpfilter.MakeReliable();
-
-			UserMessageBegin( recpfilter, "HitVerif" );
-				WRITE_BYTE( pAttacker->entindex() );			//attacker id
-				WRITE_BYTE( pVictim->entindex() );				//victim id
-				WRITE_BYTE( ptr->hitgroup + (attackType << 4) );//where?
-				WRITE_SHORT( (int)(info.GetDamage() * 100) );	//damage - scale up for better tallying accuracy due to truncation
-			MessageEnd();
-
-			//BG2 - Tjoppen - serverside blood
-			UserMessageBegin( recpfilter, "ServerBlood" );
-				WRITE_VEC3COORD( ptr->endpos );
-				WRITE_VEC3NORMAL( vecDir );
-				WRITE_SHORT( (int)floorf(info.GetDamage()) );	//damage
-			MessageEnd();
-			//
-		}
+		UserMessageBegin( recpfilter, "ServerBlood" );
+			WRITE_VEC3COORD( ptr->endpos );
+			WRITE_VEC3NORMAL( vecDir );
+			WRITE_SHORT( inputInfo.GetDamage() );			//damage
+		MessageEnd();
 		//
 
 		//BG2 - Tjoppen - serverside blood
@@ -977,7 +951,7 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CBasePlayer::DamageEffect(float flDamage, int fDamageType)
+void CBasePlayer::DamageEffect(int iDamage, int fDamageType)
 {
 	if (fDamageType & DMG_CRUSH)
 	{
@@ -994,7 +968,7 @@ void CBasePlayer::DamageEffect(float flDamage, int fDamageType)
 	else if (fDamageType & DMG_SLASH)
 	{
 		// If slash damage shoot some blood
-		SpawnBlood(EyePosition(), g_vecAttackDir, BloodColor(), flDamage);
+		SpawnBlood(EyePosition(), g_vecAttackDir, BloodColor(), iDamage);
 	}
 	else if (fDamageType & DMG_PLASMA)
 	{

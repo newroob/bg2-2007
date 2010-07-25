@@ -84,9 +84,9 @@ public:
 		Activity	m_iAttackActivity,
 					m_iAttackActivityEmpty;
 
-		float	m_flRange,
-				m_flDamage,
-				m_flRecoil,				//factor of 357 standard recoil - firearm only
+		float	m_flRange;
+		int		m_iDamage;
+		float	m_flRecoil,				//factor of 357 standard recoil - firearm only
 				m_flCosAngleTolerance,	//tolerance of melee hits(sqrt(0.5) for crowbar, or 45 degrees)
 										// - melee only
 				m_flRetraceDuration,
@@ -177,7 +177,7 @@ public:
 
 		float scale = GetAttackType( iAttack ) == ATTACKTYPE_STAB ? 0.8f : 1.0f;	//adjusting stabs
 
-		return m_Attackinfos[iAttack].m_flDamage * scale;/*
+		return m_Attackinfos[iAttack].m_iDamage * scale;/*
 					* random->RandomFloat( 0.97f, 1.03f );	//+-3% dmg*/
 	}
 
@@ -310,7 +310,7 @@ public:
 	float	m_flShotSpread;		//used when firing shot, if the current gun is capable of that
 	float	m_flMuzzleVelocity;
 	int		m_iNumShot;
-	float	m_flDamagePerShot;
+	float	m_iDamagePerShot;
 
 	float GetCurrentAmmoSpread( void )
 	{

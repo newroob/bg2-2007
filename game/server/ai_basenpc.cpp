@@ -8963,7 +8963,7 @@ int CAI_BaseNPC::DrawDebugTextOverlays(void)
 		// --------------
 		// Print Health
 		// --------------
-		Q_snprintf(tempstr,sizeof(tempstr),"Health: %i  (DACC:%1.2f)",m_iHealth, GetDamageAccumulator() );
+		Q_snprintf(tempstr,sizeof(tempstr),"Health: %i",m_iHealth);
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 

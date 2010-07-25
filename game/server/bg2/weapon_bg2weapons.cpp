@@ -49,42 +49,42 @@ const int	PISTOL_STAMINA_DRAIN = 25,
 
 //BG2 - Tjoppen - these constants from weapon_data.h @ BG 1.0F RC14
 // damage values for each attack on each weapon
-const float BESS_FIRE_DAMAGE = 60.0;
-const float BESS_BAYONET_DAMAGE = 43.0;
-const float BESS_BAYONET_RANGE = 83.0; //90
+const int BESS_FIRE_DAMAGE = 60;
+const int BESS_BAYONET_DAMAGE = 43;
+const int BESS_BAYONET_RANGE = 83; //90
 
-const float REVOL_FIRE_DAMAGE = 58.0;
-const float REVOL_BAYONET_DAMAGE = 41.0;
-const float REVOL_BAYONET_RANGE = 75.0;
+const int REVOL_FIRE_DAMAGE = 58;
+const int REVOL_BAYONET_DAMAGE = 41;
+const int REVOL_BAYONET_RANGE = 75;
 
 //BG2 - Tjoppen - roundoff errors makes me have to increase CHARLE_FIRE_DAMAGE by 0.5
-const float CHARLE_FIRE_DAMAGE = 58.0;//57.5;
-const float CHARLE_BAYONET_DAMAGE = 41.0;
-const float CHARLE_BAYONET_RANGE = 80.0; //87
+const int CHARLE_FIRE_DAMAGE = 58;//57.5;
+const int CHARLE_BAYONET_DAMAGE = 41;
+const int CHARLE_BAYONET_RANGE = 80; //87
 
-const float PENNY_FIRE_DAMAGE = 60.0;
+const int PENNY_FIRE_DAMAGE = 60;
 
-const float LONGPATTERN_FIRE_DAMAGE = 62.0;
-const float LONGPATTERN_BAYONET_DAMAGE = 45.0;
-const float LONGPATTERN_BAYONET_RANGE = 86.0;
+const int LONGPATTERN_FIRE_DAMAGE = 62;
+const int LONGPATTERN_BAYONET_DAMAGE = 45;
+const int LONGPATTERN_BAYONET_RANGE = 86;
 
-const float FOWLER_FIRE_DAMAGE = 56.0;	//damage per ball
-const float FOWLER_SHOT_DAMAGE = 10.0;	//damage per shot. base is 8*10 = 80. chest shot (HIT_CHEST_DMG) -> 80*1.85 = 148
-const int   FOWLER_NUM_SHOT = 8;
+const int FOWLER_FIRE_DAMAGE = 56;	//damage per ball
+const int FOWLER_SHOT_DAMAGE = 10;	//damage per shot. base is 8*10 = 80. chest shot (HIT_CHEST_DMG) -> 80*1.85 = 148
+const int FOWLER_NUM_SHOT = 8;
 
-const float CARBINE_FIRE_DAMAGE = 58.0;	//damage per ball. between fowler and normal brown bess
-const float CARBINE_SHOT_DAMAGE = 11.0;	//damage per shot. base is 8*11 = 88. chest shot (HIT_CHEST_DMG) -> 88*1.85 = 162.8
-const int   CARBINE_NUM_SHOT = 8;
-const float CARBINE_BAYONET_RANGE = 72.0;
+const int CARBINE_FIRE_DAMAGE = 58;	//damage per ball. between fowler and normal brown bess
+const int CARBINE_SHOT_DAMAGE = 11;	//damage per shot. base is 8*11 = 88. chest shot (HIT_CHEST_DMG) -> 88*1.85 = 162.8
+const int CARBINE_NUM_SHOT = 8;
+const int CARBINE_BAYONET_RANGE = 72;
 
-const float JAEGER_FIRE_DAMAGE = 63.0;
+const int JAEGER_FIRE_DAMAGE = 63;
 
-const float PISTOL_FIRE_DAMAGE = 55.0;
+const int PISTOL_FIRE_DAMAGE = 55;
 
-const float KNIFE_DAMAGE = 30.0;
-const float SABRE_DAMAGE = 40.0; //38
-const float TOMAHAWK_DAMAGE = 43;  //45
-const float HIRSCHFAENGER_DAMAGE = KNIFE_DAMAGE;		//same damage as knife
+const int KNIFE_DAMAGE = 30;
+const int SABRE_DAMAGE = 40; //38
+const int TOMAHAWK_DAMAGE = 43;  //45
+const int HIRSCHFAENGER_DAMAGE = KNIFE_DAMAGE;		//same damage as knife
 
 //BG2 - Tjoppen - own constants, interpreted from various places in the BG source
 const float SABRE_RANGE = 57.0;
@@ -134,7 +134,7 @@ DECLARE_BG2_WEAPON( brownbess )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= BESS_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_iDamage				= BESS_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
@@ -158,7 +158,7 @@ DECLARE_BG2_WEAPON( brownbess )
 
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
-	m_Attackinfos[1].m_flDamage				= BESS_BAYONET_DAMAGE;//60;
+	m_Attackinfos[1].m_iDamage				= BESS_BAYONET_DAMAGE;//60;
 	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;
 	m_Attackinfos[1].m_flRange				= BESS_BAYONET_RANGE;
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
@@ -206,7 +206,7 @@ DECLARE_BG2_WEAPON( charleville )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= CHARLE_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_iDamage				= CHARLE_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.6;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
@@ -230,7 +230,7 @@ DECLARE_BG2_WEAPON( charleville )
 
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
-	m_Attackinfos[1].m_flDamage				= CHARLE_BAYONET_DAMAGE;//60;
+	m_Attackinfos[1].m_iDamage				= CHARLE_BAYONET_DAMAGE;//60;
 	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;
 	m_Attackinfos[1].m_flRange				= CHARLE_BAYONET_RANGE;
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
@@ -279,7 +279,7 @@ DECLARE_BG2_WEAPON( jaeger )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= JAEGER_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_iDamage				= JAEGER_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.9;
 	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
@@ -338,7 +338,7 @@ DECLARE_BG2_WEAPON( pennsylvania )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= PENNY_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_iDamage				= PENNY_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 1.0;
 	m_Attackinfos[0].m_flRange				= RIFLE_RANGE;
@@ -383,7 +383,7 @@ DECLARE_BG2_WEAPON( pistol_a )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= PISTOL_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_iDamage				= PISTOL_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= PISTOL_RANGE;
@@ -422,7 +422,7 @@ DECLARE_BG2_WEAPON( pistol_b )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= PISTOL_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_iDamage				= PISTOL_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= PISTOL_RANGE;
@@ -461,7 +461,7 @@ DECLARE_BG2_WEAPON( sabre_a )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
-	m_Attackinfos[0].m_flDamage				= SABRE_DAMAGE;//60;
+	m_Attackinfos[0].m_iDamage				= SABRE_DAMAGE;//60;
 	m_Attackinfos[0].m_flAttackrate			= 1.4;//-0.7f;
 	m_Attackinfos[0].m_flRange				= SABRE_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
@@ -492,7 +492,7 @@ DECLARE_BG2_WEAPON( sabre_b )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
-	m_Attackinfos[0].m_flDamage				= SABRE_DAMAGE;//60;
+	m_Attackinfos[0].m_iDamage				= SABRE_DAMAGE;//60;
 	m_Attackinfos[0].m_flAttackrate			= 1.4;//-0.7f;
 	m_Attackinfos[0].m_flRange				= SABRE_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
@@ -523,7 +523,7 @@ DECLARE_BG2_WEAPON( knife )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
-	m_Attackinfos[0].m_flDamage				= KNIFE_DAMAGE;//60;
+	m_Attackinfos[0].m_iDamage				= KNIFE_DAMAGE;//60;
 	m_Attackinfos[0].m_flAttackrate			= 1.1;//-0.7f;
 	m_Attackinfos[0].m_flRange				= KNIFE_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
@@ -554,7 +554,7 @@ DECLARE_BG2_WEAPON( hirschf )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
-	m_Attackinfos[0].m_flDamage				= HIRSCHFAENGER_DAMAGE;//60;
+	m_Attackinfos[0].m_iDamage				= HIRSCHFAENGER_DAMAGE;//60;
 	m_Attackinfos[0].m_flAttackrate			= 1.4;//-0.7f;
 	m_Attackinfos[0].m_flRange				= HIRSCHFAENGER_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
@@ -586,7 +586,7 @@ DECLARE_BG2_WEAPON( tomahawk )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
-	m_Attackinfos[0].m_flDamage				= TOMAHAWK_DAMAGE;//60;
+	m_Attackinfos[0].m_iDamage				= TOMAHAWK_DAMAGE;//60;
 	m_Attackinfos[0].m_flAttackrate			= 1.4;//-0.7f;
 	m_Attackinfos[0].m_flRange				= TOMAHAWK_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
@@ -630,7 +630,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= REVOL_FIRE_DAMAGE;//75
+	m_Attackinfos[0].m_iDamage				= REVOL_FIRE_DAMAGE;//75
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
@@ -654,7 +654,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
-	m_Attackinfos[1].m_flDamage				= REVOL_BAYONET_DAMAGE;
+	m_Attackinfos[1].m_iDamage				= REVOL_BAYONET_DAMAGE;
 	m_Attackinfos[1].m_flAttackrate			= 1.0f;
 	m_Attackinfos[1].m_flRange				= REVOL_BAYONET_RANGE;
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
@@ -702,7 +702,7 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= BESS_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_iDamage				= BESS_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
@@ -744,7 +744,7 @@ DECLARE_BG2_WEAPON( beltaxe )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_SLASH;
-	m_Attackinfos[0].m_flDamage				= TOMAHAWK_DAMAGE;//60;
+	m_Attackinfos[0].m_iDamage				= TOMAHAWK_DAMAGE;//60;
 	m_Attackinfos[0].m_flAttackrate			= 1.4;//-0.7f;
 	m_Attackinfos[0].m_flRange				= TOMAHAWK_RANGE;
 	//m_Attackinfos[0].m_flCosAngleTolerance	= 0.95f;
@@ -787,7 +787,7 @@ DECLARE_BG2_WEAPON( fowler )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= FOWLER_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_iDamage				= FOWLER_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
@@ -813,7 +813,7 @@ DECLARE_BG2_WEAPON( fowler )
 	m_flShotSpread = 6.95f;		//4 m spread at 33 m -> (4 / 2) / 33 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
 	m_iNumShot = FOWLER_NUM_SHOT;
-	m_flDamagePerShot = FOWLER_SHOT_DAMAGE;
+	m_iDamagePerShot = FOWLER_SHOT_DAMAGE;
 }
 
 #ifndef CLIENT_DLL
@@ -844,7 +844,7 @@ DECLARE_BG2_WEAPON( longpattern )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= LONGPATTERN_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_iDamage				= LONGPATTERN_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
@@ -868,7 +868,7 @@ DECLARE_BG2_WEAPON( longpattern )
 
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
-	m_Attackinfos[1].m_flDamage				= LONGPATTERN_BAYONET_DAMAGE;//60;
+	m_Attackinfos[1].m_iDamage				= LONGPATTERN_BAYONET_DAMAGE;//60;
 	m_Attackinfos[1].m_flAttackrate			= 1.2f;//-0.7f;
 	m_Attackinfos[1].m_flRange				= LONGPATTERN_BAYONET_RANGE;
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
@@ -916,7 +916,7 @@ DECLARE_BG2_WEAPON( longpattern_nobayo )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= LONGPATTERN_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_iDamage				= LONGPATTERN_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
@@ -972,7 +972,7 @@ DECLARE_BG2_WEAPON( american_brownbess )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= BESS_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_iDamage				= BESS_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
@@ -996,7 +996,7 @@ DECLARE_BG2_WEAPON( american_brownbess )
 
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
-	m_Attackinfos[1].m_flDamage				= BESS_BAYONET_DAMAGE;//60;
+	m_Attackinfos[1].m_iDamage				= BESS_BAYONET_DAMAGE;//60;
 	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;
 	m_Attackinfos[1].m_flRange				= BESS_BAYONET_RANGE;
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
@@ -1044,7 +1044,7 @@ DECLARE_BG2_WEAPON( american_brownbess_nobayo )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= BESS_FIRE_DAMAGE;//75;
+	m_Attackinfos[0].m_iDamage				= BESS_FIRE_DAMAGE;//75;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
@@ -1099,7 +1099,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 
 	//primary
 	m_Attackinfos[0].m_iAttacktype			= ATTACKTYPE_FIREARM;
-	m_Attackinfos[0].m_flDamage				= CARBINE_FIRE_DAMAGE;
+	m_Attackinfos[0].m_iDamage				= CARBINE_FIRE_DAMAGE;
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
@@ -1123,7 +1123,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_STAB;
-	m_Attackinfos[1].m_flDamage				= BESS_BAYONET_DAMAGE;//60;
+	m_Attackinfos[1].m_iDamage				= BESS_BAYONET_DAMAGE;//60;
 	m_Attackinfos[1].m_flAttackrate			= 1.0f;//-0.7f;
 	m_Attackinfos[1].m_flRange				= CARBINE_BAYONET_RANGE;
 	//m_Attackinfos[1].m_flCosAngleTolerance	= 0.95f;
@@ -1142,7 +1142,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_flShotSpread = 7.64f;		//4 m spread at 30 m -> (4 / 2) / 30 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
 	m_iNumShot = CARBINE_NUM_SHOT;
-	m_flDamagePerShot = CARBINE_SHOT_DAMAGE;
+	m_iDamagePerShot = CARBINE_SHOT_DAMAGE;
 }
 
 #ifndef CLIENT_DLL

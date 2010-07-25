@@ -51,7 +51,7 @@ public:
 
 	bool m_bIsVictim;			//governs what kind of message is produced
 	float m_flLastAttack;
-	int m_flTotalDamage;
+	int m_iTotalDamage;
 	int m_iHitgroup;			//only used if only one player was hit
 	std::set<int> m_sPlayers;
 
@@ -69,16 +69,16 @@ public:
 	{
 		m_bIsVictim = isVictim;
 		m_flLastAttack = 0;
-		m_flTotalDamage = 0;
+		m_iTotalDamage = 0;
 	}
 
 	//accumulates the specified damage and returns a proper message
-	std::string Accumulate( float damage, int player, int hitgroup )
+	std::string Accumulate( int damage, int player, int hitgroup )
 	{
 		if( m_flLastAttack + ACCUMULATE_LIMIT > gpGlobals->curtime )
 		{
 			//accumulate
-			m_flTotalDamage += damage;
+			m_iTotalDamage += damage;
 			m_sPlayers.insert(player);
 
 			//only override hitgroup if it's a headshot
@@ -89,7 +89,7 @@ public:
 		{
 			//reset
 			m_flLastAttack = gpGlobals->curtime;
-			m_flTotalDamage = damage;
+			m_iTotalDamage = damage;
 			m_iHitgroup = hitgroup;
 			m_sPlayers.clear();
 			m_sPlayers.insert(player);
@@ -156,7 +156,7 @@ public:
 			}
 		}
 
-		oss << " for " << (int)m_flTotalDamage << " points of damage";
+		oss << " for " << m_iTotalDamage << " points of damage";
 
 		return oss.str();
 	}

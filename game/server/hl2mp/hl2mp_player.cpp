@@ -31,6 +31,7 @@
 #include "bg2/flag.h"
 #include "bg2/vcomm.h"
 #include "bg2/spawnpoint.h"
+#include "bg2/weapon_bg2base.h"
 //
 
 #include "engine/IEngineSound.h"
@@ -2033,6 +2034,35 @@ int CHL2MP_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	ep.m_pOrigin = &vecOrigin;
 
 	EmitSound( filter, entindex(), ep );
+
+	//BG2 - Tjoppen - print hit verification
+	if ( inputInfo.GetAttacker()->IsPlayer() )
+	{
+		CBasePlayer *pVictim = this,
+					*pAttacker = ToBasePlayer( inputInfo.GetAttacker() );
+		Assert( pAttacker != NULL );
+
+		CBaseBG2Weapon *pWeapon = dynamic_cast<CBaseBG2Weapon*>(pAttacker->GetActiveWeapon());
+		int attackType = pWeapon ? pWeapon->m_iLastAttackType : 0;
+
+		//use usermessage instead and let the client figure out what to print. saves precious bandwidth
+		//send one to attacker and one to victim
+		//the "Damage" usermessage is more detailed, but adds up all damage in the current frame. it is therefore
+		//hard to determine who is the attacker since the victim can be hit multiple times
+		
+		CRecipientFilter recpfilter;
+		recpfilter.AddRecipient( pAttacker );
+		recpfilter.AddRecipient( pVictim );
+		recpfilter.MakeReliable();
+
+		UserMessageBegin( recpfilter, "HitVerif" );
+			WRITE_BYTE( pAttacker->entindex() );				//attacker id
+			WRITE_BYTE( pVictim->entindex() );					//victim id
+			WRITE_BYTE( LastHitGroup() + (attackType << 4) );	//where?
+			WRITE_SHORT( inputInfo.GetDamage() );				//damage
+		MessageEnd();
+	}
+	//
 
 	return BaseClass::OnTakeDamage( inputInfo );
 }

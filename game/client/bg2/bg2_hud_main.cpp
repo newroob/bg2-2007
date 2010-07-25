@@ -377,12 +377,12 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 {
 	int attacker, victim, hitgroup;
 	int attackType;
-	float damage;
+	int damage;
 
 	attacker	= msg.ReadByte();
 	victim		= msg.ReadByte();
 	hitgroup	= msg.ReadByte();
-	damage		= 0.01 * (unsigned)msg.ReadShort();	//un-scale damage
+	damage		= msg.ReadShort();
 
 	//attack type and hitgroup are packed into the same byte
 	attackType = (hitgroup >> 4) & 0xF;

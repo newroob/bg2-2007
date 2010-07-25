@@ -69,9 +69,9 @@ ConVar	ai_debug_shoot_positions( "ai_debug_shoot_positions", "0", FCVAR_REPLICAT
 //-----------------------------------------------------------------------------
 // Purpose: Spawn some blood particles
 //-----------------------------------------------------------------------------
-void SpawnBlood(Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage)
+void SpawnBlood(Vector vecSpot, const Vector &vecDir, int bloodColor, int iDamage)
 {
-	UTIL_BloodDrips( vecSpot, vecDir, bloodColor, (int)flDamage );
+	UTIL_BloodDrips( vecSpot, vecDir, bloodColor, iDamage );
 }
 
 #if !defined( NO_ENTITY_PREDICTION )
@@ -1717,7 +1717,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 	bool bDoImpacts = false;
 	bool bDoTracers = false;
 	
-	float flCumulativeDamage = 0.0f;
+	//float flCumulativeDamage = 0.0f;
 
 	for (int iShot = 0; iShot < info.m_iShots; iShot++)
 	{
@@ -1827,7 +1827,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 				bHitWater = HandleShotImpactingWater( info, vecEnd, &traceFilter, &vecTracerDest );
 			}
 
-			float flActualDamage = info.m_iDamage;
+			int iActualDamage = info.m_iDamage;
 
 			// If we hit a player, and we have player damage specified, use that instead
 			// Adrian: Make sure to use the currect value if we hit a vehicle the player is currently driving.
@@ -1835,7 +1835,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 			{
 				if ( tr.m_pEnt->IsPlayer() )
 				{
-					flActualDamage = iPlayerDamage;
+					iActualDamage = iPlayerDamage;
 				}
 #ifdef GAME_DLL
 				/*else if ( tr.m_pEnt->GetServerVehicle() )
@@ -1849,24 +1849,24 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 			}
 
 			int nActualDamageType = nDamageType;
-			if ( flActualDamage == 0.0 )
+			if ( iActualDamage == 0 )
 			{
-				flActualDamage = g_pGameRules->GetAmmoDamage( pAttacker, tr.m_pEnt, info.m_iAmmoType );
+				iActualDamage = g_pGameRules->GetAmmoDamage( pAttacker, tr.m_pEnt, info.m_iAmmoType );
 			}
 			else
 			{
-				nActualDamageType = nDamageType | ((flActualDamage > 16) ? DMG_ALWAYSGIB : DMG_NEVERGIB );
+				nActualDamageType = nDamageType | ((iActualDamage > 16) ? DMG_ALWAYSGIB : DMG_NEVERGIB );
 			}
 
 			if ( !bHitWater || ((info.m_nFlags & FIRE_BULLETS_DONT_HIT_UNDERWATER) == 0) )
 			{
 				//BG2 - Tjoppen - damage based on range
 				//Msg( "damageFactor = %f, flActualDamage: %f -> %f\n", damageFactor , flActualDamage, flActualDamage*damageFactor );
-				flActualDamage *= damageFactor;
+				iActualDamage *= damageFactor;
 				//
 
 				// Damage specified by function parameter
-				CTakeDamageInfo dmgInfo( this, pAttacker, flActualDamage, nActualDamageType );
+				CTakeDamageInfo dmgInfo( this, pAttacker, iActualDamage, nActualDamageType );
 				CalculateBulletDamageForce( &dmgInfo, info.m_iAmmoType, vecDir, tr.endpos );
 				dmgInfo.ScaleDamageForce( info.m_flDamageForceScale );
 				//BG2 - Tjoppen - don't send airborne players flying
@@ -1876,10 +1876,10 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 				dmgInfo.SetAmmoType( info.m_iAmmoType );
 				tr.m_pEnt->DispatchTraceAttack( dmgInfo, vecDir, &tr);
 			
-				if ( ToBaseCombatCharacter( tr.m_pEnt ) )
+				/*if ( ToBaseCombatCharacter( tr.m_pEnt ) )
 				{
 					flCumulativeDamage += dmgInfo.GetDamage();
-				}
+				}*/
 
 				if ( bStartedInWater || !bHitWater || (info.m_nFlags & FIRE_BULLETS_ALLOW_WATER_SURFACE_IMPACTS) )
 				{
@@ -1972,12 +1972,12 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 #ifdef GAME_DLL
 	ApplyMultiDamage();
 
-	if ( IsPlayer() && flCumulativeDamage > 0.0f )
+	/*if ( IsPlayer() && flCumulativeDamage > 0.0f )
 	{
 		//CBasePlayer *pPlayer = static_cast< CBasePlayer * >( this );
 		CTakeDamageInfo dmgInfo( this, pAttacker, flCumulativeDamage, nDamageType );
 		//gamestats->Event_WeaponHit( pPlayer, info.m_bPrimaryAttack, pPlayer->GetActiveWeapon()->GetClassname(), dmgInfo );
-	}
+	}*/
 #endif
 }
 
@@ -2197,14 +2197,14 @@ int CBaseEntity::BloodColor()
 }
 
 
-void CBaseEntity::TraceBleed( float flDamage, const Vector &vecDir, trace_t *ptr, int bitsDamageType )
+void CBaseEntity::TraceBleed( int iDamage, const Vector &vecDir, trace_t *ptr, int bitsDamageType )
 {
 	if ((BloodColor() == DONT_BLEED) || (BloodColor() == BLOOD_COLOR_MECH))
 	{
 		return;
 	}
 
-	if (flDamage == 0)
+	if (iDamage <= 0)
 		return;
 
 	if (! (bitsDamageType & (DMG_CRUSH | DMG_BULLET | DMG_SLASH | DMG_BLAST | DMG_CLUB | DMG_AIRBOAT)))
@@ -2233,12 +2233,12 @@ void CBaseEntity::TraceBleed( float flDamage, const Vector &vecDir, trace_t *ptr
 	}
 #endif
 
-	if (flDamage < 10)
+	if (iDamage < 10)
 	{
 		flNoise = 0.1;
 		cCount = 1;
 	}
-	else if (flDamage < 25)
+	else if (iDamage < 25)
 	{
 		flNoise = 0.2;
 		cCount = 2;

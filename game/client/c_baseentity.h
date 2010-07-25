@@ -201,7 +201,7 @@ public:
 	virtual void					MakeTracer( const Vector &vecTracerSrc, const trace_t &tr, int iTracerType );
 	virtual int						GetTracerAttachment( void );
 	void							ComputeTracerStartPosition( const Vector &vecShotSrc, Vector *pVecTracerStart );
-	void							TraceBleed( float flDamage, const Vector &vecDir, trace_t *ptr, int bitsDamageType );
+	void							TraceBleed( int iDamage, const Vector &vecDir, trace_t *ptr, int bitsDamageType );
 	virtual int						BloodColor();
 	virtual const char*				GetTracerType();
 
