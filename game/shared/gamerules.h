@@ -229,8 +229,9 @@ public:
 	virtual bool FShouldSwitchWeapon( CBasePlayer *pPlayer, CBaseCombatWeapon *pWeapon ) = 0;// should the player switch to this weapon?
 
 // Functions to verify the single/multiplayer status of a game
-	virtual bool IsDeathmatch( void ) = 0;//is this a deathmatch game?
-	//virtual bool IsTeamplay( void ) { return FALSE; };//BG2 - Don't need it anymore. Always assume teamplay, because BG2 requires it anyway. -HairyPotter
+	// (Nifty): virtual type func_name(params) = 0; // This is a pure virtual/abstract method declaration
+	virtual bool IsDeathmatch( void ) = 0; //is this a deathmatch game
+	//virtual bool IsTeamplay( void ) { return FALSE; };//BG2 - Don't need it anymore. Always assume teamplay, because BG2 requires it anyway. -HairyPotter. (Nifty: Does this need to be commented out?)
 	virtual bool IsCoOp( void ) = 0;// is this a coop game?
 	virtual const char *GetGameDescription( void ) { return "Half-Life 2"; }  // this is the game name that gets seen in the server browser
 	

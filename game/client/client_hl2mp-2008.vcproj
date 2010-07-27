@@ -281,10 +281,26 @@
 			<File
 				RelativePath=".\achievement_notification_panel.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\achievement_notification_panel.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\shared\achievement_saverestore.cpp"
@@ -1093,6 +1109,14 @@
 			<File
 				RelativePath=".\geiger.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\glow_overlay.cpp"
@@ -1913,6 +1937,14 @@
 			<File
 				RelativePath="..\shared\vehicle_viewblend_shared.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\vgui_avatarimage.cpp"
@@ -2136,6 +2168,14 @@
 				<File
 					RelativePath=".\c_prop_vehicle.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\c_recipientfilter.cpp"
@@ -2400,6 +2440,14 @@
 				<File
 					RelativePath=".\game_controls\teammenu.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\game_controls\vguitextwindow.cpp"
@@ -2556,6 +2604,14 @@
 				<File
 					RelativePath=".\hl2\hud_battery.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\hl2\hud_blood.cpp"
@@ -2581,6 +2637,14 @@
 					RelativePath=".\hl2\hud_flashlight.cpp"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release|Win32"
 						>
 						<Tool
@@ -2604,6 +2668,14 @@
 				<File
 					RelativePath=".\hud_squadstatus.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\hl2\hud_suitpower.cpp"
@@ -2620,6 +2692,14 @@
 				<File
 					RelativePath=".\hl2\hud_zoom.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\shared\script_intro_shared.cpp"
@@ -2739,6 +2819,14 @@
 					<File
 						RelativePath=".\hl2mp\hl2mp_hud_team.cpp"
 						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\hl2mp\ui\hl2mpclientscoreboard.cpp"
@@ -3314,6 +3402,14 @@
 			<File
 				RelativePath=".\c_prop_vehicle.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\c_recipientfilter.h"
@@ -3382,6 +3478,14 @@
 			<File
 				RelativePath=".\c_vehicle_jeep.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\c_vguiscreen.h"
@@ -5374,6 +5478,14 @@
 			<File
 				RelativePath=".\game_controls\teammenu.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\game_controls\vguitextwindow.h"

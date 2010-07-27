@@ -63,7 +63,7 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
 
-	s_pInstance = this; //BG2 - HairyPotter
+	s_pInstance = this; //BG2 - HairyPotter (Nifty: Why is this here? If you're inside of the object, the "this" keyword is the address to the current object, and it's always available. Outside of the object, you can get access to an object's address by properly getting the reference.)
 
 	SetHiddenBits( HIDEHUD_ALL );//HIDEHUD_MISCSTATUS );
 
