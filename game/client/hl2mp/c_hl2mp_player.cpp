@@ -812,7 +812,7 @@ void C_HL2MPRagdoll::CreateHL2MPRagdoll( void )
 {
 	// First, initialize all our data. If we have the player's entity on our client,
 	// then we can make ourselves start out exactly where the player is.
-	C_HL2MP_Player *pPlayer = dynamic_cast< C_HL2MP_Player* >( m_hPlayer.Get() );
+	C_HL2MP_Player *pPlayer = static_cast< C_HL2MP_Player* >( m_hPlayer.Get() );
 	
 	if ( pPlayer && !pPlayer->IsDormant() )
 	{
@@ -861,7 +861,9 @@ void C_HL2MPRagdoll::CreateHL2MPRagdoll( void )
 			Interp_Reset( varMap );
 
 			//BG2 - Fade out when you die, unless you've disabled the ragdoll death cam. -HairyPotter
-			if( cl_ragdolldeathcam.GetBool() )
+			//HACK - Usually when a person spawns within a tenth of a second of dying: CreateHL2MPRagdoll) is called AFTER CBasePlayer::Spawn();
+			//Basically we have to check to see if the player is already alive, so we don't do the fade.
+			if( cl_ragdolldeathcam.GetBool() && !pPlayer->IsAlive() )
 			{
 				float duration = RandomFloat( 1.5, 2.0 );
 		
@@ -915,6 +917,17 @@ void C_HL2MPRagdoll::CreateHL2MPRagdoll( void )
 
 	InitAsClientRagdoll( boneDelta0, boneDelta1, currentBones, boneDt );
 
+
+	//BG2 - This is another great HACK that detects if Spawn() was already called before the ragdoll was created. 
+	//If we're already alive, force our last position onto the ragdoll. This will mke the ragdoll flip out a little,
+	//but at least it's not spawning out of the player's ass when they (the player) spawn.
+	if ( pPlayer && pPlayer->IsAlive() )
+	{
+		CRagdoll *ragdoll = dynamic_cast< CRagdoll * >( GetIRagdoll() );
+		if ( ragdoll )
+			ragdoll->SetRagdollOrigin( m_vecRagdollOrigin, GetAbsAngles() );
+	}
+
 	//BG2 - Skillet - Add this ragdoll to the bottom of our list
 	HL2MPRules()->m_hRagdollList.AddToHead( this );
 
@@ -933,7 +946,8 @@ void C_HL2MPRagdoll::CreateHL2MPRagdoll( void )
 			if ( HL2MPRules()->m_hRagdollList.IsValidIndex( iLastIndex ) )
 			{
 				C_HL2MPRagdoll* Ragdoll = HL2MPRules()->m_hRagdollList.Element( iLastIndex );
-				Ragdoll->Remove();
+				if ( Ragdoll )
+					Ragdoll->Remove();
 			}
 		}
 	}

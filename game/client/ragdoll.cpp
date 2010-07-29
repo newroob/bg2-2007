@@ -174,6 +174,12 @@ const Vector& CRagdoll::GetRagdollOrigin( )
 	m_ragdoll.list[0].pObject->GetPosition( &m_origin, 0 );
 	return m_origin;
 }
+//BG2 - Force the ragdoll's position. -HairyPotter
+void CRagdoll::SetRagdollOrigin( Vector origin, QAngle angles )
+{
+	m_ragdoll.list[0].pObject->SetPosition( origin, angles, true );
+}
+//
 
 void CRagdoll::GetRagdollBounds( Vector &theMins, Vector &theMaxs )
 {
