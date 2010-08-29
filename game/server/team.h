@@ -87,6 +87,10 @@ public:
 
 	void AwardAchievement( int iAchievement );
 
+	void ResetTickets( void );
+	int GetTicketsLeft( void );
+	void RemoveTicket( void );
+
 public:
 	CUtlVector< CTeamSpawnPoint * > m_aSpawnPoints;
 	CUtlVector< CBasePlayer * >		m_aPlayers;
@@ -95,6 +99,7 @@ public:
 	CNetworkString( m_szTeamname, MAX_TEAM_NAME_LENGTH );
 	CNetworkVar( int, m_iScore );
 	CNetworkVar( int, m_iRoundsWon );
+	CNetworkVar( int, m_iTicketsLeft );
 	int		m_iDeaths;
 
 	// Spawnpoints

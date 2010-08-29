@@ -186,6 +186,9 @@ private:
 			m_flNextGlobalVoicecomm;		//BG2 - Tjoppen - only battlecries for now
 	float	m_fNextStamRegen;				//BG2 - Draco - stamina regen timer
 
+	//BG2 - Tjoppen - tickets. sometimes we don't want to remove tickets on spawn, such as when first joining a team
+	bool	m_bDontRemoveTicket;
+
 public:
 	CBaseEntity	*m_pIntermission;	//follow that info_intermission!
 	//

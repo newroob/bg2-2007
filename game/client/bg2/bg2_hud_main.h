@@ -205,8 +205,11 @@ private:
 
 	vgui::Label * m_pLabelBScore; 
 	vgui::Label * m_pLabelAScore; 
+	vgui::Label * m_pLabelBTickets;
+	vgui::Label * m_pLabelATickets;
 	vgui::Label * m_pLabelAmmo; 
 	vgui::Label * m_pLabelWaveTime; 
+	vgui::Label * m_pLabelRoundTime; 
 	vgui::Label *m_pLabelDamageVerificator,
 				*m_pLabelLMS;		//BG2 - Tjoppen - TODO: remove this when hintbox works correctly
 

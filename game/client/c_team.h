@@ -67,6 +67,7 @@ public:
 	char	m_szTeamname[ MAX_TEAM_NAME_LENGTH ];
 	int		m_iScore;
 	int		m_iRoundsWon;
+	int		m_iTicketsLeft;
 
 	// Data for the scoreboard
 	int		m_iDeaths;

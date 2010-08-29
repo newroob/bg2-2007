@@ -88,6 +88,7 @@
 	#include "hl2mp_gamerules.h"
 	#include "sdk/sdk_bot_temp.h"
 #endif
+#include "team.h"
 
 
 extern IToolFrameworkServer *g_pToolFrameworkServer;
@@ -952,10 +953,11 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	LIMIT_REVERT( lrg )
 
 	//other game related cvars
-	extern ConVar mp_winbonus, mp_respawnstyle, mp_respawntime, mp_limit_mapsize_low, mp_limit_mapsize_high;
+	extern ConVar mp_winbonus, mp_respawnstyle, mp_respawntime, mp_respawntickets, mp_limit_mapsize_low, mp_limit_mapsize_high;
 	mp_winbonus.Revert();
 	mp_respawnstyle.Revert();
 	mp_respawntime.Revert();
+	mp_respawntickets.Revert();
 	mp_limit_mapsize_low.Revert();
 	mp_limit_mapsize_high.Revert();
 
@@ -965,6 +967,12 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	engine->ServerCommand( szExec );
 	engine->ServerExecute();
 	//
+
+	//BG2 - Tjoppen - tickets
+	//we need to call CTeam::ResetTickets() here rather than in CTeam::Init() since the teams get inited before the map config is loaded
+	g_Teams[TEAM_AMERICANS]->ResetTickets();
+	g_Teams[TEAM_BRITISH]->ResetTickets();
+
 	return true;
 }
 

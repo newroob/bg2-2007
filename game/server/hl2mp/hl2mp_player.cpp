@@ -4,9 +4,8 @@
 //
 //=============================================================================//
 
-#include "weapon_hl2mpbasehlmpcombatweapon.h"
-
 #include "cbase.h"
+#include "weapon_hl2mpbasehlmpcombatweapon.h"
 #include "hl2mp_player.h"
 #include "globalstate.h"
 #include "game.h"
@@ -180,6 +179,9 @@ CHL2MP_Player::CHL2MP_Player() : m_PlayerAnimState( this )
 	//BG2 - Tjoppen - don't pick a class..
 	m_iClass = m_iNextClass = -1;//RandomInt( 0, 2 );
 	//
+
+	//BG2 - Tjoppen - tickets
+	m_bDontRemoveTicket = true;
 }
 
 CHL2MP_Player::~CHL2MP_Player( void )
@@ -568,6 +570,15 @@ void CHL2MP_Player::Spawn(void)
 			break;
 	}
 	//
+
+	//BG2 - Tjoppen - tickets
+	if( HL2MPRules()->UsingTickets() && GetTeam() )
+	{
+		if( m_bDontRemoveTicket )
+			m_bDontRemoveTicket = false;
+		else
+			GetTeam()->RemoveTicket();
+	}
 
 	m_bReady = false;
 	m_fLastRespawn = gpGlobals->curtime + sv_saferespawntime.GetFloat();

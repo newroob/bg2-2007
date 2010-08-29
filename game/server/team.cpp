@@ -49,6 +49,7 @@ IMPLEMENT_SERVERCLASS_ST_NOBASE(CTeam, DT_Team)
 	SendPropInt( SENDINFO(m_iScore), 16, SPROP_UNSIGNED ),
 	//
 	SendPropInt( SENDINFO(m_iRoundsWon), 8 ),
+	SendPropInt( SENDINFO(m_iTicketsLeft), 8, SPROP_UNSIGNED ),
 	SendPropString( SENDINFO( m_szTeamname ) ),
 
 	//BG2 - Tjoppen - don't need this
@@ -88,6 +89,7 @@ int GetNumberOfTeams( void )
 //-----------------------------------------------------------------------------
 CTeam::CTeam( void )
 {
+	m_iTicketsLeft = 0;
 	memset( m_szTeamname.GetForModify(), 0, sizeof(m_szTeamname) );
 }
 
@@ -433,3 +435,19 @@ void CTeam::RemoveMoralePoint(CBaseEntity * pEnt)
 }
 */
 //BG2 - Draco - End
+
+void CTeam::ResetTickets( void )
+{
+	m_iTicketsLeft = mp_respawntickets.GetInt();
+}
+
+int CTeam::GetTicketsLeft( void )
+{
+	return m_iTicketsLeft;
+}
+
+void CTeam::RemoveTicket( void )
+{
+	if( m_iTicketsLeft > 0 )
+		m_iTicketsLeft--;
+}

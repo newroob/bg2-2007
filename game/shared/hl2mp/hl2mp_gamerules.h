@@ -63,6 +63,8 @@
 #define VEC_CROUCH_TRACE_MIN	HL2MPRules()->GetHL2MPViewVectors()->m_vCrouchTraceMin
 #define VEC_CROUCH_TRACE_MAX	HL2MPRules()->GetHL2MPViewVectors()->m_vCrouchTraceMax
 
+extern ConVar mp_respawnstyle, mp_respawntime, mp_roundtime, mp_respawntickets;
+
 enum
 {
 	TEAM_AMERICANS = 2,
@@ -213,6 +215,7 @@ public:
 
 	//BG2 - Draco - Start
 	CNetworkVar( float, m_fLastRespawnWave );
+	CNetworkVar( float, m_fLastRoundRestart );
 	float m_fNextGameReset;
 	float m_fNextRoundReset;
 	//float m_fEndRoundTime;	//use m_fLastRespawnWave + mp_respawntime.GetFloat() instead
@@ -250,7 +253,8 @@ public:
 	int GetLimitTeamClass( int iTeam, int iClass );
 	//
 
-
+	//BG2 - Tjoppen - tickets
+	bool UsingTickets();	//returns whether we're currently using ticket based respawn
 };
 
 inline CHL2MPRules* HL2MPRules()

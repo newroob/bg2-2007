@@ -37,11 +37,6 @@ void Host_Say( edict_t *pEdict, bool teamonly );
 extern CBaseEntity*	FindPickerEntityClass( CBasePlayer *pPlayer, char *classname );
 extern bool			g_fGameOver;
 
-//BG2 - Draco - Start
-extern ConVar mp_respawnstyle;
-extern ConVar mp_respawntime;
-//BG2 - Draco - End
-
 void FinishClientPutInServer( CHL2MP_Player *pPlayer )
 {
 	pPlayer->InitialSpawn();

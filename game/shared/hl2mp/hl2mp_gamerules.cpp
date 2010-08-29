@@ -55,8 +55,6 @@ ConVar sv_report_client_settings("sv_report_client_settings", "0", FCVAR_GAMEDLL
 
 extern ConVar mp_chattime;
 //BG2 - Draco - Start
-ConVar mp_respawnstyle( "mp_respawnstyle", "1", FCVAR_REPLICATED | FCVAR_NOTIFY );	//0 = regular dm, 1 = waves, 2 = rounds
-ConVar mp_respawntime( "mp_respawntime", "14", FCVAR_REPLICATED | FCVAR_NOTIFY );
 ConVar sv_restartround( "sv_restartround", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar sv_restartmap( "sv_restartmap", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar mp_americanscore( "mp_americanscore", "0", FCVAR_GAMEDLL /*| FCVAR_NOTIFY*/ | FCVAR_CHEAT );
@@ -115,6 +113,10 @@ LIMIT_DEFINES( lrg, "large" )
 ConVar mp_limit_mapsize_low( "mp_limit_mapsize_low", "16", CVAR_FLAGS, "Servers with player counts <= this number are small, above it are medium or large" );
 ConVar mp_limit_mapsize_high( "mp_limit_mapsize_high", "32", CVAR_FLAGS, "Servers with player counts <= this number are small or medium, above it are large" );
 
+ConVar mp_respawnstyle( "mp_respawnstyle", "1", CVAR_FLAGS, "0 = regular dm, 1 = waves, 2 = rounds (LMS), 3 = rounds with tickets" );
+ConVar mp_respawntime( "mp_respawntime", "14", CVAR_FLAGS, "Time between waves, or the maximum length of the round with mp_respawnstyle 2" );
+ConVar mp_roundtime( "mp_roundtime", "180", CVAR_FLAGS, "Maximum length of the round when using mp_respawnstyle 3. mp_respawntime is used with mp_respawnstyle 2 to maintain backwards compatibility of old configs/maps" );
+ConVar mp_respawntickets( "mp_respawntickets", "10", CVAR_FLAGS, "Initial number of tickets for each team. Only used with mp_respawnstyle 3" );
 
 
 REGISTER_GAMERULES_CLASS( CHL2MPRules );
@@ -124,9 +126,11 @@ BEGIN_NETWORK_TABLE_NOBASE( CHL2MPRules, DT_HL2MPRules )
 	#ifdef CLIENT_DLL
 		//RecvPropBool( RECVINFO( m_bTeamPlayEnabled ) ),
 		RecvPropFloat( RECVINFO( m_fLastRespawnWave ) ), //BG2 This needs to be here for the timer to work. -HairyPotter
+		RecvPropFloat( RECVINFO( m_fLastRoundRestart ) ),
 	#else
 		//SendPropBool( SENDINFO( m_bTeamPlayEnabled ) ),
 		SendPropFloat( SENDINFO( m_fLastRespawnWave ) ), //BG2 This needs to be here for the timer to work. -HairyPotter
+		SendPropFloat( SENDINFO( m_fLastRoundRestart ) ),
 	#endif
 
 END_NETWORK_TABLE()
@@ -251,7 +255,7 @@ CHL2MPRules::CHL2MPRules()
 	m_fNextFlagUpdate = 0;
 	//m_iWaveTime = 0;
 	//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
-	m_fLastRespawnWave = gpGlobals->curtime;
+	m_fLastRoundRestart = m_fLastRespawnWave = gpGlobals->curtime;
 	m_iTDMTeamThatWon = 0;
 	m_bHasDoneWinSong = false;
 	m_bHasLoggedScores = false;
@@ -675,13 +679,8 @@ void CHL2MPRules::Think( void )
 		}
 		RestartRound();	//BG2 - Tjoppen - restart round
 
-		//Reset the map and wave times...
-		if (mp_respawntime.GetInt() > 0)
-		{
-			m_fLastRespawnWave = gpGlobals->curtime;
-		}
+		//Reset the map time
 		m_flGameStartTime = gpGlobals->curtime;
-		//
 	}
 
 	if (sv_restartround.GetInt() > 0)
@@ -693,17 +692,20 @@ void CHL2MPRules::Think( void )
 	{
 		m_fNextRoundReset = 0;//dont reset again
 		RestartRound();	//BG2 - restart round
-
-		if (mp_respawntime.GetInt() > 0)
-		{
-			m_fLastRespawnWave = gpGlobals->curtime;
-		}
 	}
 	
 	//=========================
 	//Round systems
 	//=========================
-	if( mp_respawnstyle.GetInt() >= 2 )//if line battle all at once spawn style - Draco
+	if( mp_respawnstyle.GetInt() == 1 || UsingTickets() )//wave spawning
+	{
+		if ((m_fLastRespawnWave + mp_respawntime.GetFloat()) <= gpGlobals->curtime)
+		{
+			RespawnWave();
+			m_fLastRespawnWave = gpGlobals->curtime;
+		}
+	}
+	if( mp_respawnstyle.GetInt() == 2 || UsingTickets() )//if line battle all at once spawn style - Draco
 	{
 		/*if (mp_respawntime.GetInt() == 0)
 		{
@@ -717,7 +719,7 @@ void CHL2MPRules::Think( void )
 		if( pAmericans->GetNumPlayers() == 0 || pBritish->GetNumPlayers() == 0 )
 			return;
 
-		int aliveamericans = 0, x = 0;
+		int aliveamericans = UsingTickets() ? pAmericans->GetTicketsLeft() : 0, x = 0;
 		for( ; x < pAmericans->GetNumPlayers(); x++ )
 		{
 			CBasePlayer *pPlayer = pAmericans->GetPlayer( x );
@@ -725,7 +727,7 @@ void CHL2MPRules::Think( void )
 				aliveamericans++;
 		}
 
-		int alivebritish = 0;
+		int alivebritish = UsingTickets() ? pBritish->GetTicketsLeft() : 0;
 		for( x = 0; x < pBritish->GetNumPlayers(); x++ )
 		{
 			CBasePlayer *pPlayer = pBritish->GetPlayer( x );
@@ -736,8 +738,9 @@ void CHL2MPRules::Think( void )
 		//Tjoppen - End
 		//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed
 		//wins
+		float roundLength = UsingTickets() ? mp_roundtime.GetFloat() : mp_respawntime.GetFloat();
 		
-		if ((aliveamericans == 0) || (alivebritish == 0) || (m_fLastRespawnWave + mp_respawntime.GetFloat() <= gpGlobals->curtime) || (m_bIsRestartingRound))
+		if ((aliveamericans == 0) || (alivebritish == 0) || (m_fLastRoundRestart + roundLength <= gpGlobals->curtime) || (m_bIsRestartingRound))
 		{
 			if( !m_bIsRestartingRound )
 			{
@@ -796,20 +799,7 @@ void CHL2MPRules::Think( void )
 						HandleScores( NULL, 0, 0, true );
 						break;
 				}
-
-				if (mp_respawntime.GetInt() > 0)
-				{
-					m_fLastRespawnWave = gpGlobals->curtime;
-				}
 			}
-		}
-	}
-	else if( mp_respawnstyle.GetInt() == 1 )//wave spawning
-	{
-		if ((m_fLastRespawnWave + mp_respawntime.GetFloat()) <= gpGlobals->curtime)
-		{
-			RespawnWave();
-			m_fLastRespawnWave = gpGlobals->curtime;
 		}
 	}
 	//BG2 - Draco - End
@@ -1614,6 +1604,16 @@ void CHL2MPRules::RestartRound()
 	ResetMap();
 	ResetFlags();
 	RespawnAll();
+
+	//BG2 - Tjoppen - tickets
+	if( UsingTickets() )
+	{
+		g_Teams[TEAM_AMERICANS]->ResetTickets();
+		g_Teams[TEAM_BRITISH]->ResetTickets();
+	}
+
+	if( mp_respawntime.GetInt() > 0 )
+		m_fLastRoundRestart = m_fLastRespawnWave = gpGlobals->curtime;
 }
 
 void CHL2MPRules::RespawnAll()
@@ -1730,6 +1730,10 @@ void CHL2MPRules::RespawnWave()
 	{
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_AMERICANS]->GetPlayer( x ) );
 
+		//BG2 - Tjoppen - tickets
+		if( UsingTickets() && g_Teams[TEAM_AMERICANS]->GetTicketsLeft() <= 0)
+			break;
+
 		if( !pPlayer )
 			continue;
 
@@ -1743,6 +1747,10 @@ void CHL2MPRules::RespawnWave()
 	{
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( g_Teams[TEAM_BRITISH]->GetPlayer( x ) );
 		
+		//BG2 - Tjoppen - tickets
+		if( UsingTickets() && g_Teams[TEAM_BRITISH]->GetTicketsLeft() <= 0)
+			break;
+
 		if( !pPlayer )
 			continue;
 
@@ -1974,4 +1982,9 @@ int CHL2MPRules::GetLimitTeamClass( int iTeam, int iClass )
 		//large
 		LIMIT_SWITCH( lrg )
 	}
+}
+
+bool CHL2MPRules::UsingTickets()
+{
+	return mp_respawnstyle.GetInt() == 3;
 }
