@@ -31,6 +31,268 @@
 	//BG2 - <name of contributer>[ - <small description>]
 */
 
+#define LIFETIME	3.f //10.f //3 seconds is definately long enough lifetime.
+
+#ifndef USE_ENTITY_BULLET
+#ifndef CLIENT_DLL
+
+#include "cbase.h"
+#include "te_effect_dispatch.h"
+#include "bullet.h"
+#include <vector>
+
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
+
+using namespace std;
+
+class Bullet {
+	Vector m_vTrajStart, m_vPosition, m_vLastPosition, m_vVelocity;
+	int m_iDamage;
+	float m_flConstantDamageRange, m_flRelativeDrag, m_flMuzzleVelocity, m_flDyingTime;
+	bool m_bHasPlayedNearmiss;
+	CBasePlayer *m_pOwner;
+public:
+	Bullet(const Vector& position, const QAngle& angle, int iDamage, float flConstantDamageRange, float flRelativeDrag, float flMuzzleVelocity, CBasePlayer *pOwner)
+	{
+		Vector vecDir;
+		AngleVectors( angle, &vecDir );
+
+		m_vTrajStart = m_vLastPosition = m_vPosition = position;
+		m_vVelocity = vecDir * flMuzzleVelocity;
+		m_iDamage = iDamage;
+		m_flConstantDamageRange = flConstantDamageRange;
+		m_flRelativeDrag = flRelativeDrag;
+		m_flMuzzleVelocity = flMuzzleVelocity;
+		m_flDyingTime = gpGlobals->curtime + LIFETIME;
+		m_bHasPlayedNearmiss = false;
+		m_pOwner = pOwner;
+	}
+
+	/**
+	 * Updates the bullet's velocity based on drag and overshoot.
+	 * Moves bullet forward and traces area between its current position and the last.
+	 * Returns whether this bullet should still exist. False if it hit something, or ran out of time. True if it's still going.
+	 */
+	bool Think(float dt)
+	{
+		//dead?
+		if( gpGlobals->curtime > m_flDyingTime )
+			return false;
+
+		UpdateVelocity(dt);
+		DoNearmiss();
+
+		//advance position and trace
+		m_vLastPosition = m_vPosition;
+		m_vPosition += m_vVelocity * dt;
+
+		return !DoTrace();
+	}
+
+private:
+	void UpdateVelocity(float dt)
+	{
+		//apply drag
+		Vector	vecDir = m_vVelocity;
+		extern	ConVar	sv_simulatedbullets_drag,
+						sv_simulatedbullets_overshoot_range,
+						sv_simulatedbullets_overshoot_force,
+						sv_gravity;
+
+		float	speed = vecDir.NormalizeInPlace(),
+				drag = sv_simulatedbullets_drag.GetFloat() * m_flRelativeDrag;
+
+		speed -= drag * speed*speed * dt;
+
+		//probably no need to clamp any more, and it's fun to play with low muzzle velocities
+		//if( speed < 1000 )
+		//	speed = 1000;	//clamp
+
+		m_vVelocity = vecDir * speed;
+
+		if( sv_simulatedbullets_overshoot_force.GetFloat() > 0 &&
+			sv_simulatedbullets_overshoot_range.GetFloat() > 0 )
+		{
+			//add lift due to bullet rotation which causes overshoot at medium range
+			//this extra force declines exponentially and will equal to gravity at time tmax, thus putting the maximum there
+			float	t = gpGlobals->curtime - m_flDyingTime + LIFETIME,	//how long we've existed..
+					tmax = sv_simulatedbullets_overshoot_range.GetFloat() * 36.f / m_flMuzzleVelocity,	//how long until max?
+					F0 = sv_gravity.GetFloat() * sv_simulatedbullets_overshoot_force.GetFloat(),
+					//F = F0 * expf( -logf(sv_simulatedbullets_overshoot_force.GetFloat()) * t / tmax );
+					F = F0 * powf( sv_simulatedbullets_overshoot_force.GetFloat(), -t / tmax );
+
+			//approx.
+			m_vVelocity.z += F * dt;
+		}
+
+		m_vVelocity.z -= sv_gravity.GetFloat() * dt;
+	}
+
+	void DoNearmiss()
+	{
+#if 0
+		//8 units "safety margin" to make sure we passed our victim's head
+		/*float	margin = 8, 
+				headTolerance = 32,	//how close to the head must the bullet be?
+				desiredBacktrace = margin + speed * gpGlobals->frametime * 2;	//*2 due to frametime variations*/
+		if( !m_bHasPlayedNearmiss /*&& (GetAbsOrigin() - m_vTrajStart).LengthSqr() > desiredBacktrace*desiredBacktrace*/ )
+		{
+			//has gone desiredBacktrace units and not played nearmiss so far. trace backward
+			//find any player except the shooter who is within the margin and desiredBacktrace distance when projected
+			//onto the ray
+			//the ray in this case extends behind the bullet
+
+			//re-normalize because overshoot messed it up
+			vecDir = m_vVelocity;
+			vecDir.NormalizeInPlace();
+
+			for( int x = 1; x <= gpGlobals->maxClients; x++ )
+			{
+				CBasePlayer *pPlayer = UTIL_PlayerByIndex( x );
+
+				//only want connected, alive players
+				if( !pPlayer || !pPlayer->IsAlive() || x == m_pOwner->entindex() )
+					continue;
+
+				//distance along ray, behind the bullet
+				//float d = vecDir.Dot(GetAbsOrigin() - pPlayer->EyePosition());//
+
+				//Msg( "%i: %f < %f < %f\t", x, desiredBacktrace, d, margin );
+
+				//if( d < margin || d > desiredBacktrace )//
+				//	continue;//
+
+				//shortest distance to eyes from ray must be less than headTolerance
+				//if( (GetAbsOrigin() - pPlayer->EyePosition()).LengthSqr() - d*d < headTolerance*headTolerance )//
+				{
+					//make sure only this player hears it
+					CSingleUserRecipientFilter filter( pPlayer );
+					EmitSound( filter, entindex(), "Bullets.DefaultNearmiss" ); //By using the entindex of the bullet itself, you're making IT play the sound, not the player. -HairyPotter
+					m_bHasPlayedNearmiss = true;
+
+					//break;
+				}
+			}
+
+			//Msg( "\n" );
+		}
+#endif
+	}
+
+	//return true if we hit something, false otherwise
+	bool DoTrace()
+	{
+		trace_t tr;
+		UTIL_TraceLine(m_vLastPosition, m_vPosition, MASK_SHOT, m_pOwner, COLLISION_GROUP_NONE, &tr);
+
+		if(!tr.DidHit())
+			return false;
+
+		Vector vecDir = m_vVelocity;
+		float speed = vecDir.NormalizeInPlace();
+
+		CEffectData	effectData;
+
+		effectData.m_vOrigin = tr.endpos;
+		effectData.m_vNormal = -vecDir;
+		effectData.m_nEntIndex = 0;
+
+		if(tr.DidHitWorld())
+		{
+			//miss (hit world)
+			//make sure we don't put marks on or bounce off the sky
+			if ( !(tr.surface.flags & SURF_SKY) )
+			{
+				//BG2 - Tjoppen - Bullet.HitWorld
+				//EmitSound( "Bullet.HitWorld" );
+
+				// See if we should reflect off this surface
+				float hitDot = DotProduct( tr.plane.normal, -vecDir );
+				
+				// BG2 - BP original was( hitDot < 0.5f ) but a musket ball should not bounce off walls if the angle is too big
+				//BG2 - Tjoppen - don't ricochet unless we're hitting a surface at a 60 degree horisontal angle or more
+				//					this is a hack so that bullets don't ricochet off the ground
+				//if ( ( hitDot < 0.2f ) && ( speed > 100 ) )
+				if ( hitDot < 0.2f && tr.plane.normal.z < 0.5f )
+				{
+					//reflect, slow down 25%
+					m_vVelocity = .75f * (m_vVelocity - 2.f * m_vVelocity.Dot(tr.plane.normal) * tr.plane.normal);
+
+					//since we reflected, pretend we didn't hit anything
+					return false;
+				}
+				else
+				{
+					DispatchEffect( "Impact", effectData );
+					UTIL_ImpactTrace( &tr, DMG_BULLET );
+				}
+			}
+		}
+		else if(tr.m_pEnt && tr.m_pEnt != DAMAGE_NO)
+		{
+			//we hit something that can be damaged
+			ClearMultiDamage();
+			//VectorNormalize( vecNormalizedVel );
+
+			int dmg;
+			if( (tr.endpos - m_vTrajStart).Length() < m_flConstantDamageRange )
+				dmg = m_iDamage;
+			else
+				dmg = (int)(m_iDamage * speed * speed / (m_flMuzzleVelocity*m_flMuzzleVelocity));
+
+			UTIL_ImpactTrace( &tr, DMG_BULLET );	//BG2 - Tjoppen - surface blood
+
+			//no force!
+			CTakeDamageInfo	dmgInfo( m_pOwner, m_pOwner, dmg, DMG_BULLET | /*DMG_PREVENT_PHYSICS_FORCE |*/DMG_CRUSH | DMG_NEVERGIB ); //Changed to avoid asserts. -HairyPotter
+			dmgInfo.SetDamagePosition( tr.endpos );
+			tr.m_pEnt->DispatchTraceAttack( dmgInfo, vecDir, &tr );
+
+			ApplyMultiDamage();
+
+			//Adrian: keep going through the glass.
+			if ( tr.m_pEnt->GetCollisionGroup() == COLLISION_GROUP_BREAKABLE_GLASS )
+				 return false;
+
+			// play body "thwack" sound
+			//BG2 - Tjoppen - no sound..
+			//EmitSound( "Bullet.HitBody" );
+			DispatchEffect( "Impact", effectData );
+		}
+
+		return true;
+	}
+};
+
+static vector<Bullet> activeBullets;
+
+void SpawnServerBullet(const Vector& position, const QAngle& angle, int iDamage, float flConstantDamageRange, float flRelativeDrag, float flMuzzleVelocity, CBasePlayer *pOwner)
+{
+	activeBullets.push_back(Bullet(position, angle, iDamage, flConstantDamageRange, flRelativeDrag, flMuzzleVelocity, pOwner));
+}
+
+void UpdateBullets()
+{
+	float step = 1.f / BULLET_SIMULATION_FREQUENCY;
+
+	//step using sub-frametime dt's. this way we get a much more accurate simulation
+	for(float t = 0; t < gpGlobals->frametime; t += step) {
+		float dt = min(step, gpGlobals->frametime - t);
+
+		//have all bullets think. remove those that hit something or have timed out
+		for(size_t x = 0; x < activeBullets.size();)
+		{
+			if(activeBullets[x].Think(dt))
+				x++;
+			else
+				activeBullets.erase(activeBullets.begin() + x);
+		}
+	}
+}
+
+#endif
+#else
+
 #include "weapon_bg2base.h"
 #include "ammodef.h"
 
@@ -109,7 +371,6 @@ CBullet *CBullet::BulletCreate( const Vector &vecOrigin, const QAngle &angAngles
 
 	pBullet->m_iDamage = iDamage;
 
-#define LIFETIME	3.f //10.f //3 seconds is definately long enough lifetime.
 	pBullet->m_flDyingTime = gpGlobals->curtime + LIFETIME;
 	pBullet->m_flConstantDamageRange = flConstantDamageRange;
 	pBullet->m_flRelativeDrag = flRelativeDrag;
@@ -571,4 +832,5 @@ void C_Bullet::ClientThink( void )
 	m_bUpdated = false;
 }
 
+#endif
 #endif

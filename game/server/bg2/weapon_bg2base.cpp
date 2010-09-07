@@ -94,6 +94,9 @@ ConVar mp_disable_firearms( "mp_disable_firearms", "0", FCVAR_NOTIFY | FCVAR_REP
 ConVar sv_show_damages("sv_show_damages", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Allow people to view enemy damages in scoreboard?");
 ConVar sv_show_enemy_names("sv_show_enemy_names", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Allow people to view enemy names in crosshair?");
 
+ConVar sv_muzzle_velocity_override("sv_muzzle_velocity_override", "0", FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_CHEAT, "If non-zero, overide muzzle velocities with this value (inch per seconds)");
+ConVar sv_flintlock_delay("sv_flintlock_delay", "0.1", FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_CHEAT, "Delay in seconds of the flintlock mechanism (delay bullet firing by this amount)");
+
 //-----------------------------------------------------------------------------
 // CBaseBG2Weapon
 //-----------------------------------------------------------------------------
@@ -314,9 +317,9 @@ void CBaseBG2Weapon::Fire( int iAttack )
 
 	//sample eye vector after a short delay, then fire the bullet(s) a short time after that
 	m_bShouldSampleForward = true;
-	m_flNextSampleForward = gpGlobals->curtime + 0.1f;
+	m_flNextSampleForward = gpGlobals->curtime + sv_flintlock_delay.GetFloat();
 	m_bShouldFireDelayed = true;
-	m_flNextDelayedFire = gpGlobals->curtime + 0.15f;
+	m_flNextDelayedFire = gpGlobals->curtime + sv_flintlock_delay.GetFloat();
 }
 
 void CBaseBG2Weapon::FireBullets( int iAttack )
@@ -360,6 +363,8 @@ void CBaseBG2Weapon::FireBullets( int iAttack )
 	else if( numActualShot > 30 )
 		numActualShot = 30;
 
+	float muzzleVelocity = sv_muzzle_velocity_override.GetFloat() > 0 ? sv_muzzle_velocity_override.GetFloat() : m_flMuzzleVelocity;
+
 	if( sv_simulatedbullets.GetBool() )
 	{
 #ifndef CLIENT_DLL
@@ -376,10 +381,17 @@ void CBaseBG2Weapon::FireBullets( int iAttack )
 			QAngle angDir;
 			VectorAngles( vecDir, angDir );
 
+#ifdef USE_ENTITY_BULLET
 			CBullet::BulletCreate( vecSrc, angDir, iDamage,
 									m_Attackinfos[iAttack].m_flConstantDamageRange,
-									m_Attackinfos[iAttack].m_flRelativeDrag, m_flMuzzleVelocity,
+									m_Attackinfos[iAttack].m_flRelativeDrag, muzzleVelocity,
 									pPlayer, pPlayer->GetActiveWeapon() );
+#else
+			SpawnServerBullet( vecSrc, angDir, iDamage,
+									m_Attackinfos[iAttack].m_flConstantDamageRange,
+									m_Attackinfos[iAttack].m_flRelativeDrag,
+									muzzleVelocity, pPlayer );
+#endif
 		}
 #endif
 	}
@@ -393,7 +405,7 @@ void CBaseBG2Weapon::FireBullets( int iAttack )
 		
 		//arcscan bullet
 		info.m_bArc = sv_arcscanbullets.GetBool();
-		info.m_flMuzzleVelocity = m_flMuzzleVelocity;
+		info.m_flMuzzleVelocity = muzzleVelocity;
 		info.m_flRelativeDrag = m_Attackinfos[iAttack].m_flRelativeDrag;
 		info.m_flConstantDamageRange = m_Attackinfos[iAttack].m_flConstantDamageRange;
 

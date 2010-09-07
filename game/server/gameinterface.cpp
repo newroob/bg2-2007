@@ -87,6 +87,9 @@
 #ifndef CLIENT_DLL
 	#include "hl2mp_gamerules.h"
 	#include "sdk/sdk_bot_temp.h"
+#ifndef USE_ENTITY_BULLET
+	#include "bg2/bullet.h"
+#endif
 #endif
 #include "team.h"
 
@@ -1092,9 +1095,13 @@ void CServerGameDLL::GameFrame( bool simulating )
 	//gamestatsuploader->UpdateConnection();
 
 	//BG2 - Tjoppen - bots are run here
-	void Bot_RunAll();
 	Bot_RunAll();
 	//
+#endif
+
+#ifndef USE_ENTITY_BULLET
+	//the bullets have their own physics system. run it now
+	UpdateBullets();
 #endif
 
 	Physics_RunThinkFunctions( simulating );

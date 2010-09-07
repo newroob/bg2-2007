@@ -31,6 +31,16 @@
 	//BG2 - <name of contributer>[ - <small description>]
 */
 
+#ifndef USE_ENTITY_BULLET
+#ifndef CLIENT_DLL
+
+#define BULLET_SIMULATION_FREQUENCY 1000
+
+void SpawnServerBullet(const Vector& position, const QAngle& angle, int iDamage, float flConstantDamageRange, float flRelativeDrag, float flMuzzleVelocity, CBasePlayer *pOwner);
+void UpdateBullets();
+
+#endif
+#else
 #ifndef CLIENT_DLL
 
 class CBullet : public CBaseCombatCharacter
@@ -106,4 +116,5 @@ private:
 	bool	m_bUpdated;
 };
 
+#endif
 #endif
