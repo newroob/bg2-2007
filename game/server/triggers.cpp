@@ -832,6 +832,25 @@ void CTriggerHurt::Touch( CBaseEntity *pOther )
 	}
 }
 
+//BG2 - Tjoppen - CTriggerHurtTeam
+BEGIN_DATADESC( CTriggerHurtTeam )
+	// Fields
+	DEFINE_KEYFIELD( m_iTeam, FIELD_INTEGER, "team" ),
+END_DATADESC()
+
+LINK_ENTITY_TO_CLASS( trigger_hurt_team, CTriggerHurtTeam );
+
+bool CTriggerHurtTeam::PassesTriggerFilters( CBaseEntity *pOther )
+{
+	CHL2_Player *pPlayer = dynamic_cast<CHL2_Player*>(pOther);
+
+	Msg("CTriggerHurtTeam::PassesTriggerFilters: %i == %i?\n", pPlayer ? pPlayer->GetTeamNumber() : -1, m_iTeam);
+
+	if( pPlayer && pPlayer->GetTeamNumber() == m_iTeam )
+		return BaseClass::PassesTriggerFilters(pOther);
+	else
+		return false;
+}
 
 // ##################################################################################
 //	>> TriggerMultiple

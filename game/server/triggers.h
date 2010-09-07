@@ -204,4 +204,17 @@ public:
 	CUtlVector<EHANDLE>	m_hurtEntities;
 };
 
+//BG2 - Tjoppen - CTriggerHurtTeam. Hurts one team only
+class CTriggerHurtTeam : public CTriggerHurt
+{
+public:
+	DECLARE_CLASS( CTriggerHurtTeam, CTriggerHurt );
+
+	bool PassesTriggerFilters( CBaseEntity *pOther );
+
+	DECLARE_DATADESC();
+
+	int		m_iTeam;	//which team to damage
+};
+
 #endif // TRIGGERS_H
