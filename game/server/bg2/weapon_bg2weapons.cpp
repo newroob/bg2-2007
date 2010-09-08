@@ -69,11 +69,11 @@ const int LONGPATTERN_BAYONET_RANGE = 86;
 
 const int FOWLER_FIRE_DAMAGE = 103;			//damage per ball. 56 * 1.85
 const int FOWLER_SHOT_DAMAGE = 18;			//damage per shot. 10 * 1.85 -> 18 -> 8*18 = 144
-const int FOWLER_NUM_SHOT = 8;
+const int FOWLER_NUM_SHOT = 10;
 
 const int CARBINE_FIRE_DAMAGE = 107;		//damage per ball. between fowler and normal brown bess. 58 * 1.85
 const int CARBINE_SHOT_DAMAGE = 20;			//damage per shot. 11 * 1.85 -> 20 -> 8*20 = 160
-const int CARBINE_NUM_SHOT = 8;
+const int CARBINE_NUM_SHOT = 10;
 const int CARBINE_BAYONET_RANGE = 72;
 
 const int JAEGER_FIRE_DAMAGE = 116;			//63 * 1.85
@@ -809,7 +809,7 @@ DECLARE_BG2_WEAPON( fowler )
 	m_fMaxRange1	= MUSKET_RANGE;
 
 	m_flBallSpread = 1.0f;
-	m_flShotSpread = 6.95f;		//4 m spread at 33 m -> (4 / 2) / 33 / sin(0.5)
+	m_flShotSpread = 6.95f * 0.75f;		//4 m spread at 33 m -> (4 / 2) / 33 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
 	m_iNumShot = FOWLER_NUM_SHOT;
 	m_iDamagePerShot = FOWLER_SHOT_DAMAGE;
@@ -1138,7 +1138,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_fMaxRange2	= CARBINE_BAYONET_RANGE;
 
 	m_flBallSpread = 1.0f;
-	m_flShotSpread = 7.64f;		//4 m spread at 30 m -> (4 / 2) / 30 / sin(0.5)
+	m_flShotSpread = 7.64f * 0.75f;		//4 m spread at 30 m -> (4 / 2) / 30 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
 	m_iNumShot = CARBINE_NUM_SHOT;
 	m_iDamagePerShot = CARBINE_SHOT_DAMAGE;
