@@ -194,6 +194,10 @@ public:
 	void			StartLagCompensation( CBasePlayer *player, CUserCmd *cmd );
 	void			FinishLagCompensation( CBasePlayer *player );
 
+	//BG2 - Tjoppen - bullet lag compensation
+	void			StartLagCompensation( CBasePlayer *player, CUserCmd *cmd, float flTargetTime );
+	float			GetTargetTime( CBasePlayer *player, CUserCmd *cmd ) const;
+
 private:
 	void			BacktrackPlayer( CBasePlayer *player, float flTargetTime );
 
@@ -308,28 +312,15 @@ void CLagCompensationManager::FrameUpdatePostEntityThink()
 	}
 }
 
+//BG2 - Tjoppen - bullet lag compensation - refactored the code below so the bullet code can access the calculated target time
 // Called during player movement to set up/restore after lag compensation
 void CLagCompensationManager::StartLagCompensation( CBasePlayer *player, CUserCmd *cmd )
 {
-	// Assume no players need to be restored
-	m_RestorePlayer.ClearAll();
-	m_bNeedToRestore = false;
+	StartLagCompensation( player, cmd, GetTargetTime( player, cmd ) );
+}
 
-	m_pCurrentPlayer = player;
-	
-	if ( !player->m_bLagCompensation		// Player not wanting lag compensation
-		 || (gpGlobals->maxClients <= 1)	// no lag compensation in single player
-		 || !sv_unlag.GetBool()				// disabled by server admin
-		 || player->IsBot() 				// not for bots
-		 || player->IsObserver()			// not for spectators
-		)
-		return;
-
-	// NOTE: Put this here so that it won't show up in single player mode.
-	VPROF_BUDGET( "StartLagCompensation", VPROF_BUDGETGROUP_OTHER_NETWORKING );
-	Q_memset( m_RestoreData, 0, sizeof( m_RestoreData ) );
-	Q_memset( m_ChangeData, 0, sizeof( m_ChangeData ) );
-
+float CLagCompensationManager::GetTargetTime( CBasePlayer *player, CUserCmd *cmd ) const
+{
 	// Get true latency
 
 	// correct is the amout of time we have to correct game time
@@ -364,6 +355,30 @@ void CLagCompensationManager::StartLagCompensation( CBasePlayer *player, CUserCm
 		// DevMsg("StartLagCompensation: delta too big (%.3f)\n", deltaTime );
 		targettick = gpGlobals->tickcount - TIME_TO_TICKS( correct );
 	}
+
+	return TICKS_TO_TIME( targettick );
+}
+
+void CLagCompensationManager::StartLagCompensation( CBasePlayer *player, CUserCmd *cmd, float flTargetTime )
+{ 
+	// Assume no players need to be restored
+	m_RestorePlayer.ClearAll();
+	m_bNeedToRestore = false;
+
+	m_pCurrentPlayer = player;
+	
+	if ( !player->m_bLagCompensation		// Player not wanting lag compensation
+		 || (gpGlobals->maxClients <= 1)	// no lag compensation in single player
+		 || !sv_unlag.GetBool()				// disabled by server admin
+		 || player->IsBot() 				// not for bots
+		 || player->IsObserver()			// not for spectators
+		)
+		return;
+
+	// NOTE: Put this here so that it won't show up in single player mode.
+	VPROF_BUDGET( "StartLagCompensation", VPROF_BUDGETGROUP_OTHER_NETWORKING );
+	Q_memset( m_RestoreData, 0, sizeof( m_RestoreData ) );
+	Q_memset( m_ChangeData, 0, sizeof( m_ChangeData ) );
 	
 	// Iterate all active players
 	const CBitVec<MAX_EDICTS> *pEntityTransmitBits = engine->GetEntityTransmitBitsForClient( player->entindex() - 1 );
@@ -387,7 +402,7 @@ void CLagCompensationManager::StartLagCompensation( CBasePlayer *player, CUserCm
 			continue;
 
 		// Move other player back in time
-		BacktrackPlayer( pPlayer, TICKS_TO_TIME( targettick ) );
+		BacktrackPlayer( pPlayer, flTargetTime );
 	}
 }
 

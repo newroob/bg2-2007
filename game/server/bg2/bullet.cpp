@@ -39,6 +39,9 @@
 #include "cbase.h"
 #include "te_effect_dispatch.h"
 #include "bullet.h"
+#include "ndebugoverlay.h"
+#include "ilagcompensationmanager.h"
+#include "ipredictionsystem.h"
 #include <vector>
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -186,17 +189,18 @@ private:
 		trace_t tr;
 		UTIL_TraceLine(m_vLastPosition, m_vPosition, MASK_SHOT, m_pOwner, COLLISION_GROUP_NONE, &tr);
 
+		extern ConVar sv_simulatedbullets_show_trajectories;
+
+		if(sv_simulatedbullets_show_trajectories.GetBool())
+			NDebugOverlay::Line(m_vLastPosition, m_vPosition, tr.DidHit() ? 0 : 255, tr.DidHitWorld() ? 0 : 255, tr.DidHitWorld() ? 255 : 0, true, 4);
+
 		if(!tr.DidHit())
 			return false;
 
 		Vector vecDir = m_vVelocity;
 		float speed = vecDir.NormalizeInPlace();
 
-		CEffectData	effectData;
-
-		effectData.m_vOrigin = tr.endpos;
-		effectData.m_vNormal = -vecDir;
-		effectData.m_nEntIndex = 0;
+		UTIL_ImpactTrace( &tr, DMG_BULLET );
 
 		if(tr.DidHitWorld())
 		{
@@ -222,11 +226,6 @@ private:
 					//since we reflected, pretend we didn't hit anything
 					return false;
 				}
-				else
-				{
-					DispatchEffect( "Impact", effectData );
-					UTIL_ImpactTrace( &tr, DMG_BULLET );
-				}
 			}
 		}
 		else if(tr.m_pEnt && tr.m_pEnt != DAMAGE_NO)
@@ -241,8 +240,6 @@ private:
 			else
 				dmg = (int)(m_iDamage * speed * speed / (m_flMuzzleVelocity*m_flMuzzleVelocity));
 
-			UTIL_ImpactTrace( &tr, DMG_BULLET );	//BG2 - Tjoppen - surface blood
-
 			//no force!
 			CTakeDamageInfo	dmgInfo( m_pOwner, m_pOwner, dmg, DMG_BULLET | /*DMG_PREVENT_PHYSICS_FORCE |*/DMG_CRUSH | DMG_NEVERGIB ); //Changed to avoid asserts. -HairyPotter
 			dmgInfo.SetDamagePosition( tr.endpos );
@@ -253,11 +250,6 @@ private:
 			//Adrian: keep going through the glass.
 			if ( tr.m_pEnt->GetCollisionGroup() == COLLISION_GROUP_BREAKABLE_GLASS )
 				 return false;
-
-			// play body "thwack" sound
-			//BG2 - Tjoppen - no sound..
-			//EmitSound( "Bullet.HitBody" );
-			DispatchEffect( "Impact", effectData );
 		}
 
 		return true;
@@ -265,16 +257,45 @@ private:
 };
 
 static vector<Bullet> activeBullets;
+static const float step = 1.f / BULLET_SIMULATION_FREQUENCY;
 
 void SpawnServerBullet(const Vector& position, const QAngle& angle, int iDamage, float flConstantDamageRange, float flRelativeDrag, float flMuzzleVelocity, CBasePlayer *pOwner)
 {
-	activeBullets.push_back(Bullet(position, angle, iDamage, flConstantDamageRange, flRelativeDrag, flMuzzleVelocity, pOwner));
+	CUserCmd *cmd = pOwner->GetCurrentCommand();
+	float targetTime = lagcompensation->GetTargetTime( pOwner, cmd );
+	float delta = gpGlobals->curtime - targetTime;
+
+	//BG2 - Tjoppen - bullet lag compensation
+	//simulate the bullet from when the client fired it up to the server's current time
+	Bullet bullet(position, angle, iDamage, flConstantDamageRange, flRelativeDrag, flMuzzleVelocity, pOwner);
+
+	//when Bullet::Think() is "run by an entity" the impact effects it does get filtered out for some reason
+	//this does not happen in UpdateBullets() since that gets called globally (not in the context of some entity)
+	//temporarily disabling prediction filtering fixes this
+	CDisablePredictionFiltering disable( true );
+
+	if(delta > 0) {
+		for(float t = targetTime; t < gpGlobals->curtime; t += step) {
+			float dt = min(step, gpGlobals->curtime - t);
+
+			lagcompensation->StartLagCompensation( pOwner, cmd, t );
+
+			bool ret = bullet.Think(dt);
+
+			lagcompensation->FinishLagCompensation( pOwner );
+
+			//dead. no need to keep simulating
+			if(!ret)
+				return;
+		}
+	}
+
+	//bullet is still alive - add it to the list for futher simulation
+	activeBullets.push_back(bullet);
 }
 
 void UpdateBullets()
 {
-	float step = 1.f / BULLET_SIMULATION_FREQUENCY;
-
 	//step using sub-frametime dt's. this way we get a much more accurate simulation
 	for(float t = 0; t < gpGlobals->frametime; t += step) {
 		float dt = min(step, gpGlobals->frametime - t);

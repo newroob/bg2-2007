@@ -52,6 +52,7 @@
 	#include "beam_shared.h"
 
 	#include "shot_manipulator.h"
+	#include "ilagcompensationmanager.h"
 #endif
 
 #include "takedamageinfo.h"
@@ -77,6 +78,9 @@ ConVar sv_simulatedbullets_overshoot_range( "sv_simulatedbullets_overshoot_range
 
 ConVar sv_simulatedbullets_overshoot_force( "sv_simulatedbullets_overshoot_force", "3", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO | FCVAR_CHEAT,
 		"How much stronger than gravity is the overshoot force at t=0?" );
+
+ConVar sv_simulatedbullets_show_trajectories( "sv_simulatedbullets_show_trajectories", "0", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_CHEAT,
+		"Draw trajectories of the bullets? Useful for adjusting their settings" );
 
 ConVar sv_bullettracers("sv_bullettracers", "1", FCVAR_NOTIFY | FCVAR_REPLICATED, "Do bullets draw tracers behind them?" );
 
@@ -532,6 +536,11 @@ void CBaseBG2Weapon::Swing( int iAttack, bool bIsFirstAttempt )
 	if ( m_bIsIronsighted ) //No melee with ironsights.
 		return;
 
+#ifndef CLIENT_DLL
+	//only the server can do lag compensation
+	lagcompensation->StartLagCompensation( pOwner, pOwner->GetCurrentCommand() );
+#endif
+
 	if( GetAttackType(iAttack) == ATTACKTYPE_STAB )
 		m_bLastAttackStab = true;
 	else
@@ -592,12 +601,11 @@ void CBaseBG2Weapon::Swing( int iAttack, bool bIsFirstAttempt )
 			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate(iAttack) + 0.25f;
 		else
 			m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + GetAttackRate(iAttack);
+	}
 
 #ifndef CLIENT_DLL
-		//BG2 - Tjoppen - melee lag fix - this makes sure we get lag compensation for the next five frames or so
-		pHL2Player->NoteWeaponFired();
+	lagcompensation->FinishLagCompensation( pOwner );
 #endif
-	}
 }
 
 void CBaseBG2Weapon::Drop( const Vector &vecVelocity )

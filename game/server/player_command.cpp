@@ -452,13 +452,7 @@ void CPlayerMove::RunCommand ( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper 
 	moveHelper->ProcessImpacts();
 	VPROF_SCOPE_END();
 
-	//BG2 - Tjoppen - melee lag fix
-	//thanks go to Teddy on the Dystopia team for making this, and Jorg of the Unknown Lifeforms team for pointing it out to me
-	// Only do unlag for post think/post frame, which is mainly weapons stuff! - Teddy
-	lagcompensation->StartLagCompensation( player, ucmd );
 	RunPostThink( player );
-	lagcompensation->FinishLagCompensation( player );
-	//
 
 	g_pGameMovement->FinishTrackPredictionErrors( player );
 
