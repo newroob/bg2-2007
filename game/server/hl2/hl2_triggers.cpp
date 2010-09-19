@@ -1043,7 +1043,7 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 		return;
 
 	//Defines
-	CBasePlayer *pPlayer = static_cast< CBasePlayer* >( pOther );
+	CHL2MP_Player *pPlayer = ToHL2MPPlayer( pOther );
 	CtfFlag *pFlag = NULL;
 	bool m_bHomeFlagTaken = false;
 
@@ -1101,26 +1101,8 @@ void CTriggerCTFCapture::StartTouch(CBaseEntity *pOther)
 			g_Teams[TeamNumber]->AddScore( m_iTeamBonus ); //Adds the team score bonus.
 			pPlayer->IncrementFragCount( m_iPlayerBonus ); //Give the player the points.
 
-			//For the player speed difference.
-			switch( pPlayer->m_iClass )
-			{
-				case CLASS_INFANTRY:
-					pPlayer->IncreasePlayerSpeed( pFlag->m_iFlagWeight );
-					break;
-				case CLASS_OFFICER:
-					pPlayer->IncreasePlayerSpeed( pFlag->m_iFlagWeight * 1.6 );
-					break;
-				case CLASS_SNIPER:
-					pPlayer->IncreasePlayerSpeed( pFlag->m_iFlagWeight * 1.2 );
-					break;
-				case CLASS_SKIRMISHER:
-					pPlayer->IncreasePlayerSpeed( pFlag->m_iFlagWeight * 1.1 );
-					break;
-				case CLASS_LIGHT_INFANTRY:
-					pPlayer->IncreasePlayerSpeed( pFlag->m_iFlagWeight * 1.05 );
-					break;
-			}
-			//
+			//reset the capturer's speed
+			pPlayer->SetSpeedModifier( 0 );
 
 			pFlag->PrintAlert( CTF_CAPTURE, pPlayer->GetPlayerName(), pFlag->cFlagName );
 

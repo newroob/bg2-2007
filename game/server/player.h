@@ -242,13 +242,6 @@ public:
 	IPlayerInfo *GetPlayerInfo() { return &m_PlayerInfo; }
 	IBotController *GetBotController() { return &m_PlayerInfo; }
 
-	//BG2 - Put these here for method use. -HairyPotter
-	int iSpeed, iSpeed2; 
-	CNetworkVar( int, m_iClass );
-	void DecreasePlayerSpeed( int Speed );
-	void IncreasePlayerSpeed( int Speed );
-	//
-
 	//BG2 - Used to prevent spawn kills. -HairyPotter
 	float m_fLastRespawn;
 	//

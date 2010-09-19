@@ -118,8 +118,8 @@ void CtfFlag::Think( void )
 		if ( m_bFlagIsDropped && gpGlobals->curtime > fReturnTime /*&& sv_ctf_returnstyle.GetInt() == 1*/ ) //Should the flag return when time is up?
 			ReturnFlag();
 
-		CBasePlayer *pPlayer = NULL;
-		while( (pPlayer = static_cast<CBasePlayer*>(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flPickupRadius ))) != NULL )
+		CHL2MP_Player *pPlayer = NULL;
+		while( (pPlayer = ToHL2MPPlayer(gEntList.FindEntityByClassnameWithin( pPlayer, "player", GetLocalOrigin(), m_flPickupRadius ))) != NULL )
 		{
 			if ( !pPlayer->IsAlive() ) //Dead players cannot pick up the flag.
 				continue;
@@ -157,26 +157,32 @@ void CtfFlag::Think( void )
 			SetAbsOrigin( pPlayer->GetAbsOrigin() + Vector( 0,0,25 ) );	//Keeps the flag out of the player's FOV, also raises it so it doesn't look like it's stuck in the player's grill.
 			SetParent( pPlayer );	//Attach the entity to the player.
 			m_bIsCarried = true;
+
 			//For the player speed difference.
-			switch( pPlayer->m_iClass )
+			float scale = 1;
+
+			switch( pPlayer->GetClass() )
 			{
 				case CLASS_INFANTRY:
-					pPlayer->DecreasePlayerSpeed( m_iFlagWeight );
+					scale = 1;
 					break;
 				case CLASS_OFFICER:
-					pPlayer->DecreasePlayerSpeed( m_iFlagWeight * 1.6 );
+					scale = 1.6f;
 					break;
 				case CLASS_SNIPER:
-					pPlayer->DecreasePlayerSpeed( m_iFlagWeight * 1.2 );
+					scale = 1.2f;
 					break;
 				case CLASS_SKIRMISHER:
-					pPlayer->DecreasePlayerSpeed( m_iFlagWeight * 1.1 );
+					scale = 1.1;
 					break;
 				case CLASS_LIGHT_INFANTRY:
-					pPlayer->DecreasePlayerSpeed( m_iFlagWeight * 1.05 );
+					scale = 1.05;
 					break;
 			}
-			//
+
+			//decrease the carrier's speed
+			pPlayer->SetSpeedModifier( -m_iFlagWeight * scale );
+
 			m_bFlagIsDropped = false; //So it doesn't return while you're carrying it!
 			PrintAlert( CTF_PICKUP, pPlayer->GetPlayerName(), cFlagName );
 			PlaySound( GetAbsOrigin(), m_iPickupSound );

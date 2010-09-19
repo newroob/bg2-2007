@@ -111,6 +111,7 @@ IMPLEMENT_SERVERCLASS_ST(CHL2MP_Player, DT_HL2MP_Player)
 	//BG2 - Tjoppen - m_iClass and m_iCurrentAmmoKit are network vars
 	SendPropInt( SENDINFO( m_iClass ), 3, SPROP_UNSIGNED ),			//BG2 - Tjoppen - remember: max eight classes per team or increase this
 	SendPropInt( SENDINFO( m_iCurrentAmmoKit ), 2, SPROP_UNSIGNED ),//BG2 - Tjoppen - remember: max four ammo kits or increase this
+	SendPropInt( SENDINFO( m_iSpeedModifier ), 9, 0 ),
 	//
 	//BG2 - Tjoppen - rewards put on hold
 	/*SendPropInt( SENDINFO( m_iOfficerReward), 7, SPROP_UNSIGNED ),	//BG2 - Draco - Rewards
@@ -490,6 +491,9 @@ void CHL2MP_Player::Spawn(void)
 		return;	//we're done
 	//
 
+	//reset speed modifier
+	SetSpeedModifier( 0 );
+
 	//BG2 - Tjoppen - pick correct model
 	m_iClass = m_iNextClass;				//BG2 - Tjoppen - sometimes these may not match
 
@@ -546,29 +550,7 @@ void CHL2MP_Player::Spawn(void)
 
 	//BG2 - Put the speed handler into spawn so flag weight works, among other things. -HairyPotter
 	//5 speed added to all classes.
-	switch (m_iClass)
-	{
-		case CLASS_INFANTRY:
-			iSpeed = 195;
-			iSpeed2 = 120;
-			break;
-		case CLASS_OFFICER:
-			iSpeed = 220;
-			iSpeed2 = 140;
-			break;
-		case CLASS_SNIPER:
-			iSpeed = 205;
-			iSpeed2 = 130;
-			break;
-		case CLASS_SKIRMISHER:
-			iSpeed = 200;
-			iSpeed2 = 140;
-			break;
-		case CLASS_LIGHT_INFANTRY:
-			iSpeed = 198;
-			iSpeed2 = 130;
-			break;
-	}
+	HandleSpeedChanges();
 	//
 
 	//BG2 - Tjoppen - tickets
@@ -734,27 +716,12 @@ bool CHL2MP_Player::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelinde
 
 void CHL2MP_Player::HandleSpeedChanges( void )
 {
-	//int buttonsChanged = m_afButtonPressed | m_afButtonReleased;
-	//BG2 - Tjoppen - walk/run speeds
-	//BG2 - Draco - stamina changes speed
-	//float scale = 0.5f + 0.5f * expf( -0.01f * (float)(100 - GetHealth()) );
-	float scale = expf( -0.01f * (float)(100 - m_iStamina) );
+	SetMaxSpeed( GetCurrentSpeed() );
+}
 
-	if( GetActiveWeapon() )
-	{
-		if (GetActiveWeapon()->m_bIsIronsighted )
-			scale *= 0.3f;
-
-		if( GetActiveWeapon()->m_bInReload )
-		{
-			scale *= 0.5f;
-		}
-	}
-
-	if( m_nButtons & IN_WALK )
-		SetMaxSpeed( iSpeed2 * scale );
-	else
-		SetMaxSpeed( iSpeed * scale );
+void CHL2MP_Player::SetSpeedModifier( int iSpeedModifier )
+{
+	m_iSpeedModifier = delta;
 }
 
 void CHL2MP_Player::PreThink( void )

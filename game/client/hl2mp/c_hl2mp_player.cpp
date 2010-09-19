@@ -40,9 +40,10 @@ IMPLEMENT_CLIENTCLASS_DT(C_HL2MP_Player, DT_HL2MP_Player, CHL2MP_Player)
 	//BG2 - Tjoppen - send stamina via C_HL2MP_Player <=> DT_HL2MP_Player <=> CHL2MP_Player
 	RecvPropInt( RECVINFO( m_iStamina) ),
 	//
-	//BG2 - Tjoppen - m_iClass and m_iCurrentAmmoKit are network vars
+	//BG2 - Tjoppen - m_iClass, m_iCurrentAmmoKit and m_iSpeedModifier are network vars
 	RecvPropInt( RECVINFO( m_iClass ) ), 
 	RecvPropInt( RECVINFO( m_iCurrentAmmoKit ) ), 
+	RecvPropInt( RECVINFO( m_iSpeedModifier ) ),
 	//
 END_RECV_TABLE()
 
@@ -594,53 +595,7 @@ bool C_HL2MP_Player::CanSprint( void )
 
 void C_HL2MP_Player::HandleSpeedChanges( void )
 {
-	//BG2 - Testing. -HairyPotter
-	//int buttonsChanged = m_afButtonPressed | m_afButtonReleased;
-	//BG2 - Tjoppen - walk/run speeds
-	//float scale = 0.5f + 0.5f * expf( -0.01f * (float)(100 - GetHealth()) );
-	float scale = expf( -0.01f * (float)(100 - m_iStamina) );
-
-	if( GetActiveWeapon() )
-	{
-		if (GetActiveWeapon()->m_bIsIronsighted )
-			scale *= 0.3f;
-
-		if( GetActiveWeapon()->m_bInReload )
-			scale *= 0.5f;
-	}
-
-	int iSpeed = 190;
-	int iSpeed2 = 150;
-
-	//5 speed added to all classes.
-	switch (m_iClass)
-	{
-		case CLASS_INFANTRY:
-			iSpeed = 195;
-			iSpeed2 = 120;
-			break;
-		case CLASS_OFFICER:
-			iSpeed = 220;
-			iSpeed2 = 140;
-			break;
-		case CLASS_SNIPER:
-			iSpeed = 205;
-			iSpeed2 = 130;
-			break;
-		case CLASS_SKIRMISHER:
-			iSpeed = 200;
-			iSpeed2 = 140;
-			break;
-		case CLASS_LIGHT_INFANTRY:
-			iSpeed = 198;
-			iSpeed2 = 130;
-			break;
-	}
-
-	if( m_nButtons & IN_WALK )
-		SetMaxSpeed( iSpeed2 * scale );
-	else
-		SetMaxSpeed( iSpeed * scale );
+	SetMaxSpeed( GetCurrentSpeed() );
 }
 
 void C_HL2MP_Player::ItemPreFrame( void )

@@ -178,7 +178,9 @@ public:
 		m_iAmmoKit;
 
 private:
+	CNetworkVar( int, m_iClass );
 	CNetworkVar( int, m_iCurrentAmmoKit );	//BG2 - Tjoppen - we need to copy m_iAmmoKit when spawned so players can't change current load by typing "kit ..."
+	CNetworkVar( int, m_iSpeedModifier );
 
 	//int		m_iClass;					//BG2 - Tjoppen - class system
 	int		m_iNextClass;					//BG2 - Tjoppen - which class will we become on our next respawn?
@@ -189,7 +191,13 @@ private:
 	//BG2 - Tjoppen - tickets. sometimes we don't want to remove tickets on spawn, such as when first joining a team
 	bool	m_bDontRemoveTicket;
 
+	//return the player's speed based on whether which class we are, which weapon kit we're using etc.
+	int		GetCurrentSpeed( void ) const;
+
 public:
+	//used for temporary speed modifiers (carrying flags and such)
+	void	SetSpeedModifier( int iSpeedModifier );
+
 	CBaseEntity	*m_pIntermission;	//follow that info_intermission!
 	//
 

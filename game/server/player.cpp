@@ -2069,15 +2069,6 @@ void CBasePlayer::ShowViewPortPanel( const char * name, bool bShow, KeyValues *d
 		}
 	MessageEnd();
 }
-//BG2 - IncreasePlayerSpeed and DecreasePlayerSpeed - HairyPotter
-void CBasePlayer::IncreasePlayerSpeed( int Speed )
-{
-	iSpeed += Speed;
-}
-void CBasePlayer::DecreasePlayerSpeed( int Speed )
-{
-	iSpeed -= Speed;
-}
 
 //BG2 - Tjoppen - CBasePlayer::MayRespawn()
 bool CBasePlayer::MayRespawn( void )
@@ -2324,8 +2315,6 @@ bool CBasePlayer::SetObserverMode(int mode )
 {
 	if ( mode < OBS_MODE_NONE || mode >= NUM_OBSERVER_MODES )
 		return false;
-
-	iSpeed = 240; //BG2 - Put this here so specs can move after HandleSpeedChanges() tweaks. -HairyPotter
 
 	// check mp_forcecamera settings for dead players
 	if ( mode > OBS_MODE_FIXED && GetTeamNumber() > TEAM_SPECTATOR )

@@ -85,9 +85,13 @@ public:
 
 	int		GetClass( void )			{ return m_iClass; }
 	int		GetCurrentAmmoKit( void )	{ return m_iCurrentAmmoKit; }
+
+	//return the player's speed based on whether which class we are, which weapon kit we're using etc.
+	int		GetCurrentSpeed( void ) const;
 private:
 	int		m_iClass;
 	int		m_iCurrentAmmoKit;
+	int		m_iSpeedModifier;
 	//
 	//BG@ - Draco - Rewards
 	//BG2 - Tjoppen - rewards put on hold

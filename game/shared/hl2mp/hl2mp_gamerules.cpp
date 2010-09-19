@@ -567,7 +567,7 @@ void CHL2MPRules::Think( void )
 			//here comes the tricky part, who to swap, how to swap?
 			//meh, go random for now, maybe lowest scorer later...
 			int iAutoTeamBalancePlayerToSwitchIndex = 0;
-			CBasePlayer *pPlayer = NULL;
+			CHL2MP_Player *pPlayer = NULL;
 
 			int args[2];
 
@@ -580,12 +580,12 @@ void CHL2MPRules::Think( void )
 			{
 				case TEAM_BRITISH:
 					iAutoTeamBalancePlayerToSwitchIndex = random->RandomInt( 0, (pBritish->GetNumPlayers() - 1) );
-					pPlayer = pBritish->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex);
+					pPlayer = ToHL2MPPlayer(pBritish->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex));
 					if (pPlayer && !pPlayer->IsAlive()) //Let's try to avoid null pointers.
 					{
 						//BG2 - This sets the player's current default weapon kit for the class they're being switched to. -HairyPotter
 						int edict = engine->IndexOfEdict( pPlayer->edict() );
-						switch( pPlayer->m_iClass )
+						switch( pPlayer->GetClass() )
 						{
 							case CLASS_INFANTRY:
 								sscanf( engine->GetClientConVarValue( edict, "cl_kit_a_inf" ), "%i %i", &(args[0]), &(args[1]) );
@@ -595,26 +595,20 @@ void CHL2MPRules::Think( void )
 								break;
 						}
 
-						CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
-						if ( pHL2Player )
-						{
-							pHL2Player->m_iGunKit = args[0];
-							pHL2Player->m_iAmmoKit = args[1];
-						}
-						//
-
+						pPlayer->m_iGunKit = args[0];
+						pPlayer->m_iAmmoKit = args[1];
 						pPlayer->ChangeTeam(TEAM_AMERICANS);
 					}
 					break;
 				case TEAM_AMERICANS:
 					iAutoTeamBalancePlayerToSwitchIndex = random->RandomInt( 0, (pAmericans->GetNumPlayers() - 1) );
-					pPlayer = pAmericans->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex);
+					pPlayer = ToHL2MPPlayer(pAmericans->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex));
 					if (pPlayer && !pPlayer->IsAlive()) //Let's try to avoid null pointers.
 					{
 						//BG2 - This sets the player's current default weapon kit for the class they're being switched to. -HairyPotter
 						int edict = engine->IndexOfEdict( pPlayer->edict() );
 						//szWeaponKit = engine->GetClientConVarValue( edict, "cl_playermodel" );
-						switch( pPlayer->m_iClass )
+						switch( pPlayer->GetClass() )
 						{
 							case CLASS_INFANTRY:
 								sscanf( engine->GetClientConVarValue( edict, "cl_kit_b_inf" ), "%i %i", &(args[0]), &(args[1]) );
@@ -627,14 +621,8 @@ void CHL2MPRules::Think( void )
 								break;
 						}
 
-						CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
-						if ( pHL2Player )
-						{
-							pHL2Player->m_iGunKit = args[0];
-							pHL2Player->m_iAmmoKit = args[1];
-						}
-						//
-
+						pPlayer->m_iGunKit = args[0];
+						pPlayer->m_iAmmoKit = args[1];
 						pPlayer->ChangeTeam(TEAM_BRITISH);
 					}
 					break;

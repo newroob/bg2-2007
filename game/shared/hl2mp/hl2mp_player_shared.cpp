@@ -15,6 +15,8 @@
 #include "hl2mp_player.h"
 #endif
 
+#include "hl2mp_gamerules.h"
+#include "in_buttons.h"
 #include "engine/IEngineSound.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
 
@@ -138,6 +140,56 @@ void CHL2MP_Player::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, f
 	ep.m_pOrigin = &vecOrigin;
 
 	EmitSound( filter, entindex(), ep );
+}
+
+int CHL2MP_Player::GetCurrentSpeed( void ) const
+{
+	float scale = expf( -0.01f * (float)(100 - m_iStamina) );
+
+	if( GetActiveWeapon() )
+	{
+		if (GetActiveWeapon()->m_bIsIronsighted )
+			scale *= 0.3f;
+
+		if( GetActiveWeapon()->m_bInReload )
+			scale *= 0.5f;
+	}
+
+	int base = 120;
+
+	if( GetTeamNumber() != TEAM_BRITISH && GetTeamNumber() != TEAM_AMERICANS )
+	{
+		//spectating
+		base = 240;
+	}
+	else if( m_nButtons & IN_WALK )
+	{
+		base = 120;
+		//use same walking speed for all classes
+	}
+	else
+	{
+		switch( m_iClass )
+		{
+		case CLASS_INFANTRY:
+			base = 195;
+			break;
+		case CLASS_OFFICER:
+			base = 220;
+			break;
+		case CLASS_SNIPER:
+			base = 205;
+			break;
+		case CLASS_SKIRMISHER:
+			base = 200;
+			break;
+		case CLASS_LIGHT_INFANTRY:
+			base = 198;
+			break;
+		}
+	}
+
+	return (base + m_iSpeedModifier) * scale;
 }
 
 
