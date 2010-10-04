@@ -23,13 +23,13 @@ GAME_DIR=$(SOURCE_DIR)/lib/linux/
 MOD_DIR=$(GAME_DIR)/bg2-svn
 
 # compiler options 3.4.6 or 4.2.4 will work nicely.
-CC=gcc-4.2
-CPLUS=g++-4.2
-CLINK=gcc-4.2
-CPP_LIB="/usr/lib/gcc/i486-linux-gnu/4.2.4/libstdc++.a /usr/lib/gcc/i486-linux-gnu/4.2.4/libgcc_eh.a"
+CC=gcc-3.4
+CPLUS=g++-3.4
+CLINK=gcc-3.4
+CPP_LIB="/usr/lib/gcc/i486-linux-gnu/3.4.6/libstdc++.a /usr/lib/gcc/i486-linux-gnu/3.4.6/libgcc_eh.a"
 
 # GCC 4.2.4 optimization flags, if you're using anything below, don't use these!
-OPTFLAGS= -O2
+OPTFLAGS= -O2 -fomit-frame-pointers
 
 # put any compiler flags you want passed here
 USER_CFLAGS=
