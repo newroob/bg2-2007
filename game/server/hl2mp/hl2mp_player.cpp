@@ -721,7 +721,7 @@ void CHL2MP_Player::HandleSpeedChanges( void )
 
 void CHL2MP_Player::SetSpeedModifier( int iSpeedModifier )
 {
-	m_iSpeedModifier = delta;
+	m_iSpeedModifier = iSpeedModifier;
 }
 
 void CHL2MP_Player::PreThink( void )

@@ -231,6 +231,9 @@ private:
 		else if(tr.m_pEnt && tr.m_pEnt != DAMAGE_NO)
 		{
 			//we hit something that can be damaged
+			//trace through arms
+			TraceThroughArms( &tr );
+
 			ClearMultiDamage();
 			//VectorNormalize( vecNormalizedVel );
 
@@ -253,6 +256,41 @@ private:
 		}
 
 		return true;
+	}
+
+	/**
+	 * Trace a few more units ahead to see if something other than an arm is behind what we hit.
+	 * This fixes the "kevlar arms" issue.
+	 */
+	void TraceThroughArms( trace_t *tr )
+	{
+		//we only care about hitting arms
+		if( tr->hitgroup != HITGROUP_LEFTARM && tr->hitgroup != HITGROUP_RIGHTARM )
+			return;
+
+		Vector dir = m_vPosition - m_vLastPosition;
+		dir.NormalizeInPlace();
+
+		for( float ofs = 1; ofs < 32; ofs += 0.5f )
+		{
+			trace_t tr2;
+			Vector start = tr->endpos + ofs*dir;
+			Vector end = tr->endpos + ofs*64;
+
+			if(sv_simulatedbullets_show_trajectories.GetBool())
+				NDebugOverlay::Box(start, Vector(-0.1f, -0.1f, -0.1f), Vector(0.1f, 0.1f, 0.1f), 0, 255, 255, 255, 5);
+
+			UTIL_TraceLine(start, end, MASK_SHOT, m_pOwner, COLLISION_GROUP_NONE, &tr2);
+
+			if( tr2.m_pEnt == tr->m_pEnt && tr2.hitgroup != HITGROUP_GENERIC &&
+				tr2.hitgroup != HITGROUP_LEFTARM && tr2.hitgroup != HITGROUP_RIGHTARM )
+			{
+				//hit non-generic non-arm hitgroup on the same player
+				//replace trace with the new one - we probably hit the chest or stomach instead
+				*tr = tr2;
+				return;
+			}
+		}
 	}
 };
 
