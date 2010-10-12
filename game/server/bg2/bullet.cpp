@@ -49,6 +49,8 @@
 
 using namespace std;
 
+extern ConVar sv_simulatedbullets_show_trajectories;
+
 class Bullet {
 	Vector m_vTrajStart, m_vPosition, m_vLastPosition, m_vVelocity;
 	int m_iDamage;
@@ -188,8 +190,6 @@ private:
 	{
 		trace_t tr;
 		UTIL_TraceLine(m_vLastPosition, m_vPosition, MASK_SHOT, m_pOwner, COLLISION_GROUP_NONE, &tr);
-
-		extern ConVar sv_simulatedbullets_show_trajectories;
 
 		if(sv_simulatedbullets_show_trajectories.GetBool())
 			NDebugOverlay::Line(m_vLastPosition, m_vPosition, tr.DidHit() ? 0 : 255, tr.DidHitWorld() ? 0 : 255, tr.DidHitWorld() ? 255 : 0, true, 4);

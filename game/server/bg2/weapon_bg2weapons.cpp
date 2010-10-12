@@ -106,8 +106,10 @@ const float HIRSCHFAENGER_RETRACE_DURATION = 0.3;
 const float SABRE_COS_TOLERANCE = 0.7071067811865;			//+-45 degrees
 const float SABRE_RETRACE_DURATION = 0.3;
 
-const float MUZZLE_VELOCITY_DEFAULT = 14400.0f;	//1200 fps
-const float MUZZLE_VELOCITY_PISTOL = 12000.0f;	//1000 fps
+const float MUZZLE_VELOCITY_RIFLE = 20400;
+const float MUZZLE_VELOCITY_SMOOTHBORE = 15600;
+const float MUZZLE_VELOCITY_BUCKSHOT = 12000;	//TODO: implement different muzzle velocity for buckshot
+const float MUZZLE_VELOCITY_PISTOL = 10800;
 
 #ifdef CLIENT_DLL
 #define CWeaponbrownbess C_Weaponbrownbess
@@ -173,7 +175,7 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_fMaxRange2	= BESS_BAYONET_RANGE;
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_iNumShot = 0;
 }
 
@@ -245,7 +247,7 @@ DECLARE_BG2_WEAPON( charleville )
 	m_fMaxRange2	= CHARLE_BAYONET_RANGE;
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_iNumShot = 0;
 }
 
@@ -304,7 +306,7 @@ DECLARE_BG2_WEAPON( jaeger )
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_RIFLE;
 	m_iNumShot = 0;
 }
 
@@ -363,7 +365,7 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_RIFLE;
 	m_iNumShot = 0;
 }
 
@@ -669,7 +671,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_fMaxRange2	= REVOL_BAYONET_RANGE;
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_iNumShot = 0;
 }
 
@@ -724,7 +726,7 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 	m_fMaxRange1	= MUSKET_RANGE;
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_iNumShot = 0;
 }
 
@@ -810,7 +812,7 @@ DECLARE_BG2_WEAPON( fowler )
 
 	m_flBallSpread = 1.0f;
 	m_flShotSpread = 6.95f * 0.75f;		//4 m spread at 33 m -> (4 / 2) / 33 / sin(0.5)
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_iNumShot = FOWLER_NUM_SHOT;
 	m_iDamagePerShot = FOWLER_SHOT_DAMAGE;
 }
@@ -883,7 +885,7 @@ DECLARE_BG2_WEAPON( longpattern )
 	m_fMaxRange2	= LONGPATTERN_BAYONET_RANGE;
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_iNumShot = 0;
 }
 
@@ -938,7 +940,7 @@ DECLARE_BG2_WEAPON( longpattern_nobayo )
 	m_fMaxRange1	= MUSKET_RANGE;
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_iNumShot = 0;
 }
 
@@ -1011,7 +1013,7 @@ DECLARE_BG2_WEAPON( american_brownbess )
 	m_fMaxRange2	= BESS_BAYONET_RANGE;
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_iNumShot = 0;
 }
 
@@ -1066,7 +1068,7 @@ DECLARE_BG2_WEAPON( american_brownbess_nobayo )
 	m_fMaxRange1	= MUSKET_RANGE;
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_iNumShot = 0;
 }
 
@@ -1139,7 +1141,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 
 	m_flBallSpread = 1.0f;
 	m_flShotSpread = 7.64f * 0.75f;		//4 m spread at 30 m -> (4 / 2) / 30 / sin(0.5)
-	m_flMuzzleVelocity = MUZZLE_VELOCITY_DEFAULT;
+	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_iNumShot = CARBINE_NUM_SHOT;
 	m_iDamagePerShot = CARBINE_SHOT_DAMAGE;
 }
