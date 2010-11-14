@@ -181,7 +181,6 @@ void CHudBG2::VidInit( void )
 	m_Base = gHUD.GetIcon( "hud_base" );
 	m_Stamina = gHUD.GetIcon( "hud_stamina" );
 	m_Health = gHUD.GetIcon( "hud_health" );
-	m_Straps = gHUD.GetIcon( "hud_straps" );
 }
 
 //==============================================
@@ -203,7 +202,7 @@ static ConVar cl_draw_lms_indicator( "cl_draw_lms_indicator", "1", FCVAR_CLIENTD
 
 void CHudBG2::Paint()
 {
-	if( !m_Base || !m_Straps || !m_Stamina || !m_Health )
+	if( !m_Base || !m_Stamina || !m_Health )
 		return;
 
 	//BG2 - Tjoppen - Always paint damage label, so it becomes visible while using iron sights
@@ -276,7 +275,6 @@ void CHudBG2::Paint()
 	int stamy = 105 - stamheight;
 	m_Stamina->DrawSelfCropped(50,ystart + 2 + stamy,0,/*m_Stamina->Height()*//*20*/ stamy, 25, stamheight/*20*/,ColourWhite);
 	m_Health->DrawSelfCropped(15,ystart + 2 + healthy,0,/*m_Health->Height()*//*40*/ healthy, 25, healthheight /*10*/,ColourWhite);
-	m_Straps->DrawSelf(10,ystart + 6,ColourWhite);
 	
 	C_Team *pAmer = GetGlobalTeam(TEAM_AMERICANS);
 	C_Team *pBrit = GetGlobalTeam(TEAM_BRITISH);

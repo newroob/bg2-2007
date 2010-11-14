@@ -199,7 +199,6 @@ public:
 private:
 
 	CHudTexture		* m_Base; 
-	CHudTexture		* m_Straps; 
 	CHudTexture		* m_Stamina;
 	CHudTexture		* m_Health;
 
