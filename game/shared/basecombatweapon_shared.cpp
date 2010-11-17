@@ -644,8 +644,9 @@ bool CBaseCombatWeapon::IsIronsighted( void )
 
 void CBaseCombatWeapon::ToggleIronsights( void )
 {
-	//delay next primary attack 250 ms
-	m_flNextPrimaryAttack = gpGlobals->curtime + 0.25f;
+	//delay both attacks by 400 ms, but make sure we don't roll back the attack times
+	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + 0.4f);
+	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + 0.4f);
 	
 	if( m_bIsIronsighted )
 		DisableIronsights();
