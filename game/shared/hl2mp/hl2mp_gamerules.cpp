@@ -140,7 +140,7 @@ LINK_ENTITY_TO_CLASS( hl2mp_gamerules, CHL2MPGameRulesProxy );
 IMPLEMENT_NETWORKCLASS_ALIASED( HL2MPGameRulesProxy, DT_HL2MPGameRulesProxy )
 
 static HL2MPViewVectors g_HL2MPViewVectors(
-	Vector( 0, 0, 60 ),       //VEC_VIEW (m_vView) //BG2 - This was 64, but the BG2 models are slightly smaller I guess.. 
+	Vector( 0, 0, 55 ),       //VEC_VIEW (m_vView) //BG2 - This was 64, but the BG2 models are slightly smaller I guess.. 
 							  //so let's lower it slightly. -HairyPotter
 							  
 	Vector(-16, -16, 0 ),	  //VEC_HULL_MIN (m_vHullMin)
