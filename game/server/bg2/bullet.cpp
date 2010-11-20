@@ -50,6 +50,7 @@
 using namespace std;
 
 extern ConVar sv_simulatedbullets_show_trajectories;
+extern ConVar sv_simulatedbullets_show_trajectories_timeout;
 
 class Bullet {
 	Vector m_vTrajStart, m_vPosition, m_vLastPosition, m_vVelocity;
@@ -192,7 +193,7 @@ private:
 		UTIL_TraceLine(m_vLastPosition, m_vPosition, MASK_SHOT, m_pOwner, COLLISION_GROUP_NONE, &tr);
 
 		if(sv_simulatedbullets_show_trajectories.GetBool())
-			NDebugOverlay::Line(m_vLastPosition, m_vPosition, tr.DidHit() ? 0 : 255, tr.DidHitWorld() ? 0 : 255, tr.DidHitWorld() ? 255 : 0, true, 4);
+			NDebugOverlay::Line(m_vLastPosition, m_vPosition, tr.DidHit() ? 0 : 255, tr.DidHitWorld() ? 0 : 255, tr.DidHitWorld() ? 255 : 0, true, sv_simulatedbullets_show_trajectories_timeout.GetFloat());
 
 		if(!tr.DidHit())
 			return false;
@@ -278,7 +279,7 @@ private:
 			Vector end = tr->endpos + ofs*64;
 
 			if(sv_simulatedbullets_show_trajectories.GetBool())
-				NDebugOverlay::Box(start, Vector(-0.1f, -0.1f, -0.1f), Vector(0.1f, 0.1f, 0.1f), 0, 255, 255, 255, 5);
+				NDebugOverlay::Box(start, Vector(-0.1f, -0.1f, -0.1f), Vector(0.1f, 0.1f, 0.1f), 0, 255, 255, 255, sv_simulatedbullets_show_trajectories_timeout.GetFloat());
 
 			UTIL_TraceLine(start, end, MASK_SHOT, m_pOwner, COLLISION_GROUP_NONE, &tr2);
 

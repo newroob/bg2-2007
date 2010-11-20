@@ -82,6 +82,9 @@ ConVar sv_simulatedbullets_overshoot_force( "sv_simulatedbullets_overshoot_force
 ConVar sv_simulatedbullets_show_trajectories( "sv_simulatedbullets_show_trajectories", "0", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_CHEAT,
 		"Draw trajectories of the bullets? Useful for adjusting their settings" );
 
+ConVar sv_simulatedbullets_show_trajectories_timeout( "sv_simulatedbullets_show_trajectories_timeout", "10", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_CHEAT,
+		"How long the trajectories stay, in seconds" );
+
 ConVar sv_bullettracers("sv_bullettracers", "1", FCVAR_NOTIFY | FCVAR_REPLICATED, "Do bullets draw tracers behind them?" );
 
 ConVar sv_retracing_melee( "sv_retracing_melee", "1", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO,
