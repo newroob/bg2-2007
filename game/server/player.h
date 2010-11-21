@@ -899,6 +899,10 @@ protected:
 	//BG2 - Tjoppen - public method for setting m_fNextSuicideTime
 public:
 	void SetSuicideTime( float time ) { m_fNextSuicideTime = time; }
+
+	//BG2 - Tjoppen - name change spam prevention
+	float					m_fNextNameChange;	// the next time the player can change their name
+
 private:
 	//
 	int						m_iSuicideCustomKillFlags;

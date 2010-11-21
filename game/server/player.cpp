@@ -604,6 +604,9 @@ CBasePlayer::CBasePlayer( )
 	m_nBodyPitchPoseParam = -1;
 	m_flForwardMove = 0;
 	m_flSideMove = 0;
+
+	//BG2 - Tjoppen - name change spam prevention
+	m_fNextNameChange = gpGlobals->curtime;
 }
 
 CBasePlayer::~CBasePlayer( )

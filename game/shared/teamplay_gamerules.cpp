@@ -277,6 +277,19 @@ void CTeamplayRules::ClientSettingsChanged( CBasePlayer *pPlayer )
 	// Note, not using FStrEq so that this is case sensitive
 	if ( pszOldName[0] != 0 && Q_strcmp( pszOldName, pszName ) )
 	{
+		// check if we're allowed to change name yet
+		// always reset the timer so the player can't use some kind of script to repeatedly attempt to change name
+		bool mayChange = pPlayer->m_fNextNameChange <= gpGlobals->curtime;
+
+		// disallow name changes for ten seconds
+		pPlayer->m_fNextNameChange = gpGlobals->curtime + 10;
+
+		if ( !mayChange )
+		{
+			UTIL_SayText( "Changing name too fast - wait ten seconds\n", pPlayer );
+			return;
+		}
+
 		IGameEvent * event = gameeventmanager->CreateEvent( "player_changename" );
 		if ( event )
 		{
