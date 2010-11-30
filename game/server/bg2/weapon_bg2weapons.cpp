@@ -111,6 +111,10 @@ const float MUZZLE_VELOCITY_SMOOTHBORE = 15600;
 const float MUZZLE_VELOCITY_BUCKSHOT = 12000;	//TODO: implement different muzzle velocity for buckshot
 const float MUZZLE_VELOCITY_PISTOL = 10800;
 
+const float ZERO_RANGE_PISTOL = 10 * 36;	//ten yards
+const float ZERO_RANGE_MUSKET = 50 * 36;	//fifty yards
+const float ZERO_RANGE_RIFLE = 200 * 36;	//two hundred yards
+
 #ifdef CLIENT_DLL
 #define CWeaponbrownbess C_Weaponbrownbess
 #endif
@@ -176,6 +180,7 @@ DECLARE_BG2_WEAPON( brownbess )
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
+	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
 }
 
@@ -248,6 +253,7 @@ DECLARE_BG2_WEAPON( charleville )
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
+	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
 }
 
@@ -307,6 +313,7 @@ DECLARE_BG2_WEAPON( jaeger )
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_RIFLE;
+	m_flZeroRange = ZERO_RANGE_RIFLE;
 	m_iNumShot = 0;
 }
 
@@ -366,6 +373,7 @@ DECLARE_BG2_WEAPON( pennsylvania )
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_RIFLE;
+	m_flZeroRange = ZERO_RANGE_RIFLE;
 	m_iNumShot = 0;
 }
 
@@ -405,6 +413,7 @@ DECLARE_BG2_WEAPON( pistol_a )
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_PISTOL;
+	m_flZeroRange = ZERO_RANGE_PISTOL;
 	m_iNumShot = 0;
 }
 
@@ -444,6 +453,7 @@ DECLARE_BG2_WEAPON( pistol_b )
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_PISTOL;
+	m_flZeroRange = ZERO_RANGE_PISTOL;
 	m_iNumShot = 0;
 }
 
@@ -672,6 +682,7 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
+	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
 }
 
@@ -727,6 +738,8 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
+	m_flZeroRange = ZERO_RANGE_MUSKET;
+
 	m_iNumShot = 0;
 }
 
@@ -813,6 +826,7 @@ DECLARE_BG2_WEAPON( fowler )
 	m_flBallSpread = 1.0f;
 	m_flShotSpread = 6.95f * 0.75f;		//4 m spread at 33 m -> (4 / 2) / 33 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
+	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = FOWLER_NUM_SHOT;
 	m_iDamagePerShot = FOWLER_SHOT_DAMAGE;
 }
@@ -886,6 +900,7 @@ DECLARE_BG2_WEAPON( longpattern )
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
+	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
 }
 
@@ -941,6 +956,7 @@ DECLARE_BG2_WEAPON( longpattern_nobayo )
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
+	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
 }
 
@@ -1014,6 +1030,7 @@ DECLARE_BG2_WEAPON( american_brownbess )
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
+	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
 }
 
@@ -1069,6 +1086,7 @@ DECLARE_BG2_WEAPON( american_brownbess_nobayo )
 
 	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
+	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
 }
 
@@ -1142,6 +1160,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_flBallSpread = 1.0f;
 	m_flShotSpread = 7.64f * 0.75f;		//4 m spread at 30 m -> (4 / 2) / 30 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
+	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = CARBINE_NUM_SHOT;
 	m_iDamagePerShot = CARBINE_SHOT_DAMAGE;
 }

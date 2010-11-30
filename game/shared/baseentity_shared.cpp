@@ -1553,11 +1553,8 @@ float BG2_TraceArc( const FireBulletsInfo_t &info, const Vector &vecDir, unsigne
 	Vector vel = vecDir * info.m_flMuzzleVelocity;
 
 	extern	ConVar	sv_simulatedbullets_drag,
-					sv_simulatedbullets_overshoot_range,
-					sv_simulatedbullets_overshoot_force,
 					sv_gravity;
 
-	float tmax_overshoot = sv_simulatedbullets_overshoot_range.GetFloat() * 36.f / info.m_flMuzzleVelocity;
 	float z_vel_offset = 0;
 	float z_pos_offset = 0;
 
@@ -1569,13 +1566,6 @@ float BG2_TraceArc( const FireBulletsInfo_t &info, const Vector &vecDir, unsigne
 		//calculate acceleration due to drag, lift and gravity
 		//drag works in the opposite direction of velocity
 		Vector acc = vel * -(vel.Length() * info.m_flRelativeDrag * sv_simulatedbullets_drag.GetFloat());
-
-		//we model lift due to bullet backspin as an exponentially decaying upward force
-		if( sv_simulatedbullets_overshoot_force.GetFloat() > 0 )
-		{
-			lift = sv_gravity.GetFloat() * sv_simulatedbullets_overshoot_force.GetFloat() * pow( 3, -t / tmax_overshoot );
-			acc.z += lift;
-		}
 
 		//lastly subtract gravity
 		grav = -sv_gravity.GetFloat();

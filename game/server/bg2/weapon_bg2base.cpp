@@ -73,12 +73,6 @@ ConVar sv_arcscanbullets( "sv_arcscanbullets", "1", FCVAR_NOTIFY | FCVAR_REPLICA
 ConVar sv_simulatedbullets_drag( "sv_simulatedbullets_drag", "0.00003", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO | FCVAR_CHEAT,
 		"Tweak this value to affect how fast the speed and thus damage of bullets drop off with distance.\n\tLower values => more damage over distance" );
 
-ConVar sv_simulatedbullets_overshoot_range( "sv_simulatedbullets_overshoot_range", "50", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO | FCVAR_CHEAT,
-		"At what range in yards overshoot reaches maximum" );
-
-ConVar sv_simulatedbullets_overshoot_force( "sv_simulatedbullets_overshoot_force", "3", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_DEMO | FCVAR_CHEAT,
-		"How much stronger than gravity is the overshoot force at t=0?" );
-
 ConVar sv_simulatedbullets_show_trajectories( "sv_simulatedbullets_show_trajectories", "0", FCVAR_NOTIFY | FCVAR_REPLICATED | FCVAR_CHEAT,
 		"Draw trajectories of the bullets? Useful for adjusting their settings" );
 
@@ -634,6 +628,27 @@ void CBaseBG2Weapon::WeaponIdle( void )
 	}
 }
 
+/**
+ * Returns how many degrees we need to angle the barrel up to be zeroed
+ * in at the given range with the given muzzle velocity.
+ * Note that this function does not account for drag, since doing so
+ * would mean having to solve a rather complicated differential equation.
+ * This function is probably good enough for practical purposes.
+ * This image is helpful: http://www.frfrogspad.com/traj.gif
+ */
+static float AngleForZeroedRange( float muzzleVelocity, float zeroRange )
+{
+	extern ConVar sv_gravity;
+	float q = sv_gravity.GetFloat() * zeroRange / (muzzleVelocity*muzzleVelocity);
+
+	//avoid returning NaN in case of bogus range/velocity combination
+	if( q < -1 || q > 1 )
+		return 0;
+
+	//half of sin^-1(q) in degrees
+	return 90.f / M_PI * asinf(q);
+}
+
 void CBaseBG2Weapon::ItemPostFrame( void )
 {
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
@@ -661,7 +676,13 @@ void CBaseBG2Weapon::ItemPostFrame( void )
 
 	if( m_bShouldSampleForward && m_flNextSampleForward <= gpGlobals->curtime )
 	{
-		Vector vecAiming	= pOwner->CBasePlayer::GetAutoaimVector( AUTOAIM_5DEGREES );	
+		Vector vecAiming;
+		QAngle angles = EyeAngles() + pOwner->m_Local.m_vecPunchAngle;
+
+		//angle the barrel up slightly to account for bullet drop
+		angles.x -= AngleForZeroedRange( m_flMuzzleVelocity, m_flZeroRange );
+
+		AngleVectors( angles, &vecAiming );
 		CShotManipulator manipulator( vecAiming );
 
 		m_vLastForward = manipulator.ApplySpread( sv_perfectaim.GetInt() == 0 ? Cone( GetAccuracy( m_iLastAttack ) ) : vec3_origin );

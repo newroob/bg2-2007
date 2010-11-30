@@ -324,8 +324,6 @@ void CCannonBall::BubbleThink( void )
 		//apply drag
 		Vector	vecDir = GetAbsVelocity();
 		extern	ConVar	sv_simulatedbullets_drag,
-						sv_simulatedbullets_overshoot_range,
-						sv_simulatedbullets_overshoot_force,
 						sv_gravity;
 
 		float	speed = vecDir.NormalizeInPlace(),
@@ -337,22 +335,6 @@ void CCannonBall::BubbleThink( void )
 			speed = 1000;	//clamp
 
 		SetAbsVelocity( vecDir * speed );
-
-		if( sv_simulatedbullets_overshoot_force.GetFloat() > 0 &&
-			sv_simulatedbullets_overshoot_range.GetFloat() > 0 )
-		{
-			//add lift due to bullet rotation which causes overshoot at medium range
-			//this extra force declines exponentially and will equal to gravity at time tmax, thus putting the maximum there
-			float	t = gpGlobals->curtime - m_flDyingTime + LIFETIME,	//how long we've existed..
-					tmax = sv_simulatedbullets_overshoot_range.GetFloat() * 36.f / m_flMuzzleVelocity,	//how long until max?
-					F0 = sv_gravity.GetFloat() * sv_simulatedbullets_overshoot_force.GetFloat(),
-					F = F0 * powf( sv_simulatedbullets_overshoot_force.GetFloat(), -t / tmax );
-
-			//approx.
-			vecDir = GetAbsVelocity();
-			vecDir.z += F * gpGlobals->frametime;
-			SetAbsVelocity( vecDir );
-		}
 
 		vecDir.NormalizeInPlace();
 

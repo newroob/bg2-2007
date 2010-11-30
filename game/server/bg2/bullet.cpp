@@ -58,6 +58,7 @@ class Bullet {
 	float m_flConstantDamageRange, m_flRelativeDrag, m_flMuzzleVelocity, m_flDyingTime;
 	bool m_bHasPlayedNearmiss;
 	CBasePlayer *m_pOwner;
+	int m_iBounces;
 public:
 	Bullet(const Vector& position, const QAngle& angle, int iDamage, float flConstantDamageRange, float flRelativeDrag, float flMuzzleVelocity, CBasePlayer *pOwner)
 	{
@@ -73,10 +74,11 @@ public:
 		m_flDyingTime = gpGlobals->curtime + LIFETIME;
 		m_bHasPlayedNearmiss = false;
 		m_pOwner = pOwner;
+		m_iBounces = 0;
 	}
 
 	/**
-	 * Updates the bullet's velocity based on drag and overshoot.
+	 * Updates the bullet's velocity based on drag.
 	 * Moves bullet forward and traces area between its current position and the last.
 	 * Returns whether this bullet should still exist. False if it hit something, or ran out of time. True if it's still going.
 	 */
@@ -102,8 +104,6 @@ private:
 		//apply drag
 		Vector	vecDir = m_vVelocity;
 		extern	ConVar	sv_simulatedbullets_drag,
-						sv_simulatedbullets_overshoot_range,
-						sv_simulatedbullets_overshoot_force,
 						sv_gravity;
 
 		float	speed = vecDir.NormalizeInPlace(),
@@ -116,22 +116,6 @@ private:
 		//	speed = 1000;	//clamp
 
 		m_vVelocity = vecDir * speed;
-
-		if( sv_simulatedbullets_overshoot_force.GetFloat() > 0 &&
-			sv_simulatedbullets_overshoot_range.GetFloat() > 0 )
-		{
-			//add lift due to bullet rotation which causes overshoot at medium range
-			//this extra force declines exponentially and will equal to gravity at time tmax, thus putting the maximum there
-			float	t = gpGlobals->curtime - m_flDyingTime + LIFETIME,	//how long we've existed..
-					tmax = sv_simulatedbullets_overshoot_range.GetFloat() * 36.f / m_flMuzzleVelocity,	//how long until max?
-					F0 = sv_gravity.GetFloat() * sv_simulatedbullets_overshoot_force.GetFloat(),
-					//F = F0 * expf( -logf(sv_simulatedbullets_overshoot_force.GetFloat()) * t / tmax );
-					F = F0 * powf( sv_simulatedbullets_overshoot_force.GetFloat(), -t / tmax );
-
-			//approx.
-			m_vVelocity.z += F * dt;
-		}
-
 		m_vVelocity.z -= sv_gravity.GetFloat() * dt;
 	}
 
@@ -207,7 +191,8 @@ private:
 		{
 			//miss (hit world)
 			//make sure we don't put marks on or bounce off the sky
-			if ( !(tr.surface.flags & SURF_SKY) )
+			//don't bounce more than twice
+			if ( !(tr.surface.flags & SURF_SKY) && m_iBounces < 2 )
 			{
 				//BG2 - Tjoppen - Bullet.HitWorld
 				//EmitSound( "Bullet.HitWorld" );
@@ -221,6 +206,8 @@ private:
 				//if ( ( hitDot < 0.2f ) && ( speed > 100 ) )
 				if ( hitDot < 0.2f && tr.plane.normal.z < 0.5f )
 				{
+					m_iBounces++;
+
 					//reflect, slow down 25%
 					m_vVelocity = .75f * (m_vVelocity - 2.f * m_vVelocity.Dot(tr.plane.normal) * tr.plane.normal);
 
@@ -750,8 +737,6 @@ void CBullet::BubbleThink( void )
 		//apply drag
 		Vector	vecDir = GetAbsVelocity();
 		extern	ConVar	sv_simulatedbullets_drag,
-						sv_simulatedbullets_overshoot_range,
-						sv_simulatedbullets_overshoot_force,
 						sv_gravity;
 
 		float	speed = vecDir.NormalizeInPlace(),
@@ -764,23 +749,6 @@ void CBullet::BubbleThink( void )
 
 		SetAbsVelocity( vecDir * speed );
 
-		if( sv_simulatedbullets_overshoot_force.GetFloat() > 0 &&
-			sv_simulatedbullets_overshoot_range.GetFloat() > 0 )
-		{
-			//add lift due to bullet rotation which causes overshoot at medium range
-			//this extra force declines exponentially and will equal to gravity at time tmax, thus putting the maximum there
-			float	t = gpGlobals->curtime - m_flDyingTime + LIFETIME,	//how long we've existed..
-					tmax = sv_simulatedbullets_overshoot_range.GetFloat() * 36.f / m_flMuzzleVelocity,	//how long until max?
-					F0 = sv_gravity.GetFloat() * sv_simulatedbullets_overshoot_force.GetFloat(),
-					//F = F0 * expf( -logf(sv_simulatedbullets_overshoot_force.GetFloat()) * t / tmax );
-					F = F0 * powf( sv_simulatedbullets_overshoot_force.GetFloat(), -t / tmax );
-
-			//approx.
-			vecDir = GetAbsVelocity();
-			vecDir.z += F * gpGlobals->frametime;
-			SetAbsVelocity( vecDir );
-		}
-
 		//8 units "safety margin" to make sure we passed our victim's head
 		/*float	margin = 8, 
 				headTolerance = 32,	//how close to the head must the bullet be?
@@ -791,9 +759,6 @@ void CBullet::BubbleThink( void )
 			//find any player except the shooter who is within the margin and desiredBacktrace distance when projected
 			//onto the ray
 			//the ray in this case extends behind the bullet
-
-			//re-normalize because overshoot messed it up
-			vecDir.NormalizeInPlace();
 
 			for( int x = 1; x <= gpGlobals->maxClients; x++ )
 			{
