@@ -113,7 +113,7 @@ const float MUZZLE_VELOCITY_PISTOL = 10800;
 
 const float ZERO_RANGE_PISTOL = 10 * 36;	//ten yards
 const float ZERO_RANGE_MUSKET = 50 * 36;	//fifty yards
-const float ZERO_RANGE_RIFLE = 200 * 36;	//two hundred yards
+const float ZERO_RANGE_RIFLE = 130 * 36;	//two hundred yards
 
 #ifdef CLIENT_DLL
 #define CWeaponbrownbess C_Weaponbrownbess
