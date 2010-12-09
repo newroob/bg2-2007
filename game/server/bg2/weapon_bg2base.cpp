@@ -735,3 +735,12 @@ bool CBaseBG2Weapon::Holster( CBaseCombatWeapon *pSwitchingTo )
 
 	return BaseClass::Holster( pSwitchingTo );
 }
+
+bool CBaseBG2Weapon::Reload( void )
+{
+	//BG2 - Tjoppen - disallow reloading until delayed firing has occured
+	if( m_bShouldFireDelayed )
+		return false;
+
+	return BaseClass::Reload();
+}

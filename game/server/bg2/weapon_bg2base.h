@@ -295,6 +295,7 @@ public:
 	virtual Activity	GetDrawActivity( void );
 
 	bool		Holster( CBaseCombatWeapon *pSwitchingTo );
+	bool		Reload( void );
 
 	//BG2 - For the holster delay. -HairyPotter
 	float m_fNextHolster;
