@@ -200,7 +200,7 @@ AnimationController::RelativeAlignment AnimationController::LookupAlignment( cha
 		}
 	}
 
-	return a_northwest;
+	return AnimationController::a_northwest;
 }
 
 //-----------------------------------------------------------------------------
