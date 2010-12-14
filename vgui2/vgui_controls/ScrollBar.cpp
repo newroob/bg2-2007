@@ -342,7 +342,8 @@ void ScrollBar::SetButton(Button *button, int index)
 {
 	if(_button[index]!=null)
 	{
-		_button[index]->SetParent((Panel *)NULL);
+		//_button[index]->SetParent((Panel *)NULL);
+		_button[index]->DeletePanel(); //BG2 - Added as a fix for a memory leak. -HairyPotter
 	}
 	_button[index]=button;
 	_button[index]->SetParent(this);
@@ -370,7 +371,8 @@ void ScrollBar::SetSlider(ScrollBarSlider *slider)
 {
 	if(_slider!=null)
 	{
-		_slider->SetParent((Panel *)NULL);
+		//_slider->SetParent((Panel *)NULL);
+		_slider->DeletePanel(); //BG2 - Added as a fix for a memory leak. -HairyPotter
 	}
 	_slider=slider;
 	_slider->AddActionSignalTarget(this);
