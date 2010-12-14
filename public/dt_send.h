@@ -628,6 +628,8 @@ void* SendProxy_DataTablePtrToDataTable( const SendProp *pProp, const void *pStr
 
 // Used on player entities - only sends the data to the local player (objectID-1).
 void* SendProxy_SendLocalDataTable( const SendProp *pProp, const void *pStruct, const void *pVarData, CSendProxyRecipients *pRecipients, int objectID );
+// Used on player entities - sends the data to every player otehr than the local player
+void* SendProxy_SendNonLocalDataTable( const SendProp *pProp, const void *pStruct, const void *pVarData, CSendProxyRecipients *pRecipients, int objectID );
 
 
 // ------------------------------------------------------------------------ //

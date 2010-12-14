@@ -2471,6 +2471,8 @@ public:
 
 		typedef CUtlHash<HashValueType, HashValueType::HashFuncs, HashValueType::HashFuncs> ActivityToValueIdxHash;
 
+		// These must be here because IFM does not compile/link studio.cpp (?!?)
+
 		// ctor
 		CActivityToSequenceMapping( void ) 
 			: m_pSequenceTuples(NULL), m_iSequenceTuplesCount(0), m_ActToSeqHash(8,0,0), m_expectedPStudioHdr(NULL), m_expectedVModel(NULL) 

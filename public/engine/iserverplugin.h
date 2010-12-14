@@ -45,7 +45,8 @@ typedef int QueryCvarCookie_t;
 
 
 #define INTERFACEVERSION_ISERVERPLUGINCALLBACKS_VERSION_1	"ISERVERPLUGINCALLBACKS001"
-#define INTERFACEVERSION_ISERVERPLUGINCALLBACKS				"ISERVERPLUGINCALLBACKS002"
+#define INTERFACEVERSION_ISERVERPLUGINCALLBACKS_VERSION_2	"ISERVERPLUGINCALLBACKS002"
+#define INTERFACEVERSION_ISERVERPLUGINCALLBACKS				"ISERVERPLUGINCALLBACKS003"
 
 //-----------------------------------------------------------------------------
 // Purpose: callbacks the engine exposes to the 3rd party plugins (ala MetaMod)
@@ -110,7 +111,10 @@ public:
 	// iCookie is the value returned by IServerPluginHelpers::StartQueryCvarValue.
 	// Added with version 2 of the interface.
 	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) = 0;
-	
+
+	// added with version 3 of the interface.
+	virtual void			OnEdictAllocated( edict_t *edict ) = 0;
+	virtual void			OnEdictFreed( const edict_t *edict  ) = 0;	
 };
 
 #define INTERFACEVERSION_ISERVERPLUGINHELPERS			"ISERVERPLUGINHELPERS001"
@@ -154,6 +158,17 @@ public:
 	// Store the return value if you want to match this specific query to the OnQueryCvarValueFinished call.
 	// Returns InvalidQueryCvarCookie if the entity is invalid.
 	virtual QueryCvarCookie_t StartQueryCvarValue( edict_t *pEntity, const char *pName ) = 0;
+
+	// Create a menu on the client
+	// validSlots - a bitfield of keys that are valid input
+	// displayTime - the duration, in seconds, the menu should stay up. -1 means is stays until something is chosen.
+	// needMore - a boolean, true if there is more string yet to be received before displaying the menu, false if it's the last string
+	// szString - menu string to display
+	// returns false if the menu message isn't registered in the game.
+
+	virtual bool SendMenu( edict_t *pEntity, short validSlots, short displayTime, bool needMore, const char *szString ) = 0;
+
+
 };
 
 #endif //ISERVERPLUGIN_H

@@ -631,6 +631,13 @@ public:
 	virtual bool CreateMessage( const char *plugin, edict_t *pEntity, DIALOG_TYPE type, KeyValues *data ) = 0;
 };
 
+#define INTERFACEVERSION_PLUGINGAMEHELPERS		"PluginGameHelpers001"
+
+abstract_class IPluginGameHelpers
+{
+public:
+	virtual bool SendMenu( edict_t *pEntity, short validSlots, short displayTime, bool needMore, const char *szString ) = 0;
+};
 //-----------------------------------------------------------------------------
 // Purpose: Interface exposed from the client .dll back to the engine for specifying shared .dll IAppSystems (e.g., ISoundEmitterSystem)
 //-----------------------------------------------------------------------------

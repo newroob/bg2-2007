@@ -47,6 +47,7 @@ public:
 
 	// modifies section info
 	virtual void SetSectionFgColor(int sectionID, Color color);
+	virtual void SetSectionDividerColor( int sectionID, Color color);
 	// forces a section to always be visible
 	virtual void SetSectionAlwaysVisible(int sectionID, bool visible = true);
 
@@ -81,6 +82,7 @@ public:
 
 	// set the text color of an item
 	virtual void SetItemFgColor(int itemID, Color color);
+	virtual void SetItemFont( int itemID, HFont font );
 
 	/* MESSAGES SENT:
 		"RowSelected"
@@ -173,6 +175,8 @@ protected:
 	virtual void OnKeyCodeTyped( KeyCode code);
 	virtual void OnSetFocus();						// called after the panel receives the keyboard focus
 
+public:
+	virtual void SetFontSection(int sectionID, HFont font);
 private:
 	MESSAGE_FUNC( OnSliderMoved, "ScrollBarSliderMoved" );
 
@@ -223,6 +227,8 @@ private:
 	bool m_bDeleteImageListWhenDone;
 	bool m_bSortNeeded;
 	bool m_bVerticalScrollbarEnabled;
+
+	CPanelAnimationVar( bool, m_bShowColumns, "show_columns", "false" );
 };
 
 } // namespace vgui

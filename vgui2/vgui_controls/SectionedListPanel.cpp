@@ -98,6 +98,10 @@ public:
 		m_SectionDividerColor = col;
 		SetFgColor(col);
 	}
+	void SetDividerColor(Color col )
+	{
+		m_SectionDividerColor = col;
+	}
 
 	void PerformLayout()
 	{
@@ -193,6 +197,7 @@ public:
 				{
 					Assert(dynamic_cast<TextImage *>(image) != NULL);
 					TextImage *textImage = (TextImage *)image;
+					textImage->SetFont(GetFont()); 
 					textImage->SetText(m_pListPanel->GetColumnTextBySection(m_iSectionID, i));
 					textImage->ResizeImageToContentMaxWidth( maxWidth );
 				}
@@ -499,6 +504,71 @@ public:
 		surface()->DrawFilledRect(0, 0, wide, tall);
 	}
 
+	virtual void Paint()
+	{
+		BaseClass::Paint();
+
+		if ( !m_bShowColumns )
+			return;
+
+		// Debugging code to show column widths
+		int wide, tall;
+		GetSize(wide, tall);
+		surface()->DrawSetColor( 255,255,255,255 );
+		surface()->DrawOutlinedRect(0, 0, wide, tall);
+
+		int colCount = m_pListPanel->GetColumnCountBySection(m_iSectionID);
+		if (m_pData && colCount >= 0)
+		{
+			int xpos = 0;
+			for (int i = 0; i < colCount; i++)
+			{
+				const char *keyname = m_pListPanel->GetColumnNameBySection(m_iSectionID, i);
+				int columnFlags = m_pListPanel->GetColumnFlagsBySection(m_iSectionID, i);
+				int maxWidth = m_pListPanel->GetColumnWidthBySection(m_iSectionID, i);
+
+				IImage *image = NULL;
+				if (columnFlags & SectionedListPanel::COLUMN_IMAGE)
+				{
+					// lookup which image is being referred to
+					if (m_pListPanel->m_pImageList)
+					{
+						int imageIndex = m_pData->GetInt(keyname, 0);
+						if (m_pListPanel->m_pImageList->IsValidIndex(imageIndex))
+						{
+							if (imageIndex > 0)
+							{
+								image = m_pListPanel->m_pImageList->GetImage(imageIndex);
+							}
+						}
+					}
+				}
+				else
+				{
+					image = GetImageAtIndex(i);
+				}
+
+				int imageWide = 0, tall = 0;
+				int wide;
+				if (image)
+				{
+					image->GetContentSize(imageWide, tall);
+				}
+				if (maxWidth >= 0)
+				{
+					wide = maxWidth;
+				}
+				else
+				{
+					wide = imageWide;
+				}
+
+				xpos += wide;//max(maxWidth,wide);
+				surface()->DrawOutlinedRect( xpos, 0, xpos, GetTall() );
+			}
+		}
+	}
+
 	virtual void OnMousePressed(MouseCode code)
 	{
 		if (code == MOUSE_LEFT)
@@ -600,6 +670,11 @@ public:
 		m_bOverrideColors = state;
 	}
 
+	void SetShowColumns( bool bShow )
+	{
+		m_bShowColumns = bShow;
+	}
+
 private:
 	SectionedListPanel *m_pListPanel;
 	int m_iID;
@@ -616,6 +691,7 @@ private:
 
 	bool m_bSelected;
 	bool m_bOverrideColors;
+	bool m_bShowColumns;
 };
 
 }; // namespace vgui
@@ -872,6 +948,11 @@ void SectionedListPanel::ApplySchemeSettings(IScheme *pScheme)
 
 	SetBgColor(GetSchemeColor("SectionedListPanel.BgColor", GetBgColor(), pScheme));
 	SetBorder(pScheme->GetBorder("ButtonDepressedBorder"));
+
+	FOR_EACH_LL( m_Items, j )
+	{
+		m_Items[j]->SetShowColumns( m_bShowColumns );
+	}	
 }
 
 //-----------------------------------------------------------------------------
@@ -1080,7 +1161,14 @@ void SectionedListPanel::SetItemFgColor( int itemID, Color color )
 	m_Items[itemID]->SetOverrideColors( true );
 	m_Items[itemID]->InvalidateLayout();
 }
+void SectionedListPanel::SetItemFont( int itemID, HFont font )
+{
+	Assert( m_Items.IsValidIndex(itemID) );
+	if ( !m_Items.IsValidIndex(itemID) )
+		return;
 
+	m_Items[itemID]->SetFont( font );
+}
 //-----------------------------------------------------------------------------
 // Purpose: sets the color of a section text & underline
 //-----------------------------------------------------------------------------
@@ -1091,7 +1179,16 @@ void SectionedListPanel::SetSectionFgColor(int sectionID, Color color)
 
 	m_Sections[sectionID].m_pHeader->SetColor(color);
 }
+//-----------------------------------------------------------------------------
+// Purpose: added so you can change the divider color AFTER the main color.
+//-----------------------------------------------------------------------------
+void SectionedListPanel::SetSectionDividerColor( int sectionID, Color color)
+{
+	if (!m_Sections.IsValidIndex(sectionID))
+		return;
 
+	m_Sections[sectionID].m_pHeader->SetDividerColor(color);
+}
 //-----------------------------------------------------------------------------
 // Purpose: forces a section to always be visible
 //-----------------------------------------------------------------------------
@@ -1102,7 +1199,13 @@ void SectionedListPanel::SetSectionAlwaysVisible(int sectionID, bool visible)
 
 	m_Sections[sectionID].m_bAlwaysVisible = visible;
 }
+void SectionedListPanel::SetFontSection(int sectionID, HFont font)
+{
+	if (!m_Sections.IsValidIndex(sectionID))
+		return;
 
+	m_Sections[sectionID].m_pHeader->SetFont(font);
+}
 //-----------------------------------------------------------------------------
 // Purpose: removes an item from the list; returns false if the item does not exist or is already removed
 //-----------------------------------------------------------------------------
@@ -1714,6 +1817,7 @@ int SectionedListPanel::GetNewItemButton()
 	{
 		// create a new CItemButton
 		m_Items[itemID] = SETUP_PANEL(new CItemButton(this, itemID));
+		m_Items[itemID]->SetShowColumns( m_bShowColumns );
 	}
 	return itemID;
 }

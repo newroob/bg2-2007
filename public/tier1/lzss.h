@@ -22,6 +22,8 @@ struct lzss_header_t
 	unsigned int	actualSize;	// always little endian
 };
 
+class CUtlBuffer;
+
 #define DEFAULT_LZSS_WINDOW_SIZE 4096
 
 class CLZSS
@@ -30,6 +32,8 @@ public:
 	unsigned char*	Compress( unsigned char *pInput, int inputlen, unsigned int *pOutputSize );
 	unsigned char*	CompressNoAlloc( unsigned char *pInput, int inputlen, unsigned char *pOutput, unsigned int *pOutputSize );
 	unsigned int	Uncompress( unsigned char *pInput, unsigned char *pOutput );
+	//unsigned int	Uncompress( unsigned char *pInput, CUtlBuffer &buf );
+	unsigned int	SafeUncompress( unsigned char *pInput, unsigned char *pOutput, unsigned int unBufSize );
 	bool			IsCompressed( unsigned char *pInput );
 	unsigned int	GetActualSize( unsigned char *pInput );
 

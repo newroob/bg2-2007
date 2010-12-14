@@ -196,8 +196,8 @@ public:
 };
 
 // convert legacy elements to non-legacy elements
-// legacy formats include: binary_vN, keyvalues2_v1, keyvalues2_flat_v1, xml, xml_flat
-//   where N is a version number 
+// legacy formats include: sfm_vN, binary_vN, keyvalues2_v1, keyvalues2_flat_v1, xml, xml_flat
+//   where N is a version number (1..9 for sfm, 1..2 for binary)
 class IDmLegacyUpdater
 {
 public:
@@ -209,7 +209,7 @@ public:
 };
 
 // converts old elements to new elements
-// current formats include: animset presets, particle definitions, exported maya character, etc.
+// current formats include: sfm session, animset presets, particle definitions, exported maya character, etc.
 class IDmFormatUpdater
 {
 public:
