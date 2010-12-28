@@ -175,7 +175,12 @@ void CBaseBG2Weapon::PrimaryAttack( void )
 
 		//do tracelines for so many seconds
 		if( sv_retracing_melee.GetBool() )
-			m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( ATTACK_PRIMARY );
+		{
+			m_flStartDemotingHeadhits = m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( ATTACK_PRIMARY );
+
+			if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_SLASH )
+				m_flStartDemotingHeadhits = gpGlobals->curtime + 0.1f;
+		}
 
 		Swing( ATTACK_PRIMARY, true );
 	}
@@ -230,7 +235,12 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 
 		//do tracelines for so many seconds
 		if( sv_retracing_melee.GetBool() )
-			m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( ATTACK_SECONDARY );
+		{
+			m_flStartDemotingHeadhits = m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( ATTACK_PRIMARY );
+
+			if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_SLASH )
+				m_flStartDemotingHeadhits = gpGlobals->curtime + 0.1f;
+		}
 
 		Swing( ATTACK_SECONDARY, true );
 	}
@@ -560,7 +570,8 @@ void CBaseBG2Weapon::Swing( int iAttack, bool bIsFirstAttempt )
 
 	//only allow slashing weapons to hit to head on the first frame
 	//any subsequent hit to the head gets demoted a hit to the chest
-	if( GetAttackType( iAttack ) == ATTACKTYPE_SLASH && traceHit.hitgroup == HITGROUP_HEAD && !bIsFirstAttempt )
+	if( GetAttackType( iAttack ) == ATTACKTYPE_SLASH && traceHit.hitgroup == HITGROUP_HEAD &&
+			gpGlobals->curtime >= m_flStartDemotingHeadhits && !bIsFirstAttempt )
 		traceHit.hitgroup = HITGROUP_CHEST;
 
 	if ( traceHit.fraction == 1.0f )
