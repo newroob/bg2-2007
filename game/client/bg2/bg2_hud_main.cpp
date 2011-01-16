@@ -476,10 +476,20 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 		//local player is victim ("You were hit...")
 		message = m_IsVictimAccumulator.Accumulate( damage, attacker, hitgroup );
 	}
-	else
+	else if( C_BasePlayer::GetLocalPlayer()->entindex() == attacker )
 	{
 		//"You hit..."
 		message = m_IsAttackerAccumulator.Accumulate( damage, victim, hitgroup );
+	}
+	else
+	{
+		/**
+		 * We're neither the attacker nor the victim.
+		 * This should rarely happen since only the attacker and victim are added to
+		 * this message's recipient filter. However, a user reported the indicator
+		 * showing another player's damage, so return in this case just to be safe.
+		 */
+		return;
 	}
 
 	m_pLabelDamageVerificator->SetText( message.c_str() );
