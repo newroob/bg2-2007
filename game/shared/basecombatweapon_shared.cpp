@@ -1409,6 +1409,11 @@ bool CBaseCombatWeapon::DefaultDeploy( char *szViewModel, char *szWeaponModel, i
 	if ( !HasAnyAmmo() && AllowsAutoSwitchFrom() )
 		return false;
 
+	//BG2 - Tjoppen - make sure guns aren't deployed with ironsights enabled and that m_bInReload is false
+	//                the point of this is to make sure players never spawn unable to use the sights
+	DisableIronsights();
+	m_bInReload = false;
+
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 	if ( pOwner )
 	{
