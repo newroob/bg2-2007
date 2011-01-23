@@ -56,5 +56,7 @@ void RegisterUserMessages( void )
 	usermessages->Register( "VCommSounds", -1 ); //Position Of Player (varies). -HairyPotter
 	//usermessages->Register( "MapName", -1 ); //Name of map that we're changng to (varies). -HairyPotter //Not used yet.
 	usermessages->Register( "BG2Events", -1 ); //BG2 - Used for localization. -HairyPotter
+	usermessages->Register( "WeaponPickup", -1 ); //BG2 - roob - weapon swap
+	usermessages->Register( "PickupDelay", -1 );
 	//
 }

@@ -171,6 +171,12 @@ public:
 	// Weapon Pickup For Player
 	virtual void			SetPickupTouch( void );
 	virtual void 			DefaultTouch( CBaseEntity *pOther );	// default weapon touch
+	//BG2 - weapon pickup	
+	bool					IsDropped (void) { return m_bDropped; }
+	void					CheckPickup( void ); //BG2 - roob - weapon swap
+	//vars
+	CNetworkVar( bool, m_bInPickup);
+	float					m_fPickupEnd;
 
 	// HUD Hints
 	virtual bool			ShouldDisplayAltFireHUDHint();
@@ -478,7 +484,7 @@ public:
 	// Weapon state
 	bool					m_bInReload;			// Are we in the middle of a reload;
 	bool					m_bFireOnEmpty;			// True when the gun is empty and the player is still holding down the attack key(s)
-	
+
 	//BG2 - Tjoppen - m_bDontAutoreload
 	bool					m_bDontAutoreload;
 	//
@@ -557,7 +563,7 @@ private:
 	bool					m_bReloadHudHintDisplayed;	// Have we displayed a reload HUD hint since this weapon was deployed?
 	float					m_flHudHintPollTime;	// When to poll the weapon again for whether it should display a hud hint.
 	float					m_flHudHintMinDisplayTime; // if the hint is squelched before this, reset my counter so we'll display it again.
-	
+	bool					m_bDropped; //BG2 - weapon pickup
 	// Server only
 #if !defined( CLIENT_DLL )
 
@@ -566,7 +572,7 @@ private:
 	COutputEvent			m_OnPlayerPickup;	// Fired when the player picks up the weapon.
 	COutputEvent			m_OnNPCPickup;		// Fired when an NPC picks up the weapon.
 	COutputEvent			m_OnCacheInteraction;	// For awarding lambda cache achievements in HL2 on 360. See .FGD file for details 
-
+	
 #else // Client .dll only
 	bool					m_bJustRestored;
 

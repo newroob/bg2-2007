@@ -117,6 +117,8 @@ CBaseCombatWeapon::CBaseCombatWeapon()
 #if !defined( CLIENT_DLL )
 	m_pConstraint = NULL;
 	OnBaseCombatWeaponCreated( this );
+
+	m_bDropped = false; //BG2 - roob - wep pickup
 #endif
 
 	m_hWeaponFileInfo = GetInvalidWeaponInfoHandle();
@@ -695,6 +697,8 @@ void CBaseCombatWeapon::Drop( const Vector &vecVelocity )
 {
 #if !defined( CLIENT_DLL )
 
+	m_bDropped = true; //BG2 - roob - wep pickup
+
 	// Once somebody drops a gun, it's fair game for removal when/if
 	// a game_weapon_manager does a cleanup on surplus weapons in the
 	// world.
@@ -846,23 +850,42 @@ void CBaseCombatWeapon::MakeTracer( const Vector &vecTracerSrc, const trace_t &t
 //-----------------------------------------------------------------------------
 void CBaseCombatWeapon::DefaultTouch( CBaseEntity *pOther )
 {
-//BG2 - Tjoppen - no weapon pickup
-/*#if !defined( CLIENT_DLL )
-	// Can't pick up dissolving weapons
-	if ( IsDissolving() )
-		return;
+//roob - weapon pickup - let user know they're touching
 
-	// if it's not a player, ignore
+#if !defined( CLIENT_DLL )
+
+	bool loaded = false;
 	CBasePlayer *pPlayer = ToBasePlayer(pOther);
-	if ( !pPlayer )
-		return;
 
-	if (pPlayer->BumpWeapon(this))
+	
+
+	//fixme: relaod check
+	if ( pPlayer )
 	{
-		OnPickedUp( pPlayer );
+		if ( pPlayer->GetActiveWeapon() )
+		{
+			if ( pPlayer->GetActiveWeapon()->m_bInReload || pPlayer->GetActiveWeapon()->m_bIsIronsighted )
+			{
+				return;
+			}
+		}
+		if ( m_iClip1 > 0 )
+		{
+			loaded = true;
+		}
+		
+		CSingleUserRecipientFilter filter( pPlayer );
+		const char *notice_name = this->GetDeathNoticeName();
+		notice_name += 7;
+
+		UserMessageBegin( filter, "WeaponPickup" );
+			WRITE_BOOL( loaded );
+			WRITE_STRING( notice_name );			
+		MessageEnd();
 	}
-#endif*/
-//
+
+#endif
+
 }
 
 //---------------------------------------------------------
@@ -1653,6 +1676,10 @@ void CBaseCombatWeapon::ItemPostFrame( void )
 	{
 		CheckReload();
 	}
+	if ( IsDropped() ) //BG2 - roob check if weapon pickup tiem has expired
+	{
+		CheckPickup();
+	}
 
 	bool bFired = false;
 
@@ -2114,6 +2141,15 @@ void CBaseCombatWeapon::CheckReload( void )
 			m_flNextSecondaryAttack = gpGlobals->curtime;
 			m_bInReload = false;
 		}
+	}
+}
+//BG2 - roob - check if pickup delay has elapsed.
+void CBaseCombatWeapon::CheckPickup( void )
+{
+	if (gpGlobals->curtime > m_fPickupEnd )
+	{
+		m_bDropped = false;
+		m_bInPickup = false;
 	}
 }
 
@@ -2624,6 +2660,7 @@ BEGIN_NETWORK_TABLE(CBaseCombatWeapon, DT_BaseCombatWeapon)
 	//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
 	SendPropBool( SENDINFO( m_bIsIronsighted ) ),
 	SendPropFloat( SENDINFO( m_flIronsightedTime ) ),
+	SendPropBool( SENDINFO( m_bInPickup ) ), //BG2 - weapon pickup
 	//
 #else
 	RecvPropDataTable("LocalWeaponData", 0, 0, &REFERENCE_RECV_TABLE(DT_LocalWeaponData)),
@@ -2635,6 +2672,7 @@ BEGIN_NETWORK_TABLE(CBaseCombatWeapon, DT_BaseCombatWeapon)
 	//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
 	RecvPropBool( RECVINFO( m_bIsIronsighted ) ),
 	RecvPropFloat( RECVINFO( m_flIronsightedTime ) ),
+	RecvPropBool( RECVINFO( m_bInPickup ) ), //BG2 - weapon pickup
 	//
 #endif
 END_NETWORK_TABLE()

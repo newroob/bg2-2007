@@ -703,10 +703,20 @@ int	CBaseCombatWeapon::ObjectCaps( void )
 void CBaseCombatWeapon::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
 	//BG2 - Tjoppen - no +use on weapons. ANY weapon - including accidentally spawned HL2 ones
-	/*CBasePlayer *pPlayer = ToBasePlayer( pActivator );
+	CBasePlayer *pPlayer = ToBasePlayer( pActivator );
 	
 	if ( pPlayer )
 	{
+		if ( !pPlayer->m_Local.m_bDucked )
+			return;
+
+		if ( pPlayer->GetActiveWeapon() )
+		{
+			if ( pPlayer->GetActiveWeapon()->m_bInReload || pPlayer->GetActiveWeapon()->m_bIsIronsighted || pPlayer->GetActiveWeapon()->m_bInPickup )
+			{
+				return;
+			}
+		}
 		m_OnPlayerUse.FireOutput( pActivator, pCaller );
 
 		//
@@ -722,7 +732,7 @@ void CBaseCombatWeapon::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_
 		{
 			pPlayer->PickupObject( this );
 		}
-	}*/
+	}
 	//
 }
 

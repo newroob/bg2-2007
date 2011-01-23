@@ -382,6 +382,9 @@ bool CBaseHudWeaponSelection::IsHudMenuPreventingWeaponSelection()
 //-----------------------------------------------------------------------------
 void CBaseHudWeaponSelection::SelectSlot( int iSlot )
 {
+	if ( !CheckPickup() ) //BG2 - roob - pickup
+		return;
+
 	// A menu may be overriding weapon selection commands
 	CHudMenu *pHudMenu = GET_HUDELEMENT( CHudMenu );
 	if ( pHudMenu && IsHudMenuTakingInput() )	
@@ -417,6 +420,9 @@ void CBaseHudWeaponSelection::UserCmd_NextWeapon(void)
 	if ( !BaseClass::ShouldDraw() )
 		return;
 
+	if ( !CheckPickup() ) //BG2 - roob - pickup
+		return;
+
 	CycleToNextWeapon();
 	if( hud_fastswitch.GetInt() > 0 )
 	{
@@ -432,6 +438,9 @@ void CBaseHudWeaponSelection::UserCmd_PrevWeapon(void)
 {
 	// If we're not allowed to draw, ignore weapon selections
 	if ( !BaseClass::ShouldDraw() )
+		return;
+
+	if ( !CheckPickup() ) //BG2 - roob - pickup
 		return;
 
 	CycleToPrevWeapon();
@@ -451,6 +460,13 @@ void CBaseHudWeaponSelection::UserCmd_LastWeapon(void)
 {
 	// If we're not allowed to draw, ignore weapon selections
 	if ( !BaseClass::ShouldDraw() )
+		return;	
+
+	C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
+	if ( !player )
+		return;
+
+	if ( !CheckPickup() ) //BG2 - roob - pickup
 		return;
 
 	/*
@@ -614,4 +630,16 @@ C_BaseCombatWeapon *CBaseHudWeaponSelection::GetNextActivePos( int iSlot, int iS
 	}
 
 	return pNextWeapon;
+}
+bool CBaseHudWeaponSelection::CheckPickup( void )
+{
+	//BG2 - roob - no wep change during pickup
+	C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
+	if ( !player )
+		return false;
+	
+	if ( player->GetActiveWeapon()->m_bInPickup )
+		return false;
+
+	return true;
 }

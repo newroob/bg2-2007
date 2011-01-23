@@ -89,6 +89,9 @@ public:
 	
 	virtual int	KeyInput( int down, ButtonCode_t keynum, const char *pszCurrentBinding );
 
+private:
+	bool CheckPickup( void );
+
 protected:
 	// returns true if there is a weapon currently visible to select
 	virtual bool IsWeaponSelectable()	{ return IsInSelectionMode(); }

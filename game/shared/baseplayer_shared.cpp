@@ -762,6 +762,13 @@ void CBasePlayer::Weapon_SetLast( CBaseCombatWeapon *pWeapon )
 //-----------------------------------------------------------------------------
 bool CBasePlayer::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelindex /*=0*/ ) 
 {
+	//BG2 - roob - dont allow to switch in pickup
+	if ( GetActiveWeapon() )
+	{
+		if ( GetActiveWeapon() != pWeapon && GetActiveWeapon()->m_bInPickup )
+			return false;
+	}
+
     MDLCACHE_CRITICAL_SECTION(); //BG2 - This was added to fix the IsFrameLocking assert. -HairyPotter
 
 	CBaseCombatWeapon *pLastWeapon = GetActiveWeapon();

@@ -1133,6 +1133,7 @@ bool CHL2MP_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 		return false;
 	}
 
+	/* BG2 - roob don't need this
 	bool bOwnsWeaponAlready = !!Weapon_OwnsThisType( pWeapon->GetClassname(), pWeapon->GetSubType());
 
 	if ( bOwnsWeaponAlready == true ) 
@@ -1149,7 +1150,7 @@ bool CHL2MP_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 		 {
 			 return false;
 		 }
-	}
+	} */
 
 	pWeapon->CheckRespawn();
 	Weapon_Equip( pWeapon );
