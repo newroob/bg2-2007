@@ -826,6 +826,7 @@ DECLARE_BG2_WEAPON( fowler )
 	m_flBallSpread = 1.0f;
 	m_flShotSpread = 6.95f * 0.75f;		//4 m spread at 33 m -> (4 / 2) / 33 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
+	m_flShotMuzzleVelocity = MUZZLE_VELOCITY_BUCKSHOT;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = FOWLER_NUM_SHOT;
 	m_iDamagePerShot = FOWLER_SHOT_DAMAGE;
@@ -1160,6 +1161,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_flBallSpread = 1.0f;
 	m_flShotSpread = 7.64f * 0.75f;		//4 m spread at 30 m -> (4 / 2) / 30 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
+	m_flShotMuzzleVelocity = MUZZLE_VELOCITY_BUCKSHOT;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = CARBINE_NUM_SHOT;
 	m_iDamagePerShot = CARBINE_SHOT_DAMAGE;

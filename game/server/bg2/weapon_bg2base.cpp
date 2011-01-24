@@ -356,6 +356,7 @@ void CBaseBG2Weapon::FireBullets( int iAttack )
 	//figure out how many balls we should fire based on the player's current ammo kit
 	int numActualShot = 1;
 	int iDamage = 0;
+	float muzzleVelocity = m_flMuzzleVelocity;
 	
 	switch( pPlayer->GetCurrentAmmoKit() )
 	{
@@ -369,6 +370,7 @@ void CBaseBG2Weapon::FireBullets( int iAttack )
 		{
 			numActualShot = m_iNumShot;
 			iDamage = m_iDamagePerShot;
+			muzzleVelocity = m_flShotMuzzleVelocity;
 		}
 		else
 		{
@@ -385,7 +387,7 @@ void CBaseBG2Weapon::FireBullets( int iAttack )
 	else if( numActualShot > 30 )
 		numActualShot = 30;
 
-	float muzzleVelocity = sv_muzzle_velocity_override.GetFloat() > 0 ? sv_muzzle_velocity_override.GetFloat() : m_flMuzzleVelocity;
+	muzzleVelocity = sv_muzzle_velocity_override.GetFloat() > 0 ? sv_muzzle_velocity_override.GetFloat() : muzzleVelocity;
 
 	if( sv_simulatedbullets.GetBool() )
 	{

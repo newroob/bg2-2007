@@ -310,6 +310,7 @@ public:
 	float	m_flBallSpread;		//used when firing single balls
 	float	m_flShotSpread;		//used when firing shot, if the current gun is capable of that
 	float	m_flMuzzleVelocity;
+	float	m_flShotMuzzleVelocity;	//muzzle velocity when firing buckshot
 	float	m_flZeroRange;		//range to zero the gun in at
 	int		m_iNumShot;
 	float	m_iDamagePerShot;
