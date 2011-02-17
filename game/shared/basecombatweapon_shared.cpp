@@ -405,7 +405,8 @@ bool CBaseCombatWeapon::UsesClipsForAmmo2( void ) const
 //-----------------------------------------------------------------------------
 int CBaseCombatWeapon::GetWeight( void ) const
 {
-	return GetWpnData().iWeight;
+	//BG2 - roob
+	return m_iWeight;
 }
 
 //-----------------------------------------------------------------------------

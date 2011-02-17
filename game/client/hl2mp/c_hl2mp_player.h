@@ -88,10 +88,12 @@ public:
 
 	//return the player's speed based on whether which class we are, which weapon kit we're using etc.
 	int		GetCurrentSpeed( void ) const;
+	int		GetKitWeight( void ) const;
 private:
 	int		m_iClass;
 	int		m_iCurrentAmmoKit;
 	int		m_iSpeedModifier;
+	int		m_i_BaseWeight;
 	//
 	//BG@ - Draco - Rewards
 	//BG2 - Tjoppen - rewards put on hold

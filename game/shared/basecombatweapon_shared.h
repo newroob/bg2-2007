@@ -178,6 +178,9 @@ public:
 	CNetworkVar( bool, m_bInPickup);
 	float					m_fPickupEnd;
 
+	//BG2 - roob - weapon weights
+	int						m_iWeight;
+
 	// HUD Hints
 	virtual bool			ShouldDisplayAltFireHUDHint();
 	virtual void			DisplayAltFireHudHint();	
