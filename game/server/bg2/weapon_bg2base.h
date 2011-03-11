@@ -282,6 +282,7 @@ public:
 	float	m_flNextDelayedFire;
 
 
+	void		Think( void );
 	void		ItemPostFrame( void );
 	void		Fire( int iAttack );
 	void		FireBullets( int iAttack );

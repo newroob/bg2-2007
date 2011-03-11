@@ -37,6 +37,7 @@
 //BG2 - Draco - no hl2 player stuff on server!
 #ifdef CLIENT_DLL
 	#include "c_hl2mp_player.h"
+	#include "hl2mp_gamerules.h"
 	#include "c_te_effect_dispatch.h"
 
 	#include "cbase.h"
@@ -671,6 +672,76 @@ static float AngleForZeroedRange( float muzzleVelocity, float zeroRange )
 
 	//half of sin^-1(q) in degrees
 	return 90.f / M_PI * asinf(q);
+}
+
+void CBaseBG2Weapon::Think( void )
+{
+	CHL2MP_Player *pOwner = ToHL2MPPlayer( GetOwner() );
+	int group;
+
+	//should be fast enough to swap submodels and textures around
+	SetNextThink( gpGlobals->curtime + 0.05f ); 
+
+	if( pOwner == NULL )
+		return;
+
+	CBaseViewModel *pViewModel = pOwner->GetViewModel();
+
+	//only fiddle around if we have a view model and we're the active weapon
+	//if we're not the active weapon, we'd mess up the active weapon's submodels and skin!
+	if ( !pViewModel || pOwner->GetActiveWeapon() != this )
+		return;
+
+	//hide bayonet if we don't have a secondary attack
+	if ( (group = pViewModel->FindBodygroupByName( "musket_bayonet" )) >= 0)
+		pViewModel->SetBodygroup( group, m_Attackinfos[1].m_iAttacktype == ATTACKTYPE_STAB );
+
+	//pick the correct metal
+	if ( (group = pViewModel->FindBodygroupByName( "musket_metal" )) >= 0)
+		pViewModel->SetBodygroup( group, pOwner->GetTeamNumber() == TEAM_BRITISH );
+
+	//use the correct arms (natives don't have sleeves)
+	if ( (group = pViewModel->FindBodygroupByName( "arms" )) >= 0)
+		pViewModel->SetBodygroup( group, pOwner->GetTeamNumber() == TEAM_BRITISH &&
+		                            pOwner->GetClass() == CLASS_SKIRMISHER );
+
+	//set sleev_texgroup via m_nSkin
+	switch( pOwner->GetTeamNumber() )
+	{
+	case TEAM_AMERICANS:
+		switch( pOwner->GetClass() )
+		{
+		case CLASS_SNIPER:
+			//minuteman
+			pViewModel->m_nSkin = 1;
+			break;
+		case CLASS_SKIRMISHER:
+			//militia
+			pViewModel->m_nSkin = 1;
+			break;
+		default:
+			//everyone else
+			pViewModel->m_nSkin = 0;
+			break;
+		}
+		break;
+	case TEAM_BRITISH:
+		switch( pOwner->GetClass() )
+		{
+		case CLASS_SNIPER:
+			//jäger
+			pViewModel->m_nSkin = 4;
+			break;
+		default:
+			//everyone else
+			pViewModel->m_nSkin = 3;
+			break;
+		}
+		break;
+	default:
+		pViewModel->m_nSkin = 0;
+		break;
+	}
 }
 
 void CBaseBG2Weapon::ItemPostFrame( void )
