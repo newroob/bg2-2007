@@ -207,7 +207,7 @@ void CTargetID::Paint()
 		if ( sIDString[0] )
 		{
 			int wide, tall;
-			int ypos = YRES(260);
+			int ypos = YRES(280);
 			int xpos = XRES(10);
 
 			vgui::surface()->GetTextSize( m_hFont, sIDString, wide, tall );
