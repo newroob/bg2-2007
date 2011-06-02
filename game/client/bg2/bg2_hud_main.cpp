@@ -68,8 +68,8 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	SetHiddenBits( HIDEHUD_ALL );//HIDEHUD_MISCSTATUS );
 
 	m_Base = NULL; 
-	m_Stamina = NULL;
-	m_Health = NULL;
+	m_AmerHealthBase = m_AmerHealth = m_AmerStamina = NULL;
+	m_BritHealthBase = m_BritHealth = m_BritStamina = NULL;
 
 	m_flExpireTime = 0;
 
@@ -179,8 +179,12 @@ void CHudBG2::Init( void )
 void CHudBG2::VidInit( void )
 {
 	m_Base = gHUD.GetIcon( "hud_base" );
-	m_Stamina = gHUD.GetIcon( "hud_stamina" );
-	m_Health = gHUD.GetIcon( "hud_health" );
+	m_AmerHealthBase = gHUD.GetIcon("hud_amer_health_base");
+	m_AmerHealth     = gHUD.GetIcon("hud_amer_health");
+	m_AmerStamina    = gHUD.GetIcon("hud_amer_stamina");
+	m_BritHealthBase = gHUD.GetIcon("hud_brit_health_base");
+	m_BritHealth     = gHUD.GetIcon("hud_brit_health");
+	m_BritStamina    = gHUD.GetIcon("hud_brit_stamina");
 }
 
 //==============================================
@@ -202,7 +206,8 @@ static ConVar cl_draw_lms_indicator( "cl_draw_lms_indicator", "1", FCVAR_CLIENTD
 
 void CHudBG2::Paint()
 {
-	if( !m_Base || !m_Stamina || !m_Health )
+	if( !m_Base || !m_AmerHealthBase || !m_AmerHealth || !m_AmerStamina ||
+		!m_BritHealthBase || !m_BritHealth || !m_BritStamina )
 		return;
 
 	//BG2 - Tjoppen - Always paint damage label, so it becomes visible while using iron sights
@@ -269,27 +274,48 @@ void CHudBG2::Paint()
 	int ystart = GetTall() - m_Base->Height();
 
 	m_Base->DrawSelf(0,ystart,ColourWhite);
-	int healthheight = pHL2Player->GetHealth()* 1.05;
-	int healthy = 105 - healthheight;
-	int stamheight = pHL2Player->m_iStamina * 1.05;
-	int stamy = 105 - stamheight;
-	m_Stamina->DrawSelfCropped(50,ystart + 2 + stamy,0,/*m_Stamina->Height()*//*20*/ stamy, 25, stamheight/*20*/,ColourWhite);
-	m_Health->DrawSelfCropped(15,ystart + 2 + healthy,0,/*m_Health->Height()*//*40*/ healthy, 25, healthheight /*10*/,ColourWhite);
-	
+
+	CHudTexture *pHealthBase, *pHealth, *pStamina;
+
+	if (pHL2Player->GetTeamNumber() == TEAM_AMERICANS)
+	{
+		pHealthBase  = m_AmerHealthBase;
+		pHealth      = m_AmerHealth;
+		pStamina     = m_AmerStamina;
+	}
+	else
+	{
+		pHealthBase  = m_BritHealthBase;
+		pHealth      = m_BritHealth;
+		pStamina     = m_BritStamina;
+	}
+
+	int healthheight = pHealth->Height()  * pHL2Player->GetHealth() / 100;
+	int stamheight   = pStamina->Height() * pHL2Player->m_iStamina  / 100;
+
+	int healthy = pHealth->Height()  - healthheight;
+	int stamy   = pStamina->Height() - stamheight;
+	int offset = (pStamina->Height() - pHealth->Height()) / 2;
+	int ystart2 = GetTall() - pStamina->Height();
+
+	pStamina->DrawSelfCropped(m_Base->Width(), ystart2 + stamy,            0, stamy,   64, stamheight,   ColourWhite);
+	pHealthBase->DrawSelf(    m_Base->Width(), ystart2           + offset,                               ColourWhite);
+	pHealth->DrawSelfCropped( m_Base->Width(), ystart2 + healthy + offset, 0, healthy, 64, healthheight, ColourWhite);
+
 	C_Team *pAmer = GetGlobalTeam(TEAM_AMERICANS);
 	C_Team *pBrit = GetGlobalTeam(TEAM_BRITISH);
 	Q_snprintf( msg2, 512, "%i ", pBrit ? pBrit->Get_Score() : 0);	//BG2 - Tjoppen - avoid NULL
 	m_pLabelBScore->SetText(msg2);
 	m_pLabelBScore->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelBScore->SetPos(90,ystart + 40 - h/2);
+	m_pLabelBScore->SetPos(15,ystart + 40 - h/2);
 	m_pLabelBScore->SetFgColor( ColourWhite );
 	
 	Q_snprintf( msg2, 512, "%i ", pAmer ? pAmer->Get_Score() : 0);	//BG2 - Tjoppen - avoid NULL
 	m_pLabelAScore->SetText(msg2);
 	m_pLabelAScore->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelAScore->SetPos(135,ystart + 40 - h/2);
+	m_pLabelAScore->SetPos(60,ystart + 40 - h/2);
 	m_pLabelAScore->SetFgColor( ColourWhite );
 
 	if( HL2MPRules()->UsingTickets() )
@@ -322,7 +348,7 @@ void CHudBG2::Paint()
 		}
 		m_pLabelAmmo->SizeToContents();
 		m_pLabelAmmo->GetSize( w, h );
-		m_pLabelAmmo->SetPos(135,ystart + 100 - h/2);
+		m_pLabelAmmo->SetPos(55,ystart + 100 - h/2);
 	}
 	else
 		m_pLabelAmmo->SetVisible( false );
@@ -335,7 +361,7 @@ void CHudBG2::Paint()
 	m_pLabelWaveTime->SetText(msg2);
 	m_pLabelWaveTime->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelWaveTime->SetPos(120,ystart + 67 - h/2);
+	m_pLabelWaveTime->SetPos(50,ystart + 66 - h/2);
 	m_pLabelWaveTime->SetFgColor( ColourWhite );
 
 	if( HL2MPRules()->UsingTickets() )

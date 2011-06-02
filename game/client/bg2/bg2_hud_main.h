@@ -199,8 +199,12 @@ public:
 private:
 
 	CHudTexture		* m_Base; 
-	CHudTexture		* m_Stamina;
-	CHudTexture		* m_Health;
+	CHudTexture		* m_AmerHealthBase;
+	CHudTexture		* m_AmerHealth;
+	CHudTexture		* m_AmerStamina;
+	CHudTexture		* m_BritHealthBase;
+	CHudTexture		* m_BritHealth;
+	CHudTexture		* m_BritStamina;
 
 	vgui::Label * m_pLabelBScore; 
 	vgui::Label * m_pLabelAScore; 
