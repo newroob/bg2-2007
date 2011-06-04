@@ -290,17 +290,16 @@ void CHudBG2::Paint()
 		pStamina     = m_BritStamina;
 	}
 
-	int healthheight = pHealth->Height()  * pHL2Player->GetHealth() / 100;
+	int healthheight = pHealth->Height()  * (100 - pHL2Player->GetHealth()) / 100;
 	int stamheight   = pStamina->Height() * pHL2Player->m_iStamina  / 100;
 
-	int healthy = pHealth->Height()  - healthheight;
 	int stamy   = pStamina->Height() - stamheight;
 	int offset = (pStamina->Height() - pHealth->Height()) / 2;
 	int ystart2 = GetTall() - pStamina->Height();
 
-	pStamina->DrawSelfCropped(m_Base->Width(), ystart2 + stamy,            0, stamy,   64, stamheight,   ColourWhite);
-	pHealthBase->DrawSelf(    m_Base->Width(), ystart2           + offset,                               ColourWhite);
-	pHealth->DrawSelfCropped( m_Base->Width(), ystart2 + healthy + offset, 0, healthy, 64, healthheight, ColourWhite);
+	pStamina->DrawSelfCropped(m_Base->Width(), ystart2 + stamy,  0, stamy, 64, stamheight,   ColourWhite);
+	pHealthBase->DrawSelf(    m_Base->Width(), ystart2 + offset,                               ColourWhite);
+	pHealth->DrawSelfCropped( m_Base->Width(), ystart2 + offset, 0, 0,     64, healthheight, ColourWhite);
 
 	C_Team *pAmer = GetGlobalTeam(TEAM_AMERICANS);
 	C_Team *pBrit = GetGlobalTeam(TEAM_BRITISH);
