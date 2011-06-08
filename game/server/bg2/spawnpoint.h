@@ -62,6 +62,11 @@ public:
 
 		m_flNextSetEnabled = gpGlobals->curtime + 0.1f;				//wait for other outputs and stuff to fire
 
+		if ( !strcmp(GetClassname(), "info_player_american") )
+			m_iSpawnTeam = TEAM_AMERICANS;
+		else if ( !strcmp(GetClassname(), "info_player_british") )
+			m_iSpawnTeam = TEAM_BRITISH;
+		else
 		switch( m_iDefaultTeam )
 		{
 			case 0:
