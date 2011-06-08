@@ -2092,7 +2092,7 @@ CBaseEntity* CHL2MP_Player::HandleSpawnList( const CUtlVector<CBaseEntity *>& sp
 	for ( int x = 0; x < spawns.Count(); x++ ) 
 	{
 		CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>( spawns[(x + offset) % spawns.Count()] );
-		if ( pSpawn && !pSpawn->m_bReserved && pSpawn->IsEnabled() )
+		if ( pSpawn && !pSpawn->m_bReserved && pSpawn->IsEnabled() && pSpawn->GetTeam() == GetTeamNumber() )
 		{
 			CBaseEntity *ent = NULL;
 			bool IsTaken = false;
