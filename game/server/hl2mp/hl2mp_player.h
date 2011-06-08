@@ -37,6 +37,9 @@ public:
 
 class CHL2MP_Player : public CHL2_Player
 {
+	//returns an abitrary free spawn point from the given list
+	CBaseEntity* HandleSpawnList( const CUtlVector<CBaseEntity *>& spawns );
+
 public:
 	DECLARE_CLASS( CHL2MP_Player, CHL2_Player );
 

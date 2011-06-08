@@ -2083,105 +2083,58 @@ void CHL2MP_Player::DeathSound( const CTakeDamageInfo &info )
 
 	EmitSound( filter, entindex(), ep );
 }
-CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
+
+CBaseEntity* CHL2MP_Player::HandleSpawnList( const CUtlVector<CBaseEntity *>& spawns )
 {
-	if( GetTeamNumber() <= TEAM_SPECTATOR )
-		return NULL;	//BG2 - Tjoppen - spectators/unassigned don't spawn..
-
-	//CBaseEntity *pSpot = NULL;
-	//edict_t		*player;
-
-	//player = edict();
-
-	//BG2 - Rewrote all of the stuff below. -HairyPotter
-	switch ( GetTeamNumber() )
+	//BG2 - Tjoppen - the code below was broken out of EntSelectSpawnPoint()
+	for ( int x = 0; x < spawns.Count(); x++ ) 
 	{
-		case TEAM_AMERICANS:
-			for ( int x = 0; x < m_AmericanSpawns.Count(); x++ ) 
-			{
-				CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>(  m_AmericanSpawns[x] );
-				if ( pSpawn && !pSpawn->m_bReserved && pSpawn->IsEnabled() )
-				{
-					CBaseEntity *ent = NULL;
-					bool IsTaken = false;
-					//32 world units seems... safe.. -HairyPotter
-					for ( CEntitySphereQuery sphere( m_AmericanSpawns[x]->GetAbsOrigin(), 32 /*128*/ ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
-					{
-						// Check to see if the ent is a player.
-						if ( ent->IsPlayer() /*&& !(ent->edict() == player)*/ )
-						{
-							IsTaken = true;
-							//Msg("Someone is in the way of the american spawn. \n");
-						}
-					}
-					if ( IsTaken ) //Retry?
-						continue;
-				
-					pSpawn->m_bReserved = true;
-					return m_AmericanSpawns[x];
-				}
-
-				continue;
-			}
-			break;
-		case TEAM_BRITISH:
-			for ( int x = 0; x < m_BritishSpawns.Count(); x++ ) 
-			{
-				CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>( m_BritishSpawns[x] );
-				if ( pSpawn && pSpawn->IsEnabled() && !pSpawn->m_bReserved )
-				{
-					CBaseEntity *ent = NULL;
-					bool IsTaken = false;
-					//32 world units seems... safe.. -HairyPotter
-					for ( CEntitySphereQuery sphere( m_BritishSpawns[x]->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
-					{
-						if ( ent->IsPlayer() )
-						{	
-							IsTaken = true;
-						}
-					}
-					if ( IsTaken ) //Retry?
-						continue;
-
-					pSpawn->m_bReserved = true;
-					return m_BritishSpawns[x];
-				}
-
-				continue;
-			}
-			break;
-		default:
-			return false;
-			break;
-	}
-	//
-
-	//while( (pSpot = gEntList.FindEntityByClassname( pSpot, "info_player_multispawn" )) != NULL )
-	for ( int x = 0; x < m_MultiSpawns.Count(); x++ ) 
-	{
-		CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>( m_MultiSpawns[x] );
-		if ( pSpawn && pSpawn->IsEnabled() && pSpawn->GetTeam() == GetTeamNumber() && !pSpawn->m_bReserved )
+		CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>( spawns[x] );
+		if ( pSpawn && !pSpawn->m_bReserved && pSpawn->IsEnabled() )
 		{
 			CBaseEntity *ent = NULL;
 			bool IsTaken = false;
 			//32 world units seems... safe.. -HairyPotter
-			for ( CEntitySphereQuery sphere( m_MultiSpawns[x]->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
+			for ( CEntitySphereQuery sphere( pSpawn->GetAbsOrigin(), 32 ); (ent = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 			{
+				// Check to see if the ent is a player.
 				if ( ent->IsPlayer() )
-				{	
+				{
 					IsTaken = true;
 				}
 			}
 			if ( IsTaken ) //Retry?
 				continue;
-
+		
 			pSpawn->m_bReserved = true;
-			return m_MultiSpawns[x];
+			return pSpawn;
 		}
-
-		continue;
 	}
 
+	return NULL;
+}
+
+CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
+{
+	if( GetTeamNumber() <= TEAM_SPECTATOR )
+		return NULL;	//BG2 - Tjoppen - spectators/unassigned don't spawn..
+
+	CBaseEntity *pSpot = NULL;
+
+	if ( GetTeamNumber() == TEAM_AMERICANS )
+		pSpot = HandleSpawnList( m_AmericanSpawns );
+	else if ( GetTeamNumber() == TEAM_BRITISH )
+		pSpot = HandleSpawnList( m_BritishSpawns );
+	else
+		return NULL;
+
+	if ( pSpot )
+		return pSpot;
+
+	pSpot = HandleSpawnList( m_MultiSpawns );
+
+	if ( pSpot )
+		return pSpot;
 
 	switch ( GetTeamNumber() )
 	{
