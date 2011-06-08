@@ -150,9 +150,6 @@ bool CBaseBG2Weapon::Deploy( void )
 //PrimaryAttack
 void CBaseBG2Weapon::PrimaryAttack( void )
 {
-	if ( m_bInPickup ) //roob - no attack in pickup cooldown
-		return;
-
 	//disallow holding reload button
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 
@@ -214,9 +211,6 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 	if ( m_bIsIronsighted )
 		return;
 
-	if ( m_bInPickup ) //roob - no attack in pickup cooldown
-		return;
-
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 
 	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
@@ -268,11 +262,6 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 	if ( pHL2Player )
 		pHL2Player->DrainStamina( GetStaminaDrain( ATTACK_SECONDARY ) );
 #endif
-}
-//roob allow +use on weapons
-int	CBaseBG2Weapon::ObjectCaps( void )
-{
-	return FCAP_IMPULSE_USE;
 }
 
 //-----------------------------------------------------------------------------
@@ -834,7 +823,7 @@ bool CBaseBG2Weapon::Holster( CBaseCombatWeapon *pSwitchingTo )
 bool CBaseBG2Weapon::Reload( void )
 {
 	//BG2 - Tjoppen - disallow reloading until delayed firing has occured
-	if( m_bShouldFireDelayed || m_bInPickup )
+	if( m_bShouldFireDelayed )
 		return false;
 
 	return BaseClass::Reload();

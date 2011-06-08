@@ -1942,45 +1942,6 @@ void CBaseCombatCharacter::SetLightingOriginRelative( CBaseEntity *pLightingOrig
 //-----------------------------------------------------------------------------
 void CBaseCombatCharacter::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 {
-	if ( GetActiveWeapon() )
-	{
-		if ( GetActiveWeapon() != pWeapon && GetActiveWeapon()->m_bInPickup )
-			return;
-	}
-
-	//roob - weapon pickup, swap logic.
-	if ( pWeapon->IsDropped() )
-	{
-		int j = 0;
-		if ( GetActiveWeapon() )
-		{			
-			for (int i=0;i<MAX_WEAPONS;i++) 
-			{	
-				if (m_hMyWeapons[i]) 
-				{
-					j++;
-				}
-			}
-			if ( j == 1 && GetActiveWeapon()->GetWpnData().iMaxClip1 == pWeapon->GetWpnData().iMaxClip1 )
-			{
-				Weapon_Drop( GetActiveWeapon(), NULL, NULL );
-			}
-			else if ( j == 1 && GetActiveWeapon()->GetWpnData().iMaxClip1 != pWeapon->GetWpnData().iMaxClip1 )
-			{
-				//do nothing				
-			}
-			else if ( GetActiveWeapon()->GetWpnData().iMaxClip1 == pWeapon->GetWpnData().iMaxClip1 )
-			{
-				Weapon_Drop( GetActiveWeapon(), NULL, NULL );
-			}
-			else
-			{
-				return;
-			}
-		}
-		SetActiveWeapon( NULL );
-	}
-
 	// Add the weapon to my weapon inventory
 	for (int i=0;i<MAX_WEAPONS;i++) 
 	{			
@@ -1997,10 +1958,6 @@ void CBaseCombatCharacter::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 	// ----------------------
 	//  Give Primary Ammo
 	// ----------------------
-
-	//roob - weapon pickup - maintain dropped ammo.
-	if(!pWeapon->IsDropped())
-	{
 		// If gun doesn't use clips, just give ammo
 		if (pWeapon->GetMaxClip1() == -1)
 		{
@@ -2013,7 +1970,6 @@ void CBaseCombatCharacter::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 			pWeapon->m_iClip1 = pWeapon->GetMaxClip1();
 			GiveAmmo( (pWeapon->GetDefaultClip1() - pWeapon->GetMaxClip1()), pWeapon->m_iPrimaryAmmoType); 
 		}
-	}
 
 	// ----------------------
 	//  Give Secondary Ammo
@@ -2070,21 +2026,6 @@ void CBaseCombatCharacter::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 
 	// Pass the lighting origin over to the weapon if we have one
 	pWeapon->SetLightingOriginRelative( GetLightingOriginRelative() );
-
-	if(pWeapon->IsDropped())
-	{
-
-		Weapon_Switch( pWeapon );
-		//add firing delay
-		pWeapon->m_bInPickup = true;
-		pWeapon->m_fPickupEnd = gpGlobals->curtime + 3.0f;
-
-		CSingleUserRecipientFilter filter( ToBasePlayer(pWeapon->GetOwner()) );
-
-		UserMessageBegin( filter, "PickupDelay" );
-			WRITE_BOOL( true );
-		MessageEnd();
-	}
 }
 
 //-----------------------------------------------------------------------------

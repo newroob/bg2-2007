@@ -169,45 +169,27 @@ int CHL2MP_Player::GetCurrentSpeed( void ) const
 	}
 	else
 	{
-		base = 230 - GetKitWeight();
-
-	}
-
-	return (base + m_iSpeedModifier) * scale;
-}
-
-int CHL2MP_Player::GetKitWeight( void ) const
-{
-	int base = 0;
-
 		switch( m_iClass )
 		{
 		case CLASS_INFANTRY:
-			base = 27;
+			base = 195;
 			break;
 		case CLASS_OFFICER:
-			base = 7;
+			base = 220;
 			break;
 		case CLASS_SNIPER:
-			base = 7;
+			base = 205;
 			break;
 		case CLASS_SKIRMISHER:
-			base = 10;
+			base = 200;
 			break;
 		case CLASS_LIGHT_INFANTRY:
-			base = 27;
+			base = 198;
 			break;
-		}
-
-	for (int i=0;i<MAX_WEAPONS;i++) 
-	{			
-		if (GetWeapon(i)) 
-		{
-			base += GetWeapon(i)->GetWeight();
 		}
 	}
 
-	return base;
+	return (base + m_iSpeedModifier) * scale;
 }
 
 

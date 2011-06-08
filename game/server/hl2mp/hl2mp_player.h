@@ -179,7 +179,6 @@ public:
 
 	int m_iGunKit,
 		m_iAmmoKit;
-	int		m_i_BaseWeight;
 
 private:
 	CNetworkVar( int, m_iClass );
@@ -197,7 +196,6 @@ private:
 
 	//return the player's speed based on whether which class we are, which weapon kit we're using etc.
 	int		GetCurrentSpeed( void ) const;
-	int		GetKitWeight( void ) const;
 
 public:
 	//used for temporary speed modifiers (carrying flags and such)

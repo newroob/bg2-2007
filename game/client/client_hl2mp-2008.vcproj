@@ -2930,14 +2930,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\bg2\bg2_hud_pickup.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\bg2\bg2_hud_pickup.h"
-					>
-				</File>
-				<File
 					RelativePath=".\bg2\bg2_hud_stamina.cpp"
 					>
 					<FileConfiguration

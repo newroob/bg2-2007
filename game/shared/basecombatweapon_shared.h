@@ -171,15 +171,6 @@ public:
 	// Weapon Pickup For Player
 	virtual void			SetPickupTouch( void );
 	virtual void 			DefaultTouch( CBaseEntity *pOther );	// default weapon touch
-	//BG2 - weapon pickup	
-	bool					IsDropped (void) { return m_bDropped; }
-	void					CheckPickup( void ); //BG2 - roob - weapon swap
-	//vars
-	CNetworkVar( bool, m_bInPickup);
-	float					m_fPickupEnd;
-
-	//BG2 - roob - weapon weights
-	int						m_iWeight;
 
 	// HUD Hints
 	virtual bool			ShouldDisplayAltFireHUDHint();
@@ -566,7 +557,7 @@ private:
 	bool					m_bReloadHudHintDisplayed;	// Have we displayed a reload HUD hint since this weapon was deployed?
 	float					m_flHudHintPollTime;	// When to poll the weapon again for whether it should display a hud hint.
 	float					m_flHudHintMinDisplayTime; // if the hint is squelched before this, reset my counter so we'll display it again.
-	bool					m_bDropped; //BG2 - weapon pickup
+	
 	// Server only
 #if !defined( CLIENT_DLL )
 

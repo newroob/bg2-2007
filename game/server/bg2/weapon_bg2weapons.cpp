@@ -115,16 +115,6 @@ const float ZERO_RANGE_PISTOL = 10 * 36;	//ten yards
 const float ZERO_RANGE_MUSKET = 50 * 36;	//fifty yards
 const float ZERO_RANGE_RIFLE = 130 * 36;	//two hundred yards
 
-const float WEIGHT_MUSKET_BAYO = 11;
-const float WEIGHT_SKIRMISH = 8;
-const float WEIGHT_RIFLE = 11;
-const float WEIGHT_PISTOL = 3;
-const float WEIGHT_CARBINE = 8;
-
-const float WEIGHT_SABER = 2;
-const float WEIGHT_SNIPER_MELEE = 1;
-const float WEIGHT_AXE = 3;
-
 #ifdef CLIENT_DLL
 #define CWeaponbrownbess C_Weaponbrownbess
 #endif
@@ -192,8 +182,6 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
-
-	m_iWeight = WEIGHT_MUSKET_BAYO;
 }
 
 #ifndef CLIENT_DLL
@@ -267,8 +255,6 @@ DECLARE_BG2_WEAPON( charleville )
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
-
-	m_iWeight = WEIGHT_MUSKET_BAYO;
 }
 
 #ifndef CLIENT_DLL
@@ -329,8 +315,6 @@ DECLARE_BG2_WEAPON( jaeger )
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_RIFLE;
 	m_flZeroRange = ZERO_RANGE_RIFLE;
 	m_iNumShot = 0;
-
-	m_iWeight = WEIGHT_RIFLE;
 }
 
 #ifndef CLIENT_DLL
@@ -391,8 +375,6 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_RIFLE;
 	m_flZeroRange = ZERO_RANGE_RIFLE;
 	m_iNumShot = 0;
-
-	m_iWeight = WEIGHT_RIFLE;
 }
 
 #ifndef CLIENT_DLL
@@ -433,8 +415,6 @@ DECLARE_BG2_WEAPON( pistol_a )
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_PISTOL;
 	m_flZeroRange = ZERO_RANGE_PISTOL;
 	m_iNumShot = 0;
-
-	m_iWeight = WEIGHT_PISTOL;
 }
 
 #ifndef CLIENT_DLL
@@ -475,8 +455,6 @@ DECLARE_BG2_WEAPON( pistol_b )
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_PISTOL;
 	m_flZeroRange = ZERO_RANGE_PISTOL;
 	m_iNumShot = 0;
-
-	m_iWeight = WEIGHT_PISTOL;
 }
 
 #ifndef CLIENT_DLL
@@ -508,8 +486,6 @@ DECLARE_BG2_WEAPON( sabre_a )
 
 	//secondary
 	m_Attackinfos[1] = m_Attackinfos[0];
-
-	m_iWeight = WEIGHT_SABER;
 }
 
 #ifndef CLIENT_DLL
@@ -541,8 +517,6 @@ DECLARE_BG2_WEAPON( sabre_b )
 
 	//secondary
 	m_Attackinfos[1] = m_Attackinfos[0];
-
-	m_iWeight = WEIGHT_SABER;
 }
 
 #ifndef CLIENT_DLL
@@ -574,8 +548,6 @@ DECLARE_BG2_WEAPON( knife )
 
 	//secondary
 	m_Attackinfos[1] = m_Attackinfos[0];
-
-	m_iWeight = WEIGHT_SNIPER_MELEE;
 }
 
 #ifndef CLIENT_DLL
@@ -607,8 +579,6 @@ DECLARE_BG2_WEAPON( hirschf )
 
 	//secondary
 	m_Attackinfos[1] = m_Attackinfos[0];
-
-	m_iWeight = WEIGHT_SNIPER_MELEE;
 }
 #ifndef CLIENT_DLL
 MELEE_ACTTABLE( hirschf )
@@ -641,8 +611,6 @@ DECLARE_BG2_WEAPON( tomahawk )
 
 	//secondary
 	m_Attackinfos[1] = m_Attackinfos[0];
-
-	m_iWeight = WEIGHT_AXE;
 }
 
 #ifndef CLIENT_DLL
@@ -716,8 +684,6 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
-
-	m_iWeight = WEIGHT_MUSKET_BAYO;
 }
 
 #ifndef CLIENT_DLL
@@ -775,8 +741,6 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 
 	m_iNumShot = 0;
-
-	m_iWeight = WEIGHT_SKIRMISH;
 }
 
 #ifndef CLIENT_DLL
@@ -808,8 +772,6 @@ DECLARE_BG2_WEAPON( beltaxe )
 
 	//secondary
 	m_Attackinfos[1] = m_Attackinfos[0];
-
-	m_iWeight = WEIGHT_AXE;
 }
 #ifndef CLIENT_DLL
 MELEE_ACTTABLE( beltaxe )
@@ -868,8 +830,6 @@ DECLARE_BG2_WEAPON( fowler )
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = FOWLER_NUM_SHOT;
 	m_iDamagePerShot = FOWLER_SHOT_DAMAGE;
-
-	m_iWeight = WEIGHT_SKIRMISH;
 }
 
 #ifndef CLIENT_DLL
@@ -943,8 +903,6 @@ DECLARE_BG2_WEAPON( longpattern )
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
-
-	m_iWeight = WEIGHT_MUSKET_BAYO;
 }
 
 #ifndef CLIENT_DLL
@@ -1001,8 +959,6 @@ DECLARE_BG2_WEAPON( longpattern_nobayo )
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
-
-	m_iWeight = WEIGHT_SKIRMISH;
 }
 
 #ifndef CLIENT_DLL
@@ -1077,8 +1033,6 @@ DECLARE_BG2_WEAPON( american_brownbess )
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
-
-	m_iWeight = WEIGHT_MUSKET_BAYO;
 }
 
 #ifndef CLIENT_DLL
@@ -1135,8 +1089,6 @@ DECLARE_BG2_WEAPON( american_brownbess_nobayo )
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
-
-	m_iWeight = WEIGHT_SKIRMISH;
 }
 
 #ifndef CLIENT_DLL
@@ -1213,8 +1165,6 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = CARBINE_NUM_SHOT;
 	m_iDamagePerShot = CARBINE_SHOT_DAMAGE;
-
-	m_iWeight = WEIGHT_CARBINE;
 }
 
 #ifndef CLIENT_DLL

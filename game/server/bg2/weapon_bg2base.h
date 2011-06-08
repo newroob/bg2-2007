@@ -130,8 +130,6 @@ public:
 	void	PrimaryAttack( void );
 	void	SecondaryAttack( void );
 
-	virtual int		ObjectCaps( void ); //roob allow +use on weapons :)
-
 	//BG2 - Tjoppen - this one from base_weapon.cpp
 	//works out the accuracy cone, so we can use cones of varying sizes
 	Vector Cone(float flConeSize)
