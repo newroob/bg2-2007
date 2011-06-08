@@ -615,15 +615,3 @@ C_BaseCombatWeapon *CBaseHudWeaponSelection::GetNextActivePos( int iSlot, int iS
 
 	return pNextWeapon;
 }
-bool CBaseHudWeaponSelection::CheckPickup( void )
-{
-	//BG2 - roob - no wep change during pickup
-	C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
-	if ( !player )
-		return false;
-	
-	if ( player->GetActiveWeapon()->m_bInPickup )
-		return false;
-
-	return true;
-}
