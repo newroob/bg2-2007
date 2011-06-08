@@ -2122,18 +2122,17 @@ CBaseEntity* CHL2MP_Player::EntSelectSpawnPoint( void )
 		return NULL;	//BG2 - Tjoppen - spectators/unassigned don't spawn..
 
 	CBaseEntity *pSpot = NULL;
+	CUtlVector<CBaseEntity *> spots;
 
 	if ( GetTeamNumber() == TEAM_AMERICANS )
-		pSpot = HandleSpawnList( m_AmericanSpawns );
+		spots = m_AmericanSpawns;
 	else if ( GetTeamNumber() == TEAM_BRITISH )
-		pSpot = HandleSpawnList( m_BritishSpawns );
+		spots = m_BritishSpawns;
 	else
 		return NULL;
 
-	if ( pSpot )
-		return pSpot;
-
-	pSpot = HandleSpawnList( m_MultiSpawns );
+	spots.AddVectorToTail( m_MultiSpawns );
+	pSpot = HandleSpawnList( spots );
 
 	if ( pSpot )
 		return pSpot;
