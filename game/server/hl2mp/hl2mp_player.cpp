@@ -2087,9 +2087,11 @@ void CHL2MP_Player::DeathSound( const CTakeDamageInfo &info )
 CBaseEntity* CHL2MP_Player::HandleSpawnList( const CUtlVector<CBaseEntity *>& spawns )
 {
 	//BG2 - Tjoppen - the code below was broken out of EntSelectSpawnPoint()
+	int offset = RandomInt(0, spawns.Count() - 1);	//start at a random offset into the list
+
 	for ( int x = 0; x < spawns.Count(); x++ ) 
 	{
-		CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>( spawns[x] );
+		CSpawnPoint *pSpawn = static_cast<CSpawnPoint*>( spawns[(x + offset) % spawns.Count()] );
 		if ( pSpawn && !pSpawn->m_bReserved && pSpawn->IsEnabled() )
 		{
 			CBaseEntity *ent = NULL;
