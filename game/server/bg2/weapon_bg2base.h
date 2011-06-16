@@ -193,21 +193,28 @@ public:
 
 		return m_Attackinfos[iAttack].m_vStandSpread * (moving ? 2.0f : 1.0f);*/
 
+		float modifier = 0;
+
+		CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
+
+		if ( pPlayer && m_iNumShot > 0 && pPlayer->GetCurrentAmmoKit() == AMMO_KIT_BUCKSHOT )
+			modifier = m_flShotAimModifier;
+
 		if( GetOwner() && (GetOwner()->GetFlags() & FL_DUCKING) ) //we're crouching
 		{
 			if( moving ) //we're moving.
 			{
 				if ( m_bIsIronsighted ) //So we're aiming... yet moving...
-					return m_Attackinfos[iAttack].m_flCrouchAimMoving;
+					return m_Attackinfos[iAttack].m_flCrouchAimMoving + modifier;
 				else //Hip shot.
-					return m_Attackinfos[iAttack].m_flCrouchMoving;
+					return m_Attackinfos[iAttack].m_flCrouchMoving + modifier;
 			}
 			else	//we're not moving.
 			{
 				if ( m_bIsIronsighted ) //So we're aiming...
-					return m_Attackinfos[iAttack].m_flCrouchAimStill;
+					return m_Attackinfos[iAttack].m_flCrouchAimStill + modifier;
 				else //Hip shot.
-					return m_Attackinfos[iAttack].m_flCrouchStill;
+					return m_Attackinfos[iAttack].m_flCrouchStill + modifier;
 			}
 		}
 		else //We're not crouching.
@@ -215,16 +222,16 @@ public:
 			if( moving ) //We're standing and moving.
 			{
 				if ( m_bIsIronsighted ) //So we're aiming...
-					return m_Attackinfos[iAttack].m_flStandAimMoving;
+					return m_Attackinfos[iAttack].m_flStandAimMoving + modifier;
 				else //Hip shot.
-					return m_Attackinfos[iAttack].m_flStandMoving;
+					return m_Attackinfos[iAttack].m_flStandMoving + modifier;
 			}
 			else // We're not moving.
 			{
 				if ( m_bIsIronsighted ) //So we're aiming...
-					return m_Attackinfos[iAttack].m_flStandAimStill;
+					return m_Attackinfos[iAttack].m_flStandAimStill + modifier;
 				else //Hip shot.
-					return m_Attackinfos[iAttack].m_flStandStill;
+					return m_Attackinfos[iAttack].m_flStandStill + modifier;
 			}
 		}
 	}
@@ -305,8 +312,7 @@ public:
 	//
 
 	//values related to internal ballistics
-	//accuracy-agnostic spreads
-	float	m_flBallSpread;		//used when firing single balls
+	float	m_flShotAimModifier;//applies to aim cone. afterwards m_flShotSpread applies. should be negative
 	float	m_flShotSpread;		//used when firing shot, if the current gun is capable of that
 	float	m_flMuzzleVelocity;
 	float	m_flShotMuzzleVelocity;	//muzzle velocity when firing buckshot
@@ -318,17 +324,10 @@ public:
 	{
 		CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
 
-		if ( !pPlayer || m_iNumShot <= 0 )
-			return m_flBallSpread;
+		if ( !pPlayer || m_iNumShot <= 0 || pPlayer->GetCurrentAmmoKit() != AMMO_KIT_BUCKSHOT )
+			return 0;
 
-		switch( pPlayer->GetCurrentAmmoKit() )
-		{
-		default:
-		case AMMO_KIT_BALL:
-			return m_flBallSpread;
-		case AMMO_KIT_BUCKSHOT:
-			return m_flShotSpread;
-		}
+		return m_flShotSpread;
 	}
 
 #ifndef CLIENT_DLL

@@ -178,7 +178,6 @@ DECLARE_BG2_WEAPON( brownbess )
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= BESS_BAYONET_RANGE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
@@ -251,7 +250,6 @@ DECLARE_BG2_WEAPON( charleville )
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= CHARLE_BAYONET_RANGE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
@@ -311,7 +309,6 @@ DECLARE_BG2_WEAPON( jaeger )
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_RIFLE;
 	m_flZeroRange = ZERO_RANGE_RIFLE;
 	m_iNumShot = 0;
@@ -371,7 +368,6 @@ DECLARE_BG2_WEAPON( pennsylvania )
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_RIFLE;
 	m_flZeroRange = ZERO_RANGE_RIFLE;
 	m_iNumShot = 0;
@@ -411,7 +407,6 @@ DECLARE_BG2_WEAPON( pistol_a )
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_PISTOL;
 	m_flZeroRange = ZERO_RANGE_PISTOL;
 	m_iNumShot = 0;
@@ -451,7 +446,6 @@ DECLARE_BG2_WEAPON( pistol_b )
 	//secondary
 	m_Attackinfos[1].m_iAttacktype			= ATTACKTYPE_NONE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_PISTOL;
 	m_flZeroRange = ZERO_RANGE_PISTOL;
 	m_iNumShot = 0;
@@ -680,7 +674,6 @@ DECLARE_BG2_WEAPON( revolutionnaire )
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= REVOL_BAYONET_RANGE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
@@ -736,7 +729,6 @@ DECLARE_BG2_WEAPON( brownbess_nobayo )
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 
@@ -805,15 +797,15 @@ DECLARE_BG2_WEAPON( fowler )
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
-	m_Attackinfos[0].m_flCrouchMoving		= 11.1f;
-	m_Attackinfos[0].m_flCrouchStill		= 2.4f;
-	m_Attackinfos[0].m_flStandMoving		= 12.3f;
-	m_Attackinfos[0].m_flStandStill			= 2.4f;
+	m_Attackinfos[0].m_flCrouchMoving		= 12.1f;
+	m_Attackinfos[0].m_flCrouchStill		= 3.4f;
+	m_Attackinfos[0].m_flStandMoving		= 13.3f;
+	m_Attackinfos[0].m_flStandStill			= 3.4f;
 	//Iron Sights. These values will probably be changed.
-	m_Attackinfos[0].m_flStandAimStill		= 1.2f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 7.2f;
-	m_Attackinfos[0].m_flCrouchAimStill		= 1.2f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 6.4f;
+	m_Attackinfos[0].m_flStandAimStill		= 2.2f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 8.2f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.2f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 7.4f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -823,7 +815,7 @@ DECLARE_BG2_WEAPON( fowler )
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
 
-	m_flBallSpread = 1.0f;
+	m_flShotAimModifier = -1.0f;
 	m_flShotSpread = 6.95f * 0.75f;		//4 m spread at 33 m -> (4 / 2) / 33 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flShotMuzzleVelocity = MUZZLE_VELOCITY_BUCKSHOT;
@@ -899,7 +891,6 @@ DECLARE_BG2_WEAPON( longpattern )
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= LONGPATTERN_BAYONET_RANGE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
@@ -955,7 +946,6 @@ DECLARE_BG2_WEAPON( longpattern_nobayo )
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
@@ -1029,7 +1019,6 @@ DECLARE_BG2_WEAPON( american_brownbess )
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= BESS_BAYONET_RANGE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
@@ -1085,7 +1074,6 @@ DECLARE_BG2_WEAPON( american_brownbess_nobayo )
 	m_fMinRange1	= 0;
 	m_fMaxRange1	= MUSKET_RANGE;
 
-	m_flBallSpread = m_flShotSpread = 0.0f;
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flZeroRange = ZERO_RANGE_MUSKET;
 	m_iNumShot = 0;
@@ -1123,15 +1111,15 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_Attackinfos[0].m_flAttackrate			= 1.0;
 	m_Attackinfos[0].m_flRecoil				= 0.7;
 	m_Attackinfos[0].m_flRange				= MUSKET_RANGE;
-	m_Attackinfos[0].m_flCrouchMoving		= 11.0f;
-	m_Attackinfos[0].m_flCrouchStill		= 2.6f;
-	m_Attackinfos[0].m_flStandMoving		= 12.2f;
-	m_Attackinfos[0].m_flStandStill			= 2.6f;
+	m_Attackinfos[0].m_flCrouchMoving		= 12.0f;
+	m_Attackinfos[0].m_flCrouchStill		= 3.6f;
+	m_Attackinfos[0].m_flStandMoving		= 13.2f;
+	m_Attackinfos[0].m_flStandStill			= 3.6f;
 	//Iron Sights.
-	m_Attackinfos[0].m_flStandAimStill		= 1.4f;	
-	m_Attackinfos[0].m_flStandAimMoving		= 7.1f;
-	m_Attackinfos[0].m_flCrouchAimStill		= 1.4f;
-	m_Attackinfos[0].m_flCrouchAimMoving	= 6.3f;
+	m_Attackinfos[0].m_flStandAimStill		= 2.4f;	
+	m_Attackinfos[0].m_flStandAimMoving		= 8.1f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.4f;
+	m_Attackinfos[0].m_flCrouchAimMoving	= 7.3f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
 	m_Attackinfos[0].m_flRelativeDrag		= 1.0;			//musket
@@ -1158,7 +1146,7 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_fMinRange2	= 0;
 	m_fMaxRange2	= CARBINE_BAYONET_RANGE;
 
-	m_flBallSpread = 1.0f;
+	m_flShotAimModifier = -1.0f;
 	m_flShotSpread = 7.64f * 0.75f;		//4 m spread at 30 m -> (4 / 2) / 30 / sin(0.5)
 	m_flMuzzleVelocity = MUZZLE_VELOCITY_SMOOTHBORE;
 	m_flShotMuzzleVelocity = MUZZLE_VELOCITY_BUCKSHOT;
