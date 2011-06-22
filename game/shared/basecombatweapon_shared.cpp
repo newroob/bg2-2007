@@ -642,22 +642,6 @@ bool CBaseCombatWeapon::IsIronsighted( void )
 	return ( m_bIsIronsighted  );
 }
 
-void CBaseCombatWeapon::ToggleIronsights( void )
-{
-	//only allow ironsights to be toggled if they are able to attack
-	if( gpGlobals->curtime < m_flNextPrimaryAttack || gpGlobals->curtime < m_flNextSecondaryAttack )
-		return;
-
-	//delay both attacks by 450 ms, but make sure we don't roll back the attack times
-	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + 0.45f);
-	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + 0.45f);
-	
-	if( m_bIsIronsighted )
-		DisableIronsights();
-	else
-		EnableIronsights();
-}
-
 void CBaseCombatWeapon::EnableIronsights( void )
 {
 	if( m_bIsIronsighted )
@@ -668,11 +652,22 @@ void CBaseCombatWeapon::EnableIronsights( void )
 	if( !pOwner )
 		return;
  
+	//delay both attacks by 450 ms, but make sure we don't roll back the attack times
+	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + 0.45f);
+	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + 0.45f);
+
+#ifndef CLIENT_DLL
+	if ( !m_iClip1 )
+		SendWeaponAnim( ACT_FORCE_STABLE_EMPTY ); //Dummy animation that will cancel out the idle anim.
+	else
+		SendWeaponAnim( ACT_FORCE_STABLE ); //Dummy animation that will cancel out the idle anim.
+
 	if( pOwner->SetFOV( this, pOwner->GetDefaultFOV()+GetIronsightFOVOffset(), 1.0f, 0.3f ) ) //modify these values to adjust how fast the fov is applied
 	{
 		m_bIsIronsighted = true;
 		m_flIronsightedTime = gpGlobals->curtime;
 	}
+#endif
 }
  
 void CBaseCombatWeapon::DisableIronsights( void )
@@ -685,11 +680,17 @@ void CBaseCombatWeapon::DisableIronsights( void )
 	if( !pOwner )
 		return;
  
+	//delay both attacks by 450 ms, but make sure we don't roll back the attack times
+	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + 0.45f);
+	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + 0.45f);
+
+#ifndef CLIENT_DLL
 	if( pOwner->SetFOV( this, 0, 0.4f, 0.1f ) ) //modify these values to adjust how fast the fov is applied
 	{
 		m_bIsIronsighted = false;
 		m_flIronsightedTime = gpGlobals->curtime;
 	}
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1750,6 +1751,19 @@ void CBaseCombatWeapon::ItemPostFrame( void )
 		// reload when reload is pressed, or if no buttons are down and weapon is empty.
 		Reload();
 		m_fFireDuration = 0.0f;
+	}
+
+	//only toggling ironsights only if we have them, we're not in a reload and we're not too soon after the last attack
+	if ( m_bWeaponHasSights && !m_bInReload && gpGlobals->curtime > m_flNextPrimaryAttack && gpGlobals->curtime > m_flNextSecondaryAttack )
+	{
+		if ( pOwner->m_nButtons & IN_ZOOM )
+		{
+			EnableIronsights();
+		}
+		else
+		{
+			DisableIronsights();
+		}
 	}
 
 	// -----------------------

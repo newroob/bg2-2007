@@ -604,11 +604,12 @@ void C_HL2MP_Player::ItemPreFrame( void )
 		 return;
 
 	// Disallow shooting while zooming
-	if ( m_nButtons & IN_ZOOM )
+	//BG2 - Tjoppen - Allow shooting while zooming
+	/*if ( m_nButtons & IN_ZOOM )
 	{
 		//FIXME: Held weapons like the grenade get sad when this happens
 		m_nButtons &= ~(IN_ATTACK|IN_ATTACK2);
-	}
+	}*/
 
 	BaseClass::ItemPreFrame();
 

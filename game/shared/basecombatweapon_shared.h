@@ -156,7 +156,6 @@ public:
 	//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
 	//Funcs
 	bool					IsIronsighted( void );
-	void					ToggleIronsights( void );
 	void					EnableIronsights( void );
 	void					DisableIronsights( void );
 

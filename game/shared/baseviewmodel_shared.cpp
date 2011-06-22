@@ -79,9 +79,12 @@ void CBaseViewModel::CalcIronsights( Vector &pos, QAngle &ang )
 		( delta > 1.0f ) ? 1.0f : delta : //normal blending
 		( delta > 1.0f ) ? 0.0f : 1.0f - delta; //reverse interpolation
  
-	if( exp == 0.0f ) //fully not ironsighted; save performance
+	if( exp <= 0.0f ) //fully not ironsighted; save performance
 		return;
  
+	if( exp > 1.0f )
+		exp = 1.0f;
+
 	Vector newPos = pos;
 	QAngle newAng = ang;
  

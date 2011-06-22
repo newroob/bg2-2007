@@ -126,6 +126,7 @@ static	kbutton_t	in_break;
 static	kbutton_t	in_zoom;
 static  kbutton_t   in_grenade1;
 static  kbutton_t   in_grenade2;
+static  kbutton_t   in_ironsights;
 kbutton_t	in_ducktoggle;
 
 /*
@@ -480,6 +481,18 @@ void IN_DuckToggle( const CCommand &args )
 	else
 	{
 		KeyDown( &in_ducktoggle, args[1] ); 
+	}
+}
+
+void IN_IronsightsToggle( const CCommand &args ) 
+{ 
+	if ( ::input->KeyState(&in_zoom) )
+	{
+		KeyUp( &in_zoom, args[1] ); 
+	}
+	else
+	{
+		KeyDown( &in_zoom, args[1] ); 
 	}
 }
 
@@ -1412,6 +1425,11 @@ int CInput::GetButtonBits( int bResetState )
 		bits |= IN_DUCK;
 	}
 
+	if ( KeyState(&in_ironsights) )
+	{
+		bits |= IN_ZOOM;
+	}
+
 	// Cancel is a special flag
 	if (in_cancel)
 	{
@@ -1575,6 +1593,7 @@ static ConCommand endgrenade1( "-grenade1", IN_Grenade1Up );
 static ConCommand startgrenade1( "+grenade1", IN_Grenade1Down );
 static ConCommand endgrenade2( "-grenade2", IN_Grenade2Up );
 static ConCommand startgrenade2( "+grenade2", IN_Grenade2Down );
+static ConCommand toggle_ironsights( "ironsights", IN_IronsightsToggle );
 
 #ifdef TF_CLIENT_DLL
 static ConCommand toggle_duck( "toggle_duck", IN_DuckToggle );

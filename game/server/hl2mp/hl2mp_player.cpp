@@ -201,29 +201,6 @@ void CHL2MP_Player::UpdateOnRemove( void )
 	BaseClass::UpdateOnRemove();
 }
 
-//BG2 -Added for Iron Sights Testing. Credits to z33ky for the code base. -HairyPotter
-void CC_ToggleIronSights( void )
-{
-	CBasePlayer* pPlayer = UTIL_GetCommandClient();
-	if ( !pPlayer  )
-		return;
- 
-	CBaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
-	if( !pWeapon || !pWeapon->m_bWeaponHasSights || pWeapon->m_bInReload )
-		return;
-
-	if ( !pWeapon->m_iClip1 )
-		pWeapon->SendWeaponAnim( ACT_FORCE_STABLE_EMPTY ); //Dummy animation that will cancel out the idle anim.
-	else
-		pWeapon->SendWeaponAnim( ACT_FORCE_STABLE ); //Dummy animation that will cancel out the idle anim.
-
-	pWeapon->ToggleIronsights();
-	//
-}
-//
- 
-static ConCommand toggle_ironsight("ironsights", CC_ToggleIronSights);
-
 void CHL2MP_Player::Precache( void )
 {
 	BaseClass::Precache();
