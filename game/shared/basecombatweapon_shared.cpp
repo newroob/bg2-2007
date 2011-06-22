@@ -644,6 +644,10 @@ bool CBaseCombatWeapon::IsIronsighted( void )
 
 void CBaseCombatWeapon::ToggleIronsights( void )
 {
+	//only allow ironsights to be toggled if they are able to attack
+	if( gpGlobals->curtime < m_flNextPrimaryAttack || gpGlobals->curtime < m_flNextSecondaryAttack )
+		return;
+
 	//delay both attacks by 450 ms, but make sure we don't roll back the attack times
 	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + 0.45f);
 	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + 0.45f);
