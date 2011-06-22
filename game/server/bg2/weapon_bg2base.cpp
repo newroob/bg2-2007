@@ -668,8 +668,9 @@ void CBaseBG2Weapon::Think( void )
 	CHL2MP_Player *pOwner = ToHL2MPPlayer( GetOwner() );
 	int group;
 
-	//should be fast enough to swap submodels and textures around
-	SetNextThink( gpGlobals->curtime + 0.05f ); 
+	//set submodels and skins every frame
+	//TODO: we don't actually have to do this every frame - only when the animation changes
+	SetNextThink( gpGlobals->curtime ); 
 
 	if( pOwner == NULL )
 		return;
