@@ -707,7 +707,7 @@ void CBaseBG2Weapon::Think( void )
 			break;
 		case CLASS_SKIRMISHER:
 			//militia
-			pViewModel->m_nSkin = 1;
+			pViewModel->m_nSkin = 2;
 			break;
 		default:
 			//everyone else
