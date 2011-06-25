@@ -694,44 +694,7 @@ void CBaseBG2Weapon::Think( void )
 	if ( (group = pViewModel->FindBodygroupByName( "arms" )) >= 0)
 		pViewModel->SetBodygroup( group, pOwner->GetTeamNumber() == TEAM_BRITISH &&
 		                            pOwner->GetClass() == CLASS_SKIRMISHER );
-
-	//set sleev_texgroup via m_nSkin
-	switch( pOwner->GetTeamNumber() )
-	{
-	case TEAM_AMERICANS:
-		switch( pOwner->GetClass() )
-		{
-		case CLASS_SNIPER:
-			//minuteman
-			pViewModel->m_nSkin = 1;
-			break;
-		case CLASS_SKIRMISHER:
-			//militia
-			pViewModel->m_nSkin = 2;
-			break;
-		default:
-			//everyone else
-			pViewModel->m_nSkin = 0;
-			break;
-		}
-		break;
-	case TEAM_BRITISH:
-		switch( pOwner->GetClass() )
-		{
-		case CLASS_SNIPER:
-			//jäger
-			pViewModel->m_nSkin = 4;
-			break;
-		default:
-			//everyone else
-			pViewModel->m_nSkin = 3;
-			break;
-		}
-		break;
-	default:
-		pViewModel->m_nSkin = 0;
-		break;
-	}
+	
 }
 
 void CBaseBG2Weapon::ItemPostFrame( void )
@@ -828,4 +791,54 @@ bool CBaseBG2Weapon::Reload( void )
 		return false;
 
 	return BaseClass::Reload();
+}
+
+//roob: set correct skin on equip
+void CBaseBG2Weapon::Equip( CBaseCombatCharacter *pOwner )
+{
+
+	if( pOwner == NULL )
+		return;
+
+	CHL2MP_Player *player = ToHL2MPPlayer( pOwner );
+
+	switch( player->GetTeamNumber() )
+	{
+		case TEAM_AMERICANS:
+		switch( player->GetClass() )
+		{
+		case CLASS_SNIPER:
+			//minuteman
+			m_nSkin = 1;
+			break;
+		case CLASS_SKIRMISHER:
+			//militia
+			m_nSkin = 2;
+			break;
+		default:
+			//everyone else
+			m_nSkin = 0;
+			break;
+		}
+		break;
+	case TEAM_BRITISH:
+		switch( player->GetClass() )
+		{
+		case CLASS_SNIPER:
+			//jäger
+			m_nSkin = 4;
+			break;
+		default:
+			//everyone else
+			m_nSkin = 3;
+			break;
+		}
+		break;
+	default:
+		m_nSkin = 0;
+		break;
+	}
+
+	return BaseClass::Equip( pOwner );
+
 }

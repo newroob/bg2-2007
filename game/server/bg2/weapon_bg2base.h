@@ -286,7 +286,7 @@ public:
 	bool	m_bShouldFireDelayed;
 	float	m_flNextDelayedFire;
 
-
+	void		Equip( CBaseCombatCharacter *pOwner );
 	void		Think( void );
 	void		ItemPostFrame( void );
 	void		Fire( int iAttack );
