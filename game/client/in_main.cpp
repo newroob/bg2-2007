@@ -456,7 +456,18 @@ void IN_JumpDown ( const CCommand &args ) {KeyDown(&in_jump, args[1] );}
 void IN_JumpUp ( const CCommand &args ) {KeyUp(&in_jump, args[1] );}
 void IN_DuckDown( const CCommand &args ) {KeyDown(&in_duck, args[1] );}
 void IN_DuckUp( const CCommand &args ) {KeyUp(&in_duck, args[1] );}
-void IN_ReloadDown( const CCommand &args ) {KeyDown(&in_reload, args[1] );}
+
+void IN_ReloadDown( const CCommand &args )
+{
+	KeyDown(&in_reload, args[1] );
+
+	//BG2 - Tjoppen - unzoom when reloading
+	//this prevents going immediately back into ironsights
+	//after reloading if using the toggle command, since that
+	//might not always be desirable
+	KeyUp( &in_zoom, NULL );
+}
+
 void IN_ReloadUp( const CCommand &args ) {KeyUp(&in_reload, args[1] );}
 void IN_Alt1Down( const CCommand &args ) {KeyDown(&in_alt1, args[1] );}
 void IN_Alt1Up( const CCommand &args ) {KeyUp(&in_alt1, args[1] );}
