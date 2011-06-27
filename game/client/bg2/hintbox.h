@@ -17,7 +17,7 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 	Contact information:
-		Tomas "Tjoppen" Härdin		tjoppen@gamedev.se
+		Tomas "Tjoppen" Härdin		mail, in reverse: se . gamedev @ tjoppen
 		Jason "Draco" Houston		iamlorddraco@gmail.com
 
 	You may also contact us via the Battle Grounds website and/or forum at:
