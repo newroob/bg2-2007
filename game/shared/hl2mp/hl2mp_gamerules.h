@@ -63,7 +63,7 @@
 #define VEC_CROUCH_TRACE_MIN	HL2MPRules()->GetHL2MPViewVectors()->m_vCrouchTraceMin
 #define VEC_CROUCH_TRACE_MAX	HL2MPRules()->GetHL2MPViewVectors()->m_vCrouchTraceMax
 
-extern ConVar mp_respawnstyle, mp_respawntime, mp_roundtime, mp_respawntickets;
+extern ConVar mp_respawnstyle, mp_respawntime, mp_tickets_roundtime, mp_tickets_a, mp_tickets_b;
 
 enum
 {
@@ -248,7 +248,9 @@ public:
 	void WinSong( int team, bool m_bWonMap = false );
 	void RespawnWave();
 	void ResetFlags();
-	void UpdateFlags();
+	void CountHeldFlags( int &american_flags, int &british_flags, int &neutral_flags, int &foramericans, int &forbritish );
+	void CheckFullcap();
+	void CheckTicketDrain();
 
 	int GetLimitTeamClass( int iTeam, int iClass );
 	//

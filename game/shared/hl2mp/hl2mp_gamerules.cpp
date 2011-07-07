@@ -115,9 +115,14 @@ ConVar mp_limit_mapsize_high( "mp_limit_mapsize_high", "32", CVAR_FLAGS, "Server
 
 ConVar mp_respawnstyle( "mp_respawnstyle", "1", CVAR_FLAGS, "0 = regular dm, 1 = waves, 2 = rounds (LMS), 3 = rounds with tickets" );
 ConVar mp_respawntime( "mp_respawntime", "14", CVAR_FLAGS, "Time between waves, or the maximum length of the round with mp_respawnstyle 2" );
-ConVar mp_roundtime( "mp_roundtime", "180", CVAR_FLAGS, "Maximum length of the round when using mp_respawnstyle 3. mp_respawntime is used with mp_respawnstyle 2 to maintain backwards compatibility of old configs/maps" );
-ConVar mp_respawntickets( "mp_respawntickets", "10", CVAR_FLAGS, "Initial number of tickets for each team. Only used with mp_respawnstyle 3" );
 
+//ticket system
+ConVar mp_tickets_rounds( "mp_tickets_rounds", "5", CVAR_FLAGS, "Maximum number of rounds - rounds are restarted until this or mp_timelimit" );
+ConVar mp_tickets_roundtime( "mp_tickets_roundtime", "300", CVAR_FLAGS, "Maximum length of round" );
+ConVar mp_tickets_a( "mp_tickets_a", "100", CVAR_FLAGS, "Tickets given to americans on round start" );
+ConVar mp_tickets_b( "mp_tickets_b", "100", CVAR_FLAGS, "Tickets given to british on round start" );
+ConVar mp_tickets_drain_a( "mp_tickets_drain_a", "12.5", CVAR_FLAGS, "Number of tickets drained every ten seconds when the americans have more than half of their cappable flags. Can have decimals" );
+ConVar mp_tickets_drain_b( "mp_tickets_drain_b", "12.5", CVAR_FLAGS, "Number of tickets drained every ten seconds when the british have more than half of their cappable flags. Can have decimals" );
 
 REGISTER_GAMERULES_CLASS( CHL2MPRules );
 
@@ -520,8 +525,16 @@ void CHL2MPRules::Think( void )
 //	CFlagHandler::FlagThink();//make the flags think.
 	if (m_fNextFlagUpdate <= gpGlobals->curtime)
 	{
-		UpdateFlags();
-		m_fNextFlagUpdate = gpGlobals->curtime + 1;
+		if ( UsingTickets() )
+		{
+			CheckTicketDrain();
+			m_fNextFlagUpdate = gpGlobals->curtime + 10;
+		}
+		else
+		{
+			CheckFullcap();
+			m_fNextFlagUpdate = gpGlobals->curtime + 1;
+		}
 	}
 	else if (m_fNextFlagUpdate == 0)
 	{
@@ -704,7 +717,11 @@ void CHL2MPRules::Think( void )
 		CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
 		CTeam *pBritish = g_Teams[TEAM_BRITISH];
 
-		if( pAmericans->GetNumPlayers() == 0 || pBritish->GetNumPlayers() == 0 )
+		if( pAmericans->GetNumPlayers() == 0 && pBritish->GetNumPlayers() == 0 )
+			return;
+
+		//allow ticket round to restart even if there aren't any players on the other team
+		if( !UsingTickets() && (pAmericans->GetNumPlayers() == 0 || pBritish->GetNumPlayers() == 0) )
 			return;
 
 		int aliveamericans = UsingTickets() ? pAmericans->GetTicketsLeft() : 0, x = 0;
@@ -726,7 +743,7 @@ void CHL2MPRules::Think( void )
 		//Tjoppen - End
 		//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed
 		//wins
-		float roundLength = UsingTickets() ? mp_roundtime.GetFloat() : mp_respawntime.GetFloat();
+		float roundLength = UsingTickets() ? mp_tickets_roundtime.GetFloat() : mp_respawntime.GetFloat();
 		
 		if ((aliveamericans == 0) || (alivebritish == 0) || (m_fLastRoundRestart + roundLength <= gpGlobals->curtime) || (m_bIsRestartingRound))
 		{
@@ -1781,23 +1798,15 @@ void CHL2MPRules::ResetFlags( void )
 	//
 }
 
-void CHL2MPRules::UpdateFlags( void )
+void CHL2MPRules::CountHeldFlags( int &american_flags, int &british_flags, int &neutral_flags, int &foramericans, int &forbritish )
 {
 	CBaseEntity *pEntity = NULL;
 
-	//CMapTrigger *BG2Trigger = NULL;
-	
-	int	american_flags = 0,
-		british_flags = 0,
-		neutral_flags = 0;
-	int	foramericans = 0;
-	int	forbritish = 0;
-	//BG2 - Tjoppen - not needed
-	/*int iNumFlags = 0;
-	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
-	{
-		iNumFlags++;
-	}*/
+	american_flags = 0;
+	british_flags = 0;
+	neutral_flags = 0;
+	foramericans = 0;
+	forbritish = 0;
 
 	while( (pEntity = gEntList.FindEntityByClassname( pEntity, "flag" )) != NULL )
 	{
@@ -1879,6 +1888,12 @@ void CHL2MPRules::UpdateFlags( void )
 	/*Msg( "american_flags = %i & foramericans flags = %i\n", american_flags, foramericans );
 	Msg( "british_flags = %i & forbritish flags = %i\n", british_flags, forbritish );
 	Msg( "neutral_flags = %i\n", neutral_flags );*/
+}
+
+void CHL2MPRules::CheckFullcap( void )
+{
+	int american_flags, british_flags, neutral_flags, foramericans, forbritish;
+	CountHeldFlags( american_flags, british_flags, neutral_flags, foramericans, forbritish );
 
 	if( !american_flags && !british_flags && !neutral_flags )
 		return;
@@ -1922,6 +1937,21 @@ void CHL2MPRules::UpdateFlags( void )
 			return;
 		}
 	}
+}
+
+void CHL2MPRules::CheckTicketDrain( void )
+{
+	int american_flags, british_flags, neutral_flags, foramericans, forbritish;
+	CountHeldFlags( american_flags, british_flags, neutral_flags, foramericans, forbritish );
+
+	CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
+	CTeam *pBritish = g_Teams[TEAM_BRITISH];
+
+	if ( american_flags > foramericans/2 )
+		pBritish->RemoveTickets( mp_tickets_drain_b.GetFloat() );
+
+	if ( british_flags > forbritish/2 )
+		pAmericans->RemoveTickets( mp_tickets_drain_a.GetFloat() );
 }
 #endif
 
@@ -1974,5 +2004,5 @@ int CHL2MPRules::GetLimitTeamClass( int iTeam, int iClass )
 
 bool CHL2MPRules::UsingTickets()
 {
-	return mp_respawnstyle.GetInt() == 3;
+	return mp_respawnstyle.GetInt() == 3 || mp_respawnstyle.GetInt() == 4;
 }

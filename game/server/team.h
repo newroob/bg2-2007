@@ -91,6 +91,13 @@ public:
 	int GetTicketsLeft( void );
 	void RemoveTicket( void );
 
+	//we explicitly allow the number of tickets to be removed to be decimal
+	void RemoveTickets( float number );
+private:
+	//fractional number of tickets left over from last call to RemoveTickets()
+	//zeroed on round restart
+	float m_flTicketRemovalFraction;
+
 public:
 	CUtlVector< CTeamSpawnPoint * > m_aSpawnPoints;
 	CUtlVector< CBasePlayer * >		m_aPlayers;

@@ -956,11 +956,19 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	LIMIT_REVERT( lrg )
 
 	//other game related cvars
-	extern ConVar mp_winbonus, mp_respawnstyle, mp_respawntime, mp_respawntickets, mp_limit_mapsize_low, mp_limit_mapsize_high;
+	extern ConVar mp_winbonus, mp_respawnstyle, mp_respawntime;
+	extern ConVar mp_tickets_rounds, mp_tickets_roundtime, mp_tickets_a, mp_tickets_b;
+	extern ConVar mp_tickets_drain_a, mp_tickets_drain_b;
+	extern ConVar mp_limit_mapsize_low, mp_limit_mapsize_high;
 	mp_winbonus.Revert();
 	mp_respawnstyle.Revert();
 	mp_respawntime.Revert();
-	mp_respawntickets.Revert();
+	mp_tickets_rounds.Revert();
+	mp_tickets_roundtime.Revert();
+	mp_tickets_a.Revert();
+	mp_tickets_b.Revert();
+	mp_tickets_drain_a.Revert();
+	mp_tickets_drain_b.Revert();
 	mp_limit_mapsize_low.Revert();
 	mp_limit_mapsize_high.Revert();
 

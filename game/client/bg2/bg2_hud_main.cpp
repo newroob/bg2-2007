@@ -365,7 +365,7 @@ void CHudBG2::Paint()
 
 	if( HL2MPRules()->UsingTickets() )
 	{
-		int roundtime = ceilf(HL2MPRules()->m_fLastRoundRestart + mp_roundtime.GetFloat() - gpGlobals->curtime);
+		int roundtime = ceilf(HL2MPRules()->m_fLastRoundRestart + mp_tickets_roundtime.GetFloat() - gpGlobals->curtime);
 		if(	roundtime < 0 )
 			roundtime = 0;
 

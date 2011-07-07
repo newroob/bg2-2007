@@ -297,7 +297,7 @@ void CFlag::Think( void )
 	*/
 
 	extern ConVar mp_respawnstyle;
-	if ( !m_bActive || mp_respawnstyle.GetInt() == 2 )
+	if ( !m_bActive || mp_respawnstyle.GetInt() == 2 || mp_respawnstyle.GetInt() == 4 )
 	{
 		ChangeTeam( TEAM_UNASSIGNED );
 		m_iLastTeam = TEAM_UNASSIGNED;
@@ -949,8 +949,8 @@ BEGIN_DATADESC( CFlag )
 	DEFINE_KEYFIELD( m_iDisabledFlagSkin, FIELD_INTEGER, "DisabledFlagSkin" ),
 	DEFINE_KEYFIELD( m_iBritishFlagSkin, FIELD_INTEGER, "BritishFlagSkin" ),
 	DEFINE_KEYFIELD( m_iAmericanFlagSkin, FIELD_INTEGER, "AmericanFlagSkin" ), //
-	DEFINE_KEYFIELD( m_iFullCap, FIELD_INTEGER, "FullCap" ), //This is used in the UpdateFlags function in hl2mp_gamerules.cpp -HairyPotter
-	DEFINE_KEYFIELD( m_bInvisible, FIELD_BOOLEAN, "Invisible" ), //This is used in the UpdateFlags function in hl2mp_gamerules.cpp -HairyPotter
+	DEFINE_KEYFIELD( m_iFullCap, FIELD_INTEGER, "FullCap" ), //This is used in the CheckFullcap function in hl2mp_gamerules.cpp -HairyPotter
+	DEFINE_KEYFIELD( m_bInvisible, FIELD_BOOLEAN, "Invisible" ), //This is used in the CheckFullcap function in hl2mp_gamerules.cpp -HairyPotter
 
 #ifndef CLIENT_DLL
 	DEFINE_THINKFUNC( Think ),

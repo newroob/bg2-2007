@@ -90,6 +90,7 @@ int GetNumberOfTeams( void )
 CTeam::CTeam( void )
 {
 	m_iTicketsLeft = 0;
+	m_flTicketRemovalFraction = 0;
 	memset( m_szTeamname.GetForModify(), 0, sizeof(m_szTeamname) );
 }
 
@@ -438,7 +439,12 @@ void CTeam::RemoveMoralePoint(CBaseEntity * pEnt)
 
 void CTeam::ResetTickets( void )
 {
-	m_iTicketsLeft = mp_respawntickets.GetInt();
+	m_flTicketRemovalFraction = 0;
+
+	if ( m_iTeamNum == TEAM_AMERICANS )
+		m_iTicketsLeft = mp_tickets_a.GetInt();
+	else
+		m_iTicketsLeft = mp_tickets_b.GetInt();
 }
 
 int CTeam::GetTicketsLeft( void )
@@ -450,4 +456,21 @@ void CTeam::RemoveTicket( void )
 {
 	if( m_iTicketsLeft > 0 )
 		m_iTicketsLeft--;
+}
+
+void CTeam::RemoveTickets( float number )
+{
+	number += m_flTicketRemovalFraction;
+	int intPart = (int)number;
+
+	if ( intPart >= m_iTicketsLeft )
+	{
+		m_iTicketsLeft = 0;
+		m_flTicketRemovalFraction = 0;
+	}
+	else
+	{
+		m_iTicketsLeft -= intPart;
+		m_flTicketRemovalFraction = number - intPart;
+	}
 }
