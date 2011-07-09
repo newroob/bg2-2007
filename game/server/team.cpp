@@ -49,7 +49,7 @@ IMPLEMENT_SERVERCLASS_ST_NOBASE(CTeam, DT_Team)
 	SendPropInt( SENDINFO(m_iScore), 16, SPROP_UNSIGNED ),
 	//
 	SendPropInt( SENDINFO(m_iRoundsWon), 8 ),
-	SendPropInt( SENDINFO(m_iTicketsLeft), 8, SPROP_UNSIGNED ),
+	SendPropInt( SENDINFO(m_iTicketsLeft), 12, SPROP_UNSIGNED ),
 	SendPropString( SENDINFO( m_szTeamname ) ),
 
 	//BG2 - Tjoppen - don't need this
