@@ -4795,6 +4795,10 @@ void CBasePlayer::Spawn( void )
 	m_bitsDamageType	= 0;
 	m_afPhysicsFlags	= 0;
 
+	//BG2 - Tjoppen - reset zoom owner on spawn
+	//this fixes not being able to use ironsights on occasion
+	m_hZoomOwner = NULL;
+	//
 	SetFOV( this, 0 );
 
 	m_flNextDecalTime	= 0;// let this player decal as soon as he spawns.

@@ -652,22 +652,22 @@ void CBaseCombatWeapon::EnableIronsights( void )
 	if( !pOwner )
 		return;
  
-	//delay both attacks by 450 ms, but make sure we don't roll back the attack times
-	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + 0.45f);
-	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + 0.45f);
-
 #ifndef CLIENT_DLL
+	if( !pOwner->SetFOV( this, pOwner->GetDefaultFOV()+GetIronsightFOVOffset(), 1.0f, 0.3f ) ) //modify these values to adjust how fast the fov is applied
+		return;
+
 	if ( !m_iClip1 )
 		SendWeaponAnim( ACT_FORCE_STABLE_EMPTY ); //Dummy animation that will cancel out the idle anim.
 	else
 		SendWeaponAnim( ACT_FORCE_STABLE ); //Dummy animation that will cancel out the idle anim.
 
-	if( pOwner->SetFOV( this, pOwner->GetDefaultFOV()+GetIronsightFOVOffset(), 1.0f, 0.3f ) ) //modify these values to adjust how fast the fov is applied
-	{
-		m_bIsIronsighted = true;
-		m_flIronsightedTime = gpGlobals->curtime;
-	}
+	m_bIsIronsighted = true;
+	m_flIronsightedTime = gpGlobals->curtime;
 #endif
+
+	//delay both attacks by 450 ms, but make sure we don't roll back the attack times
+	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + 0.45f);
+	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + 0.45f);
 }
  
 void CBaseCombatWeapon::DisableIronsights( void )
@@ -680,17 +680,17 @@ void CBaseCombatWeapon::DisableIronsights( void )
 	if( !pOwner )
 		return;
  
+#ifndef CLIENT_DLL
+	if( !pOwner->SetFOV( this, 0, 0.4f, 0.1f ) ) //modify these values to adjust how fast the fov is applied
+		return;
+
+	m_bIsIronsighted = false;
+	m_flIronsightedTime = gpGlobals->curtime;
+#endif
+
 	//delay both attacks by 450 ms, but make sure we don't roll back the attack times
 	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + 0.45f);
 	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + 0.45f);
-
-#ifndef CLIENT_DLL
-	if( pOwner->SetFOV( this, 0, 0.4f, 0.1f ) ) //modify these values to adjust how fast the fov is applied
-	{
-		m_bIsIronsighted = false;
-		m_flIronsightedTime = gpGlobals->curtime;
-	}
-#endif
 }
 
 //-----------------------------------------------------------------------------
