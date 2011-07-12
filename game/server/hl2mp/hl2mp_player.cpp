@@ -1948,18 +1948,23 @@ int CHL2MP_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	//have bullets drain a lot more stamina than melee damage
 	//this makes firearms more useful, and avoids melee turning too slow due to stamina loss
 	//have leg damage drain the most stamina. works as a consolation prize and also makes more sense
+	//finally, arms drain the least stamina
 	float scale;
 	
 	if( inputInfo.GetDamageType() & DMG_BULLET )
 	{
-		//legs = full drain, all other hit groups = 60%
+		//legs = 75%
+		//body/head = 50%
+		//arms = 30% (keep same as melee for simplicity)
 		if( LastHitGroup() == HITGROUP_LEFTLEG || LastHitGroup() == HITGROUP_RIGHTLEG )
-			scale = 1.0;
+			scale = 0.75f;
+		else if( LastHitGroup() == HITGROUP_LEFTARM || LastHitGroup() == HITGROUP_RIGHTARM )
+			scale = 0.3f;
 		else
-			scale = 0.6;
+			scale = 0.5f;
 	}
 	else
-		scale = 0.3;
+		scale = 0.3f;
 	
 	DrainStamina( inputInfo.GetDamage() * scale );
 	//
