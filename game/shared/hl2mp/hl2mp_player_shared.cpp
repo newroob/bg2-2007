@@ -144,7 +144,8 @@ void CHL2MP_Player::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, f
 
 int CHL2MP_Player::GetCurrentSpeed( void ) const
 {
-	float scale = expf( -0.01f * (float)(100 - m_iStamina) );
+	//linear ramp from 50% to 100%
+	float scale = 0.5 + m_iStamina * 0.005f;
 
 	if( GetActiveWeapon() )
 	{
