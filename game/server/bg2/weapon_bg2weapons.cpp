@@ -50,7 +50,7 @@ const int	PISTOL_STAMINA_DRAIN = 25,
 //they have since been adjusted and normalized to work with a chest damage modifier of 1 instead of 1.85
 const int BESS_FIRE_DAMAGE = 111;			//60 * 1.85
 const int BESS_BAYONET_DAMAGE = 63;			//43 * 0.8 * 1.85
-const int BESS_BAYONET_RANGE = 83;
+const int BESS_BAYONET_RANGE = 81;
 
 const int REVOL_FIRE_DAMAGE = 107;			//58 * 1.85
 const int REVOL_BAYONET_DAMAGE = 60;		//41 * 0.8 * 1.85
@@ -58,13 +58,13 @@ const int REVOL_BAYONET_RANGE = 75;
 
 const int CHARLE_FIRE_DAMAGE = REVOL_FIRE_DAMAGE;
 const int CHARLE_BAYONET_DAMAGE = REVOL_BAYONET_DAMAGE;
-const int CHARLE_BAYONET_RANGE = 80;
+const int CHARLE_BAYONET_RANGE = 78;
 
 const int PENNY_FIRE_DAMAGE = BESS_FIRE_DAMAGE;
 
 const int LONGPATTERN_FIRE_DAMAGE = 114;	//62 * 1.85
 const int LONGPATTERN_BAYONET_DAMAGE = 66;	//45 * 0.8 * 1.85
-const int LONGPATTERN_BAYONET_RANGE = 86;
+const int LONGPATTERN_BAYONET_RANGE = 83;
 
 const int FOWLER_FIRE_DAMAGE = 103;			//damage per ball. 56 * 1.85
 const int FOWLER_SHOT_DAMAGE = 18;			//damage per shot. 10 * 1.85 -> 18 -> 8*18 = 144
@@ -73,7 +73,7 @@ const int FOWLER_NUM_SHOT = 10;
 const int CARBINE_FIRE_DAMAGE = 107;		//damage per ball. between fowler and normal brown bess. 58 * 1.85
 const int CARBINE_SHOT_DAMAGE = 20;			//damage per shot. 11 * 1.85 -> 20 -> 8*20 = 160
 const int CARBINE_NUM_SHOT = 10;
-const int CARBINE_BAYONET_RANGE = 72;
+const int CARBINE_BAYONET_RANGE = 70;
 
 const int JAEGER_FIRE_DAMAGE = 116;			//63 * 1.85
 
