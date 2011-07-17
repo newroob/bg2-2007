@@ -672,8 +672,10 @@ void CBaseBG2Weapon::Think( void )
 	//TODO: we don't actually have to do this every frame - only when the animation changes
 	SetNextThink( gpGlobals->curtime ); 
 
-	if( pOwner == NULL )
+	if( pOwner == NULL ){
+		BaseClass::Think(); //BG2 - roob - need to call this so dropped weapons get removed.
 		return;
+	}
 
 	CBaseViewModel *pViewModel = pOwner->GetViewModel();
 
@@ -695,6 +697,7 @@ void CBaseBG2Weapon::Think( void )
 		pViewModel->SetBodygroup( group, pOwner->GetTeamNumber() == TEAM_BRITISH &&
 		                            pOwner->GetClass() == CLASS_SKIRMISHER );
 	
+	BaseClass::Think();
 }
 
 void CBaseBG2Weapon::ItemPostFrame( void )
