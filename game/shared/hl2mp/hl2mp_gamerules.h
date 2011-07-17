@@ -255,6 +255,12 @@ private:
 	 */
 	void SwapPlayerTeam( CHL2MP_Player *pPlayer, bool skipAlive );
 
+	/**
+	 * Swap team for all players on both teams
+	 * Note that no players are killed.
+	 */
+	void SwapTeams( void );
+
 	//BG2 - Tjoppen - stuff in CHL2MPRules
 public:
 	void RestartRound();

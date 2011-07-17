@@ -1143,6 +1143,11 @@ void CHL2MP_Player::ChangeTeam( int iTeam )
 		bKill = true;
 	}
 
+	ChangeTeam( iTeam, bKill );
+}
+
+void CHL2MP_Player::ChangeTeam( int iTeam, bool bKill )
+{
 	//BG2 - Tjoppen - changing team. remove self from flags
 	if( iTeam != GetTeamNumber() )
 		RemoveSelfFromFlags();

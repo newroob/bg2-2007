@@ -504,7 +504,26 @@ void CHL2MPRules::SwapPlayerTeam( CHL2MP_Player *pPlayer, bool skipAlive )
 		pPlayer->m_iAmmoKit = AMMO_KIT_BALL;
 	}
 
-	pPlayer->ChangeTeam( iOtherTeam );
+	//don't kill the player
+	pPlayer->ChangeTeam( iOtherTeam, false );
+}
+
+void CHL2MPRules::SwapTeams( void )
+{
+	//Merge the british and american player lists.
+	//We can't iterate over the teams separately since
+	//all players would then end up on the same team.
+
+	//Fun fact: CUtlVector tries to be noncopyable by hiding
+	//its copy constructor for some reason.
+	//However, operator=() is perfectly acceptable.
+	CUtlVector<CBasePlayer*> players;
+	players = g_Teams[TEAM_AMERICANS]->m_aPlayers;
+
+	players.AddVectorToTail( g_Teams[TEAM_BRITISH]->m_aPlayers );
+
+	for( int x = 0; x < players.Count(); x++ )
+		SwapPlayerTeam( ToHL2MPPlayer(players[x]), false );
 }
 #endif
 
