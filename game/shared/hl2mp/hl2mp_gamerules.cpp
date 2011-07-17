@@ -413,7 +413,8 @@ void CHL2MPRules::HandleScores( int iTeam, int iScore, int msg_type, bool bResta
 	}
 	if ( bRestart )
 	{
-		RestartRound();
+		//swap teams if using tickets
+		RestartRound( UsingTickets() );
 		//do not cause two simultaneous round restarts..
 		m_bIsRestartingRound = false;
 		m_flNextRoundRestart = gpGlobals->curtime + 1;
@@ -524,6 +525,12 @@ void CHL2MPRules::SwapTeams( void )
 
 	for( int x = 0; x < players.Count(); x++ )
 		SwapPlayerTeam( ToHL2MPPlayer(players[x]), false );
+
+	//swap scores
+	int a = g_Teams[TEAM_AMERICANS]->GetScore();
+	int b = g_Teams[TEAM_BRITISH]->GetScore();
+	g_Teams[TEAM_AMERICANS]->SetScore(b);
+	g_Teams[TEAM_BRITISH]->SetScore(a);
 }
 #endif
 
@@ -707,7 +714,7 @@ void CHL2MPRules::Think( void )
 			pPlayer->ResetFragCount();//...for cap points...
 			pPlayer->ResetDeathCount();//...and damage
 		}
-		RestartRound();	//BG2 - Tjoppen - restart round
+		RestartRound( false );	//BG2 - Tjoppen - restart round
 
 		//Reset the map time
 		m_flGameStartTime = gpGlobals->curtime;
@@ -721,7 +728,7 @@ void CHL2MPRules::Think( void )
 	if ((m_fNextRoundReset > 0) && ( m_fNextRoundReset <= gpGlobals->curtime))
 	{
 		m_fNextRoundReset = 0;//dont reset again
-		RestartRound();	//BG2 - restart round
+		RestartRound( false );	//BG2 - restart round
 	}
 	
 	//=========================
@@ -1609,11 +1616,15 @@ const char *CHL2MPRules::GetChatFormat( bool bTeamOnly, CBasePlayer *pPlayer )
 
 #ifndef CLIENT_DLL
 
-void CHL2MPRules::RestartRound()
+void CHL2MPRules::RestartRound( bool swapTeams )
 {
 	//restart current round. immediately.
 	ResetMap();
 	ResetFlags();
+
+	if ( swapTeams )
+		SwapTeams();
+
 	RespawnAll();
 
 	//BG2 - Tjoppen - tickets

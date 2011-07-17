@@ -263,7 +263,7 @@ private:
 
 	//BG2 - Tjoppen - stuff in CHL2MPRules
 public:
-	void RestartRound();
+	void RestartRound( bool swapTeams );
 	void RespawnAll();
 	void WinSong( int team, bool m_bWonMap = false );
 	void RespawnWave();
