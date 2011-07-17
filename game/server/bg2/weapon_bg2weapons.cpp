@@ -42,8 +42,8 @@ const float PISTOL_CONSTANT_DAMAGE_RANGE = 8 * 36,	//8 yards
 			MUSKET_CONSTANT_DAMAGE_RANGE = 30 * 36,	//30 yards
 			RIFLE_CONSTANT_DAMAGE_RANGE  = 40 * 36;	//40 yards
 
-const int	PISTOL_STAMINA_DRAIN = 25,
-			MUSKET_RIFLE_STAMINA_DRAIN = 35,
+const int	PISTOL_STAMINA_DRAIN = 0,
+			MUSKET_RIFLE_STAMINA_DRAIN = 0,
 			MELEE_STAMINA_DRAIN = 25;
 
 //BG2 - Tjoppen - these constants are based on values from weapon_data.h @ BG 1.0F RC14
