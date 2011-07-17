@@ -241,6 +241,20 @@ private:
 	bool m_bAwaitingReadyRestart;
 	bool m_bHeardAllPlayersReady;
 
+	/**
+	 * Counts the number of alive players in the specified team.
+	 * If UsingTickets(), then the number of remaining tickets is
+	 * added to the number.
+	 */
+	int CountAlivePlayersAndTickets( int iTeamNumber );
+
+	/**
+	 * Swaps the specified player's team, making sure they
+	 * get the correct kit and so on.
+	 * If skipAlive is set, then the player won't be swapped if they're alive.
+	 */
+	void SwapPlayerTeam( CHL2MP_Player *pPlayer, bool skipAlive );
+
 	//BG2 - Tjoppen - stuff in CHL2MPRules
 public:
 	void RestartRound();

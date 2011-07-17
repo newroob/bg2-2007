@@ -430,6 +430,84 @@ void CHL2MPRules::HandleScores( int iTeam, int iScore, int msg_type, bool bResta
 //
 #endif
 
+#ifndef CLIENT_DLL
+int CHL2MPRules::CountAlivePlayersAndTickets( int iTeamNumber )
+{
+	CTeam *pTeam = g_Teams[iTeamNumber];
+	int alive = UsingTickets() ? pTeam->GetTicketsLeft() : 0;
+	int x = 0;
+
+	for( ; x < pTeam->GetNumPlayers(); x++ )
+	{
+		CBasePlayer *pPlayer = pTeam->GetPlayer( x );
+		if( pPlayer && pPlayer->IsAlive() )
+			alive++;
+	}
+
+	return alive;
+}
+
+void CHL2MPRules::SwapPlayerTeam( CHL2MP_Player *pPlayer, bool skipAlive )
+{
+	if ( !pPlayer || (pPlayer->IsAlive() && skipAlive) )
+		return;
+
+	int edict = engine->IndexOfEdict( pPlayer->edict() );
+	int iTeam = pPlayer->GetTeamNumber();
+	int iOtherTeam;
+	const char *kitvar = NULL;
+
+	//default to using normal kit
+	bool useDefaultKit = true;
+
+	if ( iTeam == TEAM_AMERICANS )
+	{
+		iOtherTeam = TEAM_BRITISH;
+
+		switch( pPlayer->GetClass() )
+		{
+		case CLASS_INFANTRY: kitvar = "cl_kit_a_inf"; break;
+		case CLASS_SKIRMISHER: kitvar = "cl_kit_a_ski"; break;
+		}
+	}
+	else if ( iTeam == TEAM_BRITISH )
+	{
+		iOtherTeam = TEAM_AMERICANS;
+
+		switch( pPlayer->GetClass() )
+		{
+		case CLASS_INFANTRY: kitvar = "cl_kit_b_inf"; break;
+		case CLASS_SKIRMISHER: kitvar = "cl_kit_b_ski"; break;
+		case CLASS_LIGHT_INFANTRY: kitvar = "cl_kit_b_light"; break;
+		}
+	}
+	else
+	{
+		//ignore spectators and such
+		return;
+	}
+
+	if ( kitvar )
+	{
+		const char *value = engine->GetClientConVarValue( edict, kitvar );
+
+		if ( value && sscanf( value , "%i %i", &pPlayer->m_iGunKit, &pPlayer->m_iAmmoKit ) == 2 )
+		{
+			//kit successfully parsed
+			useDefaultKit = false;
+		}
+	}
+
+	if ( useDefaultKit )
+	{
+		pPlayer->m_iGunKit = 1;
+		pPlayer->m_iAmmoKit = AMMO_KIT_BALL;
+	}
+
+	pPlayer->ChangeTeam( iOtherTeam );
+}
+#endif
+
 void CHL2MPRules::Think( void )
 {
 
@@ -465,29 +543,19 @@ void CHL2MPRules::Think( void )
 			}
 		}
 
-		/*for ( int i = 1; i <= gpGlobals->maxClients; i++ )
-		{
-			CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
-
-			if ( pPlayer && pPlayer->FragCount() >= flFragLimit )
-			{
-				GoToIntermission();
-				return;
-			}
-		}*/
 		if ( !m_bHasLoggedScores )
 		{
 			//BG2 - Log Damages and Scores. -HairyPotter
-			for( int x = 0; x < g_Teams[TEAM_AMERICANS]->GetNumPlayers(); x++ )
+			for( int x = 0; x < pAmericans->GetNumPlayers(); x++ )
 			{
-				CBasePlayer *pPlayer = g_Teams[TEAM_AMERICANS]->GetPlayer( x );
+				CBasePlayer *pPlayer = pAmericans->GetPlayer( x );
 				if ( !pPlayer )
 					continue;
 				m_iAmericanDmg += pPlayer->DeathCount();
 			}
-			for( int x = 0; x < g_Teams[TEAM_BRITISH]->GetNumPlayers(); x++ )
+			for( int x = 0; x < pBritish->GetNumPlayers(); x++ )
 			{
-				CBasePlayer *pPlayer = g_Teams[TEAM_BRITISH]->GetPlayer( x );
+				CBasePlayer *pPlayer = pBritish->GetPlayer( x );
 				if ( !pPlayer )
 					continue;
 				m_iBritishDmg += pPlayer->DeathCount();
@@ -519,10 +587,6 @@ void CHL2MPRules::Think( void )
 	}
 
 	//BG2 - Draco - Start
-	//CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
-	//CTeam *pBritish = g_Teams[TEAM_BRITISH];
-	//m_iWaveTime = ((m_fLastRespawnWave + mp_respawntime.GetFloat()) - gpGlobals->curtime);
-//	CFlagHandler::FlagThink();//make the flags think.
 	if (m_fNextFlagUpdate <= gpGlobals->curtime)
 	{
 		if ( UsingTickets() )
@@ -550,11 +614,11 @@ void CHL2MPRules::Think( void )
 	//=========================
 	if (mp_britishscore.GetInt() != pBritish->GetScore())
 	{
-		g_Teams[TEAM_BRITISH]->SetScore(mp_britishscore.GetInt());
+		pBritish->SetScore(mp_britishscore.GetInt());
 	}
 	if (mp_americanscore.GetInt() != pAmericans->GetScore())
 	{
-		g_Teams[TEAM_AMERICANS]->SetScore(mp_americanscore.GetInt());
+		pAmericans->SetScore(mp_americanscore.GetInt());
 	}
 	//=========================
 	//Auto Team Balance
@@ -579,67 +643,13 @@ void CHL2MPRules::Think( void )
 		{
 			//here comes the tricky part, who to swap, how to swap?
 			//meh, go random for now, maybe lowest scorer later...
-			int iAutoTeamBalancePlayerToSwitchIndex = 0;
-			CHL2MP_Player *pPlayer = NULL;
+			CTeam *pBiggerTeam     = g_Teams[iAutoTeamBalanceBiggerTeam];
+			int index              = random->RandomInt( 0, pBiggerTeam->GetNumPlayers() - 1 );
+			CHL2MP_Player *pPlayer = ToHL2MPPlayer(pBiggerTeam->GetPlayer(index));
 
-			int args[2];
-
-			//Just to make sure.
-			args[0] = 1;
-			args[1] = AMMO_KIT_BALL;
-			//
-
-			switch (iAutoTeamBalanceBiggerTeam)
-			{
-				case TEAM_BRITISH:
-					iAutoTeamBalancePlayerToSwitchIndex = random->RandomInt( 0, (pBritish->GetNumPlayers() - 1) );
-					pPlayer = ToHL2MPPlayer(pBritish->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex));
-					if (pPlayer && !pPlayer->IsAlive()) //Let's try to avoid null pointers.
-					{
-						//BG2 - This sets the player's current default weapon kit for the class they're being switched to. -HairyPotter
-						int edict = engine->IndexOfEdict( pPlayer->edict() );
-						switch( pPlayer->GetClass() )
-						{
-							case CLASS_INFANTRY:
-								sscanf( engine->GetClientConVarValue( edict, "cl_kit_a_inf" ), "%i %i", &(args[0]), &(args[1]) );
-								break;
-							case CLASS_SKIRMISHER:
-								sscanf( engine->GetClientConVarValue( edict, "cl_kit_a_ski" ), "%i %i", &(args[0]), &(args[1]) );
-								break;
-						}
-
-						pPlayer->m_iGunKit = args[0];
-						pPlayer->m_iAmmoKit = args[1];
-						pPlayer->ChangeTeam(TEAM_AMERICANS);
-					}
-					break;
-				case TEAM_AMERICANS:
-					iAutoTeamBalancePlayerToSwitchIndex = random->RandomInt( 0, (pAmericans->GetNumPlayers() - 1) );
-					pPlayer = ToHL2MPPlayer(pAmericans->GetPlayer(iAutoTeamBalancePlayerToSwitchIndex));
-					if (pPlayer && !pPlayer->IsAlive()) //Let's try to avoid null pointers.
-					{
-						//BG2 - This sets the player's current default weapon kit for the class they're being switched to. -HairyPotter
-						int edict = engine->IndexOfEdict( pPlayer->edict() );
-						//szWeaponKit = engine->GetClientConVarValue( edict, "cl_playermodel" );
-						switch( pPlayer->GetClass() )
-						{
-							case CLASS_INFANTRY:
-								sscanf( engine->GetClientConVarValue( edict, "cl_kit_b_inf" ), "%i %i", &(args[0]), &(args[1]) );
-								break;
-							case CLASS_SKIRMISHER:
-								sscanf( engine->GetClientConVarValue( edict, "cl_kit_b_ski" ), "%i %i", &(args[0]), &(args[1]) );
-								break;
-							case CLASS_LIGHT_INFANTRY:
-								sscanf( engine->GetClientConVarValue( edict, "cl_kit_b_light" ), "%i %i", &(args[0]), &(args[1]) );
-								break;
-						}
-
-						pPlayer->m_iGunKit = args[0];
-						pPlayer->m_iAmmoKit = args[1];
-						pPlayer->ChangeTeam(TEAM_BRITISH);
-					}
-					break;
-			}
+			//swap player unless they're alive
+			//if they are alive, we'll pick another player next think
+			SwapPlayerTeam( pPlayer, true );
 		}
 		//well, if we aren't even now, there's always next think...
 	}
@@ -708,14 +718,10 @@ void CHL2MPRules::Think( void )
 	}
 	if( mp_respawnstyle.GetInt() == 2 || UsingTickets() )//if line battle all at once spawn style - Draco
 	{
-		/*if (mp_respawntime.GetInt() == 0)
-		{
-			m_fEndRoundTime = 0;
-		}*/
 		//Tjoppen - start
 		//count alive players in each team
-		CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
-		CTeam *pBritish = g_Teams[TEAM_BRITISH];
+		int aliveamericans = CountAlivePlayersAndTickets( TEAM_AMERICANS );
+		int alivebritish   = CountAlivePlayersAndTickets( TEAM_BRITISH );
 
 		if( pAmericans->GetNumPlayers() == 0 && pBritish->GetNumPlayers() == 0 )
 			return;
@@ -723,22 +729,6 @@ void CHL2MPRules::Think( void )
 		//allow ticket round to restart even if there aren't any players on the other team
 		if( !UsingTickets() && (pAmericans->GetNumPlayers() == 0 || pBritish->GetNumPlayers() == 0) )
 			return;
-
-		int aliveamericans = UsingTickets() ? pAmericans->GetTicketsLeft() : 0, x = 0;
-		for( ; x < pAmericans->GetNumPlayers(); x++ )
-		{
-			CBasePlayer *pPlayer = pAmericans->GetPlayer( x );
-			if( pPlayer && pPlayer->IsAlive() )
-				aliveamericans++;
-		}
-
-		int alivebritish = UsingTickets() ? pBritish->GetTicketsLeft() : 0;
-		for( x = 0; x < pBritish->GetNumPlayers(); x++ )
-		{
-			CBasePlayer *pPlayer = pBritish->GetPlayer( x );
-			if( pPlayer && pPlayer->IsAlive() )
-				alivebritish++;
-		}
 
 		//Tjoppen - End
 		//BG2 - Tjoppen - restart rounds a few seconds after the last person is killed
@@ -811,9 +801,6 @@ void CHL2MPRules::Think( void )
 
 	if ( flFragLimit )
 	{
-		CTeam *pAmericans = g_Teams[TEAM_AMERICANS];
-		CTeam *pBritish = g_Teams[TEAM_BRITISH];
-
 		if ( pAmericans->GetScore() >= flFragLimit || pBritish->GetScore() >= flFragLimit )
 		{
 			GoToIntermission();
