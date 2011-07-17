@@ -910,10 +910,10 @@ DECLARE_BG2_WEAPON( longpattern_nobayo )
 
 	//Iron sights viewmodel settings.
 	vecIronsightPosOffset.x		= -17.0; //forward
-	vecIronsightPosOffset.y		= -8.2; //right
+	vecIronsightPosOffset.y		= -7.8; //right
 	vecIronsightPosOffset.z		= 6.6; //up
  
-	angIronsightAngOffset[PITCH]	= -0.6;
+	angIronsightAngOffset[PITCH]	= -0.75;
 	angIronsightAngOffset[YAW]		= 0.3;
 	angIronsightAngOffset[ROLL]		= 0;
 	flIronsightFOVOffset		= -2.5;
