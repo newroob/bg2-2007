@@ -132,10 +132,12 @@ BEGIN_NETWORK_TABLE_NOBASE( CHL2MPRules, DT_HL2MPRules )
 		//RecvPropBool( RECVINFO( m_bTeamPlayEnabled ) ),
 		RecvPropFloat( RECVINFO( m_fLastRespawnWave ) ), //BG2 This needs to be here for the timer to work. -HairyPotter
 		RecvPropFloat( RECVINFO( m_fLastRoundRestart ) ),
+		RecvPropInt( RECVINFO( m_iCurrentRound ) ),
 	#else
 		//SendPropBool( SENDINFO( m_bTeamPlayEnabled ) ),
 		SendPropFloat( SENDINFO( m_fLastRespawnWave ) ), //BG2 This needs to be here for the timer to work. -HairyPotter
 		SendPropFloat( SENDINFO( m_fLastRoundRestart ) ),
+		SendPropInt( SENDINFO( m_iCurrentRound ), 8, SPROP_UNSIGNED ),
 	#endif
 
 END_NETWORK_TABLE()
@@ -268,6 +270,7 @@ CHL2MPRules::CHL2MPRules()
 	m_iBritishDmg = 0;
 	m_fNextWinSong = gpGlobals->curtime;
 	m_bServerReady = false; //Do this too, this will make it so map changes with bots work.
+	m_iCurrentRound = 1;
 //BG2 - Skillet
 #else
 	m_hRagdollList.RemoveAll();
@@ -413,6 +416,18 @@ void CHL2MPRules::HandleScores( int iTeam, int iScore, int msg_type, bool bResta
 	}
 	if ( bRestart )
 	{
+		if ( UsingTickets() )
+		{
+			//if last round, then go to intermission (next map)
+			if ( m_iCurrentRound >= mp_tickets_rounds.GetInt() )
+			{
+				GoToIntermission();
+				return;
+			}
+
+			m_iCurrentRound++;
+		}
+
 		//swap teams if using tickets
 		RestartRound( UsingTickets() );
 		//do not cause two simultaneous round restarts..

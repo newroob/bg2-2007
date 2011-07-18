@@ -103,6 +103,13 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_pLabelATickets->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelATickets->SetFgColor( ColourWhite );
 
+	m_pLabelCurrentRound= new vgui::Label( this, "RoundState_warmup", "");
+	m_pLabelCurrentRound->SetPaintBackgroundEnabled( false );
+	m_pLabelCurrentRound->SetPaintBorderEnabled( false );
+	m_pLabelCurrentRound->SizeToContents();
+	m_pLabelCurrentRound->SetContentAlignment( vgui::Label::a_west );
+	m_pLabelCurrentRound->SetFgColor( ColourWhite );
+
 	m_pLabelAmmo = new vgui::Label( this, "RoundState_warmup", "");
 	m_pLabelAmmo->SetPaintBackgroundEnabled( false );
 	m_pLabelAmmo->SetPaintBorderEnabled( false );
@@ -319,16 +326,24 @@ void CHudBG2::Paint()
 
 	if( HL2MPRules()->UsingTickets() )
 	{
+		extern ConVar mp_tickets_rounds;
+
+		Q_snprintf( msg2, 512, "Round %i/%i ", HL2MPRules()->m_iCurrentRound, mp_tickets_rounds.GetInt() );
+		m_pLabelCurrentRound->SetText(msg2);
+		m_pLabelCurrentRound->SizeToContents();
+		m_pLabelCurrentRound->SetPos(10,ystart - 83);
+		m_pLabelCurrentRound->SetFgColor( ColourWhite );
+
 		Q_snprintf( msg2, 512, "British tickets left: %i ", pBrit ? pBrit->m_iTicketsLeft : 0);
 		m_pLabelBTickets->SetText(msg2);
 		m_pLabelBTickets->SizeToContents();
-		m_pLabelBTickets->SetPos(10,ystart - 50);
+		m_pLabelBTickets->SetPos(10,ystart - 43);
 		m_pLabelBTickets->SetFgColor( ColourWhite );
 
 		Q_snprintf( msg2, 512, "American tickets left: %i ", pAmer ? pAmer->m_iTicketsLeft : 0);
 		m_pLabelATickets->SetText(msg2);
 		m_pLabelATickets->SizeToContents();
-		m_pLabelATickets->SetPos(10,ystart - 30);
+		m_pLabelATickets->SetPos(10,ystart - 23);
 		m_pLabelATickets->SetFgColor( ColourWhite );
 	}
 	
@@ -372,7 +387,7 @@ void CHudBG2::Paint()
 		Q_snprintf( msg2, 512, "Time left in round: %i:%02i ", roundtime / 60, roundtime % 60 );
 		m_pLabelRoundTime->SetText(msg2);
 		m_pLabelRoundTime->SizeToContents();
-		m_pLabelRoundTime->SetPos(10,ystart - 70);
+		m_pLabelRoundTime->SetPos(10,ystart - 63);
 		m_pLabelRoundTime->SetFgColor( ColourWhite );
 	}
 
@@ -426,6 +441,7 @@ void CHudBG2::HideShowAll( bool visible )
 	m_pLabelBScore->SetVisible(visible);
 	m_pLabelBTickets->SetVisible(visible && HL2MPRules()->UsingTickets());
 	m_pLabelATickets->SetVisible(visible && HL2MPRules()->UsingTickets());
+	m_pLabelCurrentRound->SetVisible(visible && HL2MPRules()->UsingTickets());
 	m_pLabelWaveTime->SetVisible(visible);
 	m_pLabelRoundTime->SetVisible(visible && HL2MPRules()->UsingTickets());
 	m_pLabelAmmo->SetVisible(visible);

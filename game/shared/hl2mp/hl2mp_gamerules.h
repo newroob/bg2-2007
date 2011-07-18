@@ -213,6 +213,12 @@ public:
 	//bool	IsTeamplay( void ) { return m_bTeamPlayEnabled;	} //BG2 - Don't need it anymore. Always assume teamplay, because BG2 requires it anyway. -HairyPotter
 	void	CheckAllPlayersReady( void );
 
+	/**
+	 * Current round, when UsingTickets().
+	 * 1-based, so runs from 1 up to mp_tickets_rounds.
+	 */
+	CNetworkVar( int, m_iCurrentRound );
+
 	//BG2 - Draco - Start
 	CNetworkVar( float, m_fLastRespawnWave );
 	CNetworkVar( float, m_fLastRoundRestart );

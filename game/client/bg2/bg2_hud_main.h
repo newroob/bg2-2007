@@ -210,6 +210,7 @@ private:
 	vgui::Label * m_pLabelAScore; 
 	vgui::Label * m_pLabelBTickets;
 	vgui::Label * m_pLabelATickets;
+	vgui::Label * m_pLabelCurrentRound;
 	vgui::Label * m_pLabelAmmo; 
 	vgui::Label * m_pLabelWaveTime; 
 	vgui::Label * m_pLabelRoundTime; 
