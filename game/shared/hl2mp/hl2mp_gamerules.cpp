@@ -124,6 +124,8 @@ ConVar mp_tickets_b( "mp_tickets_b", "100", CVAR_FLAGS, "Tickets given to britis
 ConVar mp_tickets_drain_a( "mp_tickets_drain_a", "12.5", CVAR_FLAGS, "Number of tickets drained every ten seconds when the americans have more than half of their cappable flags. Can have decimals" );
 ConVar mp_tickets_drain_b( "mp_tickets_drain_b", "12.5", CVAR_FLAGS, "Number of tickets drained every ten seconds when the british have more than half of their cappable flags. Can have decimals" );
 
+#define TEAM_NONE -1
+
 REGISTER_GAMERULES_CLASS( CHL2MPRules );
 
 BEGIN_NETWORK_TABLE_NOBASE( CHL2MPRules, DT_HL2MPRules )
@@ -263,7 +265,7 @@ CHL2MPRules::CHL2MPRules()
 	//m_iWaveTime = 0;
 	//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 	m_fLastRoundRestart = m_fLastRespawnWave = gpGlobals->curtime;
-	m_iTDMTeamThatWon = 0;
+	m_iTDMTeamThatWon = TEAM_NONE;
 	m_bHasDoneWinSong = false;
 	m_bHasLoggedScores = false;
 	m_iAmericanDmg = 0;
@@ -414,6 +416,10 @@ void CHL2MPRules::HandleScores( int iTeam, int iScore, int msg_type, bool bResta
 			break;
 		}
 	}
+
+	if ( iScore > 0 && iTeam != TEAM_NONE )
+		g_Teams[iTeam]->AddScore( iScore );
+
 	if ( bRestart )
 	{
 		if ( UsingTickets() )
@@ -434,9 +440,6 @@ void CHL2MPRules::HandleScores( int iTeam, int iScore, int msg_type, bool bResta
 		m_bIsRestartingRound = false;
 		m_flNextRoundRestart = gpGlobals->curtime + 1;
 	}
-
-	if ( iScore > 0 )
-		g_Teams[iTeam]->AddScore( iScore );
 
 	WinSong( iTeam, true );
 
@@ -580,7 +583,7 @@ void CHL2MPRules::Think( void )
 			if (pAmericans->GetScore() == pBritish->GetScore())
 			{
 				//Draw!
-				HandleScores( -1, 0, MAP_DRAW, false );
+				HandleScores( TEAM_NONE, 0, MAP_DRAW, false );
 			}
 		}
 
@@ -776,65 +779,38 @@ void CHL2MPRules::Think( void )
 		//wins
 		float roundLength = UsingTickets() ? mp_tickets_roundtime.GetFloat() : mp_respawntime.GetFloat();
 		
-		if ((aliveamericans == 0) || (alivebritish == 0) || (m_fLastRoundRestart + roundLength <= gpGlobals->curtime) || (m_bIsRestartingRound))
+		if (aliveamericans == 0 || alivebritish == 0 || m_fLastRoundRestart + roundLength <= gpGlobals->curtime || m_bIsRestartingRound)
 		{
 			if( !m_bIsRestartingRound )
 			{
 				m_flNextRoundRestart = gpGlobals->curtime + 5;
 				m_bIsRestartingRound = true;
-				
-				if((aliveamericans > 0) && (alivebritish > 0)) //Both teams have players left alive..
-				{
-					if (aliveamericans > alivebritish)
-					{
-						ClientPrintAll( AMERICAN_DEFAULT_WIN );
-						m_iTDMTeamThatWon = TEAM_AMERICANS;
-					}
-					else if (aliveamericans < alivebritish)
-					{
-						ClientPrintAll( BRITISH_DEFAULT_WIN );
-						m_iTDMTeamThatWon = TEAM_BRITISH;
-					}
-					else
-					{
-						ClientPrintAll( DEFAULT_DRAW );
-						m_iTDMTeamThatWon = -1;
-					}
-				}
 
-				if( aliveamericans == 0 && alivebritish == 0 )
+				//print different messages depending on whether the losing has any players left alive
+				if (aliveamericans > alivebritish)
 				{
-					//draw
-					ClientPrintAll( ROUND_DRAW );
-					m_iTDMTeamThatWon = -1;
-				}
-				else if( aliveamericans == 0 )
-				{
-					//british
-					m_iTDMTeamThatWon = TEAM_BRITISH;
-					ClientPrintAll( BRITISH_ROUND_WIN );
-				}
-				else if( alivebritish == 0 )
-				{
-					//americans
+					ClientPrintAll( alivebritish ? AMERICAN_DEFAULT_WIN : AMERICAN_ROUND_WIN );
 					m_iTDMTeamThatWon = TEAM_AMERICANS;
-					ClientPrintAll( AMERICAN_ROUND_WIN );
+				}
+				else if (aliveamericans < alivebritish)
+				{
+					ClientPrintAll( aliveamericans ? BRITISH_DEFAULT_WIN : BRITISH_ROUND_WIN );
+					m_iTDMTeamThatWon = TEAM_BRITISH;
+				}
+				else
+				{
+					ClientPrintAll( aliveamericans ? DEFAULT_DRAW : ROUND_DRAW );
+					m_iTDMTeamThatWon = TEAM_NONE;
 				}
 			}
 			else if( m_flNextRoundRestart < gpGlobals->curtime )
-			{			
-				switch ( m_iTDMTeamThatWon )
-				{
-					case TEAM_AMERICANS:
-						HandleScores( TEAM_AMERICANS, 1, 0, true );
-						break;
-					case TEAM_BRITISH:
-						HandleScores( TEAM_BRITISH, 1, 0, true );
-						break;
-					default:
-						HandleScores( NULL, 0, 0, true );
-						break;
-				}
+			{
+				int score = 0;
+
+				if ( m_iTDMTeamThatWon != TEAM_NONE )
+					score = 1;
+
+				HandleScores( m_iTDMTeamThatWon, score, 0, true );
 			}
 		}
 	}
@@ -1948,7 +1924,7 @@ void CHL2MPRules::CheckFullcap( void )
 		if( american_flags <= 0 && british_flags <= 0 )
 		{
 			//draw
-			HandleScores( NULL, 0, ROUND_DRAW, true );
+			HandleScores( TEAM_NONE, 0, ROUND_DRAW, true );
 			//Msg( "draw\n" );
 			return;
 		}
