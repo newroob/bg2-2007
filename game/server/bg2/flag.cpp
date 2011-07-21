@@ -322,8 +322,10 @@ void CFlag::Think( void )
 
 
 	//award any time bonii
-	if ( !g_fGameOver ) //The game hasn't ended yet, keep adding points to the team.
+	//don't give score in ticket mode
+	if ( !g_fGameOver && !HL2MPRules()->UsingTickets() )
 	{
+		//The game hasn't ended yet, keep adding points to the team.
 		switch( GetTeamNumber() )
 		{
 			case TEAM_AMERICANS:
@@ -571,7 +573,10 @@ void CFlag::Capture( int iTeam )
 		WRITE_STRING( SoundFile );
 	MessageEnd();
 
-	g_Teams[iTeam]->AddScore( m_iTeamBonus );
+	//don't give score in ticket mode
+	if ( !HL2MPRules()->UsingTickets() )
+		g_Teams[iTeam]->AddScore( m_iTeamBonus );
+
 	m_flNextTeamBonus = (gpGlobals->curtime + m_iTeamBonusInterval);
 
 	//award capping players some points and put them on the overload list
