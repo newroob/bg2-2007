@@ -176,7 +176,7 @@ int CHL2MP_Player::GetCurrentSpeed( void ) const
 			base = 195;
 			break;
 		case CLASS_OFFICER:
-			base = 220;
+			base = 210;
 			break;
 		case CLASS_SNIPER:
 			base = 205;
