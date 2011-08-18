@@ -205,6 +205,9 @@ private:
 	CHudTexture		* m_BritHealthBase;
 	CHudTexture		* m_BritHealth;
 	CHudTexture		* m_BritStamina;
+	CHudTexture		* m_SwingometerRed;
+	CHudTexture		* m_SwingometerBlue;
+	CHudTexture		* m_PowderHorn;
 
 	vgui::Label * m_pLabelBScore; 
 	vgui::Label * m_pLabelAScore; 
@@ -218,6 +221,7 @@ private:
 				*m_pLabelLMS;		//BG2 - Tjoppen - TODO: remove this when hintbox works correctly
 
 	float m_flExpireTime;
+	float m_flLastSwing;	//last frame's swingometer value
 
 protected:
 

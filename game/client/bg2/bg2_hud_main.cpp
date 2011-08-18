@@ -70,8 +70,10 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_Base = NULL; 
 	m_AmerHealthBase = m_AmerHealth = m_AmerStamina = NULL;
 	m_BritHealthBase = m_BritHealth = m_BritStamina = NULL;
+	m_SwingometerRed = m_SwingometerBlue = m_PowderHorn = NULL;
 
 	m_flExpireTime = 0;
+	m_flLastSwing = 0.5f;
 
 	Color ColourWhite( 255, 255, 255, 255 );
 
@@ -192,6 +194,9 @@ void CHudBG2::VidInit( void )
 	m_BritHealthBase = gHUD.GetIcon("hud_brit_health_base");
 	m_BritHealth     = gHUD.GetIcon("hud_brit_health");
 	m_BritStamina    = gHUD.GetIcon("hud_brit_stamina");
+	m_SwingometerRed = gHUD.GetIcon("hud_swingometer_red");
+	m_SwingometerBlue= gHUD.GetIcon("hud_swingometer_blue");
+	m_PowderHorn     = gHUD.GetIcon("hud_powderhorn");
 }
 
 //==============================================
@@ -214,7 +219,8 @@ static ConVar cl_draw_lms_indicator( "cl_draw_lms_indicator", "1", FCVAR_CLIENTD
 void CHudBG2::Paint()
 {
 	if( !m_Base || !m_AmerHealthBase || !m_AmerHealth || !m_AmerStamina ||
-		!m_BritHealthBase || !m_BritHealth || !m_BritStamina )
+		!m_BritHealthBase || !m_BritHealth || !m_BritStamina ||
+		!m_SwingometerRed || !m_SwingometerBlue || !m_PowderHorn )
 		return;
 
 	//BG2 - Tjoppen - Always paint damage label, so it becomes visible while using iron sights
@@ -282,6 +288,58 @@ void CHudBG2::Paint()
 
 	m_Base->DrawSelf(0,ystart,ColourWhite);
 
+	C_Team *pAmer = GetGlobalTeam(TEAM_AMERICANS);
+	C_Team *pBrit = GetGlobalTeam(TEAM_BRITISH);
+
+	//swingometer
+	//displays based on tickets in ticket mode, score otherwise
+	int swinga = 0, swingb = 0;
+
+	if( HL2MPRules()->UsingTickets() )
+	{
+		swinga = pAmer ? pAmer->m_iTicketsLeft : 0;
+		swingb = pBrit ? pBrit->m_iTicketsLeft : 0;
+	}
+	else
+	{
+		swinga = pAmer ? pAmer->Get_Score() : 0;
+		swingb = pBrit ? pBrit->Get_Score() : 0;
+	}
+
+	float swing = m_flLastSwing;
+
+	//guard against negatives. you never know..
+	if( swinga >= 0 && swingb >= 0 )
+	{
+		//avoid division by zero - leave swing alone if we would
+		int tot = swinga + swingb;
+
+		if( tot > 0 )
+			swing = swinga / (float)tot;
+	}
+
+	//move swing value towards m_flLastSwing
+	float swingdiff = swing - m_flLastSwing;	//useful for setting alpha on bars
+	float swingadjust = swingdiff;
+
+	//cap swing rate so each percent takes 20 ms (meaning a full swing = 2 sec)
+	float swingrate = 0.5f;
+
+	if( swingadjust < -swingrate * gpGlobals->frametime ) swingadjust = -swingrate * gpGlobals->frametime;
+	if( swingadjust >  swingrate * gpGlobals->frametime ) swingadjust =  swingrate * gpGlobals->frametime;
+
+	swing = m_flLastSwing + swingadjust;
+
+	int swingw = m_SwingometerBlue->Width();
+	int swingx = (m_Base->Width() - swingw) / 2;
+	int swingm = swingw * swing;
+	int swingh = m_SwingometerBlue->Height();
+
+	m_SwingometerBlue->DrawSelfCropped( swingx,          ystart, 0,      0, swingm,          swingh, ColourWhite );
+	 m_SwingometerRed->DrawSelfCropped( swingx + swingm, ystart, swingm, 0, swingw - swingm, swingh, ColourWhite );
+
+	m_flLastSwing = swing;
+
 	CHudTexture *pHealthBase, *pHealth, *pStamina;
 
 	if (pHL2Player->GetTeamNumber() == TEAM_AMERICANS)
@@ -308,45 +366,43 @@ void CHudBG2::Paint()
 	pHealthBase->DrawSelf(    m_Base->Width(), ystart2 + offset,                               ColourWhite);
 	pHealth->DrawSelfCropped( m_Base->Width(), ystart2 + offset, 0, 0,     64, healthheight, ColourWhite);
 
-	C_Team *pAmer = GetGlobalTeam(TEAM_AMERICANS);
-	C_Team *pBrit = GetGlobalTeam(TEAM_BRITISH);
+	if( HL2MPRules()->UsingTickets() )
+	{
 	Q_snprintf( msg2, 512, "%i ", pBrit ? pBrit->Get_Score() : 0);	//BG2 - Tjoppen - avoid NULL
 	m_pLabelBScore->SetText(msg2);
 	m_pLabelBScore->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelBScore->SetPos(15,ystart + 40 - h/2);
+	m_pLabelBScore->SetPos(m_Base->Width() - 149,ystart + 132);
 	m_pLabelBScore->SetFgColor( ColourWhite );
 	
 	Q_snprintf( msg2, 512, "%i ", pAmer ? pAmer->Get_Score() : 0);	//BG2 - Tjoppen - avoid NULL
 	m_pLabelAScore->SetText(msg2);
 	m_pLabelAScore->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelAScore->SetPos(60,ystart + 40 - h/2);
+	m_pLabelAScore->SetPos(133,ystart + 132);
 	m_pLabelAScore->SetFgColor( ColourWhite );
 
-	if( HL2MPRules()->UsingTickets() )
-	{
 		extern ConVar mp_tickets_rounds;
 
 		Q_snprintf( msg2, 512, "Round %i/%i ", HL2MPRules()->m_iCurrentRound, mp_tickets_rounds.GetInt() );
 		m_pLabelCurrentRound->SetText(msg2);
 		m_pLabelCurrentRound->SizeToContents();
-		m_pLabelCurrentRound->SetPos(10,ystart - 83);
+		m_pLabelCurrentRound->SetPos(10,ystart - 15);
 		m_pLabelCurrentRound->SetFgColor( ColourWhite );
+	}
 
-		Q_snprintf( msg2, 512, "British tickets left: %i ", pBrit ? pBrit->m_iTicketsLeft : 0);
+		Q_snprintf( msg2, 512, "%i ", swingb);
 		m_pLabelBTickets->SetText(msg2);
 		m_pLabelBTickets->SizeToContents();
-		m_pLabelBTickets->SetPos(10,ystart - 43);
+		m_pLabelBTickets->SetPos(m_Base->Width() - 44,ystart + 103);
 		m_pLabelBTickets->SetFgColor( ColourWhite );
 
-		Q_snprintf( msg2, 512, "American tickets left: %i ", pAmer ? pAmer->m_iTicketsLeft : 0);
+		Q_snprintf( msg2, 512, "%i ", swinga);
 		m_pLabelATickets->SetText(msg2);
 		m_pLabelATickets->SizeToContents();
-		m_pLabelATickets->SetPos(10,ystart - 23);
+		m_pLabelATickets->SetPos(11,ystart + 103);
 		m_pLabelATickets->SetFgColor( ColourWhite );
-	}
-	
+
 	int iAmmoCount = pHL2Player->GetAmmoCount(wpn->GetPrimaryAmmoType()) + wpn->Clip1();
 	if( iAmmoCount >= 0 )
 	{
@@ -362,7 +418,10 @@ void CHudBG2::Paint()
 		}
 		m_pLabelAmmo->SizeToContents();
 		m_pLabelAmmo->GetSize( w, h );
-		m_pLabelAmmo->SetPos(55,ystart + 100 - h/2);
+
+		int hornx = m_Base->Width() + pStamina->Width();
+		m_pLabelAmmo->SetPos( hornx + m_PowderHorn->Width(),GetTall() - m_PowderHorn->Height() / 2 - h/2);
+		m_PowderHorn->DrawSelf( hornx, GetTall() - m_PowderHorn->Height(), ColourWhite );
 	}
 	else
 		m_pLabelAmmo->SetVisible( false );
@@ -375,7 +434,7 @@ void CHudBG2::Paint()
 	m_pLabelWaveTime->SetText(msg2);
 	m_pLabelWaveTime->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelWaveTime->SetPos(50,ystart + 66 - h/2);
+	m_pLabelWaveTime->SetPos(20,ystart + 137);
 	m_pLabelWaveTime->SetFgColor( ColourWhite );
 
 	if( HL2MPRules()->UsingTickets() )
@@ -384,10 +443,10 @@ void CHudBG2::Paint()
 		if(	roundtime < 0 )
 			roundtime = 0;
 
-		Q_snprintf( msg2, 512, "Time left in round: %i:%02i ", roundtime / 60, roundtime % 60 );
+		Q_snprintf( msg2, 512, "%i:%02i ", roundtime / 60, roundtime % 60 );
 		m_pLabelRoundTime->SetText(msg2);
 		m_pLabelRoundTime->SizeToContents();
-		m_pLabelRoundTime->SetPos(10,ystart - 63);
+		m_pLabelRoundTime->SetPos(220,ystart + 137);
 		m_pLabelRoundTime->SetFgColor( ColourWhite );
 	}
 
@@ -437,10 +496,10 @@ void CHudBG2::Reset( void )
 
 void CHudBG2::HideShowAll( bool visible )
 {
-	m_pLabelAScore->SetVisible(visible);
-	m_pLabelBScore->SetVisible(visible);
-	m_pLabelBTickets->SetVisible(visible && HL2MPRules()->UsingTickets());
-	m_pLabelATickets->SetVisible(visible && HL2MPRules()->UsingTickets());
+	m_pLabelAScore->SetVisible(visible && HL2MPRules()->UsingTickets());
+	m_pLabelBScore->SetVisible(visible && HL2MPRules()->UsingTickets());
+	m_pLabelBTickets->SetVisible(visible);
+	m_pLabelATickets->SetVisible(visible);
 	m_pLabelCurrentRound->SetVisible(visible && HL2MPRules()->UsingTickets());
 	m_pLabelWaveTime->SetVisible(visible);
 	m_pLabelRoundTime->SetVisible(visible && HL2MPRules()->UsingTickets());
