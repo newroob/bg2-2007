@@ -307,16 +307,13 @@ void CHudBG2::Paint()
 	}
 
 	float swing = m_flLastSwing;
+	int tot = swinga + swingb;
 
 	//guard against negatives. you never know..
-	if( swinga >= 0 && swingb >= 0 )
-	{
-		//avoid division by zero - leave swing alone if we would
-		int tot = swinga + swingb;
-
-		if( tot > 0 )
-			swing = swinga / (float)tot;
-	}
+	if( swinga >= 0 && swingb >= 0 && tot > 0 )
+		swing = swinga / (float)tot;
+	else
+		swing = 0.5f;	//returns to center when both scores are zero (round reset for instance)
 
 	//move swing value towards m_flLastSwing
 	float swingdiff = swing - m_flLastSwing;	//useful for setting alpha on bars
