@@ -369,14 +369,14 @@ void CHudBG2::Paint()
 	m_pLabelBScore->SetText(msg2);
 	m_pLabelBScore->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelBScore->SetPos(m_Base->Width() - 149,ystart + 132);
+	m_pLabelBScore->SetPos(m_Base->Width() - 149,GetTall() - 28);
 	m_pLabelBScore->SetFgColor( ColourWhite );
 	
 	Q_snprintf( msg2, 512, "%i ", pAmer ? pAmer->Get_Score() : 0);	//BG2 - Tjoppen - avoid NULL
 	m_pLabelAScore->SetText(msg2);
 	m_pLabelAScore->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelAScore->SetPos(133,ystart + 132);
+	m_pLabelAScore->SetPos(133,GetTall() - 28);
 	m_pLabelAScore->SetFgColor( ColourWhite );
 
 		extern ConVar mp_tickets_rounds;
@@ -391,13 +391,13 @@ void CHudBG2::Paint()
 		Q_snprintf( msg2, 512, "%i ", swingb);
 		m_pLabelBTickets->SetText(msg2);
 		m_pLabelBTickets->SizeToContents();
-		m_pLabelBTickets->SetPos(m_Base->Width() - 44,ystart + 103);
+		m_pLabelBTickets->SetPos(m_Base->Width() - 44,GetTall() - 57);
 		m_pLabelBTickets->SetFgColor( ColourWhite );
 
 		Q_snprintf( msg2, 512, "%i ", swinga);
 		m_pLabelATickets->SetText(msg2);
 		m_pLabelATickets->SizeToContents();
-		m_pLabelATickets->SetPos(11,ystart + 103);
+		m_pLabelATickets->SetPos(11,GetTall() - 57);
 		m_pLabelATickets->SetFgColor( ColourWhite );
 
 	int iAmmoCount = pHL2Player->GetAmmoCount(wpn->GetPrimaryAmmoType()) + wpn->Clip1();
@@ -431,7 +431,7 @@ void CHudBG2::Paint()
 	m_pLabelWaveTime->SetText(msg2);
 	m_pLabelWaveTime->SizeToContents();
 	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelWaveTime->SetPos(20,ystart + 137);
+	m_pLabelWaveTime->SetPos(35,GetTall() - 23);
 	m_pLabelWaveTime->SetFgColor( ColourWhite );
 
 	if( HL2MPRules()->UsingTickets() )
@@ -443,7 +443,7 @@ void CHudBG2::Paint()
 		Q_snprintf( msg2, 512, "%i:%02i ", roundtime / 60, roundtime % 60 );
 		m_pLabelRoundTime->SetText(msg2);
 		m_pLabelRoundTime->SizeToContents();
-		m_pLabelRoundTime->SetPos(220,ystart + 137);
+		m_pLabelRoundTime->SetPos(235,GetTall() - 23);
 		m_pLabelRoundTime->SetFgColor( ColourWhite );
 	}
 
