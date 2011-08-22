@@ -222,6 +222,10 @@ private:
 
 	float m_flExpireTime;
 	float m_flLastSwing;	//last frame's swingometer value
+	float m_flAFlashEnd;	//american ticket flash timer
+	float m_flBFlashEnd;	//british ticket flash timer
+	int m_iLastSwingA;		//swinga of last frame
+	int m_iLastSwingB;		//swingb of last frame
 
 protected:
 

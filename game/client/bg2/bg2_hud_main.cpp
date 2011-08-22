@@ -72,9 +72,6 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_BritHealthBase = m_BritHealth = m_BritStamina = NULL;
 	m_SwingometerRed = m_SwingometerBlue = m_PowderHorn = NULL;
 
-	m_flExpireTime = 0;
-	m_flLastSwing = 0.5f;
-
 	Color ColourWhite( 255, 255, 255, 255 );
 
 	m_pLabelBScore = new vgui::Label( this, "RoundState_warmup", "");
@@ -150,8 +147,7 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	CBaseEntity::PrecacheScriptSound( "Americans.win" );
 	CBaseEntity::PrecacheScriptSound( "British.win" );
 
-	//hide all
-	HideShowAll(false);
+	Reset();
 }
 
 //==============================================
@@ -215,6 +211,16 @@ bool CHudBG2::ShouldDraw( void )
 // errr... paints the panel
 //==============================================
 static ConVar cl_draw_lms_indicator( "cl_draw_lms_indicator", "1", FCVAR_CLIENTDLL, "Draw last man standing indicator string?" );
+
+static Color colorForFlash( float flFlashEnd )
+{
+	//flash from red back to white
+	//hold at red for 250 ms, fade to white in 250 ms
+	float value = (gpGlobals->curtime - flFlashEnd) * 4 * 256;
+	value = clamp(value, 0, 255);
+
+	return Color(255, value, value, 255);
+}
 
 void CHudBG2::Paint()
 {
@@ -337,6 +343,29 @@ void CHudBG2::Paint()
 
 	m_flLastSwing = swing;
 
+	//figure out whether our ticket meter should flash
+	extern ConVar mp_tickets_drain_a, mp_tickets_drain_b;
+
+	if( HL2MPRules()->UsingTickets() )
+	{
+		//Avoid spamming the player - only flash their team's number
+		//HACKHACK: Assume ticket decrease >= drain means we're being drained.
+		//          That or a whole bunch of players on our team spawned.
+		//          Require the drain/delta to be at least 2 though.
+		int minDelta = 2;
+
+		if( pHL2Player->GetTeamNumber() == TEAM_AMERICANS && mp_tickets_drain_a.GetInt() >= minDelta &&
+			swinga <= m_iLastSwingA - mp_tickets_drain_a.GetInt() )
+			m_flAFlashEnd = gpGlobals->curtime + 0.5f;
+
+		if( pHL2Player->GetTeamNumber() == TEAM_BRITISH   && mp_tickets_drain_b.GetInt() >= minDelta &&
+			swingb <= m_iLastSwingB - mp_tickets_drain_b.GetInt() )
+			m_flBFlashEnd = gpGlobals->curtime + 0.5f;
+	}
+
+	m_iLastSwingA = swinga;
+	m_iLastSwingB = swingb;
+
 	CHudTexture *pHealthBase, *pHealth, *pStamina;
 
 	if (pHL2Player->GetTeamNumber() == TEAM_AMERICANS)
@@ -392,13 +421,13 @@ void CHudBG2::Paint()
 		m_pLabelBTickets->SetText(msg2);
 		m_pLabelBTickets->SizeToContents();
 		m_pLabelBTickets->SetPos(m_Base->Width() - 44,GetTall() - 57);
-		m_pLabelBTickets->SetFgColor( ColourWhite );
+		m_pLabelBTickets->SetFgColor( colorForFlash(m_flBFlashEnd) );
 
 		Q_snprintf( msg2, 512, "%i ", swinga);
 		m_pLabelATickets->SetText(msg2);
 		m_pLabelATickets->SizeToContents();
 		m_pLabelATickets->SetPos(11,GetTall() - 57);
-		m_pLabelATickets->SetFgColor( ColourWhite );
+		m_pLabelATickets->SetFgColor( colorForFlash(m_flAFlashEnd) );
 
 	int iAmmoCount = pHL2Player->GetAmmoCount(wpn->GetPrimaryAmmoType()) + wpn->Clip1();
 	if( iAmmoCount >= 0 )
@@ -488,6 +517,9 @@ void CHudBG2::Reset( void )
 {
 	//mapchange, clear indicators. and stuff.
 	m_flExpireTime = 0;
+	m_flLastSwing = 0.5f;
+	m_flAFlashEnd = m_flBFlashEnd = 0;
+	m_iLastSwingA = m_iLastSwingB = 0;
 	HideShowAll( false );
 }
 
