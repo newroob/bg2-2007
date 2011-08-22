@@ -1829,9 +1829,12 @@ void CHL2MPRules::CountHeldFlags( int &american_flags, int &british_flags, int &
 		//	FullCap = 0;
 		//Msg("Full cap for %s = %i \n", pFlag->m_sFlagName, FullCap );
 
-		if ( FullCap == 3) //we're not doing full caps on this flag. 0 = normal, 1 = Americans Fullcap, 2 = Brits Fullcap, 3 = No Fullcap.
+		if ( FullCap == 3 && !UsingTickets() )
+		{
+			//we're not doing full caps on this flag.
+			//0 = normal, 1 = Americans Fullcap, 2 = Brits Fullcap, 3 = No Fullcap.
 			continue;
-
+		}
 
 		switch( pFlag->GetTeamNumber() )
 		{
@@ -1846,11 +1849,30 @@ void CHL2MPRules::CountHeldFlags( int &american_flags, int &british_flags, int &
 				break;
 		}
 		
-
+		if( UsingTickets() )
+		{
+			//ignore FullCap in tickets mode
+			switch(pFlag->m_iForTeam)
+			{
+			case 0:
+			default:
+				foramericans++;
+				forbritish++;
+				break;
+			case 1:
+				foramericans++;
+				break;
+			case 2:
+				forbritish++;
+				break;
+			}
+		}
+		else
 		//So the flag is set to be capped by this team.
 		switch(pFlag->m_iForTeam)
 		{
 			case 0:
+			default://assume both
 				switch( FullCap )
 				{
 					case 0:
@@ -1873,22 +1895,6 @@ void CHL2MPRules::CountHeldFlags( int &american_flags, int &british_flags, int &
 			case 2:
 				if ( FullCap == 2 || FullCap == 0 )
 					forbritish++;
-				break;
-			default://assume both
-				switch( FullCap )
-				{
-					case 0:
-						foramericans++;
-						forbritish++;
-						break;
-					case 1:
-						foramericans++;
-						break;
-					case 2:
-						forbritish++;
-						break;
-
-				}
 				break;
 		}
 	}
