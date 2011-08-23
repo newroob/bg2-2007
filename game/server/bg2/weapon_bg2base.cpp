@@ -682,7 +682,11 @@ void CBaseBG2Weapon::Think( void )
 	//only fiddle around if we have a view model and we're the active weapon
 	//if we're not the active weapon, we'd mess up the active weapon's submodels and skin!
 	if ( !pViewModel || pOwner->GetActiveWeapon() != this )
+	{
+		//BG2 - Tjoppen - don't forget to call Think() here as well
+		BaseClass::Think();
 		return;
+	}
 
 	//hide bayonet if we don't have a secondary attack
 	if ( (group = pViewModel->FindBodygroupByName( "musket_bayonet" )) >= 0)
