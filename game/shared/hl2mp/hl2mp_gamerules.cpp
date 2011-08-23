@@ -732,6 +732,7 @@ void CHL2MPRules::Think( void )
 			pPlayer->ResetFragCount();//...for cap points...
 			pPlayer->ResetDeathCount();//...and damage
 		}
+		m_iCurrentRound = 1;
 		RestartRound( false );	//BG2 - Tjoppen - restart round
 
 		//Reset the map time
