@@ -3127,6 +3127,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\shared\ironsights.h"
+					>
+				</File>
+				<File
 					RelativePath="..\server\bg2\vcomm.cpp"
 					>
 					<FileConfiguration

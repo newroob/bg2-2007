@@ -3744,6 +3744,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\shared\ironsights.h"
+					>
+				</File>
+				<File
 					RelativePath=".\bg2\mapfilter.cpp"
 					>
 					<FileConfiguration

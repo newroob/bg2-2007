@@ -11,6 +11,7 @@
 #include "SoundEmitterSystem/isoundemittersystembase.h"
 #include "physics_saverestore.h"
 #include "datacache/imdlcache.h"
+#include "ironsights.h"
 
 
 #if !defined( CLIENT_DLL )
@@ -653,7 +654,7 @@ void CBaseCombatWeapon::EnableIronsights( void )
 		return;
  
 #ifndef CLIENT_DLL
-	if( !pOwner->SetFOV( this, pOwner->GetDefaultFOV()+GetIronsightFOVOffset(), 1.0f, 0.3f ) ) //modify these values to adjust how fast the fov is applied
+	if( !pOwner->SetFOV( this, pOwner->GetDefaultFOV()+GetIronsightFOVOffset(), IRONSIGHTS_FOV_IN_TIME ) ) //modify these values to adjust how fast the fov is applied
 		return;
 
 	if ( !m_iClip1 )
@@ -665,9 +666,9 @@ void CBaseCombatWeapon::EnableIronsights( void )
 	m_flIronsightedTime = gpGlobals->curtime;
 #endif
 
-	//delay both attacks by 450 ms, but make sure we don't roll back the attack times
-	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + 0.45f);
-	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + 0.45f);
+	//delay both attacks, but make sure we don't roll back the attack times
+	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY);
+	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY);
 }
  
 void CBaseCombatWeapon::DisableIronsights( void )
@@ -681,16 +682,16 @@ void CBaseCombatWeapon::DisableIronsights( void )
 		return;
  
 #ifndef CLIENT_DLL
-	if( !pOwner->SetFOV( this, 0, 0.4f, 0.1f ) ) //modify these values to adjust how fast the fov is applied
+	if( !pOwner->SetFOV( this, 0, IRONSIGHTS_FOV_OUT_TIME ) ) //modify these values to adjust how fast the fov is applied
 		return;
 
 	m_bIsIronsighted = false;
 	m_flIronsightedTime = gpGlobals->curtime;
 #endif
 
-	//delay both attacks by 450 ms, but make sure we don't roll back the attack times
-	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + 0.45f);
-	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + 0.45f);
+	//delay both attacks, but make sure we don't roll back the attack times
+	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY);
+	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY);
 }
 
 //-----------------------------------------------------------------------------

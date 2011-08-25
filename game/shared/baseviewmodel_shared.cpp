@@ -7,6 +7,7 @@
 #include "cbase.h"
 #include "baseviewmodel_shared.h"
 #include "datacache/imdlcache.h"
+#include "ironsights.h"
 
 #if defined( CLIENT_DLL )
 #include "iprediction.h"
@@ -74,7 +75,7 @@ void CBaseViewModel::CalcIronsights( Vector &pos, QAngle &ang )
 		return;
  
 	//get delta time for interpolation
-	float delta( ( gpGlobals->curtime - pWeapon->m_flIronsightedTime ) / 0.4f ); //modify this value to adjust how fast the interpolation is
+	float delta( ( gpGlobals->curtime - pWeapon->m_flIronsightedTime ) / IRONSIGHTS_ANGLE_TIME ); //modify this value to adjust how fast the interpolation is
 	float exp = ( pWeapon->IsIronsighted() ) ? 
 		( delta > 1.0f ) ? 1.0f : delta : //normal blending
 		( delta > 1.0f ) ? 0.0f : 1.0f - delta; //reverse interpolation

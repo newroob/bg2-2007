@@ -14,6 +14,7 @@
 #include "materialsystem/IMaterial.h"
 #include "materialsystem/IMesh.h"
 #include "materialsystem/imaterialvar.h"
+#include "ironsights.h"
 
 #include <vgui/IScheme.h>
 #include <vgui/ISurface.h>
@@ -107,29 +108,19 @@ void CHudIronsight::ApplySchemeSettings( vgui::IScheme *scheme )
 //-----------------------------------------------------------------------------
 bool CHudIronsight::ShouldDraw( void )
 {
-	bool bNeedsDraw = false;
-
 	C_BaseHLPlayer *pPlayer = dynamic_cast<C_BaseHLPlayer *>(C_BasePlayer::GetLocalPlayer());
 	if ( pPlayer == NULL )
 		return false;
 
-	//C_HL2MP_Player *pHL2Player = dynamic_cast<C_HL2MP_Player*>(C_HL2MP_Player::GetLocalPlayer());
 	C_BaseCombatWeapon *wpn = pPlayer->GetActiveWeapon();
-	// Don't draw hud if we're using Iron Sights. -HairyPotter
-	if ( wpn && wpn->m_bIsIronsighted )
-	{
-		bNeedsDraw = true;
-	}
-	/*else if ( m_bPainted )
-	{
-		// keep painting until state is finished
-		bNeedsDraw = true;
-	}*/
 
-	return ( bNeedsDraw && CHudElement::ShouldDraw() );
+	//draw while wepon is sighted or until we're done zooming out
+	if ( (wpn && wpn->m_bIsIronsighted) || gpGlobals->curtime < m_flStartTime + IRONSIGHTS_FADE_TIME )
+		return CHudElement::ShouldDraw();
+	else
+		return false;
 }
 
-#define	ZOOM_FADE_TIME	0.4f
 //-----------------------------------------------------------------------------
 // Purpose: draws the zoom effect
 //-----------------------------------------------------------------------------
@@ -160,22 +151,10 @@ void CHudIronsight::Paint( void )
 
 	// draw the appropriately scaled zoom animation
 	float deltaTime = ( gpGlobals->curtime - m_flStartTime );
-	float scale = clamp( deltaTime / ZOOM_FADE_TIME, 0.0f, 1.0f );
+	float alpha = clamp( deltaTime / IRONSIGHTS_FADE_TIME, 0.0f, 1.0f );
 	
-	float alpha;
-
-	if ( m_bIronSights )
-	{
-		alpha = scale;
-	}
-	else
-	{
-		if ( scale >= 1.0f )
-			return;
-
-		alpha = ( 1.0f - scale ) * 0.25f;
-		scale = 1.0f - ( scale * 0.5f );
-	}
+	if ( !m_bIronSights )
+		alpha = 1.0f - alpha;
 
 	Color col = GetFgColor();
 	col[3] = alpha * 64;
