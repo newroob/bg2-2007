@@ -667,8 +667,8 @@ void CBaseCombatWeapon::EnableIronsights( void )
 #endif
 
 	//delay both attacks, but make sure we don't roll back the attack times
-	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY);
-	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY);
+	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY_IN);
+	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY_IN);
 }
  
 void CBaseCombatWeapon::DisableIronsights( void )
@@ -690,8 +690,8 @@ void CBaseCombatWeapon::DisableIronsights( void )
 #endif
 
 	//delay both attacks, but make sure we don't roll back the attack times
-	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY);
-	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY);
+	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY_OUT);
+	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY_OUT);
 }
 
 //-----------------------------------------------------------------------------
