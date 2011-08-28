@@ -314,6 +314,8 @@ FileWeaponInfo_t::FileWeaponInfo_t()
 	iFlags = 0;
 	szAmmo1[0] = 0;
 	szAmmo2[0] = 0;
+	vecIronsightPosOffset = Vector(0,0,0);
+	angIronsightAngOffset = QAngle(0,0,0);
 	memset( aShootSounds, 0, sizeof( aShootSounds ) );
 	iAmmoType = 0;
 	iAmmo2Type = 0;
@@ -378,6 +380,12 @@ void FileWeaponInfo_t::Parse( KeyValues *pKeyValuesData, const char *szWeaponNam
 		}
 	}
 
+	vecIronsightPosOffset.x   = pKeyValuesData->GetFloat("ironsights_x");
+	vecIronsightPosOffset.y   = pKeyValuesData->GetFloat("ironsights_y");
+	vecIronsightPosOffset.z   = pKeyValuesData->GetFloat("ironsights_z");
+	angIronsightAngOffset[PITCH] = pKeyValuesData->GetFloat("ironsights_pitch");
+	angIronsightAngOffset[YAW]   = pKeyValuesData->GetFloat("ironsights_yaw");
+	angIronsightAngOffset[ROLL]  = pKeyValuesData->GetFloat("ironsights_roll");
 
 	bShowUsageHint = ( pKeyValuesData->GetInt( "showusagehint", 0 ) != 0 ) ? true : false;
 	bAutoSwitchTo = ( pKeyValuesData->GetInt( "autoswitchto", 1 ) != 0 ) ? true : false;

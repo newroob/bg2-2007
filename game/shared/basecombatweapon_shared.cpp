@@ -60,7 +60,7 @@ Vector CBaseCombatWeapon::GetIronsightPositionOffset( void ) const
 	if( viewmodel_adjust_enabled.GetBool() ) //Out of the way, you!
 		return Vector( viewmodel_adjust_forward.GetFloat(), viewmodel_adjust_right.GetFloat(), viewmodel_adjust_up.GetFloat() );
 #endif
-	return vecIronsightPosOffset; //Just do what the script says!
+	return GetWpnData().vecIronsightPosOffset;
 }
  
 QAngle CBaseCombatWeapon::GetIronsightAngleOffset( void ) const
@@ -69,7 +69,7 @@ QAngle CBaseCombatWeapon::GetIronsightAngleOffset( void ) const
 	if( viewmodel_adjust_enabled.GetBool() ) //Out of the way, you!
 		return QAngle( viewmodel_adjust_pitch.GetFloat(), viewmodel_adjust_yaw.GetFloat(), viewmodel_adjust_roll.GetFloat() );
 #endif
-	return angIronsightAngOffset; //Just do what the script says!
+	return GetWpnData().angIronsightAngOffset;
 }
  
 float CBaseCombatWeapon::GetIronsightFOVOffset( void ) const

@@ -486,8 +486,6 @@ public:
 	//
 
 	//BG2 -Added for Iron Sights. Credits to z33ky for the code base. -HairyPotter
-	Vector					vecIronsightPosOffset;
-	QAngle					angIronsightAngOffset;
 	float					flIronsightFOVOffset;	
 	bool					m_bWeaponHasSights;
 	//
