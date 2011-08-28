@@ -488,6 +488,7 @@ public:
 	//BG2 -Added for Iron Sights. Credits to z33ky for the code base. -HairyPotter
 	float					flIronsightFOVOffset;	
 	bool					m_bWeaponHasSights;
+	float					m_flNextDisableIronsights;	//BG2 - Tjoppen - the soonest time we're allowed to disable the sights
 	//
 
 	// Weapon art

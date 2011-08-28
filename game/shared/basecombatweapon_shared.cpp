@@ -103,6 +103,7 @@ CBaseCombatWeapon::CBaseCombatWeapon()
 	m_bIsIronsighted = false;
 	m_flIronsightedTime = 0.0f;
 	//
+	m_flNextDisableIronsights = 0;
 
 	// Defaults to zero
 	m_nViewModelIndex	= 0;
@@ -669,6 +670,7 @@ void CBaseCombatWeapon::EnableIronsights( void )
 	//delay both attacks, but make sure we don't roll back the attack times
 	m_flNextPrimaryAttack   = max(m_flNextPrimaryAttack,   gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY_IN);
 	m_flNextSecondaryAttack = max(m_flNextSecondaryAttack, gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY_IN);
+	m_flNextDisableIronsights = gpGlobals->curtime + IRONSIGHTS_ATTACK_DELAY_IN;
 }
  
 void CBaseCombatWeapon::DisableIronsights( void )
@@ -1755,13 +1757,13 @@ void CBaseCombatWeapon::ItemPostFrame( void )
 	}
 
 	//only toggling ironsights only if we have them, we're not in a reload and we're not too soon after the last attack
-	if ( m_bWeaponHasSights && !m_bInReload && gpGlobals->curtime > m_flNextPrimaryAttack && gpGlobals->curtime > m_flNextSecondaryAttack )
+	if ( m_bWeaponHasSights && !m_bInReload )
 	{
-		if ( pOwner->m_nButtons & IN_ZOOM )
+		if ( (pOwner->m_nButtons & IN_ZOOM) && gpGlobals->curtime > m_flNextPrimaryAttack && gpGlobals->curtime > m_flNextSecondaryAttack )
 		{
 			EnableIronsights();
 		}
-		else
+		else if ( !(pOwner->m_nButtons & IN_ZOOM) && gpGlobals->curtime > m_flNextDisableIronsights )
 		{
 			DisableIronsights();
 		}
