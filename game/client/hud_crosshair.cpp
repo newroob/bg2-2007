@@ -87,8 +87,10 @@ bool CHudCrosshair::ShouldDraw( void )
 	C_BaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
 	if ( pWeapon )
 	{
+		extern ConVar viewmodel_adjust_enabled;
+
 		if ( pWeapon->m_bIsIronsighted ) //No crosshair in Iron Sights. -HairyPotter
-			return false;
+			return viewmodel_adjust_enabled.GetBool();	//BG2 - Tjoppen - unless we're adjusting the sights
 
 		if ( !pWeapon->ShouldDrawCrosshair() )
 			return false;
