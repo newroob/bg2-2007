@@ -40,18 +40,18 @@
 
 #define HIDEWEAPON_THINK_CONTEXT			"BaseCombatWeapon_HideThink"
 
-//#define TWEAK_IRONSIGHTS //BG2 - Comment this out for final release.
+#define TWEAK_IRONSIGHTS //BG2 - Comment this out for final release.
 
 //BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
 #if defined( TWEAK_IRONSIGHTS )
-ConVar viewmodel_adjust_enabled( "viewmodel_adjust_enabled", "0", FCVAR_REPLICATED );
-ConVar viewmodel_adjust_forward( "viewmodel_adjust_forward", "0", FCVAR_REPLICATED );
-ConVar viewmodel_adjust_right( "viewmodel_adjust_right", "0", FCVAR_REPLICATED );
-ConVar viewmodel_adjust_up( "viewmodel_adjust_up", "0", FCVAR_REPLICATED );
-ConVar viewmodel_adjust_pitch( "viewmodel_adjust_pitch", "0", FCVAR_REPLICATED );
-ConVar viewmodel_adjust_yaw( "viewmodel_adjust_yaw", "0", FCVAR_REPLICATED );
-ConVar viewmodel_adjust_roll( "viewmodel_adjust_roll", "0", FCVAR_REPLICATED );
-ConVar viewmodel_adjust_fov( "viewmodel_adjust_fov", "0", FCVAR_REPLICATED );
+ConVar viewmodel_adjust_enabled( "viewmodel_adjust_enabled", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar viewmodel_adjust_forward( "viewmodel_adjust_forward", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar viewmodel_adjust_right( "viewmodel_adjust_right", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar viewmodel_adjust_up( "viewmodel_adjust_up", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar viewmodel_adjust_pitch( "viewmodel_adjust_pitch", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar viewmodel_adjust_yaw( "viewmodel_adjust_yaw", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar viewmodel_adjust_roll( "viewmodel_adjust_roll", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar viewmodel_adjust_fov( "viewmodel_adjust_fov", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
 #endif
 
 Vector CBaseCombatWeapon::GetIronsightPositionOffset( void ) const
@@ -1468,6 +1468,9 @@ bool CBaseCombatWeapon::Deploy( )
 	MDLCACHE_CRITICAL_SECTION();
 
 #if defined( TWEAK_IRONSIGHTS )
+	Vector vecIronsightPosOffset = GetIronsightPositionOffset();
+	QAngle angIronsightAngOffset = GetIronsightAngleOffset();
+
 	//BG2 - This is here to help test the viewmodel settings for Ironsights. -HairyPotter
 	viewmodel_adjust_forward.SetValue( vecIronsightPosOffset.x ); //Forward
 	viewmodel_adjust_right.SetValue( vecIronsightPosOffset.y ); //Right
