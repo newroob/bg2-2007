@@ -752,9 +752,9 @@ DECLARE_BG2_WEAPON( fowler )
 	m_Attackinfos[0].m_flStandMoving		= 13.3f;
 	m_Attackinfos[0].m_flStandStill			= 3.4f;
 	//Iron Sights. These values will probably be changed.
-	m_Attackinfos[0].m_flStandAimStill		= 2.2f;	
+	m_Attackinfos[0].m_flStandAimStill		= 2.05f;	
 	m_Attackinfos[0].m_flStandAimMoving		= 8.2f;
-	m_Attackinfos[0].m_flCrouchAimStill		= 2.2f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.05f;
 	m_Attackinfos[0].m_flCrouchAimMoving	= 7.4f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
@@ -1031,9 +1031,9 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 	m_Attackinfos[0].m_flStandMoving		= 13.2f;
 	m_Attackinfos[0].m_flStandStill			= 3.6f;
 	//Iron Sights.
-	m_Attackinfos[0].m_flStandAimStill		= 2.4f;	
+	m_Attackinfos[0].m_flStandAimStill		= 2.6f;	
 	m_Attackinfos[0].m_flStandAimMoving		= 8.1f;
-	m_Attackinfos[0].m_flCrouchAimStill		= 2.4f;
+	m_Attackinfos[0].m_flCrouchAimStill		= 2.6f;
 	m_Attackinfos[0].m_flCrouchAimMoving	= 7.3f;
 	//
 	m_Attackinfos[0].m_flConstantDamageRange= MUSKET_CONSTANT_DAMAGE_RANGE;
