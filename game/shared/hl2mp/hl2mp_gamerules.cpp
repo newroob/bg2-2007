@@ -261,7 +261,15 @@ CHL2MPRules::CHL2MPRules()
 	mp_britishscore.SetValue(0);
 	mp_americanscore.SetValue(0);
 	//m_fEndRoundTime = -1;
-	m_fNextFlagUpdate = 0;
+
+	//perform drain check at the appropriate time
+	//HACKHACK: We should check UsingTickets() and set the update to happen 
+	//          one second from now if we're not in tickets mode.
+	//          The function always returns false when called from here though.
+	//          So we also delay checking fullcap by ten seconds.
+	//          This is probably OK.
+	m_fNextFlagUpdate = gpGlobals->curtime + 10;
+
 	//m_iWaveTime = 0;
 	//m_fEndRoundTime = gpGlobals->curtime + mp_respawntime.GetInt();
 	m_fLastRoundRestart = m_fLastRespawnWave = gpGlobals->curtime;
@@ -1624,6 +1632,9 @@ void CHL2MPRules::RestartRound( bool swapTeams )
 	{
 		g_Teams[TEAM_AMERICANS]->ResetTickets();
 		g_Teams[TEAM_BRITISH]->ResetTickets();
+
+		//perform drain check at the appropriate time
+		m_fNextFlagUpdate = gpGlobals->curtime + 10;
 	}
 
 	if( mp_respawntime.GetInt() > 0 )
