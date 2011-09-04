@@ -53,7 +53,7 @@ const int BESS_BAYONET_DAMAGE = 63;			//43 * 0.8 * 1.85
 const int BESS_BAYONET_RANGE = 83;
 
 const int REVOL_FIRE_DAMAGE = 107;			//58 * 1.85
-const int REVOL_BAYONET_DAMAGE = 60;		//41 * 0.8 * 1.85
+const int REVOL_BAYONET_DAMAGE = 61;		//41 * 0.8 * 1.85 + 1
 const int REVOL_BAYONET_RANGE = 75;
 
 const int CHARLE_FIRE_DAMAGE = REVOL_FIRE_DAMAGE;
