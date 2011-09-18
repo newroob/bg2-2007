@@ -176,6 +176,7 @@ public:
 	void VidInit( void );
 	virtual bool ShouldDraw( void );
 	virtual void Paint( void );
+	virtual void ApplySettings(KeyValues *inResourceData);
 	virtual void ApplySchemeSettings( vgui::IScheme *scheme );
 	virtual void OnThink();
 	void Reset( void );
@@ -226,6 +227,12 @@ private:
 	float m_flBFlashEnd;	//british ticket flash timer
 	int m_iLastSwingA;		//swinga of last frame
 	int m_iLastSwingB;		//swingb of last frame
+
+	int basex, basey, basew, baseh;
+	int swingx, swingy, swingw, swingh;
+	int staminax, staminay, staminaw, staminah;
+	int healthbasex, healthbasey, healthbasew, healthbaseh;
+	int healthx, healthy, healthw, healthh;
 
 protected:
 

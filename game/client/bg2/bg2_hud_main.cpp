@@ -71,6 +71,11 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_AmerHealthBase = m_AmerHealth = m_AmerStamina = NULL;
 	m_BritHealthBase = m_BritHealth = m_BritStamina = NULL;
 	m_SwingometerRed = m_SwingometerBlue = m_PowderHorn = NULL;
+	basex = basey = basew = baseh = 0;
+	swingx = swingy = swingw = swingh = 0;
+	staminax = staminay = staminaw = staminah = 0;
+	healthbasex = healthbasey = healthbasew = healthbaseh = 0;
+	healthx = healthy = healthw = healthh = 0;
 
 	Color ColourWhite( 255, 255, 255, 255 );
 
@@ -148,6 +153,31 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	CBaseEntity::PrecacheScriptSound( "British.win" );
 
 	Reset();
+}
+
+void CHudBG2::ApplySettings(KeyValues *inResourceData)
+{
+#define GET_COORD(name) scheme()->GetProportionalScaledValueEx(GetScheme(),inResourceData->GetInt(#name))
+#define GET(name) name = GET_COORD(name)
+
+	//grab and scale coordinates and dimensions
+	m_pLabelAScore      ->SetPos(GET_COORD(ascorex),   GET_COORD(ascorey));
+	m_pLabelBScore      ->SetPos(GET_COORD(bscorex),   GET_COORD(bscorey));
+	m_pLabelATickets    ->SetPos(GET_COORD(aticketsx), GET_COORD(aticketsy));
+	m_pLabelBTickets    ->SetPos(GET_COORD(bticketsx), GET_COORD(bticketsy));
+	m_pLabelLMS         ->SetPos(GET_COORD(lmsx),      GET_COORD(lmsy));
+	m_pLabelCurrentRound->SetPos(GET_COORD(curroundx), GET_COORD(curroundy));
+	m_pLabelRoundTime   ->SetPos(GET_COORD(roundx),    GET_COORD(roundy));
+	m_pLabelWaveTime    ->SetPos(GET_COORD(wavex),     GET_COORD(wavey));
+	m_pLabelAmmo        ->SetPos(GET_COORD(ammox),     GET_COORD(ammoy));
+
+	GET(basex);       GET(basey);       GET(basew);       GET(baseh);
+	GET(swingx);      GET(swingy);      GET(swingw);      GET(swingh);
+	GET(staminax);    GET(staminay);    GET(staminaw);    GET(staminah);
+	GET(healthbasex); GET(healthbasey); GET(healthbasew); GET(healthbaseh);
+	GET(healthx);     GET(healthy);     GET(healthw);     GET(healthh);
+
+	BaseClass::ApplySettings(inResourceData);
 }
 
 //==============================================
@@ -289,10 +319,7 @@ void CHudBG2::Paint()
 
 	char msg2[512];
 
-	int w,h;
-	int ystart = GetTall() - m_Base->Height();
-
-	m_Base->DrawSelf(0,ystart,ColourWhite);
+	m_Base->DrawSelf(basex,basey,basew,baseh,ColourWhite);
 
 	C_Team *pAmer = GetGlobalTeam(TEAM_AMERICANS);
 	C_Team *pBrit = GetGlobalTeam(TEAM_BRITISH);
@@ -333,13 +360,13 @@ void CHudBG2::Paint()
 
 	swing = m_flLastSwing + swingadjust;
 
-	int swingw = m_SwingometerBlue->Width();
-	int swingx = (m_Base->Width() - swingw) / 2;
-	int swingm = swingw * swing;
-	int swingh = m_SwingometerBlue->Height();
-
-	m_SwingometerBlue->DrawSelfCropped( swingx,          ystart, 0,      0, swingm,          swingh, ColourWhite );
-	 m_SwingometerRed->DrawSelfCropped( swingx + swingm, ystart, swingm, 0, swingw - swingm, swingh, ColourWhite );
+	//crop and scale to fit in swingw x swingh rectangle
+	m_SwingometerBlue->DrawSelfCropped( swingx, swingy, 0, 0,
+	                                    m_SwingometerBlue->Width() * swing, m_SwingometerBlue->Height(),
+										swingw * swing, swingh, ColourWhite );
+	m_SwingometerRed ->DrawSelfCropped( swingx + swingw * swing, swingy, m_SwingometerRed->Width() * swing, 0,
+	                                    m_SwingometerRed->Width() * (1 - swing), m_SwingometerRed->Height(),
+										swingw * (1 - swing), swingh, ColourWhite );
 
 	m_flLastSwing = swing;
 
@@ -381,31 +408,34 @@ void CHudBG2::Paint()
 		pStamina     = m_BritStamina;
 	}
 
-	int healthheight = pHealth->Height()  * (100 - pHL2Player->GetHealth()) / 100;
-	int stamheight   = pStamina->Height() * pHL2Player->m_iStamina  / 100;
+	float health = pHL2Player->GetHealth() / 100.0f;
+	float stamina = pHL2Player->m_iStamina  / 100.0f;
 
-	int stamy   = pStamina->Height() - stamheight;
-	int offset = (pStamina->Height() - pHealth->Height()) / 2;
-	int ystart2 = GetTall() - pStamina->Height();
+	pStamina->DrawSelfCropped( staminax, staminay + staminah * (1 - stamina), 0, pStamina->Height() * (1 - stamina),
+	                           pStamina->Width(), pStamina->Height() * stamina,
+							   staminaw, staminah * stamina, ColourWhite );
 
-	pStamina->DrawSelfCropped(m_Base->Width(), ystart2 + stamy,  0, stamy, 64, stamheight,   ColourWhite);
-	pHealthBase->DrawSelf(    m_Base->Width(), ystart2 + offset,                               ColourWhite);
-	pHealth->DrawSelfCropped( m_Base->Width(), ystart2 + offset, 0, 0,     64, healthheight, ColourWhite);
+	//crop both even though normally pHealth draws over pHealthBase
+	//this way users can mod so that the base is the actual meter, like the old HUD
+	//just to clarify, pHealthBase == amount of health left while pHealth == damage
+	pHealthBase->DrawSelfCropped( healthx, healthy + healthh * (1 - health), 0, pHealthBase->Height() * (1 - health),
+	                              pHealth->Width(), pHealth->Height() * health,
+	                              healthw, healthh * health, ColourWhite );
+
+	pHealth->DrawSelfCropped( healthx, healthy, 0, 0,
+	                          pHealth->Width(), pHealth->Height() * (1 - health),
+	                          healthw, healthh * (1 - health), ColourWhite );
 
 	if( HL2MPRules()->UsingTickets() )
 	{
 	Q_snprintf( msg2, 512, "%i ", pBrit ? pBrit->Get_Score() : 0);	//BG2 - Tjoppen - avoid NULL
 	m_pLabelBScore->SetText(msg2);
 	m_pLabelBScore->SizeToContents();
-	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelBScore->SetPos(m_Base->Width() - 149,GetTall() - 28);
 	m_pLabelBScore->SetFgColor( ColourWhite );
 	
 	Q_snprintf( msg2, 512, "%i ", pAmer ? pAmer->Get_Score() : 0);	//BG2 - Tjoppen - avoid NULL
 	m_pLabelAScore->SetText(msg2);
 	m_pLabelAScore->SizeToContents();
-	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelAScore->SetPos(133,GetTall() - 28);
 	m_pLabelAScore->SetFgColor( ColourWhite );
 
 		extern ConVar mp_tickets_rounds;
@@ -413,20 +443,17 @@ void CHudBG2::Paint()
 		Q_snprintf( msg2, 512, "Round %i/%i ", HL2MPRules()->m_iCurrentRound, mp_tickets_rounds.GetInt() );
 		m_pLabelCurrentRound->SetText(msg2);
 		m_pLabelCurrentRound->SizeToContents();
-		m_pLabelCurrentRound->SetPos(10,ystart - 15);
 		m_pLabelCurrentRound->SetFgColor( ColourWhite );
 	}
 
 		Q_snprintf( msg2, 512, "%i ", swingb);
 		m_pLabelBTickets->SetText(msg2);
 		m_pLabelBTickets->SizeToContents();
-		m_pLabelBTickets->SetPos(m_Base->Width() - 44,GetTall() - 57);
 		m_pLabelBTickets->SetFgColor( colorForFlash(m_flBFlashEnd) );
 
 		Q_snprintf( msg2, 512, "%i ", swinga);
 		m_pLabelATickets->SetText(msg2);
 		m_pLabelATickets->SizeToContents();
-		m_pLabelATickets->SetPos(11,GetTall() - 57);
 		m_pLabelATickets->SetFgColor( colorForFlash(m_flAFlashEnd) );
 
 	int iAmmoCount = pHL2Player->GetAmmoCount(wpn->GetPrimaryAmmoType()) + wpn->Clip1();
@@ -443,10 +470,8 @@ void CHudBG2::Paint()
 			m_pLabelAmmo->SetFgColor(ColourWhite);
 		}
 		m_pLabelAmmo->SizeToContents();
-		m_pLabelAmmo->GetSize( w, h );
 
 		int hornx = m_Base->Width() + pStamina->Width();
-		m_pLabelAmmo->SetPos( hornx + m_PowderHorn->Width(),GetTall() - m_PowderHorn->Height() / 2 - h/2);
 		m_PowderHorn->DrawSelf( hornx, GetTall() - m_PowderHorn->Height(), ColourWhite );
 	}
 	else
@@ -459,8 +484,6 @@ void CHudBG2::Paint()
 	Q_snprintf( msg2, 512, "%i:%02i ", wavetime / 60, wavetime % 60 );
 	m_pLabelWaveTime->SetText(msg2);
 	m_pLabelWaveTime->SizeToContents();
-	m_pLabelWaveTime->GetSize( w, h );
-	m_pLabelWaveTime->SetPos(35,GetTall() - 23);
 	m_pLabelWaveTime->SetFgColor( ColourWhite );
 
 	if( HL2MPRules()->UsingTickets() )
@@ -472,22 +495,11 @@ void CHudBG2::Paint()
 		Q_snprintf( msg2, 512, "%i:%02i ", roundtime / 60, roundtime % 60 );
 		m_pLabelRoundTime->SetText(msg2);
 		m_pLabelRoundTime->SizeToContents();
-		m_pLabelRoundTime->SetPos(235,GetTall() - 23);
 		m_pLabelRoundTime->SetFgColor( ColourWhite );
 	}
 
-	// BP - BG version display at lower right bottom of screen
-	/*Q_snprintf( msg2, 512, "%s ", HL2MPRules()->GetGameDescription());
-	m_pLabelBGVersion->SetText(msg2);
-	m_pLabelBGVersion->SizeToContents();
-	m_pLabelBGVersion->GetSize( w, h );
-	m_pLabelBGVersion->SetPos(5, 60);	
-	m_pLabelBGVersion->SetFgColor( ColourWhite );*/
-
 	m_pLabelLMS->SetText( g_pVGuiLocalize->Find("#LMS") );
 	m_pLabelLMS->SizeToContents();
-	m_pLabelLMS->GetSize( w, h );
-	m_pLabelLMS->SetPos(5, ystart - 1.3*h);
 	m_pLabelLMS->SetFgColor( ColourWhite );
 }
 
