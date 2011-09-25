@@ -202,6 +202,17 @@ void CHudBG2::ApplySettings(KeyValues *inResourceData)
 //==============================================
 void CHudBG2::ApplySchemeSettings( IScheme *scheme )
 {
+	vgui::HFont font = scheme->GetFont("HudBG2Font");
+	m_pLabelAScore->SetFont(font);
+	m_pLabelBScore->SetFont(font);
+	m_pLabelATickets->SetFont(font);
+	m_pLabelBTickets->SetFont(font);
+	m_pLabelLMS->SetFont(font);
+	m_pLabelCurrentRound->SetFont(font);
+	m_pLabelRoundTime->SetFont(font);
+	m_pLabelWaveTime->SetFont(font);
+	m_pLabelAmmo->SetFont(font);
+
 	BaseClass::ApplySchemeSettings( scheme );
 	SetPaintBackgroundEnabled( false );
 
