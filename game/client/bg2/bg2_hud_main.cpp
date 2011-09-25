@@ -157,7 +157,23 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 
 void CHudBG2::ApplySettings(KeyValues *inResourceData)
 {
-#define GET_COORD(name) scheme()->GetProportionalScaledValueEx(GetScheme(),inResourceData->GetInt(#name))
+	float factor = 2;
+
+	//we've designed for half size at 640x480, meaning full size at 1280x960
+	//note that this isn't a particularly common resolution, but whatever
+	//the following makes it so the hud scales down for lower resolutions but never scales up (consider 1920x1080 or so)
+	if (ScreenHeight() < 960)
+		factor = ScreenHeight() / 480.0f;
+
+	//since the position and size of the hud is set automagically we need to fix them up here
+	//also, I'm a bit paranoid about parsing ypos myself
+	//hence I simply invented yposr whose value is "80" instead of "r80" and thus easily parsed
+	SetPos(factor * inResourceData->GetInt("xpos"),
+		   ScreenHeight() - factor * inResourceData->GetInt("yposr"));
+	SetWide(factor * inResourceData->GetInt("wide"));
+	SetTall(factor * inResourceData->GetInt("tall"));
+
+#define GET_COORD(name) factor * inResourceData->GetInt(#name)
 #define GET(name) name = GET_COORD(name)
 
 	//grab and scale coordinates and dimensions
