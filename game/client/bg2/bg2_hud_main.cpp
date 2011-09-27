@@ -70,7 +70,7 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_Base = NULL; 
 	m_AmerHealthBase = m_AmerHealth = m_AmerStamina = NULL;
 	m_BritHealthBase = m_BritHealth = m_BritStamina = NULL;
-	m_SwingometerRed = m_SwingometerBlue = m_PowderHorn = NULL;
+	m_SwingometerRed = m_SwingometerBlue = NULL;
 	basex = basey = basew = baseh = 0;
 	swingx = swingy = swingw = swingh = 0;
 	staminax = staminay = staminaw = staminah = 0;
@@ -249,7 +249,6 @@ void CHudBG2::VidInit( void )
 	m_BritStamina    = gHUD.GetIcon("hud_brit_stamina");
 	m_SwingometerRed = gHUD.GetIcon("hud_swingometer_red");
 	m_SwingometerBlue= gHUD.GetIcon("hud_swingometer_blue");
-	m_PowderHorn     = gHUD.GetIcon("hud_powderhorn");
 }
 
 //==============================================
@@ -283,7 +282,7 @@ void CHudBG2::Paint()
 {
 	if( !m_Base || !m_AmerHealthBase || !m_AmerHealth || !m_AmerStamina ||
 		!m_BritHealthBase || !m_BritHealth || !m_BritStamina ||
-		!m_SwingometerRed || !m_SwingometerBlue || !m_PowderHorn )
+		!m_SwingometerRed || !m_SwingometerBlue )
 		return;
 
 	//BG2 - Tjoppen - Always paint damage label, so it becomes visible while using iron sights
@@ -497,9 +496,6 @@ void CHudBG2::Paint()
 			m_pLabelAmmo->SetFgColor(ColourWhite);
 		}
 		m_pLabelAmmo->SizeToContents();
-
-		int hornx = m_Base->Width() + pStamina->Width();
-		m_PowderHorn->DrawSelf( hornx, GetTall() - m_PowderHorn->Height(), ColourWhite );
 	}
 	else
 		m_pLabelAmmo->SetVisible( false );

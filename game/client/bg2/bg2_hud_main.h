@@ -208,7 +208,6 @@ private:
 	CHudTexture		* m_BritStamina;
 	CHudTexture		* m_SwingometerRed;
 	CHudTexture		* m_SwingometerBlue;
-	CHudTexture		* m_PowderHorn;
 
 	vgui::Label * m_pLabelBScore; 
 	vgui::Label * m_pLabelAScore; 
