@@ -40,8 +40,6 @@
 
 #define HIDEWEAPON_THINK_CONTEXT			"BaseCombatWeapon_HideThink"
 
-#define TWEAK_IRONSIGHTS //BG2 - Comment this out for final release.
-
 //BG2 -Added for Iron Sights Testing. Credits to z33ky for the code. -HairyPotter
 #if defined( TWEAK_IRONSIGHTS )
 ConVar viewmodel_adjust_enabled( "viewmodel_adjust_enabled", "0", FCVAR_REPLICATED | FCVAR_CHEAT );

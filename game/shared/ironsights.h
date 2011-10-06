@@ -6,3 +6,4 @@
 #define IRONSIGHTS_FOV_OUT_TIME	0.15f	//FOV restore time
 #define IRONSIGHTS_ANGLE_IN_TIME	0.3f	//controls how fast the sights are brought up
 #define IRONSIGHTS_ANGLE_OUT_TIME	0.15f	//controls how fast the sights are brought down
+//#define TWEAK_IRONSIGHTS //BG2 - Comment this out for final release.

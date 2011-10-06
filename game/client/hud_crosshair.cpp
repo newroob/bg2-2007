@@ -13,6 +13,7 @@
 #include "vgui_controls/controls.h"
 #include "vgui/ISurface.h"
 #include "IVRenderView.h"
+#include "ironsights.h"
 
 //BG2 - Tjoppen - #includes
 #include "../game/server/bg2/weapon_bg2base.h"
@@ -87,10 +88,16 @@ bool CHudCrosshair::ShouldDraw( void )
 	C_BaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
 	if ( pWeapon )
 	{
+#ifdef TWEAK_IRONSIGHTS
 		extern ConVar viewmodel_adjust_enabled;
+#endif
 
 		if ( pWeapon->m_bIsIronsighted ) //No crosshair in Iron Sights. -HairyPotter
+#ifdef TWEAK_IRONSIGHTS
 			return viewmodel_adjust_enabled.GetBool();	//BG2 - Tjoppen - unless we're adjusting the sights
+#else
+			return false;
+#endif
 
 		if ( !pWeapon->ShouldDrawCrosshair() )
 			return false;
