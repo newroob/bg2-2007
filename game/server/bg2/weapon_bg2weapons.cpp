@@ -93,17 +93,17 @@ const float TOMAHAWK_RANGE = 55.0;
 const float BAYONET_COS_TOLERANCE = 0.9961946980917;		//+-5 degrees
 const float BAYONET_RETRACE_DURATION = 0.1;
 
-const float KNIFE_COS_TOLERANCE = 0.9063077870366;			//+-25 degrees
-const float KNIFE_RETRACE_DURATION = 0.2;
+const float KNIFE_COS_TOLERANCE				= 0.940f;		//+-20 degrees
+const float KNIFE_RETRACE_DURATION			= 0.2f;
 
-const float TOMAHAWK_COS_TOLERANCE = 0.8191520442889;		//+-35 degrees
-const float TOMAHAWK_RETRACE_DURATION = 0.25;
+const float TOMAHAWK_COS_TOLERANCE			= 0.906f;		//+-25 degrees
+const float TOMAHAWK_RETRACE_DURATION		= 0.2f;
 
-const float HIRSCHFAENGER_COS_TOLERANCE = 0.7880107536067;	//+-38 degrees
-const float HIRSCHFAENGER_RETRACE_DURATION = 0.3;
+const float HIRSCHFAENGER_COS_TOLERANCE		= 0.906f;		//+-25 degrees
+const float HIRSCHFAENGER_RETRACE_DURATION	= 0.2f;
 
-const float SABRE_COS_TOLERANCE = 0.7071067811865;			//+-45 degrees
-const float SABRE_RETRACE_DURATION = 0.3;
+const float SABRE_COS_TOLERANCE				= 0.866f;		//+-30 degrees
+const float SABRE_RETRACE_DURATION			= 0.25f;
 
 const float MUZZLE_VELOCITY_RIFLE = 20400;
 const float MUZZLE_VELOCITY_SMOOTHBORE = 15600;
