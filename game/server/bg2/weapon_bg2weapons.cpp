@@ -93,6 +93,9 @@ const float TOMAHAWK_RANGE = 55.0;
 const float BAYONET_COS_TOLERANCE = 0.9961946980917;		//+-5 degrees
 const float BAYONET_RETRACE_DURATION = 0.1;
 
+ConVar sv_bayonet_angle_tolerance("sv_bayonet_angle_tolerance", "5", FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_CHEAT, "How many angles the sights are allowed to move before retracing stops");
+ConVar sv_bayonet_retrace_duration("sv_bayonet_retrace_duration", "0.1", FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_CHEAT, "How long bayonet melee traces happen for");
+
 const float KNIFE_COS_TOLERANCE				= 0.940f;		//+-20 degrees
 const float KNIFE_RETRACE_DURATION			= 0.2f;
 

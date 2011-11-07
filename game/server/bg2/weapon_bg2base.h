@@ -250,7 +250,14 @@ public:
 
 	float GetRetraceDuration( int iAttack )
 	{
-		return iAttack == ATTACK_NONE ? 0 : m_Attackinfos[iAttack].m_flRetraceDuration;
+		extern ConVar sv_bayonet_retrace_duration;
+
+		if (iAttack == ATTACK_NONE)
+			return 0;
+		else if (m_Attackinfos[iAttack].m_iAttacktype == ATTACKTYPE_STAB)
+			return sv_bayonet_retrace_duration.GetFloat();
+		else
+			return m_Attackinfos[iAttack].m_flRetraceDuration;
 	}
 
 	int GetStaminaDrain( int iAttack )
@@ -260,8 +267,15 @@ public:
 
 	float GetCosAngleTolerance( void )
 	{
+		extern ConVar sv_bayonet_angle_tolerance;
+
 		//return tolerance of last attack
-		return m_iLastAttack == ATTACK_NONE ? 1.0 : m_Attackinfos[m_iLastAttack].m_flCosAngleTolerance;
+		if (m_iLastAttack == ATTACK_NONE)
+			return 1.0f;
+		else if (m_Attackinfos[m_iLastAttack].m_iAttacktype == ATTACKTYPE_STAB)
+			return cosf(sv_bayonet_angle_tolerance.GetFloat() * M_PI / 180.f);
+		else
+			return m_Attackinfos[m_iLastAttack].m_flCosAngleTolerance;
 	}
 
 	//minor hack to get bayonet deathnotice
