@@ -129,6 +129,7 @@ public:
 
 	void	PrimaryAttack( void );
 	void	SecondaryAttack( void );
+	void	DoAttack( int iAttack );	//does stuff common to both attacks
 
 	//BG2 - Tjoppen - this one from base_weapon.cpp
 	//works out the accuracy cone, so we can use cones of varying sizes

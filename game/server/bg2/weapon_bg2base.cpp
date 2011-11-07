@@ -150,83 +150,37 @@ bool CBaseBG2Weapon::Deploy( void )
 //PrimaryAttack
 void CBaseBG2Weapon::PrimaryAttack( void )
 {
-	//disallow holding reload button
-	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-
-	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
-		return;
-
-	m_iLastAttack = ATTACK_PRIMARY;
-
-	//store forward eye vector
-	AngleVectors( pOwner->EyeAngles(), &m_vLastForward, NULL, NULL );
-
-//BG2 - Pretend this doesn't exist. -HairyPotter
-#ifndef CLIENT_DLL
-	m_iLastAttackType = GetAttackType(ATTACK_PRIMARY);
-#endif
-//
-	if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_STAB || GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_SLASH )
-	{
-		if( GetOwner() && (GetOwner()->GetFlags() & FL_DUCKING) )
-			return;
-
-		if( mp_disable_melee.GetInt() )
-			return;
-
-		//do tracelines for so many seconds
-		if( sv_retracing_melee.GetBool() )
-		{
-			m_flStartDemotingHeadhits = m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( ATTACK_PRIMARY );
-
-			if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_SLASH )
-				m_flStartDemotingHeadhits = gpGlobals->curtime + 0.1f;
-		}
-
-		Swing( ATTACK_PRIMARY, true );
-	}
-	else if( GetAttackType( ATTACK_PRIMARY ) == ATTACKTYPE_FIREARM )
-	{
-		if( mp_disable_firearms.GetInt() )
-			return;
-
-		Fire( ATTACK_PRIMARY );
-	}
-	else
-		return;	//don't drain stamina
-
-	//BG2 - Draco - decrease stam when attacking
-#ifndef CLIENT_DLL
-	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
-
-	if ( pHL2Player )
-		pHL2Player->DrainStamina( GetStaminaDrain( ATTACK_PRIMARY ) );
-#endif
+	DoAttack( ATTACK_PRIMARY );
 }
 
 //SecondaryAttack
 void CBaseBG2Weapon::SecondaryAttack( void )
 {
-	//disallow holding reload button
 	if ( m_bIsIronsighted )
 		return;
 
+	DoAttack( ATTACK_SECONDARY );
+}
+
+void CBaseBG2Weapon::DoAttack( int iAttack )
+{
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 
+	//disallow holding reload button
 	if( pOwner == NULL || pOwner->m_nButtons & IN_RELOAD || m_bInReload )
 		return;
 
-	m_iLastAttack = ATTACK_SECONDARY;
+	m_iLastAttack = iAttack;
 
 	//store forward eye vector
 	AngleVectors( pOwner->EyeAngles(), &m_vLastForward, NULL, NULL );
 
 //BG2 - Pretend this doesn't exist. -HairyPotter
 #ifndef CLIENT_DLL
-	m_iLastAttackType = GetAttackType(ATTACK_SECONDARY);
+	m_iLastAttackType = GetAttackType(iAttack);
 #endif
 //
-	if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_STAB || GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_SLASH )
+	if( GetAttackType( iAttack ) == ATTACKTYPE_STAB || GetAttackType( iAttack ) == ATTACKTYPE_SLASH )
 	{
 		if( GetOwner() && (GetOwner()->GetFlags() & FL_DUCKING) )
 			return;
@@ -237,20 +191,20 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 		//do tracelines for so many seconds
 		if( sv_retracing_melee.GetBool() )
 		{
-			m_flStartDemotingHeadhits = m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( ATTACK_SECONDARY );
+			m_flStartDemotingHeadhits = m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( iAttack );
 
-			if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_SLASH )
+			if( GetAttackType( iAttack ) == ATTACKTYPE_SLASH )
 				m_flStartDemotingHeadhits = gpGlobals->curtime + 0.1f;
 		}
 
-		Swing( ATTACK_SECONDARY, true );
+		Swing( iAttack, true );
 	}
-	else if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_FIREARM )
+	else if( GetAttackType( iAttack ) == ATTACKTYPE_FIREARM )
 	{
 		if( mp_disable_firearms.GetInt() )
 			return;
 
-		Fire( ATTACK_SECONDARY );
+		Fire( iAttack );
 	}
 	else
 		return;	//don't drain stamina
@@ -260,7 +214,7 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( GetOwner() );
 
 	if ( pHL2Player )
-		pHL2Player->DrainStamina( GetStaminaDrain( ATTACK_SECONDARY ) );
+		pHL2Player->DrainStamina( GetStaminaDrain( iAttack ) );
 #endif
 }
 
