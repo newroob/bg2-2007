@@ -237,7 +237,7 @@ void CBaseBG2Weapon::SecondaryAttack( void )
 		//do tracelines for so many seconds
 		if( sv_retracing_melee.GetBool() )
 		{
-			m_flStartDemotingHeadhits = m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( ATTACK_PRIMARY );
+			m_flStartDemotingHeadhits = m_flStopAttemptingSwing = gpGlobals->curtime + GetRetraceDuration( ATTACK_SECONDARY );
 
 			if( GetAttackType( ATTACK_SECONDARY ) == ATTACKTYPE_SLASH )
 				m_flStartDemotingHeadhits = gpGlobals->curtime + 0.1f;
