@@ -97,7 +97,7 @@ ConVar sv_show_damages("sv_show_damages", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, 
 ConVar sv_show_enemy_names("sv_show_enemy_names", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Allow people to view enemy names in crosshair?");
 
 ConVar sv_muzzle_velocity_override("sv_muzzle_velocity_override", "0", FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_CHEAT, "If non-zero, overide muzzle velocities with this value (inch per seconds)");
-ConVar sv_flintlock_delay("sv_flintlock_delay", "0.1", FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_CHEAT, "Delay in seconds of the flintlock mechanism (delay bullet firing by this amount)");
+ConVar sv_flintlock_delay("sv_flintlock_delay", "0.135", FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_CHEAT, "Delay in seconds of the flintlock mechanism (delay bullet firing by this amount)");
 
 //-----------------------------------------------------------------------------
 // CBaseBG2Weapon
