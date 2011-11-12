@@ -1665,6 +1665,14 @@ void C_BasePlayer::PreThink( void )
 
 void C_BasePlayer::PostThink( void )
 {
+	if (IsLocalPlayer() && !IsAlive())
+	{
+		//Toggle sights off when the player is dead (unstick).
+		//This prevents the sights from being re-engaged when the player
+		//respawns after having died when zoomed using the toggle.
+		KeyUp( &in_zoom, NULL );
+	}
+
 #if !defined( NO_ENTITY_PREDICTION )
 	MDLCACHE_CRITICAL_SECTION();
 
