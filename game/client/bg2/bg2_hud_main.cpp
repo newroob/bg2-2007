@@ -135,12 +135,19 @@ CHudBG2::CHudBG2( const char *pElementName ) :
 	m_pLabelRoundTime->SetContentAlignment( vgui::Label::a_west );
 	m_pLabelRoundTime->SetFgColor( ColourWhite );
 
-	m_pLabelDamageVerificator = new vgui::Label( pParent, "RoundState_warmup", "");
-	m_pLabelDamageVerificator->SetPaintBackgroundEnabled( false );
-	m_pLabelDamageVerificator->SetPaintBorderEnabled( false );
-	m_pLabelDamageVerificator->SizeToContents();
-	m_pLabelDamageVerificator->SetContentAlignment( vgui::Label::a_west );
-	m_pLabelDamageVerificator->SetFgColor( ColourWhite );
+	m_pLabelDamageTaken = new vgui::Label( pParent, "RoundState_warmup", "");
+	m_pLabelDamageTaken->SetPaintBackgroundEnabled( false );
+	m_pLabelDamageTaken->SetPaintBorderEnabled( false );
+	m_pLabelDamageTaken->SizeToContents();
+	m_pLabelDamageTaken->SetContentAlignment( vgui::Label::a_west );
+	m_pLabelDamageTaken->SetFgColor( ColourWhite );
+
+	m_pLabelDamageGiven = new vgui::Label( pParent, "RoundState_warmup", "");
+	m_pLabelDamageGiven->SetPaintBackgroundEnabled( false );
+	m_pLabelDamageGiven->SetPaintBorderEnabled( false );
+	m_pLabelDamageGiven->SizeToContents();
+	m_pLabelDamageGiven->SetContentAlignment( vgui::Label::a_west );
+	m_pLabelDamageGiven->SetFgColor( ColourWhite );
 
 	m_pLabelLMS = new vgui::Label( this, "RoundState_warmup", "");
 	m_pLabelLMS->SetPaintBackgroundEnabled( false );
@@ -287,22 +294,47 @@ void CHudBG2::Paint()
 
 	//BG2 - Tjoppen - Always paint damage label, so it becomes visible while using iron sights
 	//fade out the last second
-	float alpha = (m_flExpireTime - gpGlobals->curtime) * 255.0f;
-	if( alpha < 0.0f )
-		alpha = 0.0f;
-	else if( alpha > 255.0f )
-		alpha = 255.0f;
+	float alphaTaken = (m_flTakenExpireTime - gpGlobals->curtime) * 255.0f;
+	float alphaGiven = (m_flGivenExpireTime - gpGlobals->curtime) * 255.0f;
 
-	if( alpha > 0 )
+	if( alphaTaken < 0.0f )
+		alphaTaken = 0.0f;
+	else if( alphaTaken > 255.0f )
+		alphaTaken = 255.0f;
+
+	if( alphaGiven < 0.0f )
+		alphaGiven = 0.0f;
+	else if( alphaGiven > 255.0f )
+		alphaGiven = 255.0f;
+
+	if( alphaGiven > 0 )
 	{
-		m_pLabelDamageVerificator->SizeToContents();
-		//center and put somewhat below crosshair
-		m_pLabelDamageVerificator->SetPos((ScreenWidth()-m_pLabelDamageVerificator->GetWide())/2, (ScreenHeight()*5)/8);
-		m_pLabelDamageVerificator->SetFgColor( Color( 255, 255, 255, (int)alpha ) );
-		m_pLabelDamageVerificator->SetVisible( true );
+		m_pLabelDamageGiven->SizeToContents();
+
+		//center and put one somewhat above crosshair
+		m_pLabelDamageGiven->SetPos((ScreenWidth()-m_pLabelDamageGiven->GetWide())/2, (ScreenHeight()*3)/8);
+		//m_pLabelDamageVerificator->SetFgColor( Color( 255, 255, 255, (int)alpha ) );
+		m_pLabelDamageGiven->SetAlpha( (int)alphaGiven );
+
+		m_pLabelDamageGiven->SetVisible( true );
 	}
 	else
-		m_pLabelDamageVerificator->SetVisible( false );
+		m_pLabelDamageGiven->SetVisible( false );
+
+	if( alphaTaken > 0 )
+	{
+		m_pLabelDamageTaken->SizeToContents();
+
+		//center and put one somewhat below crosshair
+		m_pLabelDamageTaken->SetPos((ScreenWidth()-m_pLabelDamageTaken->GetWide())/2, (ScreenHeight()*5)/8);
+		//m_pLabelDamageVerificator->SetFgColor( Color( 255, 255, 255, (int)alpha ) );
+		m_pLabelDamageTaken->SetAlpha( (int)alphaTaken );
+
+		m_pLabelDamageTaken->SetVisible( true );
+
+	}
+	else
+		m_pLabelDamageTaken->SetVisible( false );
 
 	C_HL2MP_Player *pHL2Player = dynamic_cast<C_HL2MP_Player*>(C_HL2MP_Player::GetLocalPlayer());
 	if (!pHL2Player || !pHL2Player->IsAlive())
@@ -551,7 +583,8 @@ void CHudBG2::OnThink()
 void CHudBG2::Reset( void )
 {
 	//mapchange, clear indicators. and stuff.
-	m_flExpireTime = 0;
+	m_flGivenExpireTime = 0;
+	m_flTakenExpireTime = 0;
 	m_flLastSwing = 0.5f;
 	m_flAFlashEnd = m_flBFlashEnd = 0;
 	m_iLastSwingA = m_iLastSwingB = 0;
@@ -569,7 +602,8 @@ void CHudBG2::HideShowAll( bool visible )
 	m_pLabelRoundTime->SetVisible(visible && HL2MPRules()->UsingTickets());
 	m_pLabelAmmo->SetVisible(visible);
 	//m_pLabelBGVersion->SetVisible(false);	// BP: not used yet as its not subtle enough, m_pLabelBGVersion->SetVisible(ShouldDraw());
-	m_pLabelDamageVerificator->SetVisible(m_flExpireTime > gpGlobals->curtime);	//always show damage indicator (unless expired)
+	m_pLabelDamageGiven->SetVisible(m_flGivenExpireTime > gpGlobals->curtime);	//always show damage indicator (unless expired)
+	m_pLabelDamageTaken->SetVisible(m_flTakenExpireTime > gpGlobals->curtime);	//always show damage indicator (unless expired)
 	m_pLabelLMS->SetVisible( visible && mp_respawnstyle.GetInt() == 2 && cl_draw_lms_indicator.GetBool() );
 }
 
@@ -586,6 +620,8 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 	int attacker, victim, hitgroup;
 	int attackType;
 	int damage;
+	Color ColourGreen( 0, 200, 0, 255 );
+	Color ColourRed( 200, 0, 0, 255 );
 
 	attacker	= msg.ReadByte();
 	victim		= msg.ReadByte();
@@ -639,11 +675,19 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 	{
 		//local player is victim ("You were hit...")
 		message = m_IsVictimAccumulator.Accumulate( damage, attacker, hitgroup );
+		m_pLabelDamageTaken->SetFgColor( ColourRed );
+
+		m_pLabelDamageTaken->SetText( message.c_str() );
+		m_flTakenExpireTime = gpGlobals->curtime + 5.0f;
 	}
 	else if( C_BasePlayer::GetLocalPlayer()->entindex() == attacker )
 	{
 		//"You hit..."
 		message = m_IsAttackerAccumulator.Accumulate( damage, victim, hitgroup );
+		m_pLabelDamageGiven->SetFgColor( ColourGreen );
+
+		m_pLabelDamageGiven->SetText( message.c_str() );
+		m_flGivenExpireTime = gpGlobals->curtime + 5.0f;
 	}
 	else
 	{
@@ -656,8 +700,7 @@ void CHudBG2::MsgFunc_HitVerif( bf_read &msg )
 		return;
 	}
 
-	m_pLabelDamageVerificator->SetText( message.c_str() );
-	m_flExpireTime = gpGlobals->curtime + 5.0f;
+	
 }
 
 void CHudBG2::MsgFunc_WinMusic( bf_read &msg )

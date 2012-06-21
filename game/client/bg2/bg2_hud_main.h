@@ -216,11 +216,13 @@ private:
 	vgui::Label * m_pLabelCurrentRound;
 	vgui::Label * m_pLabelAmmo; 
 	vgui::Label * m_pLabelWaveTime; 
-	vgui::Label * m_pLabelRoundTime; 
-	vgui::Label *m_pLabelDamageVerificator,
-				*m_pLabelLMS;		//BG2 - Tjoppen - TODO: remove this when hintbox works correctly
+	vgui::Label * m_pLabelRoundTime;
+	vgui::Label * m_pLabelDamageTaken;
+	vgui::Label * m_pLabelDamageGiven;
+	vgui::Label * m_pLabelLMS;		//BG2 - Tjoppen - TODO: remove this when hintbox works correctly
 
-	float m_flExpireTime;
+	float m_flTakenExpireTime;
+	float m_flGivenExpireTime;
 	float m_flLastSwing;	//last frame's swingometer value
 	float m_flAFlashEnd;	//american ticket flash timer
 	float m_flBFlashEnd;	//british ticket flash timer
