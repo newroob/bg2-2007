@@ -1074,5 +1074,5 @@ DECLARE_BG2_WEAPON( brownbess_carbine )
 }
 
 #ifndef CLIENT_DLL
-MUSKET_ACTTABLE( brownbess_carbine )
+CARBINE_ACTTABLE( brownbess_carbine )
 #endif
