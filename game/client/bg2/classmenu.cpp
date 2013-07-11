@@ -64,8 +64,6 @@ ConVar cl_classmenu_sounds( "cl_classmenu_sounds", "1", FCVAR_ARCHIVE, "Enable s
 LIMIT_DEFINES( inf, "infantry" )
 LIMIT_DEFINES( ski, "skirmisher" )
 
-ConVar cl_kit_b_light("cl_kit_b_light", "1 0", CVAR_FLAGS, "Default kit for British light infantry class." );
-
 #define CANCEL -2
 
 using namespace vgui;
@@ -99,7 +97,7 @@ void CClassButton::OnMousePressed(MouseCode code)
 	}
 
 
-	pThisMenu->m_iClassSelection = m_iCommand; //This is used in the weapon/ammo display.
+	pThisMenu->m_iClassSelection = m_iCommand; //This is used in the weapon display.
 
 	cl_quickjoin.SetValue( pThisMenu->m_pQuickJoinCheckButton->IsSelected() ); //Set quickjoin var.
 
@@ -194,7 +192,7 @@ void CClassButton::PerformCommand( void )
 	pThisMenu->UpdateDefaultWeaponKit( pThisMenu->m_iTeamSelection, m_iCommand );
 
 	char cmd[16];
-	Q_snprintf( cmd, sizeof( cmd ), "kit %i %i \n", pThisMenu->DefaultKit.m_iGun, pThisMenu->DefaultKit.m_iAmmo );
+	Q_snprintf( cmd, sizeof( cmd ), "kit %i \n", pThisMenu->DefaultKit.m_iGun );
 	engine->ServerCmd( cmd );
 
 	char sClass[16];
@@ -411,13 +409,10 @@ CClassMenu::CClassMenu( IViewPort *pViewPort ) : Frame( NULL, PANEL_CLASSES )
 	m_pQuickJoinCheckButton = new vgui::CheckButton( this, "QuickJoinCheckButton", "" );
 
 	m_pWeaponSelection = new ImagePanel( this, "WeaponImage" );
-	m_pAmmoSelection = new ImagePanel( this, "AmmoImage" );
 
 	m_pWeaponButton1 = new CWeaponButton( this, "WeaponButton1", "" );
 	m_pWeaponButton2 = new CWeaponButton( this, "WeaponButton2", "" );
 	m_pWeaponButton3 = new CWeaponButton( this, "WeaponButton3", "" );
-	m_pAmmoButton1 = new CAmmoButton( this, "AmmoButton1", "" );
-	m_pAmmoButton2 = new CAmmoButton( this, "AmmoButton2", "" );
 	m_pOK = new COkayButton( this, "Okay", "" );
 
 	m_pCancelButton = new CClassButton( this, "CancelButton", "" );
@@ -499,9 +494,7 @@ void CClassMenu::ApplySchemeSettings(IScheme *pScheme)
 	m_pSkirmisherButton->MakeReadyForUse();
 	m_pLightInfantryButton->MakeReadyForUse();
 
-	// For weapons and ammo selection menu.. -HairyPotter
-	m_pAmmoButton1->MakeReadyForUse();
-	m_pAmmoButton2->MakeReadyForUse();
+	// For weapons selection menu.. -HairyPotter
 	m_pWeaponButton1->MakeReadyForUse();
 	m_pWeaponButton2->MakeReadyForUse();
 	m_pWeaponButton3->MakeReadyForUse();
@@ -589,10 +582,6 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 		{
 			m_pSkirmisherButton->OnMousePressed( code2 );
 		}
-		else if ( m_pAmmoButton1->IsVisible() )
-		{
-			m_pAmmoButton1->OnMousePressed( code2 );
-		}
 	}
 	else if( code == m_iLightInfantryKey )
 	{
@@ -602,10 +591,6 @@ void CClassMenu::OnKeyCodePressed(KeyCode code)
 		else if( m_pLightInfantryButton->IsVisible() )
 		{
 			m_pLightInfantryButton->OnMousePressed( code2 );
-		}
-		else if ( m_pAmmoButton2->IsVisible() )
-		{
-			m_pAmmoButton2->OnMousePressed( code2 );
 		}
 	}
 	/*else if( code == m_iSlot6Key ) //This is used only for
@@ -758,8 +743,6 @@ void CClassMenu::OnThink()
 	UpdateClassLabelText( m_pRiflemanLabel, CLASS_SNIPER );
 	UpdateClassLabelText( m_pSkirmisherLabel, CLASS_SKIRMISHER );
 	UpdateClassLabelText( m_pLightInfantryLabel, CLASS_LIGHT_INFANTRY );
-
-	UpdateAmmoButtons();
 }
 
 void CClassMenu::UpdateClassLabelText( vgui::Label *pLabel, int iClass )
@@ -786,36 +769,11 @@ void CClassMenu::UpdateClassLabelText( vgui::Label *pLabel, int iClass )
 	pLabel->SetText( temp );
 }
 
-void CClassMenu::UpdateAmmoButtons( void )
-{
-	//This handles the logic 
-	m_pAmmoButton2->m_bRestricted = true;
-
-	switch ( m_iTeamSelection )
-	{
-		case TEAM_AMERICANS:
-			if ( m_iClassSelection == CLASS_SKIRMISHER )
-			{
-				if ( m_pWeaponButton1->IsSelected() ) //FOWLER
-						m_pAmmoButton2->m_bRestricted = false; //Buckshot allowed
-			}
-			break;
-		case TEAM_BRITISH:
-			if ( m_iClassSelection == CLASS_LIGHT_INFANTRY )
-			{
-				if ( m_pWeaponButton1->IsSelected() ) //CARBINE
-						m_pAmmoButton2->m_bRestricted = false; //Buckshot allowed
-			}
-			break;
-	}
-	//
-}
-
 //Default weapon kits for menus. -HairyPotter
-void CClassMenu::SetDefaultWeaponKit( int m_iTeam, int m_iClass, int weapon, int ammo )
+void CClassMenu::SetDefaultWeaponKit( int m_iTeam, int m_iClass, int weapon )
 {
 	char temp[16];
-	Q_snprintf( temp, sizeof temp, "%i %i", weapon, ammo );
+	Q_snprintf( temp, sizeof temp, "%i", weapon );
 
 	switch ( m_iTeam )
 	{
@@ -839,9 +797,6 @@ void CClassMenu::SetDefaultWeaponKit( int m_iTeam, int m_iClass, int weapon, int
 				case CLASS_SKIRMISHER:
 					cl_kit_b_ski.SetValue( temp );
 					break;
-				case CLASS_LIGHT_INFANTRY:
-					cl_kit_b_light.SetValue( temp );
-					break;
 			}
 		break;
 	}
@@ -853,8 +808,6 @@ void CClassMenu::UpdateDefaultWeaponKit( int m_iTeam, int m_iClass )
 
 	//Just to make sure.
 	args[0] = 1;
-	args[1] = AMMO_KIT_BALL;
-	//
 
 	switch ( m_iTeam )
 	{
@@ -862,10 +815,10 @@ void CClassMenu::UpdateDefaultWeaponKit( int m_iTeam, int m_iClass )
 			switch( m_iClass )
 			{
 				case CLASS_INFANTRY:
-					sscanf( cl_kit_a_inf.GetString(), "%i %i", &(args[0]), &(args[1]) );
+					sscanf( cl_kit_a_inf.GetString(), "%i", &(args[0]) );
 					break;
 				case CLASS_SKIRMISHER:
-					sscanf( cl_kit_a_ski.GetString(), "%i %i", &(args[0]), &(args[1]) );
+					sscanf( cl_kit_a_ski.GetString(), "%i", &(args[0]) );
 					break;
 			}
 			break;
@@ -874,20 +827,16 @@ void CClassMenu::UpdateDefaultWeaponKit( int m_iTeam, int m_iClass )
 			switch( m_iClass )
 			{
 				case CLASS_INFANTRY:
-					sscanf( cl_kit_b_inf.GetString(), "%i %i", &(args[0]), &(args[1]) );
+					sscanf( cl_kit_b_inf.GetString(), "%i", &(args[0]) );
 					break;
 				case CLASS_SKIRMISHER:
-					sscanf( cl_kit_b_ski.GetString(), "%i %i", &(args[0]), &(args[1]) );
-					break;
-				case CLASS_LIGHT_INFANTRY:
-					sscanf( cl_kit_b_light.GetString(), "%i %i", &(args[0]), &(args[1]) );
+					sscanf( cl_kit_b_ski.GetString(), "%i", &(args[0]) );
 					break;
 			}
 			break;
 	}
 
 	DefaultKit.m_iGun = args[0];
-	DefaultKit.m_iAmmo = args[1];
 }
 //
 
@@ -935,7 +884,7 @@ bool CClassMenu::SetScreen( int m_iScreen, bool m_bVisible, bool m_bUpdate )
 					m_iClassSelection = iClass;
 				}
 
-				if ( m_iClassSelection == CLASS_OFFICER || m_iClassSelection == CLASS_SNIPER )
+				if ( m_iClassSelection == CLASS_OFFICER || m_iClassSelection == CLASS_SNIPER || m_iClassSelection == CLASS_LIGHT_INFANTRY )
 						return false;
 
 				UpdateDefaultWeaponKit( m_iTeamSelection, m_iClassSelection ); //Make sure we're updated.
@@ -979,8 +928,6 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pWeaponButton1->SetVisible(false);
 			m_pWeaponButton2->SetVisible(false);
 			m_pWeaponButton3->SetVisible(false);
-			m_pAmmoButton1->SetVisible(false);
-			m_pAmmoButton2->SetVisible(false);
 			m_pOK->SetVisible(false);
 			//
 			//Misc
@@ -1015,8 +962,6 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pWeaponButton1->SetVisible(false);
 			m_pWeaponButton2->SetVisible(false);
 			m_pWeaponButton3->SetVisible(false);
-			m_pAmmoButton1->SetVisible(false);
-			m_pAmmoButton2->SetVisible(false);
 			m_pOK->SetVisible(false);
 			//
 			//Misc
@@ -1050,8 +995,6 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pWeaponButton1->SetVisible(true);
 			m_pWeaponButton2->SetVisible(true);
 			m_pWeaponButton3->SetVisible(true);
-			m_pAmmoButton1->SetVisible(true);
-			m_pAmmoButton2->SetVisible(true);
 			m_pOK->SetVisible(true);
 			//
 			//Misc
@@ -1062,70 +1005,12 @@ void CClassMenu::ToggleButtons(int iShowScreen)
 			m_pWeaponButton1->SetSelected( DefaultKit.m_iGun == 1 );
 			m_pWeaponButton2->SetSelected( DefaultKit.m_iGun == 2 );
 			m_pWeaponButton3->SetSelected( DefaultKit.m_iGun == 3 );
-			m_pAmmoButton1->SetSelected( DefaultKit.m_iAmmo == AMMO_KIT_BALL );
-			m_pAmmoButton2->SetSelected( DefaultKit.m_iAmmo == AMMO_KIT_BUCKSHOT );
 			//
 			break;
 	}
 }
 
-void CAmmoButton::ApplySchemeSettings( vgui::IScheme *pScheme )
-{
-	BaseClass::ApplySchemeSettings(pScheme);
 
-	SetPaintBorderEnabled(false); //No borders.
-}
-
-void CAmmoButton::OnCursorEntered( void )
-{
-	m_bMouseOver = true;
-	PlaySound("Classmenu.Ammo");
-}
-
-void CAmmoButton::OnMousePressed(MouseCode code)
-{
-	CClassMenu *pThisMenu = (CClassMenu*)GetParent();
-
-	if ( !pThisMenu )
-		return;
-
-	//Force the buttons to "reset" so we don't get mixed signals sent to the server.
-	pThisMenu->m_pAmmoButton1->SetSelected ( false );
-	pThisMenu->m_pAmmoButton2->SetSelected ( false );
-
-	SetSelected( true );
-}
-void CAmmoButton::Paint ( void )
-{
-	CClassMenu *pThisMenu = (CClassMenu*)GetParent();
-
-	if ( !pThisMenu )
-		return;
-
-	int wide, tall;
-	vgui::IImage *m_pImage = NULL;
-	GetSize( wide, tall );
-
-	if ( m_bRestricted )
-	{
-		m_pImage = scheme()->GetImage( RestrictedImage, false );
-	}
-	else if ( IsSelected() || m_bMouseOver )
-	{
-		m_pImage = scheme()->GetImage( MouseoverImage, false );
-	}
-	else
-	{
-		m_pImage = scheme()->GetImage( Image, false );
-	}
-
-	if ( m_pImage )
-	{
-		m_pImage->SetSize( wide, tall );
-		m_pImage->Paint();
-	}
-
-}
 
 void CWeaponButton::OnCursorEntered( void )
 {
@@ -1283,16 +1168,13 @@ void COkayButton::PerformCommand( void )
 		m_iGunType = 3;
 
 	//Note: use AMMO_KIT_* instead of magic numbers
-	if ( pThisMenu->m_pAmmoButton1->IsSelected() )
-		m_iAmmoType = AMMO_KIT_BALL;
+	//HACK LOL
+	m_iAmmoType = AMMO_KIT_BALL;
 
-	if ( pThisMenu->m_pAmmoButton2->IsSelected() )
-		m_iAmmoType = AMMO_KIT_BUCKSHOT;
-
-	pThisMenu->SetDefaultWeaponKit( iTeam, iClass, m_iGunType, m_iAmmoType ); //Since we chose a kit ourselves, save it off.
+	pThisMenu->SetDefaultWeaponKit( iTeam, iClass, m_iGunType ); //Since we chose a kit ourselves, save it off.
 
 	char cmd[32];
-	Q_snprintf( cmd, sizeof( cmd ), "kit %i %i \n", m_iGunType, m_iAmmoType );
+	Q_snprintf( cmd, sizeof( cmd ), "kit %i \n", m_iGunType );
 	engine->ServerCmd( cmd );
 
 	char sClass[32];

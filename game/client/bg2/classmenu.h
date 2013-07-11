@@ -220,7 +220,7 @@ public:
 	virtual const char *GetName( void ) { return PANEL_CLASSES; }
 	virtual void SetData(KeyValues *data){}
 	bool SetScreen( int m_iScreen, bool m_bVisible, bool m_bUpdate = true );
-	void SetDefaultWeaponKit( int m_iTeam, int m_iClass, int weapon, int ammo );
+	void SetDefaultWeaponKit( int m_iTeam, int m_iClass, int weapon );
 	void UpdateDefaultWeaponKit( int m_iTeam, int m_iClass );
 	virtual void Reset( void ) { }//m_pPlayerList->DeleteAllItems(); }
 	virtual void Update( void );
@@ -282,7 +282,7 @@ public:
 	//being in classmenu mode means we must be visible aswell
 	bool IsInClassMenu( void ) { return m_pInfantryButton->IsVisible() && IsVisible(); }
 	bool IsInTeamMenu( void ) { return m_pBritishButton->IsVisible() && IsVisible(); }
-	bool IsInWeaponMenu( void ) { return m_pAmmoButton1->IsVisible() && IsVisible(); }
+	bool IsInWeaponMenu( void ) { return m_pWeaponButton1->IsVisible() && IsVisible(); }
 
 	void ShowFile( const char *filename );
 
